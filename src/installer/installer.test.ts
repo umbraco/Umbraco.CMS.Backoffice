@@ -1,4 +1,4 @@
-import { html, fixture, expect, aTimeout } from '@open-wc/testing';
+import { html, fixture, expect } from '@open-wc/testing';
 import { UmbInstallerConsent } from './installer-consent.element';
 import { UmbInstallerDatabase } from './installer-database.element';
 import { UmbInstallerInstalling } from './installer-installing.element';
