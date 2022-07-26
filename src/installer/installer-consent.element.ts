@@ -31,10 +31,10 @@ export class UmbInstallerConsent extends UmbContextConsumerMixin(LitElement) {
   private _telemetryLevels: TelemetryModel[] = [];
 
   @state()
-  private _telemetryFormData!: TelemetryModel['level'];
+  private _telemetryFormData?: TelemetryModel['level'];
 
   @state()
-  private _installerStore!: UmbInstallerContext;
+  private _installerStore?: UmbInstallerContext;
 
   private storeDataSubscription?: Subscription;
   private storeSettingsSubscription?: Subscription;
@@ -68,7 +68,7 @@ export class UmbInstallerConsent extends UmbContextConsumerMixin(LitElement) {
 
     const value: { [key: string]: string } = {};
     value[target.name] = this._telemetryLevels[parseInt(target.value) - 1].level;
-    this._installerStore.appendData(value);
+    this._installerStore?.appendData(value);
   }
 
   private _onNext() {
@@ -88,7 +88,7 @@ export class UmbInstallerConsent extends UmbContextConsumerMixin(LitElement) {
   }
 
   private _renderSlider() {
-    if (!this._telemetryLevels) return;
+    if (!this._telemetryLevels || this._telemetryLevels.length < 1) return;
 
     return html`
       <uui-slider

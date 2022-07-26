@@ -58,7 +58,7 @@ export class UmbInstallerDatabase extends UmbContextConsumerMixin(LitElement) {
   private _databases: UmbracoInstallerDatabaseModel[] = [];
 
   @state()
-  private _installerStore!: UmbInstallerContext;
+  private _installerStore?: UmbInstallerContext;
 
   private storeDataSubscription?: Subscription;
   private storeSettingsSubscription?: Subscription;
@@ -95,9 +95,9 @@ export class UmbInstallerDatabase extends UmbContextConsumerMixin(LitElement) {
     const value: { [key: string]: string | boolean } = {};
     value[target.name] = target.checked ?? target.value; // handle boolean and text inputs
 
-    const database = { ...this._installerStore.getData().database, ...value };
+    const database = { ...this._installerStore?.getData().database, ...value };
 
-    this._installerStore.appendData({ database });
+    this._installerStore?.appendData({ database });
   }
 
   private _handleSubmit = (e: SubmitEvent) => {
@@ -118,7 +118,7 @@ export class UmbInstallerDatabase extends UmbContextConsumerMixin(LitElement) {
     const useIntegratedAuthentication = formData.has('useIntegratedAuthentication');
 
     const database = {
-      ...this._installerStore.getData().database,
+      ...this._installerStore?.getData().database,
       username,
       password,
       server,
@@ -127,8 +127,8 @@ export class UmbInstallerDatabase extends UmbContextConsumerMixin(LitElement) {
       useIntegratedAuthentication,
     };
 
-    this._installerStore.appendData({ database });
-    this._installerStore.requestInstall().then(this._handleFulfilled.bind(this), this._handleRejected.bind(this));
+    this._installerStore?.appendData({ database });
+    this._installerStore?.requestInstall().then(this._handleFulfilled.bind(this), this._handleRejected.bind(this));
     this._installButton.state = 'waiting';
   };
   private _handleFulfilled() {
@@ -144,7 +144,7 @@ export class UmbInstallerDatabase extends UmbContextConsumerMixin(LitElement) {
   }
 
   private get selectedDatabase() {
-    const id = this._installerStore.getData().database.databaseType;
+    const id = this._installerStore?.getData().database.databaseType;
     return this._databases.find((x) => x.id === id) ?? this._databases[0];
   }
 
