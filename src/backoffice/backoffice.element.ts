@@ -8,6 +8,8 @@ import './sections/shared/section-layout.element';
 import './sections/shared/section-main.element';
 import './sections/shared/section-sidebar.element';
 
+import '../core/context/context-debugger.element';
+
 import { defineElement } from '@umbraco-ui/uui-base/lib/registration';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html, LitElement } from 'lit';
@@ -21,6 +23,7 @@ import { UmbNodeStore } from '../core/stores/node.store';
 import { UmbSectionStore } from '../core/stores/section.store';
 
 import type { Subscription } from 'rxjs';
+import { UmbContextAtlas } from '../core/context/context-atlas';
 
 @defineElement('umb-backoffice')
 export default class UmbBackoffice extends UmbContextConsumerMixin(UmbContextProviderMixin(LitElement)) {
@@ -45,16 +48,16 @@ export default class UmbBackoffice extends UmbContextConsumerMixin(UmbContextPro
 	constructor() {
 		super();
 
-		this.provideContext('umbNodeStore', new UmbNodeStore());
-		this.provideContext('umbDataTypeStore', new UmbDataTypeStore());
-		this.provideContext('umbDocumentTypeStore', new UmbDocumentTypeStore());
+		this.provideContext(UmbContextAtlas.NodeStore, new UmbNodeStore());
+		this.provideContext(UmbContextAtlas.DataTypeStore, new UmbDataTypeStore());
+		this.provideContext(UmbContextAtlas.DocumentTypeStore, new UmbDocumentTypeStore());
 		this.provideContext('umbNotificationService', new UmbNotificationService());
 		this.provideContext('umbModalService', new UmbModalService());
 
 		// TODO: how do we want to handle context aware DI?
 		this.consumeContext('umbExtensionRegistry', (extensionRegistry) => {
 			this._umbSectionStore = new UmbSectionStore(extensionRegistry);
-			this.provideContext('umbSectionStore', this._umbSectionStore);
+			this.provideContext(UmbContextAtlas.SectionStore, this._umbSectionStore);
 		});
 	}
 
@@ -65,10 +68,12 @@ export default class UmbBackoffice extends UmbContextConsumerMixin(UmbContextPro
 
 	render() {
 		return html`
-			<umb-backoffice-header></umb-backoffice-header>
-			<umb-backoffice-main></umb-backoffice-main>
-			<umb-backoffice-notification-container></umb-backoffice-notification-container>
-			<umb-backoffice-modal-container></umb-backoffice-modal-container>
+			<umb-context-debugger>
+				<umb-backoffice-header></umb-backoffice-header>
+				<umb-backoffice-main></umb-backoffice-main>
+				<umb-backoffice-notification-container></umb-backoffice-notification-container>
+				<umb-backoffice-modal-container></umb-backoffice-modal-container>
+			</umb-context-debugger>
 		`;
 	}
 }
