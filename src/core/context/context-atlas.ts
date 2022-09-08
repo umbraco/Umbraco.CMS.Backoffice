@@ -1,5 +1,3 @@
-//TODO put all string literals here as static constants
-
 export class UmbContextAtlas {
 	public static readonly NodeStore = 'umbNodeStore';
 	public static readonly DataTypeStore = 'umbDataTypeStore';

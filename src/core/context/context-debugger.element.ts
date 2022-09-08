@@ -49,8 +49,8 @@ export class UmbContextDebuggerElement extends UmbContextConsumerMixin(LitElemen
 	@state()
 	private _contexts: any = [];
 
-	@state()
-	private _showContextPanel = false;
+	@property({ type: Boolean, reflect: true })
+	private show = false;
 
 	constructor() {
 		super();
@@ -81,7 +81,7 @@ export class UmbContextDebuggerElement extends UmbContextConsumerMixin(LitElemen
 	}
 
 	renderContextPanel() {
-		return this._showContextPanel
+		return this.show
 			? html` <div id="contexts-wrapper">
 					${this._contexts.map((context: any) => {
 						return this.renderContext(context);
@@ -91,14 +91,16 @@ export class UmbContextDebuggerElement extends UmbContextConsumerMixin(LitElemen
 	}
 
 	private _toggleContextPanel() {
-		this._showContextPanel = !this._showContextPanel;
+		this.show = !this.show;
 	}
 
 	renderContext(context: any) {
 		return html`
 			<div class="context-name">${context.name}</div>
 			<div class="context-children">
-				${context.data.map((item) => html` <div>${item.name ? item.name : item}</div> `)}
+				${context.data.map(
+					(item) => html` <div @click=${() => console.log('Item: ', item)}>${item.name ? item.name : item}</div> `
+				)}
 			</div>
 		`;
 	}
