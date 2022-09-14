@@ -47,6 +47,7 @@ export class UmbContextDebuggerElement extends UmbContextConsumerMixin(LitElemen
 			}
 			.context-name {
 				font-weight: bold;
+				font-size: 1rem;
 				/* margin-bottom: 8px; */
 			}
 			.context-children {

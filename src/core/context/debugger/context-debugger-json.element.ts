@@ -28,20 +28,22 @@ export class UmbContextDebuggerJsonElement extends LitElement {
 	@property()
 	public item: any;
 
+	@property({ type: Boolean, reflect: true })
+	public open = false;
+
+	@state()
+	private _formatter?: JSONFormatter;
+
 	render() {
+		// console.log(this.item.name, this._formatter);
 		if (!this.item) return nothing;
 
-		const formatter = new JSONFormatter(
-			this.item,
-			0,
-			{
-				// hoverPreviewEnabled: true,
-				// hoverPreviewArrayCount: 1,
-				// hoverPreviewFieldCount: 1,
-			},
-			this.item.name || 'name'
-		);
+		console.log(this.item.name, this._formatter);
 
-		return html`${formatter.render()}`;
+		this.open = this._formatter?.isOpen ? true : false;
+
+		this._formatter = new JSONFormatter(this.item, this.open ? 1 : 0, {}, this.item.name || 'name');
+
+		return html`${this._formatter.render()}`;
 	}
 }
