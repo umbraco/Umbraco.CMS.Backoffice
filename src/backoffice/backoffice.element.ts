@@ -8,7 +8,7 @@ import './sections/shared/section-layout.element';
 import './sections/shared/section-main.element';
 import './sections/shared/section-sidebar.element';
 
-import '../core/context/context-debugger.element';
+import '../core/context/debugger/context-debugger.element';
 
 import { defineElement } from '@umbraco-ui/uui-base/lib/registration';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';

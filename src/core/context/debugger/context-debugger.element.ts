@@ -2,8 +2,10 @@ import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Observable } from 'rxjs';
-import { UmbContextAtlas } from './context-atlas';
-import { UmbContextConsumerMixin } from './context-consumer.mixin';
+import { UmbContextAtlas } from '../context-atlas';
+import { UmbContextConsumerMixin } from '../context-consumer.mixin';
+
+import './context-debugger-json.element';
 
 @customElement('umb-context-debugger')
 export class UmbContextDebuggerElement extends UmbContextConsumerMixin(LitElement) {
@@ -18,8 +20,11 @@ export class UmbContextDebuggerElement extends UmbContextConsumerMixin(LitElemen
 			}
 
 			#contexts-wrapper {
-				width: 300px;
 				padding: 12px;
+				overflow: auto;
+				min-width: 300px;
+				flex-grow: 1;
+				flex-shrink: 0;
 			}
 
 			#app-wrapper {
@@ -37,11 +42,18 @@ export class UmbContextDebuggerElement extends UmbContextConsumerMixin(LitElemen
 				z-index: 100;
 			}
 
+			.context {
+				margin-bottom: 12px;
+			}
 			.context-name {
 				font-weight: bold;
+				/* margin-bottom: 8px; */
 			}
 			.context-children {
 				margin-left: 12px;
+				display: flex;
+				flex-direction: column;
+				/* gap: 8px; */
 			}
 		`,
 	];
@@ -96,11 +108,13 @@ export class UmbContextDebuggerElement extends UmbContextConsumerMixin(LitElemen
 
 	renderContext(context: any) {
 		return html`
-			<div class="context-name">${context.name}</div>
-			<div class="context-children">
-				${context.data.map(
-					(item) => html` <div @click=${() => console.log('Item: ', item)}>${item.name ? item.name : item}</div> `
-				)}
+			<div class="context">
+				<div class="context-name">${context.name}</div>
+				<div class="context-children">
+					${context.data.map(
+						(item) => html`<umb-context-debugger-json .name=${item.name} .item=${item}></umb-context-debugger-json>`
+					)}
+				</div>
 			</div>
 		`;
 	}
