@@ -1,4 +1,5 @@
 export class UmbContextAtlas {
+	public static readonly EntityStore = 'umbEntityStore';
 	public static readonly NodeStore = 'umbNodeStore';
 	public static readonly DataTypeStore = 'umbDataTypeStore';
 	public static readonly DocumentTypeStore = 'umbDocumentTypeStore';
