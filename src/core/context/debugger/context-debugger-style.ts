@@ -1,4 +1,4 @@
-import { CSSResult, css } from 'lit';
+import { css } from 'lit';
 
 export const styles = [
 	css`

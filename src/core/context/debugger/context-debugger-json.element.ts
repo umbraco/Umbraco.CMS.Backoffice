@@ -38,8 +38,6 @@ export class UmbContextDebuggerJsonElement extends LitElement {
 		// console.log(this.item.name, this._formatter);
 		if (!this.item) return nothing;
 
-		console.log(this.item.name, this._formatter);
-
 		this.open = this._formatter?.isOpen ? true : false;
 
 		this._formatter = new JSONFormatter(this.item, this.open ? 1 : 0, {}, this.item.name || 'name');
