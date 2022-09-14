@@ -11,30 +11,85 @@ export class Manifests {
 	default(@body body: ProblemDetails) {}
 }
 
+@endpoint({ method: 'GET', path: '/manifests/packages' })
+export class ManifestsPackages {
+	@response({ status: 200 })
+	response(@body body: {}) {}
+
+	@defaultResponse
+	default(@body body: ProblemDetails) {}
+}
+
+@endpoint({ method: 'GET', path: '/manifests/packages/installed' })
+export class ManifestsPackagesInstalled {
+	@response({ status: 200 })
+	response(@body body: ManifestsPackagesInstalledResponse) {}
+
+	@defaultResponse
+	default(@body body: ProblemDetails) {}
+}
+
 export type Manifest =
 	| IManifestSection
+	| IManifestTree
+	| IManifestEditor
+	| IManifestTreeItemAction
 	| IManifestPropertyEditorUI
 	| IManifestDashboard
 	| IManifestEditorView
 	| IManifestPropertyAction
+	| IManifestPackageView
 	| IManifestEntrypoint
 	| IManifestCustom;
 
 export type ManifestStandardTypes =
 	| 'section'
+	| 'tree'
+	| 'editor'
+	| 'treeItemAction'
 	| 'propertyEditorUI'
 	| 'dashboard'
 	| 'editorView'
 	| 'propertyAction'
+	| 'packageView'
 	| 'entrypoint';
 
 export interface ManifestsResponse {
 	manifests: Manifest[];
 }
 
+export interface ManifestsPackagesInstalledResponse {
+	packages: PackageInstalled[];
+}
+
+export interface PackageInstalled {
+	id: string;
+	name: string;
+	alias: string;
+	version: string;
+	hasMigrations: boolean;
+	hasPendingMigrations: boolean;
+	plans: {}[];
+}
+
 export interface IManifest {
 	type: string;
 	alias: string;
+	name: string;
+}
+
+export interface IPrevalueField {
+	label?: string;
+	description?: string;
+	key: string;
+	view: string;
+}
+
+export interface IPrevalues {
+	prevalues?: {
+		fields: IPrevalueField[];
+	};
+	defaultConfig?: {};
 }
 
 export interface MetaSection {
@@ -42,7 +97,22 @@ export interface MetaSection {
 	weight: number;
 }
 
-export interface MetaPropertyEditorUI {
+export interface MetaTree {
+	weight: number;
+	sections: Array<string>;
+}
+
+export interface MetaEditor {
+	entityType: string;
+}
+
+export interface MetaTreeItemAction {
+	trees: Array<string>;
+	label: string;
+	icon: string;
+	weight: number;
+}
+export interface MetaPropertyEditorUI extends IPrevalues {
 	icon: string;
 	group: string;
 }
@@ -65,6 +135,10 @@ export interface MetaPropertyAction {
 	propertyEditors: string[];
 }
 
+export interface MetaPackageView {
+	packageAlias: string;
+}
+
 export interface IManifestCustom extends IManifest {
 	type: 'custom';
 	meta?: {};
@@ -72,7 +146,6 @@ export interface IManifestCustom extends IManifest {
 
 export interface IManifestElement extends IManifest {
 	type: ManifestStandardTypes;
-	name: string;
 	js?: string;
 	elementName?: string;
 	meta?: {};
@@ -81,6 +154,21 @@ export interface IManifestElement extends IManifest {
 export interface IManifestSection extends IManifestElement {
 	type: 'section';
 	meta: MetaSection;
+}
+
+export interface IManifestTree extends IManifestElement {
+	type: 'tree';
+	meta: MetaTree;
+}
+
+export interface IManifestEditor extends IManifestElement {
+	type: 'editor';
+	meta: MetaEditor;
+}
+
+export interface IManifestTreeItemAction extends IManifestElement {
+	type: 'treeItemAction';
+	meta: MetaTreeItemAction;
 }
 
 export interface IManifestPropertyEditorUI extends IManifestElement {
@@ -101,6 +189,11 @@ export interface IManifestEditorView extends IManifestElement {
 export interface IManifestPropertyAction extends IManifestElement {
 	type: 'propertyAction';
 	meta: MetaPropertyAction;
+}
+
+export interface IManifestPackageView extends IManifestElement {
+	type: 'packageView';
+	meta: MetaPackageView;
 }
 
 export interface IManifestEntrypoint extends IManifest {

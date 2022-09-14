@@ -1,4 +1,4 @@
-import { handlers as contentHandlers } from './domains/content.handlers';
+import { handlers as contentHandlers } from './domains/node.handlers';
 import { handlers as dataTypeHandlers } from './domains/data-type.handlers';
 import { handlers as documentTypeHandlers } from './domains/document-type.handlers';
 import { handlers as installHandlers } from './domains/install.handlers';
@@ -17,4 +17,5 @@ export const handlers = [
 	...userHandlers,
 	...dataTypeHandlers,
 	...documentTypeHandlers,
+	...manifestsHandlers.default,
 ];
