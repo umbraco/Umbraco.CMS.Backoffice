@@ -15,6 +15,7 @@ import type { Guard, IRoute } from 'router-slot/model';
 import { getManifests, getServerStatus } from './core/api/fetcher';
 import { UmbContextProviderMixin } from './core/context';
 import { UmbExtensionRegistry } from './core/extension';
+import authFlowInstance, { AuthFlow } from './core/services/flow';
 import { internalManifests } from './temp-internal-manifests';
 
 import type { ServerStatus } from './core/models';
@@ -60,12 +61,24 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 	private _iconRegistry = new UUIIconRegistryEssential();
 	private _serverStatus: ServerStatus = 'running';
 
+	private authFlow: AuthFlow;
+
 	constructor() {
 		super();
+		// TODO: Perhaps it's better to avoid singleton pattern and instead pass the instance around so we can provide it with baseUrl and other config
+		this.authFlow = authFlowInstance;
 		this._setup();
 	}
 
 	private async _setup() {
+		window.addEventListener('auth-success', () => {
+			// TODO: What happens when the user is successfully logged in - persist in user service?
+			console.log('%cis logged in: ' + this.authFlow.loggedIn(), 'background: red; color: yellow; font-size: x-large');
+		});
+
+		// TODO: Handle fallthrough if no cases were hit in setInitialState() - this should mean we need to perform an authorization request
+		await this.authFlow.setInitialState();
+
 		this._iconRegistry.attach(this);
 		this.provideContext('umbExtensionRegistry', this._extensionRegistry);
 
@@ -98,7 +111,7 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 				const pathname =
 					window.location.pathname === '/install' || window.location.pathname === '/upgrade'
 						? '/'
-						: window.location.pathname;
+						: window.location.href;
 				history.replaceState(null, '', pathname);
 				break;
 			}
@@ -106,7 +119,7 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 	}
 
 	private _isAuthorized(): boolean {
-		return sessionStorage.getItem('is-authenticated') === 'true';
+		return this.authFlow.loggedIn();
 	}
 
 	private _isAuthorizedGuard(redirectTo?: string): Guard {
@@ -115,13 +128,17 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 				return true;
 			}
 
-			let returnPath = '/login';
+			// TODO: How do we preserve the redirectTo param - forward it to the login page?
+			// TODO: How do we handle the case where the user is already logged in, but the session has expired?
+			this.authFlow.makeAuthorizationRequest();
 
-			if (redirectTo) {
-				returnPath += `?redirectTo=${redirectTo}`;
-			}
+			// let returnPath = '/login';
 
-			history.replaceState(null, '', returnPath);
+			// if (redirectTo) {
+			// 	returnPath += `?redirectTo=${redirectTo}`;
+			// }
+
+			// history.replaceState(null, '', returnPath);
 			return false;
 		};
 	}
