@@ -15,7 +15,7 @@ import type { Guard, IRoute } from 'router-slot/model';
 import { getManifests, getServerStatus } from './core/api/fetcher';
 import { UmbContextProviderMixin } from './core/context';
 import { UmbExtensionRegistry } from './core/extension';
-import authFlowInstance, { AuthFlow } from './core/services/flow';
+import { AuthFlow } from './core/services/flow';
 import { internalManifests } from './temp-internal-manifests';
 
 import type { ServerStatus } from './core/models';
@@ -65,8 +65,7 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 
 	constructor() {
 		super();
-		// TODO: Perhaps it's better to avoid singleton pattern and instead pass the instance around so we can provide it with baseUrl and other config
-		this.authFlow = authFlowInstance;
+		this.authFlow = new AuthFlow('https://localhost:44331', 'http://127.0.0.1:5173/login');
 		this._setup();
 	}
 

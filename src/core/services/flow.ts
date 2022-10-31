@@ -29,14 +29,6 @@ import { LocationLike, StringMap } from '@openid/appauth/built/types';
 
 const requestor = new FetchRequestor();
 
-/* an example open id connect provider */
-const openIdConnectUrl = 'https://localhost:44331';
-
-/* example client configuration */
-const clientId = 'umbraco-back-office';
-const redirectUri = 'http://127.0.0.1:5173/login';
-const scope = 'offline_access';
-
 class NoHashQueryStringUtils extends BasicQueryStringUtils {
 	parse(input: LocationLike) {
 		return super.parse(input, false);
@@ -50,11 +42,25 @@ export class AuthFlow {
 
 	// state
 	private configuration: AuthorizationServiceConfiguration | undefined;
+	private openIdConnectUrl: string;
+	private redirectUri: string;
+	private clientId: string;
+	private scope: string;
 
 	private refreshToken: string | undefined;
 	private accessTokenResponse: TokenResponse | undefined;
 
-	constructor() {
+	constructor(
+		openIdConnectUrl: string,
+		redirectUri: string,
+		clientId = 'umbraco-back-office',
+		scope = 'offline_access'
+	) {
+		this.openIdConnectUrl = openIdConnectUrl;
+		this.redirectUri = redirectUri;
+		this.clientId = clientId;
+		this.scope = scope;
+
 		this.notifier = new AuthorizationNotifier();
 		this.tokenHandler = new BaseTokenRequestHandler(requestor);
 		this.authorizationHandler = new RedirectRequestHandler(
@@ -119,7 +125,7 @@ export class AuthFlow {
 	}
 
 	async fetchServiceConfiguration(): Promise<void> {
-		const response = await AuthorizationServiceConfiguration.fetchFromIssuer(openIdConnectUrl, requestor);
+		const response = await AuthorizationServiceConfiguration.fetchFromIssuer(this.openIdConnectUrl, requestor);
 		console.log('Fetched service configuration', response);
 		this.configuration = response;
 	}
@@ -138,9 +144,9 @@ export class AuthFlow {
 		// create a request
 		const request = new AuthorizationRequest(
 			{
-				client_id: clientId,
-				redirect_uri: redirectUri,
-				scope: scope,
+				client_id: this.clientId,
+				redirect_uri: this.redirectUri,
+				scope: this.scope,
 				response_type: AuthorizationRequest.RESPONSE_TYPE_CODE,
 				state: undefined,
 				extras: extras,
@@ -168,8 +174,8 @@ export class AuthFlow {
 
 		// use the code to make the token request.
 		const request = new TokenRequest({
-			client_id: clientId,
-			redirect_uri: redirectUri,
+			client_id: this.clientId,
+			redirect_uri: this.redirectUri,
 			grant_type: GRANT_TYPE_AUTHORIZATION_CODE,
 			code: code,
 			refresh_token: undefined,
@@ -205,8 +211,8 @@ export class AuthFlow {
 			return Promise.resolve(this.accessTokenResponse.accessToken);
 		}
 		const request = new TokenRequest({
-			client_id: clientId,
-			redirect_uri: redirectUri,
+			client_id: this.clientId,
+			redirect_uri: this.redirectUri,
 			grant_type: GRANT_TYPE_REFRESH_TOKEN,
 			code: undefined,
 			refresh_token: this.refreshToken,
@@ -218,6 +224,3 @@ export class AuthFlow {
 		return response.accessToken;
 	}
 }
-
-const authFlow = new AuthFlow();
-export default authFlow;
