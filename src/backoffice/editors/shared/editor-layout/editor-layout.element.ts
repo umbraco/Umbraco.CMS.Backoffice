@@ -103,6 +103,7 @@ export class UmbEditorLayout extends UmbContextConsumerMixin(UmbObserverMixin(Li
 	connectedCallback(): void {
 		super.connectedCallback();
 
+		// TODO: Niels: with extensions-slot and conditions we can eliminate this type of bootstrapping:
 		this._observeEditorViews();
 		this._observeEditorActions();
 
