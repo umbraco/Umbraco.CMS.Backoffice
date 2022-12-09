@@ -167,7 +167,7 @@ export class UmbEditorEntityLayout extends UmbContextConsumerMixin(UmbObserverMi
 		}
 	}
 
-	private _renderViews() {
+	private _renderTabs() {
 		return html`
 			${this._editorViews?.length > 0
 				? html`
@@ -199,7 +199,7 @@ export class UmbEditorEntityLayout extends UmbContextConsumerMixin(UmbObserverMi
 						${this.headline ? html`<h3>${this.headline}</h3>` : nothing}
 						<slot id="name" name="name"></slot>
 					</div>
-					${this._renderViews()}
+					${this._renderTabs()}
 				</div>
 
 				<router-slot .routes="${this._routes}"></router-slot>
