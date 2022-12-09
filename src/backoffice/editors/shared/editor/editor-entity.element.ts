@@ -9,8 +9,8 @@ import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 import { UmbContextConsumerMixin } from '@umbraco-cms/context-api';
 import type { ManifestEditor } from '@umbraco-cms/models';
 
-@customElement('umb-editor-entity')
-export class UmbEditorEntityElement extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
+@customElement('umb-editor')
+export class UmbEditorElement extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -45,6 +45,10 @@ export class UmbEditorEntityElement extends UmbContextConsumerMixin(UmbObserverM
 		this._observeEditors();
 	}
 
+	/**
+	TODO: use future system of extension-slot, extension slots must use a condition-system which will be used to determine the filtering happening below.
+	This will first be possible to make when ContextApi is available, as conditions will use this system.
+	*/
 	private _observeEditors() {
 		this.observe<ManifestEditor | undefined>(
 			umbExtensionsRegistry
@@ -70,6 +74,7 @@ export class UmbEditorEntityElement extends UmbContextConsumerMixin(UmbObserverM
 		}
 
 		// TODO: implement fallback editor
+		// Note for extension-slot, we must enable giving the extension-slot a fallback element.
 		const fallbackEditor = document.createElement('div');
 		fallbackEditor.innerHTML = '<p>No editor found</p>';
 		this._element = fallbackEditor;
@@ -81,10 +86,10 @@ export class UmbEditorEntityElement extends UmbContextConsumerMixin(UmbObserverM
 	}
 }
 
-export default UmbEditorEntityElement;
+export default UmbEditorElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-editor-entity': UmbEditorEntityElement;
+		'umb-editor': UmbEditorElement;
 	}
 }

@@ -1,7 +1,7 @@
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { IRoute, IRoutingInfo } from 'router-slot';
-import { UmbEditorEntityElement } from '../../../../editors/shared/editor-entity/editor-entity.element';
+import { UmbEditorElement } from '../../../../editors/shared/editor/editor-entity.element';
 
 @customElement('umb-section-view-packages-created')
 export class UmbSectionViewPackagesCreatedElement extends LitElement {
@@ -13,9 +13,9 @@ export class UmbSectionViewPackagesCreatedElement extends LitElement {
 		},
 		{
 			path: `:entityType/:key`,
-			component: () => import('../../../../editors/shared/editor-entity/editor-entity.element'),
+			component: () => import('../../../../editors/shared/editor/editor-entity.element'),
 			setup: (component: HTMLElement, info: IRoutingInfo) => {
-				const element = component as UmbEditorEntityElement;
+				const element = component as UmbEditorElement;
 				element.entityKey = info.match.params.key;
 				element.entityType = info.match.params.entityType;
 			},
