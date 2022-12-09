@@ -6,7 +6,7 @@ import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 import { UmbContextConsumerMixin } from '@umbraco-cms/context-api';
 import type { ManifestTypes } from '@umbraco-cms/models';
 
-import '../shared/editor-entity-layout/editor-entity-layout.element';
+import '../shared/editor-layout/editor-layout.element';
 
 @customElement('umb-editor-extensions')
 export class UmbEditorExtensionsElement extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {

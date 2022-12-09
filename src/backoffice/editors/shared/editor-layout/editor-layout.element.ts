@@ -193,6 +193,7 @@ export class UmbEditorEntityLayout extends UmbContextConsumerMixin(UmbObserverMi
 		return html`
 			<umb-body-layout>
 				<div id="header" slot="header">
+					<!-- Niels tough's, TODO: maybe this is too specific for this spot. Lets consider extracting this into the document editor. As this seems/potentially should be unique for each editor -->
 					<slot id="icon" name="icon"></slot>
 					<div id="name">
 						${this.headline ? html`<h3>${this.headline}</h3>` : nothing}
