@@ -9,8 +9,16 @@ import { UmbContextConsumerMixin } from '@umbraco-cms/context-api';
 
 @customElement('umb-editor-view-node-info')
 export class UmbEditorViewNodeInfoElement extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
-	static styles = [UUITextStyles, css``];
-
+	static styles = [
+		UUITextStyles,
+		css`
+			:host {
+				display:block;
+				margin: var(--uui-size-layout-1);
+			}
+		`
+	];
+	
 	private _nodeContext?: UmbNodeContext;
 
 	@state()

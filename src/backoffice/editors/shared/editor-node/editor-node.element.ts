@@ -31,8 +31,14 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 				height: 100%;
 			}
 
+			#header {
+				margin: 0 var(--uui-size-layout-1);
+				flex:1 1 auto;
+			}
+
 			uui-input {
 				width: 100%;
+				height: 100%;/** I really don't know why this fixes the border colliding with variant-selector-toggle, but lets this solution for now */
 			}
 
 			#variant-selector-popover {
@@ -53,6 +59,11 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 
 			#variant-selector-toggle {
 				white-space: nowrap;
+			}
+
+			#footer {
+				margin: 0 var(--uui-size-layout-1);
+				flex:1 1 auto;
 			}
 		`,
 	];
@@ -197,17 +208,17 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 						: nothing}
 				</div>
 
-				<div slot="footer">Breadcrumbs</div>
+				<div id="footer" slot="footer">Breadcrumbs</div>
 
-				<div slot="actions">
-					<uui-button @click=${this._onSaveAndPreview} label="Save and preview"></uui-button>
-					<uui-button @click=${this._onSave} look="secondary" label="Save"></uui-button>
-					<uui-button
-						@click=${this._onSaveAndPublish}
-						look="primary"
-						color="positive"
-						label="Save and publish"></uui-button>
-				</div>
+				<!-- TODO: convert document editor actions to extensions: -->
+				<uui-button slot="actions" @click=${this._onSaveAndPreview} label="Save and preview"></uui-button>
+				<uui-button slot="actions" @click=${this._onSave} look="secondary" label="Save"></uui-button>
+				<uui-button slot="actions"
+					@click=${this._onSaveAndPublish}
+					look="primary"
+					color="positive"
+					label="Save and publish"></uui-button>
+				
 			</umb-editor-layout>
 		`;
 	}

@@ -27,7 +27,7 @@ export class UmbSectionElement extends UmbContextConsumerMixin(UmbObserverMixin(
 
 			#header {
 				display: flex;
-				gap: 16px;
+				gap: var(--uui-size-layout-1);
 				align-items: center;
 				min-height: 60px;
 			}

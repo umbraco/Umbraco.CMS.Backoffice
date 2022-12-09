@@ -39,7 +39,7 @@ export class UmbBodyLayout extends LitElement {
 			#footer {
 				display: flex;
 				align-items: center;
-				height: 70px;
+				height: 54px;/** TODO: missing --uui-size-18 */
 				width: 100%;
 				/*padding: 0 var(--uui-size-6);*/
 				border-top: 1px solid var(--uui-color-border);
