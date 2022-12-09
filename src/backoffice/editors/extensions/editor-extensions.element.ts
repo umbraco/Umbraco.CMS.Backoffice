@@ -6,7 +6,7 @@ import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 import { UmbContextConsumerMixin } from '@umbraco-cms/context-api';
 import type { ManifestTypes } from '@umbraco-cms/models';
 
-import '../shared/editor-content-layout/editor-content-layout.element';
+import '../shared/editor-node-layout/editor-node-layout.element';
 
 @customElement('umb-editor-extensions')
 export class UmbEditorExtensionsElement extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
@@ -26,7 +26,7 @@ export class UmbEditorExtensionsElement extends UmbContextConsumerMixin(UmbObser
 
 	render() {
 		return html`
-			<umb-editor-content-layout headline="Extensions" alias="Umb.Editor.Extensions">
+			<umb-editor-node-layout headline="Extensions" alias="Umb.Editor.Extensions">
 				<uui-box>
 					<p>List of currently loaded extensions</p>
 					<uui-table>
@@ -49,7 +49,7 @@ export class UmbEditorExtensionsElement extends UmbContextConsumerMixin(UmbObser
 						)}
 					</uui-table>
 				</uui-box>
-			</umb-editor-content-layout>
+			</umb-editor-node-layout>
 		`;
 	}
 }

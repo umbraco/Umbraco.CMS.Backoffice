@@ -3,7 +3,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbModalLayoutElement } from '../modal-layout.element';
 
-import '../../../../../backoffice/editors/shared/editor-content-layout/editor-content-layout.element';
+import '../../../../../backoffice/editors/shared/editor-node-layout/editor-node-layout.element';
 
 export interface UmbModalIconPickerData {
 	multiple: boolean;
@@ -234,7 +234,7 @@ export class UmbModalLayoutIconPickerElement extends UmbModalLayoutElement<UmbMo
 
 	render() {
 		return html`
-			<umb-editor-content-layout headline="Select Icon">
+			<umb-editor-node-layout headline="Select Icon">
 				<div id="container">
 					${this.renderSearchbar()}
 					<hr />
@@ -248,7 +248,7 @@ export class UmbModalLayoutIconPickerElement extends UmbModalLayoutElement<UmbMo
 				<uui-button slot="actions" color="positive" look="primary" @click="${this._save}" label="save">
 					Save
 				</uui-button>
-			</umb-editor-content-layout>
+			</umb-editor-node-layout>
 		`;
 	}
 

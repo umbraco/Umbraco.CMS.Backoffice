@@ -26,7 +26,7 @@ import '../editor-action-extension/editor-action-extension.element';
  * @extends {UmbContextConsumerMixin(LitElement)}
  */
 @customElement('umb-editor-content-layout')
-export class UmbEditorContentLayout extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
+export class UmbEditorNodeLayout extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -221,6 +221,6 @@ export class UmbEditorContentLayout extends UmbContextConsumerMixin(UmbObserverM
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-editor-content-layout': UmbEditorContentLayout;
+		'umb-editor-node-layout': UmbEditorNodeLayout;
 	}
 }

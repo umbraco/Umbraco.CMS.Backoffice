@@ -11,7 +11,7 @@ import { UmbNodeContext } from './node.context';
 import { UmbObserverMixin } from '@umbraco-cms/observable-api';
 import { UmbContextConsumerMixin, UmbContextProviderMixin } from '@umbraco-cms/context-api';
 
-import '../editor-content-layout/editor-content-layout.element';
+import '../editor-node-layout/editor-node-layout.element';
 
 // Lazy load
 // TODO: Make this dynamic, use load-extensions method to loop over extensions for this node.
