@@ -1,4 +1,4 @@
-import '../../../../../backoffice/editors/shared/editor-layout/editor-layout.element';
+import '../../../../../backoffice/editors/shared/body-layout/editor-layout.element';
 import './modal-layout-icon-picker.element';
 
 import { Meta, Story } from '@storybook/web-components';
