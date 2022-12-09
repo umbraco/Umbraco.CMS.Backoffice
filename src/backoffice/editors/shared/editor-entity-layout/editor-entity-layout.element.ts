@@ -10,7 +10,7 @@ import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 import { UmbContextConsumerMixin } from '@umbraco-cms/context-api';
 import type { ManifestEditorAction, ManifestEditorView } from '@umbraco-cms/models';
 
-import '../body-layout/editor-layout.element';
+import '../../../components/body-layout/body-layout.element';
 import '../editor-action-extension/editor-action-extension.element';
 
 /**
