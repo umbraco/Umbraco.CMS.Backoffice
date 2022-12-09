@@ -26,7 +26,7 @@ export class UmbBodyLayout extends LitElement {
 				width: 100%;
 				border-bottom: 1px solid var(--uui-color-border);
 				box-sizing: border-box;
-				padding: 0 var(--uui-size-6);
+				/* padding: 0 var(--uui-size-6); */
 			}
 
 			#main {
@@ -41,7 +41,7 @@ export class UmbBodyLayout extends LitElement {
 				align-items: center;
 				height: 70px;
 				width: 100%;
-				padding: 0 var(--uui-size-6);
+				/*padding: 0 var(--uui-size-6);*/
 				border-top: 1px solid var(--uui-color-border);
 				background-color: var(--uui-color-surface);
 				box-sizing: border-box;
