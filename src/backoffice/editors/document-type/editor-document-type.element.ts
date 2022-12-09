@@ -11,7 +11,7 @@ import { UmbContextConsumerMixin, UmbContextProviderMixin } from '@umbraco-cms/c
 import type { ManifestTypes, ManifestWithLoader } from '@umbraco-cms/models';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 
-import '../shared/editor-layout/editor-layout.element';
+import '../shared/editor-entity-layout/editor-entity-layout.element';
 
 @customElement('umb-editor-document-type')
 export class UmbEditorDocumentTypeElement extends UmbContextProviderMixin(

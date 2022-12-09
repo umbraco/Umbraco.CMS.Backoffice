@@ -12,7 +12,7 @@ import { UmbContextProviderMixin, UmbContextConsumerMixin } from '@umbraco-cms/c
 import type { ManifestEditorAction, ManifestWithLoader, UserDetails } from '@umbraco-cms/models';
 
 import '../../property-editor-uis/content-picker/property-editor-ui-content-picker.element';
-import '../shared/editor-layout/editor-layout.element';
+import '../shared/editor-entity-layout/editor-entity-layout.element';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 
 @customElement('umb-editor-user')
