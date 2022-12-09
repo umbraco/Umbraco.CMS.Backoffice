@@ -264,7 +264,7 @@ export class UmbEditorUserGroupElement extends LitElement {
 	render() {
 		return html`
 			<umb-editor-layout alias="Umb.Editor.UserGroup">
-				<uui-input id="name" slot="name" .value=${this._userName} @input="${this._handleInput}"></uui-input>
+				<uui-input slot="header" .value=${this._userName} @input="${this._handleInput}"></uui-input>
 				<div id="main">
 					<div id="left-column">${this.renderLeftColumn()}</div>
 					<div id="right-column">${this.renderRightColumn()}</div>

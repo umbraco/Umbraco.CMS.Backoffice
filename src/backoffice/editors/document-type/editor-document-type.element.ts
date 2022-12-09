@@ -122,9 +122,9 @@ export class UmbEditorDocumentTypeElement extends UmbContextProviderMixin(
 	render() {
 		return html`
 			<umb-editor-layout alias="Umb.Editor.DocumentType">
-				<div slot="icon">Icon</div>
-
-				<div slot="name">
+				
+				<div slot="header">
+					<div>Icon</div>
 					<uui-input id="name" .value=${this._documentType?.name} @input="${this._handleInput}">
 						<div id="alias" slot="append">${this._documentType?.alias}</div>
 					</uui-input>

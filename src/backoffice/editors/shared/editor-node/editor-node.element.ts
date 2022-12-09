@@ -165,7 +165,7 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 	render() {
 		return html`
 			<umb-editor-layout alias=${this.alias}>
-				<div slot="name">
+				<div id="header" slot="header">
 					<uui-input .value=${this._node?.name} @input="${this._handleInput}">
 						<!-- Implement Variant Selector -->
 						${this._node && this._node.variants.length > 0

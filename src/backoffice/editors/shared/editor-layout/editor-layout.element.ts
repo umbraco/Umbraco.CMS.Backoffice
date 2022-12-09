@@ -194,12 +194,15 @@ export class UmbEditorLayout extends UmbContextConsumerMixin(UmbObserverMixin(Li
 		return html`
 			<umb-body-layout>
 				<div id="header" slot="header">
+
+					${this.headline ? html`<h3 id="headline">${this.headline}</h3>` : nothing}
+
+					<slot name="header"></slot>
 					<!-- Niels thoughts, TODO: maybe this is too specific for this spot. Lets consider extracting this into the document editor. As this seems/potentially should be unique for each editor -->
+					<!--
 					<slot id="icon" name="icon"></slot>
-					<div id="name">
-						${this.headline ? html`<h3>${this.headline}</h3>` : nothing}
-						<slot id="name" name="name"></slot>
-					</div>
+					-->
+
 					${this._renderTabs()}
 				</div>
 
