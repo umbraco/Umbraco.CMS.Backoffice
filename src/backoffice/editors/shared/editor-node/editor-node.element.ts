@@ -31,11 +31,15 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 				height: 100%;
 			}
 
-			#popover {
+			uui-input {
+				width: 100%;
+			}
+
+			#variant-selector-popover {
 				display: block;
 			}
 
-			#dropdown {
+			#variant-selector-dropdown {
 				overflow: hidden;
 				z-index: -1;
 				background-color: var(--uui-combobox-popover-background-color, var(--uui-color-surface));
@@ -47,8 +51,8 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 				box-shadow: var(--uui-shadow-depth-3);
 			}
 
-			uui-input {
-				width: 100%;
+			#variant-selector-toggle {
+				white-space: nowrap;
 			}
 		`,
 	];
@@ -78,6 +82,7 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 		this.addEventListener('property-value-change', this._onPropertyValueChange);
 	}
 
+	// TODO: How do we ensure this is a change of this document and not nested documents? Should the event be stopped at this spot at avoid such.
 	private _onPropertyValueChange = (e: Event) => {
 		const target = e.composedPath()[0] as any;
 
@@ -166,7 +171,7 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 						${this._node && this._node.variants.length > 0
 							? html`
 									<div slot="append">
-										<uui-button id="trigger" @click=${this._toggleVariantSelector}>
+										<uui-button id="variant-selector-toggle" @click=${this._toggleVariantSelector}>
 											English (United States)
 											<uui-caret></uui-caret>
 										</uui-button>
@@ -176,11 +181,12 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 					</uui-input>
 
 					<!-- Implement Variant Selector -->
+					<!-- TODO: Refactor Variant Selector into its own component -->
 					${this._node && this._node.variants.length > 0
 						? html`
-								<uui-popover id="popover" .open=${this._variantSelectorIsOpen} @close=${this._close}>
-									<div id="dropdown" slot="popover">
-										<uui-scroll-container id="scroll-container">
+								<uui-popover id="variant-selector-popover" .open=${this._variantSelectorIsOpen} @close=${this._close}>
+									<div id="variant-selector-dropdown" slot="popover">
+										<uui-scroll-container>
 											<ul>
 												<li>Implement variants</li>
 											</ul>
