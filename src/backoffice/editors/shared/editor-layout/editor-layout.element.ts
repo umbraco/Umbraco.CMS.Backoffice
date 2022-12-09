@@ -14,7 +14,7 @@ import '../../../components/body-layout/body-layout.element';
 import '../editor-action-extension/editor-action-extension.element';
 
 /**
- * @element umb-editor-content-layout
+ * @element umb-editor-layout
  * @description
  * @slot icon - Slot for rendering the entity icon
  * @slot name - Slot for rendering the entity name
@@ -25,8 +25,8 @@ import '../editor-action-extension/editor-action-extension.element';
  * @class UmbEditorContentLayout
  * @extends {UmbContextConsumerMixin(LitElement)}
  */
-@customElement('umb-editor-content-layout')
-export class UmbEditorNodeLayout extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
+@customElement('umb-editor-layout')
+export class UmbEditorLayout extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -221,6 +221,6 @@ export class UmbEditorNodeLayout extends UmbContextConsumerMixin(UmbObserverMixi
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-editor-node-layout': UmbEditorNodeLayout;
+		'umb-editor-layout': UmbEditorLayout;
 	}
 }

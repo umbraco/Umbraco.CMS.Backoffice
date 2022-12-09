@@ -11,7 +11,7 @@ import { UmbNodeContext } from './node.context';
 import { UmbObserverMixin } from '@umbraco-cms/observable-api';
 import { UmbContextConsumerMixin, UmbContextProviderMixin } from '@umbraco-cms/context-api';
 
-import '../editor-node-layout/editor-node-layout.element';
+import '../editor-layout/editor-layout.element';
 
 // Lazy load
 // TODO: Make this dynamic, use load-extensions method to loop over extensions for this node.
@@ -159,7 +159,7 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 
 	render() {
 		return html`
-			<umb-editor-content-layout alias=${this.alias}>
+			<umb-editor-layout alias=${this.alias}>
 				<div slot="name">
 					<uui-input .value=${this._node?.name} @input="${this._handleInput}">
 						<!-- Implement Variant Selector -->
@@ -202,7 +202,7 @@ export class UmbEditorNodeElement extends UmbContextProviderMixin(
 						color="positive"
 						label="Save and publish"></uui-button>
 				</div>
-			</umb-editor-content-layout>
+			</umb-editor-layout>
 		`;
 	}
 }
