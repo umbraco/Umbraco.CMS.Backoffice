@@ -3,7 +3,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { BehaviorSubject, Observable } from 'rxjs';
 import type { IRoute, IRoutingInfo } from 'router-slot';
-import type { UmbEditorElement } from '../../../../editors/shared/editor/editor-entity.element';
+import type { UmbEditorElement } from '../../../../editors/shared/editor/editor.element';
 import { UmbContextProviderMixin } from '@umbraco-cms/context-api';
 
 import './list-view-layouts/table/editor-view-users-table.element';
@@ -30,7 +30,7 @@ export class UmbSectionViewUsersElement extends UmbContextProviderMixin(LitEleme
 		},
 		{
 			path: `:entityType/:key`,
-			component: () => import('../../../../editors/shared/editor/editor-entity.element'),
+			component: () => import('../../../../editors/shared/editor/editor.element'),
 			setup: (component: HTMLElement, info: IRoutingInfo) => {
 				const element = component as UmbEditorElement;
 				element.entityKey = info.match.params.key;

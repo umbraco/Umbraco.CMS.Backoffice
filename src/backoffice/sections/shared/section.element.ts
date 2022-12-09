@@ -3,7 +3,7 @@ import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { map, switchMap, EMPTY, of } from 'rxjs';
 import { UmbSectionContext } from '../section.context';
-import { UmbEditorElement } from '../../editors/shared/editor/editor-entity.element';
+import { UmbEditorElement } from '../../editors/shared/editor/editor.element';
 import { UmbEntityStore } from '../../../core/stores/entity.store';
 import { UmbObserverMixin } from '@umbraco-cms/observable-api';
 import { createExtensionElement } from '@umbraco-cms/extensions-api';
@@ -97,7 +97,7 @@ export class UmbSectionElement extends UmbContextConsumerMixin(UmbObserverMixin(
 			this._trees?.map(() => {
 				return {
 					path: `:entityType/:key`,
-					component: () => import('../../editors/shared/editor/editor-entity.element'),
+					component: () => import('../../editors/shared/editor/editor.element'),
 					setup: (component: UmbEditorElement, info: any) => {
 						component.entityKey = info.match.params.key;
 						component.entityType = info.match.params.entityType;
