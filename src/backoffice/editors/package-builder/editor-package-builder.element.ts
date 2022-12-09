@@ -2,7 +2,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import '../shared/editor-entity-layout/editor-entity-layout.element';
+import '../shared/editor-content-layout/editor-content-layout.element';
 
 @customElement('umb-editor-package-builder')
 export class UmbEditorPackageBuilderElement extends LitElement {
@@ -18,8 +18,8 @@ export class UmbEditorPackageBuilderElement extends LitElement {
 	];
 
 	render() {
-		return html`<umb-editor-entity-layout alias="Umb.Editor.PackageBuilder"
-			>PACKAGE BUILDER</umb-editor-entity-layout
+		return html`<umb-editor-content-layout alias="Umb.Editor.PackageBuilder"
+			>PACKAGE BUILDER</umb-editor-content-layout
 		> `;
 	}
 }

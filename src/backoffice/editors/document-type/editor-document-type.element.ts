@@ -11,7 +11,7 @@ import { UmbContextConsumerMixin, UmbContextProviderMixin } from '@umbraco-cms/c
 import type { ManifestTypes, ManifestWithLoader } from '@umbraco-cms/models';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 
-import '../shared/editor-entity-layout/editor-entity-layout.element';
+import '../shared/editor-content-layout/editor-content-layout.element';
 
 @customElement('umb-editor-document-type')
 export class UmbEditorDocumentTypeElement extends UmbContextProviderMixin(
@@ -121,7 +121,7 @@ export class UmbEditorDocumentTypeElement extends UmbContextProviderMixin(
 
 	render() {
 		return html`
-			<umb-editor-entity-layout alias="Umb.Editor.DocumentType">
+			<umb-editor-content-layout alias="Umb.Editor.DocumentType">
 				<div slot="icon">Icon</div>
 
 				<div slot="name">
@@ -131,7 +131,7 @@ export class UmbEditorDocumentTypeElement extends UmbContextProviderMixin(
 				</div>
 
 				<div slot="footer">Keyboard Shortcuts</div>
-			</umb-editor-entity-layout>
+			</umb-editor-content-layout>
 		`;
 	}
 }

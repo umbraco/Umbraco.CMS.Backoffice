@@ -12,7 +12,7 @@ import { UmbContextProviderMixin, UmbContextConsumerMixin } from '@umbraco-cms/c
 import type { ManifestEditorAction, ManifestWithLoader, UserDetails } from '@umbraco-cms/models';
 
 import '../../property-editor-uis/content-picker/property-editor-ui-content-picker.element';
-import '../shared/editor-entity-layout/editor-entity-layout.element';
+import '../shared/editor-content-layout/editor-content-layout.element';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 
 @customElement('umb-editor-user')
@@ -315,13 +315,13 @@ export class UmbEditorUserElement extends UmbContextProviderMixin(UmbContextCons
 		if (!this._user) return html`User not found`;
 
 		return html`
-			<umb-editor-entity-layout alias="Umb.Editor.User">
+			<umb-editor-content-layout alias="Umb.Editor.User">
 				<uui-input id="name" slot="name" .value=${this._userName} @input="${this._handleInput}"></uui-input>
 				<div id="main">
 					<div id="left-column">${this.renderLeftColumn()}</div>
 					<div id="right-column">${this.renderRightColumn()}</div>
 				</div>
-			</umb-editor-entity-layout>
+			</umb-editor-content-layout>
 		`;
 	}
 }

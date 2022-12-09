@@ -9,7 +9,7 @@ import { UmbObserverMixin } from '@umbraco-cms/observable-api';
 import { UmbContextProviderMixin, UmbContextConsumerMixin } from '@umbraco-cms/context-api';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 
-import '../shared/editor-entity-layout/editor-entity-layout.element';
+import '../shared/editor-content-layout/editor-content-layout.element';
 
 /**
  *  @element umb-editor-data-type
@@ -140,9 +140,9 @@ export class UmbEditorDataTypeElement extends UmbContextProviderMixin(
 
 	render() {
 		return html`
-			<umb-editor-entity-layout alias="Umb.Editor.DataType">
+			<umb-editor-content-layout alias="Umb.Editor.DataType">
 				<uui-input id="name" slot="name" .value=${this._dataTypeName} @input="${this._handleInput}"></uui-input>
-			</umb-editor-entity-layout>
+			</umb-editor-content-layout>
 		`;
 	}
 }
