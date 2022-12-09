@@ -15,10 +15,10 @@ import '../editor-content-layout/editor-content-layout.element';
 
 // Lazy load
 // TODO: Make this dynamic, use load-extensions method to loop over extensions for this node.
-import './views/edit/editor-view-node-edit.element';
-import './views/info/editor-view-node-info.element';
+import './views/edit/editor-view-content-edit.element';
+import './views/info/editor-view-content-info.element';
 
-@customElement('umb-editor-node')
+@customElement('umb-editor-content')
 export class UmbEditorNodeElement extends UmbContextProviderMixin(
 	UmbContextConsumerMixin(UmbObserverMixin(LitElement))
 ) {
@@ -211,6 +211,6 @@ export default UmbEditorNodeElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-editor-node': UmbEditorNodeElement;
+		'umb-editor-content': UmbEditorNodeElement;
 	}
 }
