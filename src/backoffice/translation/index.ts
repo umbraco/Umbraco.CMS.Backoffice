@@ -1,6 +1,6 @@
 import { manifests as translationSectionManifests } from './section.manifest';
-import { manifests as dictionaryTreeManifests } from './dictionary/tree/dictionary-tree.manifest';
-import { manifests as dictionaryWorkspaceManifests } from './dictionary/workspace/dictionary-workspace.manifest';
+import { manifests as dictionaryTreeManifests } from './dictionary/tree/manifests';
+import { manifests as dictionaryWorkspaceManifests } from './dictionary/workspace/manifests';
 import { ManifestTypes, umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 
 const registerExtensions = (manifests: Array<ManifestTypes>) => {
@@ -10,4 +10,8 @@ const registerExtensions = (manifests: Array<ManifestTypes>) => {
 	});
 };
 
-registerExtensions([...translationSectionManifests, ...dictionaryTreeManifests, ...dictionaryWorkspaceManifests]);
+registerExtensions([
+	...translationSectionManifests,
+	...dictionaryTreeManifests,
+	...dictionaryWorkspaceManifests,
+]);

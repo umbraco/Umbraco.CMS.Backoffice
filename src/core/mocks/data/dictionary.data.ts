@@ -12,15 +12,42 @@ export const data: Array<DictionaryDetails> = [
 		type: 'dictionary',
 		isContainer: false,
 		icon: 'umb:icon-book-alt',
+		translations: [{
+			displayName: 'English (United States)',
+			isoCode: 'en-US',
+			key: 'b7e7d0ab-53ba-485d-b8bd-12537f9925ca',
+			languageId: 1,
+			translation: 'hello in en-US'
+		},
+		{
+			displayName: 'French',
+			isoCode: 'fr',
+			key: 'b7e7d0ab-53ba-485d-b8bd-12537f9925cd',
+			languageId: 2,
+		}],
 	},
 	{
 		parentKey: 'b7e7d0ab-53ba-485d-b8bd-12537f9925cb',
-		name: 'Hello',
+		name: 'Hello again',
 		key: 'b7e7d0ab-53bb-485d-b8bd-12537f9925cb',
 		hasChildren: false,
 		type: 'dictionary',
 		isContainer: false,
 		icon: 'umb:icon-book-alt',
+		translations: [{
+			displayName: 'English (United States)',
+			isoCode: 'en-US',
+			key: 'b7e7d0ab-53ba-485d-b8bd-1253ee9925cb',
+			languageId: 1,
+			translation: 'Hello again in en-US'
+		},
+		{
+			displayName: 'French',
+			isoCode: 'fr',
+			key: 'b7e7d0ab-53ba-482d-b8bd-12537f9925cd',
+			languageId: 2,
+			translation: 'Hello again in French'
+		}],
 	},
 ];
 

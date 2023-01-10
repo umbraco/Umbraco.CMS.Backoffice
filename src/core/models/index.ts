@@ -1,6 +1,7 @@
 import type { UserStatus } from '../../auth/utils';
 import {
 	ContentTreeItem,
+	DictionaryTranslation,
 	DocumentTreeItem,
 	DocumentTypeTreeItem,
 	EntityTreeItem,
@@ -130,6 +131,7 @@ export interface MemberGroupDetails extends EntityTreeItem {
 // Dictionary
 export interface DictionaryDetails extends EntityTreeItem {
 	key: string; // TODO: Remove this when the backend is fixed
+	translations: DictionaryTranslation[];
 }
 
 // Document Blueprint
