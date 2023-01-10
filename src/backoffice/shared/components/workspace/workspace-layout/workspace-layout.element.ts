@@ -154,7 +154,7 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 
 	private _renderTabs() {
 		return html`
-			${this._workspaceViews.length > 0
+			${this._workspaceViews.length > 1
 				? html`
 						<uui-tab-group slot="tabs">
 							${this._workspaceViews.map(

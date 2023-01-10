@@ -29,6 +29,6 @@ export default class UmbTreeActionDictionaryCreateElement extends UmbTreeItemAct
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-tree-action-dictoinary-create': UmbTreeActionDictionaryCreateElement;
+		'umb-tree-action-dictionary-create': UmbTreeActionDictionaryCreateElement;
 	}
 }

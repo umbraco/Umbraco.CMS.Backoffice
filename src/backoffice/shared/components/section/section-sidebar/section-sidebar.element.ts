@@ -2,7 +2,6 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbSectionContext } from '../section.context';
-import type { ManifestSection } from '@umbraco-cms/models';
 
 import '../../tree/context-menu/tree-context-menu.service';
 import { UmbLitElement } from '@umbraco-cms/element';
@@ -20,6 +19,7 @@ export class UmbSectionSidebarElement extends UmbLitElement {
 				font-weight: 500;
 				display: flex;
 				flex-direction: column;
+				z-index:10;
 			}
 
 			h3 {
