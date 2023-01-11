@@ -92,7 +92,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 								style="color:var(--uui-color-positive-standalone);display:inline-block"></uui-icon>`
 						: html`<uui-icon
 								name="alert"
-								style="color:var(--uui-color-danger-standalone);display:inline-block"></uui-icon>`,
+								style="color:var(--uui-color-warning-standalone);display:inline-block"></uui-icon>`,
 				});
 			});
 

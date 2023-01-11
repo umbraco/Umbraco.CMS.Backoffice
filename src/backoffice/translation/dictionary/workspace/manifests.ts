@@ -17,10 +17,10 @@ const workspaceViews: Array<ManifestWorkspaceView> = [
 		type: 'workspaceView',
 		alias: 'Umb.WorkspaceView.Dictionary.Edit',
 		name: 'Dictionary Workspace Edit View',
-		loader: () => import('./views//edit/workspace-view-dictionary-edit.element'),
+		loader: () => import('./views/edit/workspace-view-dictionary-edit.element'),
 		weight: 100,
 		meta: {
-			workspaces: ['Umb.Workspace.Dictionary'],
+			workspaces: [workspaceAlias],
 			label: 'Edit',
 			pathname: 'edit',
 			icon: 'edit',
@@ -35,7 +35,7 @@ const workspaceActions: Array<ManifestWorkspaceAction> = [
 		name: 'Save Dictionary Workspace Action',
 		loader: () => import('src/backoffice/shared/components/workspace/actions/save/workspace-action-node-save.element'),
 		meta: {
-			workspaces: ['Umb.Workspace.Dictionary'],
+			workspaces: [workspaceAlias],
 			look: 'primary',
 			color: 'positive',
 		},

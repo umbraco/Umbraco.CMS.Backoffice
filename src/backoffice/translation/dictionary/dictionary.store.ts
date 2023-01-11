@@ -82,20 +82,44 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 		);
 	}
 
-	async save(users: Array<UmbDictionaryStoreItemType>): Promise<void> {
-		// TODO: use Fetcher API.
-		try {
-			const res = await fetch('/umbraco/backoffice/dictionary/save', {
-				method: 'POST',
-				body: JSON.stringify(users),
-				headers: {
-					'Content-Type': 'application/json',
+	async save(items: Array<UmbDictionaryStoreItemType>): Promise<void> {
+		// items is an array, but we only interested in the first item
+		// in fact, it's always a single-item array
+		if (!items[0].key) return;
+
+		DictionaryResource.patchDictionaryById({
+			id: items[0].key,
+			requestBody: [
+				{
+					value: JSON.stringify(items[0]),
 				},
-			});
-			const json = await res.json();
-			this.updateItems(json);
-		} catch (error) {
-			console.error('Save Data Type error', error);
-		}
+			],
+		}).then(
+			(res) => this.updateItems(items),
+			(e) => {
+				if (e instanceof ApiError) {
+					const error = e.body as ProblemDetails;
+					if (e.status === 400) {
+						console.log(error.detail);
+					}
+				}
+			}
+		);
+	}
+
+	async delete(key: string): Promise<void> {
+		DictionaryResource.deleteDictionaryByKey({
+			key,
+		}).then(
+			(res) => this.deleteItems(res),
+			(e) => {
+				if (e instanceof ApiError) {
+					const error = e.body as ProblemDetails;
+					if (e.status === 400) {
+						console.log(error.detail);
+					}
+				}
+			}
+		);
 	}
 }

@@ -1,7 +1,8 @@
-import { response, rest } from 'msw';
+import { rest } from 'msw';
+import { v4 as uuidv4 } from 'uuid';
 import { umbDictionaryData } from '../data/dictionary.data';
 import type { DictionaryDetails } from '@umbraco-cms/models';
-import { DictionaryOverview } from '@umbraco-cms/backend-api';
+import { CreatedResult, DictionaryOverview } from '@umbraco-cms/backend-api';
 
 // TODO: add schema
 export const handlers = [
@@ -22,19 +23,19 @@ export const handlers = [
 		const dictionary = umbDictionaryData.getList(parseInt(skip), parseInt(take));
 
 		// caller expects DictionaryOverview[] not DictionaryDetails[]
-		const items: DictionaryOverview[] = dictionary.map(x => {
+		const items: DictionaryOverview[] = dictionary.map((x) => {
 			return {
 				name: x.name,
 				key: x.key,
 				level: 0,
-				translations: x.translations.map(t => {
+				translations: x.translations.map((t) => {
 					return {
 						displayName: t.displayName,
 						hasTranslation: !!t.translation,
-					}
-				}),				
-			}
-		})
+					};
+				}),
+			};
+		});
 
 		const response = {
 			total: dictionary.length,
@@ -44,11 +45,50 @@ export const handlers = [
 		return res(ctx.status(200), ctx.json(response));
 	}),
 
-	rest.post<DictionaryDetails>('/umbraco/backoffice/dictionary/save', async (req, res, ctx) => {
+	rest.post('/umbraco/management/api/v1/dictionary', async (req, res, ctx) => {
 		const data = await req.json();
 		if (!data) return;
 
-		const saved = umbDictionaryData.save(data);
+		// data has name as key - saving should generate a unique key
+		data.name = data.key;
+		data.parentKey = data.parentId;
+		data.key = uuidv4();
+
+		const saved = umbDictionaryData.save([data])[0];
+		saved.translations = [
+			{
+				displayName: 'English (United States)',
+				isoCode: 'en-US',
+				key: uuidv4(),
+				languageId: 1,
+				translation: 'hello in en-US',
+			},
+			{
+				displayName: 'French',
+				isoCode: 'fr',
+				key: uuidv4(),
+				languageId: 2,
+				translation: '',
+			},
+		];
+
+		const createdResult: CreatedResult = {
+			value: saved,
+			statusCode: 200,
+		};
+
+		return res(ctx.status(200), ctx.json(createdResult));
+	}),
+
+	rest.patch('/umbraco/management/api/v1/dictionary/:key', async (req, res, ctx) => {
+		const data = await req.json();
+		if (!data) return;
+
+		const key = req.params.key as string;
+		if (!key) return;	
+
+		const dataToSave = JSON.parse(data[0].value);
+		const saved = umbDictionaryData.save([dataToSave]);
 
 		return res(ctx.status(200), ctx.json(saved));
 	}),
@@ -83,5 +123,14 @@ export const handlers = [
 		const items = umbDictionaryData.getTreeItem(keys);
 
 		return res(ctx.status(200), ctx.json(items));
+	}),
+
+	rest.delete('/umbraco/management/api/v1/dictionary/:key', (req, res, ctx) => {
+		const key = req.params.key as string;
+		if (!key) return;	
+
+		const deletedKeys = umbDictionaryData.delete([key]);
+
+		return res(ctx.status(200), ctx.json(deletedKeys));
 	}),
 ];
