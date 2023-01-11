@@ -1,6 +1,6 @@
 import { map, Observable } from 'rxjs';
 import { UmbDataStoreBase } from '../../../core/stores/store';
-import { ApiError, DictionaryResource, EntityTreeItem, ProblemDetails } from '@umbraco-cms/backend-api';
+import { DictionaryResource, EntityTreeItem } from '@umbraco-cms/backend-api';
 import type { DictionaryDetails } from '@umbraco-cms/models';
 
 export type UmbDictionaryStoreItemType = DictionaryDetails | EntityTreeItem;
@@ -25,12 +25,7 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 				this.updateItems(res.items);
 			},
 			(e) => {
-				if (e instanceof ApiError) {
-					const error = e.body as ProblemDetails;
-					if (e.status === 400) {
-						console.log(error.detail);
-					}
-				}
+				this.logError(e);
 			}
 		);
 
@@ -51,12 +46,7 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 				this.updateItems(res.items);
 			},
 			(e) => {
-				if (e instanceof ApiError) {
-					const error = e.body as ProblemDetails;
-					if (e.status === 400) {
-						console.log(error.detail);
-					}
-				}
+				this.logError(e);
 			}
 		);
 
@@ -95,14 +85,11 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 				},
 			],
 		}).then(
-			(res) => this.updateItems(items),
+			(_) => {
+				this.updateItems(items);
+			},
 			(e) => {
-				if (e instanceof ApiError) {
-					const error = e.body as ProblemDetails;
-					if (e.status === 400) {
-						console.log(error.detail);
-					}
-				}
+				this.logError(e);
 			}
 		);
 	}
@@ -113,12 +100,7 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 		}).then(
 			(res) => this.deleteItems(res),
 			(e) => {
-				if (e instanceof ApiError) {
-					const error = e.body as ProblemDetails;
-					if (e.status === 400) {
-						console.log(error.detail);
-					}
-				}
+				this.logError(e);
 			}
 		);
 	}
