@@ -1,4 +1,6 @@
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ApiError } from '../backend-api/core/ApiError';
+import { ProblemDetails } from '../backend-api/models/ProblemDetails';
 
 export interface UmbDataStoreIdentifiers {
 	key?: string;
@@ -28,6 +30,20 @@ export abstract class UmbDataStoreBase<T extends UmbDataStoreIdentifiers> implem
 
 	protected _items: BehaviorSubject<Array<T>> = new BehaviorSubject(<Array<T>>[]);
 	public readonly items: Observable<Array<T>> = this._items.asObservable();
+
+	/**
+	 * @description - Writes the error detail to the browser console
+	 * @param {unknown} e
+	 * @memberof UmbDataStoreBase
+	 */
+	public logError(e: unknown) {
+		if (e instanceof ApiError) {
+			const error = e.body as ProblemDetails;
+			if (e.status === 400) {
+				console.log(error.detail);
+			}
+		}
+	}
 
 	/**
 	 * @description - Delete items from the store.

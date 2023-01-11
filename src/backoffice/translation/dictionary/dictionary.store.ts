@@ -60,12 +60,22 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 * @memberof UmbDictionaryStore
 	 */
 	getByKey(key: string): Observable<DictionaryDetails | null> {
+		DictionaryResource.getDictionaryByKey({ key })
+			.then(
+				(res) => {
+					this.updateItems([res]);
+				},
+				(e) => {
+					this.logError(e);
+				}
+			);
+
 		// TODO: use backend cli when available.
-		fetch(`/umbraco/backoffice/dictionary/details/${key}`)
-			.then((res) => res.json())
-			.then((data) => {
-				this.updateItems(data);
-			});
+		// fetch(`/umbraco/backoffice/dictionary/details/${key}`)
+		// 	.then((res) => res.json())
+		// 	.then((data) => {
+		// 		this.updateItems(data);
+		// 	});
 
 		return this.items.pipe(
 			map((dictionary) => (dictionary.find((entry) => entry.key === key) as DictionaryDetails) || null)

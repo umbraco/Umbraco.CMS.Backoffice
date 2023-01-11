@@ -6,13 +6,21 @@ import { CreatedResult, DictionaryOverview } from '@umbraco-cms/backend-api';
 
 // TODO: add schema
 export const handlers = [
-	rest.get('/umbraco/backoffice/dictionary/details/:key', (req, res, ctx) => {
+	rest.get('/umbraco/management/api/v1/dictionary/:key', (req, res, ctx) => {
 		const key = req.params.key as string;
 		if (!key) return;
 
 		const dictionary = umbDictionaryData.getByKey(key);
 
-		return res(ctx.status(200), ctx.json([dictionary]));
+		// caller expects DictionaryDetails not Dictionary
+		// this is yuk, but assuming the API will return expected data?
+		const item: DictionaryDetails = {
+			key: dictionary?.key ?? '',
+			name: dictionary?.name ?? '',
+			translations: dictionary?.translations ?? [],
+		};
+
+		return res(ctx.status(200), ctx.json(item));
 	}),
 
 	rest.get('/umbraco/management/api/v1/dictionary', (req, res, ctx) => {
