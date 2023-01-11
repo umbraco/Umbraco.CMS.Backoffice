@@ -69,7 +69,6 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	}
 
 	private _setTableItems() {
-		console.log(this._dictionaryItems);
 		this._tableItems = this._dictionaryItems.map((dictionary) => {
 			const item: UmbTableItem = {
 				key: dictionary.key ?? '',
@@ -98,8 +97,6 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 			return item;
 		});
-
-		console.log(this._tableItems);
 	}
 
 	render() {
