@@ -15,29 +15,69 @@ const tree: ManifestTree = {
 	},
 };
 
-const treeItemActions: Array<ManifestTreeItemAction> = [{
-	type: 'treeItemAction',
-	alias: 'Umb.TreeItemAction.Translation.Create',
-	name: 'Tree Item Action Create',
-	loader: () => import('./actions/create/action-dictionary-create.element'),
-	weight: 200,
-	meta: {
-		trees: [treeAlias],
-		label: 'Create',
-		icon: 'umb:add',
+const treeItemActions: Array<ManifestTreeItemAction> = [
+	{
+		type: 'treeItemAction',
+		alias: 'Umb.TreeItemAction.Dictionary.Create',
+		name: 'Tree Item Action Create',
+		loader: () => import('./actions/action-dictionary-create.element'),
+		weight: 200,
+		meta: {
+			trees: [treeAlias],
+			label: 'Create',
+			icon: 'umb:add',
+		},
 	},
-},
-{
-	type: 'treeItemAction',
-	alias: 'Umb.TreeItemAction.Translation.Delete',
-	name: 'Tree Item Action Delete',
-	loader: () => import('./actions/delete/action-dictionary-delete.element'),
-	weight: 100,
-	meta: {
-		trees: [treeAlias],
-		label: 'Delete',
-		icon: 'umb:delete',
+	{
+		type: 'treeItemAction',
+		alias: 'Umb.TreeItemAction.Dictionary.Move',
+		name: 'Tree Item Action Move',
+		loader: () => import('./actions/action-dictionary-move.element'),
+		weight: 200,
+		meta: {
+			trees: [treeAlias],
+			label: 'Move',
+			icon: 'umb:enter',
+			
+		},
 	},
-},];
+	{
+		type: 'treeItemAction',
+		alias: 'Umb.TreeItemAction.Dictionary.Export',
+		name: 'Tree Item Action Export',
+		loader: () => import('./actions/action-dictionary-export.element'),
+		weight: 200,
+		meta: {
+			trees: [treeAlias],
+			label: 'Export',
+			icon: 'umb:download-alt',
+		},
+	},
+
+	{
+		type: 'treeItemAction',
+		alias: 'Umb.TreeItemAction.Dictionary.Delete',
+		name: 'Tree Item Action Delete',
+		loader: () => import('./actions/action-dictionary-delete.element'),
+		weight: 100,
+		meta: {
+			trees: [treeAlias],
+			label: 'Delete',
+			icon: 'umb:trash',
+		},
+	},
+	{
+		type: 'treeItemAction',
+		alias: 'Umb.TreeItemAction.Dictionary.Reload',
+		name: 'Tree Item Action Reload',
+		loader: () => import('./actions/action-dictionary-reload.element'),
+		weight: 200,
+		meta: {
+			trees: [treeAlias],
+			label: 'Reload',
+			icon: 'umb:refresh',
+		},
+	},
+];
 
 export const manifests = [tree, ...treeItemActions];
