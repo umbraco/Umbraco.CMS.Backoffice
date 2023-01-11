@@ -53,9 +53,7 @@ export const handlers = [
 		data.name = data.key;
 		data.parentKey = data.parentId;
 		data.key = uuidv4();
-
-		const saved = umbDictionaryData.save([data])[0];
-		saved.translations = [
+		data.translations = [
 			{
 				displayName: 'English (United States)',
 				isoCode: 'en-US',
@@ -71,6 +69,8 @@ export const handlers = [
 				translation: '',
 			},
 		];
+
+		const saved = umbDictionaryData.save([data])[0];
 
 		const createdResult: CreatedResult = {
 			value: saved,

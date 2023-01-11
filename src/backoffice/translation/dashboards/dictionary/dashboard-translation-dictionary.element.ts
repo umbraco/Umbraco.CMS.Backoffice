@@ -103,7 +103,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	}
 
 	render() {
-		return html` <umb-body-layout .headline="${'Dictionary overview'}">
+		return html` <umb-body-layout headline="Dictionary overview">
 			<div>
 				${when(
 					this._dictionaryItems.length,
