@@ -7,7 +7,7 @@ const DefaultDataTypeData = {
 	key: '',
     name: '',
     type: 'dictionary',
-    icon: '',
+    icon: 'umb:book-alt',
     hasChildren: false,
     isContainer: false,
     parentKey: null,

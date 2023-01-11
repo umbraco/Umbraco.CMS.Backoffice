@@ -11,7 +11,7 @@ export const data: Array<DictionaryDetails> = [
 		hasChildren: true,
 		type: 'dictionary',
 		isContainer: false,
-		icon: 'umb:icon-book-alt',
+		icon: 'umb:book-alt',
 		translations: [{
 			displayName: 'English (United States)',
 			isoCode: 'en-US',
@@ -34,7 +34,7 @@ export const data: Array<DictionaryDetails> = [
 		hasChildren: false,
 		type: 'dictionary',
 		isContainer: false,
-		icon: 'umb:icon-book-alt',
+		icon: 'umb:book-alt',
 		translations: [{
 			displayName: 'English (United States)',
 			isoCode: 'en-US',
