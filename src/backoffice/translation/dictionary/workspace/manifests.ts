@@ -33,7 +33,7 @@ const workspaceActions: Array<ManifestWorkspaceAction> = [
 		type: 'workspaceAction',
 		alias: 'Umb.WorkspaceAction.Dictionary.Save',
 		name: 'Save Dictionary Workspace Action',
-		loader: () => import('src/backoffice/shared/components/workspace/actions/save/workspace-action-node-save.element'),
+		loader: () => import('../../../../backoffice/shared/components/workspace/actions/save/workspace-action-node-save.element'),
 		meta: {
 			workspaces: [workspaceAlias],
 			look: 'primary',
