@@ -6,14 +6,34 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import { UmbTableColumn, UmbTableConfig, UmbTableItem } from 'src/backoffice/shared/components/table';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { DictionaryOverview, DictionaryResource } from '@umbraco-cms/backend-api';
+import { UmbTreeContextMenuService } from 'src/backoffice/shared/components/tree/context-menu/tree-context-menu.service';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
-			div {
-				padding: 0 var(--uui-size-space-5);
+			#body-layout-padding {
+				padding: var(--uui-size-space-5);
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+			}
+
+			#dictionary-top-bar {
+				margin-bottom: var(--uui-size-space-5);
+				display: flex;
+				justify-content: space-between;
+			}
+
+			umb-table {
+				display: inline;
+				padding: 0;
+			}
+
+			umb-empty-state {
+				margin: auto;
+				font-size: var(--uui-size-6);
 			}
 		`,
 	];
@@ -33,10 +53,14 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	];
 
 	@state()
-	private _tableItems: Array<UmbTableItem> = [];
+	private _tableItemsFiltered: Array<UmbTableItem> = [];
 
 	@state()
 	private _dictionaryItems: DictionaryOverview[] = [];
+
+	private _contextMenuService?: UmbTreeContextMenuService;
+
+	private _tableItems: Array<UmbTableItem> = [];
 
 	constructor() {
 		super();
@@ -44,6 +68,11 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	async connectedCallback() {
 		super.connectedCallback();
+
+		this.consumeContext('umbTreeContextMenuService', (contextMenuService: UmbTreeContextMenuService) => {
+			this._contextMenuService = contextMenuService;
+		});
+
 		await this._setup();
 	}
 
@@ -70,8 +99,9 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	private _setTableItems() {
 		this._tableItems = this._dictionaryItems.map((dictionary) => {
+			// key is name to allow filtering on the displayed value
 			const item: UmbTableItem = {
-				key: dictionary.key ?? '',
+				key: dictionary.name ?? '',
 				data: [
 					{
 						columnAlias: 'name',
@@ -97,17 +127,46 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 			return item;
 		});
+
+		this._tableItemsFiltered = this._tableItems;
+	}
+
+	private _filter(e: { target: HTMLInputElement }) {
+		if (e.target.value) {
+			this._tableItemsFiltered = this._tableItems.filter((t) => t.key.includes(e.target.value));
+		} else {
+			this._tableItemsFiltered = this._tableItems;
+		}
+	}
+
+	private _create() {
+		// TODO => service is null, where does it come from?
+		this._contextMenuService?.open({
+			key: 'Umb.TreeItemAction.Dictionary.Create',
+			name: 'Create',
+		});
 	}
 
 	render() {
 		return html` <umb-body-layout headline="Dictionary overview">
-			<div>
+			<div id="body-layout-padding">
+				<div id="dictionary-top-bar">
+					<uui-button type="button" look="outline" @click=${this._create}>Create dictionary item</uui-button>
+					<uui-input
+						@keyup="${this._filter}"
+						placeholder="Type to filter..."
+						label="Type to filter dictionary"
+						id="searchbar">
+						<uui-icon name="search" slot="prepend" id="searchbar_icon"></uui-icon>
+					</uui-input>
+				</div>
 				${when(
-					this._dictionaryItems.length,
+					this._tableItemsFiltered.length,
 					() => html` <umb-table
 						.config=${this._tableConfig}
 						.columns=${this._tableColumns}
-						.items=${this._tableItems}></umb-table>`
+						.items=${this._tableItemsFiltered}></umb-table>`,
+					() => html`<umb-empty-state>There were no dictionary items found.</umb-empty-state>`
 				)}
 			</div>
 		</umb-body-layout>`;

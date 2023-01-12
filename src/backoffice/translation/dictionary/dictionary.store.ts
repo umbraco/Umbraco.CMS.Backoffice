@@ -69,14 +69,7 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 					this.logError(e);
 				}
 			);
-
-		// TODO: use backend cli when available.
-		// fetch(`/umbraco/backoffice/dictionary/details/${key}`)
-		// 	.then((res) => res.json())
-		// 	.then((data) => {
-		// 		this.updateItems(data);
-		// 	});
-
+			
 		return this.items.pipe(
 			map((dictionary) => (dictionary.find((entry) => entry.key === key) as DictionaryDetails) || null)
 		);
