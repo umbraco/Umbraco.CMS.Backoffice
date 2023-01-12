@@ -22,7 +22,14 @@ export interface Entity {
 	icon: string;
 	type: string;
 	hasChildren: boolean;
-	parentKey: string;
+	parentKey: string | null;
+}
+
+export interface ContentDetails extends ContentTreeItem {
+	isTrashed: boolean; // TODO: remove only temp part of refactor
+	properties: Array<ContentProperty>;
+	//data: Array<ContentPropertyData>;
+	//layout?: any; // TODO: define layout type - make it non-optional
 }
 
 export interface UserEntity extends Entity {

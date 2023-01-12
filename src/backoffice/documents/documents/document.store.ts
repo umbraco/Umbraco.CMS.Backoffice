@@ -3,7 +3,7 @@ import { UmbNodeStoreBase } from '../../../core/stores/store';
 import type { DocumentDetails } from '@umbraco-cms/models';
 import { ApiError, DocumentResource, DocumentTreeItem, FolderTreeItem, ProblemDetails } from '@umbraco-cms/backend-api';
 
-const isDocumentDetails = (document: DocumentDetails | DocumentTreeItem): document is DocumentDetails => {
+export const isDocumentDetails = (document: DocumentDetails | DocumentTreeItem): document is DocumentDetails => {
 	return (document as DocumentDetails).data !== undefined;
 };
 
@@ -125,7 +125,7 @@ export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItemType>
 	}
 
 	getTreeItems(keys: Array<string>): Observable<Array<FolderTreeItem>> {
-		if (keys.length > 0) {
+		if (keys?.length > 0) {
 			DocumentResource.getTreeDocumentItem({
 				key: keys,
 			}).then(
