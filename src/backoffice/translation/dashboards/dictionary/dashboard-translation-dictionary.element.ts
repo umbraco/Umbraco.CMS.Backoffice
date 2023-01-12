@@ -2,11 +2,12 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+import { UmbDictionaryStore } from '../../dictionary/dictionary.store';
 import { UmbTableColumn, UmbTableConfig, UmbTableItem } from 'src/backoffice/shared/components/table';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DictionaryOverview, DictionaryResource } from '@umbraco-cms/backend-api';
+import { DictionaryOverview, } from '@umbraco-cms/backend-api';
 import { UmbTreeContextMenuService } from 'src/backoffice/shared/components/tree/context-menu/tree-context-menu.service';
+import type { DictionaryDetails } from '@umbraco-cms/models';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
@@ -60,28 +61,35 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	private _contextMenuService?: UmbTreeContextMenuService;
 
+	private _dictionaryStore?: UmbDictionaryStore;
+
 	private _tableItems: Array<UmbTableItem> = [];
 
 	constructor() {
 		super();
 	}
 
-	async connectedCallback() {
+	connectedCallback() {
 		super.connectedCallback();
 
 		this.consumeContext('umbTreeContextMenuService', (contextMenuService: UmbTreeContextMenuService) => {
 			this._contextMenuService = contextMenuService;
 		});
 
-		await this._setup();
+		this.consumeContext('umbDictionaryStore', (dictionaryStore: UmbDictionaryStore) => {
+			this._dictionaryStore = dictionaryStore;
+			this._observeDictionaryItems();
+		});
 	}
 
-	private async _setup() {
-		const dictionaryItems = await tryExecuteAndNotify(this, DictionaryResource.getDictionary({ skip: 0, take: 1000 }));
-		this._dictionaryItems = dictionaryItems.data?.items ?? [];
+	private async _observeDictionaryItems() {
+		if (!this._dictionaryStore) return;
 
-		this._setTableColumns();
-		this._setTableItems();
+		this.observe(this._dictionaryStore.get(0, 1000), (dictionaryItems: DictionaryDetails[]) => {
+			this._dictionaryItems = dictionaryItems;
+			this._setTableColumns();
+			this._setTableItems();
+		});
 	}
 
 	/**
@@ -140,11 +148,16 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	}
 
 	private _create() {
-		// TODO => service is null, where does it come from?
-		this._contextMenuService?.open({
-			key: 'Umb.TreeItemAction.Dictionary.Create',
-			name: 'Create',
-		});
+		if (!this._contextMenuService) return;
+
+		alert('Open content menu, to create an entry below the root dictionary item')
+
+		// TODO => open method opens the root menu for the given key
+		// need to open to a particular action for the given node
+		// this._contextMenuService.open({
+		// 	key: '',
+		// 	name: 'Create',
+		// });
 	}
 
 	render() {

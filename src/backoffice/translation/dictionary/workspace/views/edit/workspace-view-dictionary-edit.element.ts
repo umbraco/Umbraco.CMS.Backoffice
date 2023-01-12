@@ -48,11 +48,11 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 
 	private _renderTranslation(translation: DictionaryTranslation) {
 		return html`
-			<umb-entity-property
+			<umb-workspace-property
 				label="${translation.displayName ?? ''}"
 				alias="${translation.isoCode ?? ''}"
 				property-editor-ui-alias="Umb.PropertyEditorUI.TextArea"
-				.value="${translation.translation}"></umb-entity-property>`;
+				.value="${translation.translation}"></umb-workspace-property>`;
 	}
 
 	render() {

@@ -32,6 +32,7 @@ import './packages';
 import './search';
 import './shared';
 import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbTreeContextMenuService } from './shared/components/tree/context-menu/tree-context-menu.service';
 
 @defineElement('umb-backoffice')
 export class UmbBackofficeElement extends UmbLitElement {
@@ -70,6 +71,8 @@ export class UmbBackofficeElement extends UmbLitElement {
 		this.provideContext('umbCurrentUserHistoryStore', new UmbCurrentUserHistoryStore());
 		this.provideContext('umbDictionaryStore', new UmbDictionaryStore());
 		this.provideContext('umbDocumentBlueprintStore', new UmbDocumentBlueprintStore());
+
+		this.provideContext('umbTreeContextMenuService', new UmbTreeContextMenuService());
 	}
 
 	render() {

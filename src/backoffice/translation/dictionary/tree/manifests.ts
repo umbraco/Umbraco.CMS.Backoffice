@@ -8,9 +8,6 @@ const tree: ManifestTree = {
 	name: 'Dictionary Tree',
 	weight: 100,
 	meta: {
-		label: 'Dictionary',
-		icon: 'umb:folder',
-		sections: ['Umb.Section.Translation'],
 		storeAlias: 'umbDictionaryStore',
 	},
 };
@@ -23,7 +20,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-create.element'),
 		weight: 200,
 		meta: {
-			trees: [treeAlias],
+			entityType: 'dictionary',
 			label: 'Create',
 			icon: 'umb:add',
 		},
@@ -35,7 +32,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-move.element'),
 		weight: 200,
 		meta: {
-			trees: [treeAlias],
+			entityType: 'dictionary',
 			label: 'Move',
 			icon: 'umb:enter',
 			
@@ -48,7 +45,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-export.element'),
 		weight: 200,
 		meta: {
-			trees: [treeAlias],
+			entityType: 'dictionary',
 			label: 'Export',
 			icon: 'umb:download-alt',
 		},
@@ -61,7 +58,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-delete.element'),
 		weight: 100,
 		meta: {
-			trees: [treeAlias],
+			entityType: 'dictionary',
 			label: 'Delete',
 			icon: 'umb:trash',
 		},
@@ -73,7 +70,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-reload.element'),
 		weight: 200,
 		meta: {
-			trees: [treeAlias],
+			entityType: 'dictionary',
 			label: 'Reload',
 			icon: 'umb:refresh',
 		},

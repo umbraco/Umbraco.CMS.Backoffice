@@ -75,6 +75,20 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 		);
 	}
 
+	get(skip: number, take: number): Observable<DictionaryDetails[]> {
+		DictionaryResource.getDictionary({ skip, take })
+			.then(
+				(res) => {
+					this.updateItems(res.items);
+				},
+				(e) => {
+					this.logError(e);
+				}
+			);
+
+		return this.items.pipe(map((items) => items as DictionaryDetails[]));
+	}
+
 	async save(items: Array<UmbDictionaryStoreItemType>): Promise<void> {
 		// items is an array, but we only interested in the first item
 		// in fact, it's always a single-item array
