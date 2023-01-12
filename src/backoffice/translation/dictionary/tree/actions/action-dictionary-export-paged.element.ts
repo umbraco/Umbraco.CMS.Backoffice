@@ -2,50 +2,49 @@ import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
-import { DictionaryResource } from '@umbraco-cms/backend-api';
+import { UmbDictionaryStore } from '../../dictionary.store';
 
 @customElement('umb-tree-action-dictionary-export-page')
 export class UmbTreeActionDictionaryExportPageElement extends UmbTreeItemActionElement {
-	static styles = [
-		UUITextStyles,
-		css``,
-	];
-	
+	static styles = [UUITextStyles, css``];
+
 	@query('#form')
 	private _form!: HTMLFormElement;
+
+	private _dictionaryStore!: UmbDictionaryStore;
+
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.consumeContext('umbDictionaryStore', (dictionaryStore: UmbDictionaryStore) => {
+			this._dictionaryStore = dictionaryStore;
+		});
+	}
 
 	private _back() {
 		this._actionPageService?.closeTopPage();
 	}
 
-	private _submitForm() {
+	private _submitForm() {;
 		this._form?.requestSubmit();
 	}
 
 	private async _handleSubmit(e: SubmitEvent) {
-		e.preventDefault();
+		e.preventDefault();;
 
-		if (!this._treeContextMenuService) return;
+		if (!this._dictionaryStore) return;
 
 		const form = e.target as HTMLFormElement;
-		if (!form || !form.checkValidity()) return;
+		if (!form) return;
 
 		const formData = new FormData(form);
-
-		await tryExecuteAndNotify(
-			this,
-			DictionaryResource.getDictionaryExportByKey({
-				key: this._entity.key,
-				includeChildren: (formData.get('includeDescendants') as string) === 'on',
-			})
-		);
+		await this._dictionaryStore.export(this._entity.key, (formData.get('includeDescendants') as string) === 'on');
 	}
 
 	render() {
 		return html` <umb-context-menu-layout headline="Export">
 			<uui-form>
-				<form id="exportForm" name="export" @submit=${this._handleSubmit}>
+				<form id="form" name="form" @submit=${this._handleSubmit}>
 					<uui-form-layout-item>
 						<uui-label for="includeDescendants" slot="label">Include descendants</uui-label>
 						<uui-toggle id="includeDescendants" name="includeDescendants"></uui-toggle>

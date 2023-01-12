@@ -2,8 +2,9 @@ import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
-import { DictionaryResource } from '@umbraco-cms/backend-api';
+import { UmbDictionaryStore } from '../../dictionary.store';
+import { v4 as uuidv4 } from 'uuid';
+import { DictionaryDetails } from '@umbraco-cms/models';
 
 @customElement('umb-tree-action-dictionary-create-page')
 export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionElement {
@@ -11,6 +12,16 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 
 	@query('#form')
 	private _form!: HTMLFormElement;
+
+	private _dictionaryStore!: UmbDictionaryStore;
+
+	connectedCallback() {
+		super.connectedCallback();
+
+		this.consumeContext('umbDictionaryStore', (dictionaryStore: UmbDictionaryStore) => {
+			this._dictionaryStore = dictionaryStore;
+		});
+	}
 
 	private _back() {
 		this._actionPageService?.closeTopPage();
@@ -29,24 +40,15 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 		if (!form || !form.checkValidity()) return;
 
 		const formData = new FormData(form);
+		const key = uuidv4();
 
 		// create the new item before routing to it
-		const { data } = await tryExecuteAndNotify(
-			this,
-			DictionaryResource.postDictionary({
-				requestBody: {
-					parentId: this._entity.key,
-					key: formData.get('name') as string,
-				},
-			})
-		);
-
-		if (!data || !data.value?.key) return;
+		await this._dictionaryStore.create(this._entity.key, key, formData.get('name') as string);
 
 		// use detail from new item to construct edit URL
-		const href = `/section/translation/dictionary/edit/${data.value.key}`;
+		const href = `/section/translation/dictionary/edit/${key}`;
 		history.pushState(null, '', href);
-		this._treeContextMenuService.close();
+		this._treeContextMenuService?.close();	
 	}
 
 	render() {

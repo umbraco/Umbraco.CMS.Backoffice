@@ -2,6 +2,7 @@ import { map, Observable } from 'rxjs';
 import { UmbDataStoreBase } from '../../../core/stores/store';
 import { DictionaryResource, EntityTreeItem } from '@umbraco-cms/backend-api';
 import type { DictionaryDetails } from '@umbraco-cms/models';
+import { umbDictionaryData } from 'src/core/mocks/data/dictionary.data';
 
 export type UmbDictionaryStoreItemType = DictionaryDetails | EntityTreeItem;
 
@@ -28,7 +29,6 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 				this.logError(e);
 			}
 		);
-
 		return this.items.pipe(map((items) => items.filter((item) => item.parentKey === null)));
 	}
 
@@ -60,40 +60,68 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 * @memberof UmbDictionaryStore
 	 */
 	getByKey(key: string): Observable<DictionaryDetails | null> {
-		DictionaryResource.getDictionaryByKey({ key })
-			.then(
-				(res) => {
-					this.updateItems([res]);
-				},
-				(e) => {
-					this.logError(e);
-				}
-			);
-			
+		DictionaryResource.getDictionaryByKey({ key }).then(
+			(res) => {
+				this.updateItems([res]);
+			},
+			(e) => {
+				this.logError(e);
+			}
+		);
+
 		return this.items.pipe(
 			map((dictionary) => (dictionary.find((entry) => entry.key === key) as DictionaryDetails) || null)
 		);
 	}
 
+	/**
+	 * @description - Request the Dictionary. The Dictionary is added to the store and is returned as an Observable.
+	 * @param {number} skip
+	 * @param {number} take
+	 * @return {*}  {(Observable<DictionaryDetails[]>)}
+	 * @memberof UmbDictionaryStore
+	 */
 	get(skip: number, take: number): Observable<DictionaryDetails[]> {
-		DictionaryResource.getDictionary({ skip, take })
-			.then(
-				(res) => {
-					this.updateItems(res.items);
-				},
-				(e) => {
-					this.logError(e);
-				}
-			);
+		DictionaryResource.getDictionary({ skip, take }).then(
+			(res) => {
+				this.updateItems(res.items);
+			},
+			(e) => {
+				this.logError(e);
+			}
+		);
 
 		return this.items.pipe(map((items) => items as DictionaryDetails[]));
 	}
 
-	async save(items: Array<UmbDictionaryStoreItemType>): Promise<void> {
-		// items is an array, but we only interested in the first item
-		// in fact, it's always a single-item array
-		if (!items[0].key) return;
+	async create(parentId: string, key: string, name: string): Promise<void> {
+		await DictionaryResource.postDictionary({
+			requestBody: {
+				parentId,
+				key,
+			},
+		}).then(
+			(res) => {
+				res.value.name = name;
+				// TODO => how do we set the name, given only the key is saved?
+				umbDictionaryData.save([res.value]);
+				this.updateItems([res.value]);
+			},
+			(e) => {
+				this.logError(e);
+			}
+		);
+	}
 
+	/**
+	 * @description - Save changes to a Dictionary. The Dictionary is added to the store.
+	 * @param {Array<UmbDictionaryStoreItemType>} items - base service implements save with an []T, Dictionary only saves a single item
+	 * @return {*}  {(Promise<void>)}
+	 * @memberof UmbDictionaryStore
+	 */
+	async save(items: Array<UmbDictionaryStoreItemType>): Promise<void> {
+		if (!items[0].key) return;
+debugger;
 		DictionaryResource.patchDictionaryById({
 			id: items[0].key,
 			requestBody: [
@@ -111,6 +139,12 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 		);
 	}
 
+	/**
+	 * @description - Delete a Dictionary. The Dictionary is removed from the store.
+	 * @param {string} key
+	 * @return {*}  {(Promise<void>)}
+	 * @memberof UmbDictionaryStore
+	 */
 	async delete(key: string): Promise<void> {
 		DictionaryResource.deleteDictionaryByKey({
 			key,
@@ -120,5 +154,17 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 				this.logError(e);
 			}
 		);
+	}
+
+	/**
+	 * @description - Export a Dictionary, optionally including child items.
+	 * @param {string} key
+	 * @param {boolean} includeChildren
+	 * @return {*}  {(Observable<Blob | null>)}
+	 * @memberof UmbDictionaryStore
+	 */
+	async export(key: string, includeChildren: boolean): Promise<Blob> {
+		const blob = await DictionaryResource.getDictionaryExportByKey({ key, includeChildren });
+		return blob;
 	}
 }

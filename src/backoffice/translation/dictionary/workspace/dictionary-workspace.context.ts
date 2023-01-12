@@ -19,12 +19,15 @@ export class UmbWorkspaceDictionaryContext extends UmbWorkspaceContentContext<Um
 		super(host, DefaultDataTypeData, 'umbDictionaryStore', 'dictionary');
 	}
 
-    public setPropertyValue(isoCode: string, value: string) {
-		const data = this._data.getValue();
-		const property = (data as DictionaryDetails).translations.find((p) => p.isoCode === isoCode);
-		if (!property) return;
+    public setPropertyValue(isoCode: string, translation: string) {
+		const data = this.getData();
+		const newDataSet = (data as DictionaryDetails).translations.map((dictionaryTranslation) => {
+			if (dictionaryTranslation.isoCode === isoCode) {
+				return { ...dictionaryTranslation, translation };
+			}
+			return dictionaryTranslation;
+		});
 
-		property.translation = value;
-		this._data.next({ ...data });
+		this.update({ translations: newDataSet } as Partial<UmbDictionaryStoreItemType>);		
 	}
 }

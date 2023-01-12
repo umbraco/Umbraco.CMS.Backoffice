@@ -1,8 +1,7 @@
 import { rest } from 'msw';
 import { v4 as uuidv4 } from 'uuid';
 import { umbDictionaryData } from '../data/dictionary.data';
-import type { DictionaryDetails } from '@umbraco-cms/models';
-import { CreatedResult, DictionaryOverview } from '@umbraco-cms/backend-api';
+import { CreatedResult } from '@umbraco-cms/backend-api';
 
 // TODO: add schema
 export const handlers = [
@@ -12,15 +11,7 @@ export const handlers = [
 
 		const dictionary = umbDictionaryData.getByKey(key);
 
-		// caller expects DictionaryDetails not Dictionary
-		// this is yuk, but assuming the API will return expected data?
-		const item: DictionaryDetails = {
-			key: dictionary?.key ?? '',
-			name: dictionary?.name ?? '',
-			translations: dictionary?.translations ?? [],
-		};
-
-		return res(ctx.status(200), ctx.json(item));
+		return res(ctx.status(200), ctx.json(dictionary));
 	}),
 
 	rest.get('/umbraco/management/api/v1/dictionary', (req, res, ctx) => {
@@ -28,25 +19,10 @@ export const handlers = [
 		const take = req.url.searchParams.get('take');
 		if (!skip || !take) return;
 
-		const dictionary = umbDictionaryData.getList(parseInt(skip), parseInt(take));
-
-		// caller expects DictionaryOverview[] not DictionaryDetails[]
-		const items: DictionaryOverview[] = dictionary.map((x) => {
-			return {
-				name: x.name,
-				key: x.key,
-				level: 0,
-				translations: x.translations.map((t) => {
-					return {
-						displayName: t.displayName,
-						hasTranslation: !!t.translation,
-					};
-				}),
-			};
-		});
+		const items = umbDictionaryData.getList(parseInt(skip), parseInt(take));
 
 		const response = {
-			total: dictionary.length,
+			total: items.length,
 			items,
 		};
 
@@ -57,17 +33,17 @@ export const handlers = [
 		const data = await req.json();
 		if (!data) return;
 
-		// data has name as key - saving should generate a unique key
-		data.name = data.key;
 		data.parentKey = data.parentId;
-		data.key = uuidv4();
+		data.icon = 'umb:book-alt';
+		data.hasChildren = false;
+		data.type = 'dictionary';
 		data.translations = [
 			{
 				displayName: 'English (United States)',
 				isoCode: 'en-US',
 				key: uuidv4(),
 				languageId: 1,
-				translation: 'hello in en-US',
+				translation: '',
 			},
 			{
 				displayName: 'French',
@@ -78,10 +54,10 @@ export const handlers = [
 			},
 		];
 
-		const saved = umbDictionaryData.save([data])[0];
+		const value = umbDictionaryData.save([data])[0];
 
 		const createdResult: CreatedResult = {
-			value: saved,
+			value,
 			statusCode: 200,
 		};
 
@@ -93,7 +69,7 @@ export const handlers = [
 		if (!data) return;
 
 		const key = req.params.key as string;
-		if (!key) return;	
+		if (!key) return;
 
 		const dataToSave = JSON.parse(data[0].value);
 		const saved = umbDictionaryData.save([dataToSave]);
@@ -102,10 +78,10 @@ export const handlers = [
 	}),
 
 	rest.get('/umbraco/management/api/v1/tree/dictionary/root', (req, res, ctx) => {
-		const rootItems = umbDictionaryData.getTreeRoot();
+		const items = umbDictionaryData.getTreeRoot();
 		const response = {
-			total: rootItems.length,
-			items: rootItems,
+			total: items.length,
+			items,
 		};
 		return res(ctx.status(200), ctx.json(response));
 	}),
@@ -114,11 +90,11 @@ export const handlers = [
 		const parentKey = req.url.searchParams.get('parentKey');
 		if (!parentKey) return;
 
-		const children = umbDictionaryData.getTreeItemChildren(parentKey);
+		const items = umbDictionaryData.getTreeItemChildren(parentKey);
 
 		const response = {
-			total: children.length,
-			items: children,
+			total: items.length,
+			items,
 		};
 
 		return res(ctx.status(200), ctx.json(response));
@@ -135,10 +111,22 @@ export const handlers = [
 
 	rest.delete('/umbraco/management/api/v1/dictionary/:key', (req, res, ctx) => {
 		const key = req.params.key as string;
-		if (!key) return;	
+		if (!key) return;
 
 		const deletedKeys = umbDictionaryData.delete([key]);
 
 		return res(ctx.status(200), ctx.json(deletedKeys));
+	}),
+
+	// TODO => handle properly
+	rest.get('/umbraco/management/api/v1/dictionary/export/:key', (req, res, ctx) => {
+		const key = req.params.key as string;
+		if (!key) return;
+
+		const includeChildren = req.url.searchParams.get('includeChildren');
+		const item = umbDictionaryData.getByKey(key);
+
+		alert(`Downloads file for dictionary "${item?.name}", ${includeChildren === 'true' ? 'with' : 'without'} children.`)
+		return res(ctx.status(200));
 	}),
 ];
