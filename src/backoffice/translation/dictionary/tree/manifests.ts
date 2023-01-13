@@ -50,7 +50,19 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 			icon: 'umb:download-alt',
 		},
 	},
-
+	// TODO => this doesn't live here, temp until section-root actions exist
+	{
+		type: 'treeItemAction',
+		alias: 'Umb.TreeItemAction.Dictionary.Import',
+		name: 'Tree Item Action Import',
+		loader: () => import('./actions/action-dictionary-import.element'),
+		weight: 200,
+		meta: {
+			entityType: 'dictionary',
+			label: 'Import',
+			icon: 'umb:page-up',
+		},
+	},
 	{
 		type: 'treeItemAction',
 		alias: 'Umb.TreeItemAction.Dictionary.Delete',

@@ -1,6 +1,6 @@
 import { map, Observable } from 'rxjs';
 import { UmbDataStoreBase } from '../../../core/stores/store';
-import { DictionaryResource, EntityTreeItem } from '@umbraco-cms/backend-api';
+import { ContentResult, DictionaryImport, DictionaryItemsImport, DictionaryResource, EntityTreeItem } from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import type { DictionaryDetails } from '@umbraco-cms/models';
 import { umbDictionaryData } from 'src/core/mocks/data/dictionary.data';
@@ -25,7 +25,7 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 		tryExecuteAndNotify(this.host, DictionaryResource.getTreeDictionaryRoot({})).then(({ data }) => {
 			if (data) {
 				this.updateItems(data.items);
-			};
+			}
 		});
 
 		return this.items.pipe(map((items) => items.filter((item) => item.parentKey === null)));
@@ -38,11 +38,14 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 * @memberof UmbDataTypesStore
 	 */
 	getTreeItemChildren(key: string): Observable<Array<EntityTreeItem>> {
-		tryExecuteAndNotify(this.host, DictionaryResource.getTreeDictionaryChildren({
-			parentKey: key,
-		})).then(({ data }) => {
+		tryExecuteAndNotify(
+			this.host,
+			DictionaryResource.getTreeDictionaryChildren({
+				parentKey: key,
+			})
+		).then(({ data }) => {
 			if (data) {
-			this.updateItems(data.items);
+				this.updateItems(data.items);
 			}
 		});
 
@@ -56,12 +59,11 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 * @memberof UmbDictionaryStore
 	 */
 	getByKey(key: string): Observable<DictionaryDetails | null> {
-		tryExecuteAndNotify(this.host, DictionaryResource.getDictionaryByKey({ key })).then(
-			({ data }) => {
-				if (data) {
-					this.updateItems([data]);
-				}
-			});
+		tryExecuteAndNotify(this.host, DictionaryResource.getDictionaryByKey({ key })).then(({ data }) => {
+			if (data) {
+				this.updateItems([data]);
+			}
+		});
 
 		return this.items.pipe(
 			map((dictionary) => (dictionary.find((entry) => entry.key === key) as DictionaryDetails) || null)
@@ -76,33 +78,32 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 * @memberof UmbDictionaryStore
 	 */
 	get(skip: number, take: number): Observable<DictionaryDetails[]> {
-		tryExecuteAndNotify(this.host, DictionaryResource.getDictionary({ skip, take })).then(
-			({data}) => {
-				if (data) {
+		tryExecuteAndNotify(this.host, DictionaryResource.getDictionary({ skip, take })).then(({ data }) => {
+			if (data) {
 				this.updateItems(data.items);
-				}
-			});
+			}
+		});
 
 		return this.items.pipe(map((items) => items as DictionaryDetails[]));
 	}
 
 	async create(parentId: string, key: string, name: string): Promise<void> {
-		await DictionaryResource.postDictionary({
-			requestBody: {
-				parentId,
-				key,
-			},
-		}).then(
-			(res) => {
-				res.value.name = name;
-				// TODO => how do we set the name, given only the key is saved?
-				umbDictionaryData.save([res.value]);
-				this.updateItems([res.value]);
-			},
-			(e) => {
-				this.logError(e);
-			}
-		);
+		tryExecuteAndNotify(
+			this.host,
+			DictionaryResource.postDictionary({
+				requestBody: {
+					parentId,
+					key,
+				},
+			})
+		).then(({ data }) => {
+			if (!data) return;
+
+			// TODO => how do we set the name, given only the key is saved?
+			data.value.name = name;
+			umbDictionaryData.save([data.value]);
+			this.updateItems([data.value]);
+		});
 	}
 
 	/**
@@ -113,22 +114,23 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 */
 	async save(items: Array<UmbDictionaryStoreItemType>): Promise<void> {
 		if (!items[0].key) return;
-debugger;
-		DictionaryResource.patchDictionaryById({
-			id: items[0].key,
-			requestBody: [
-				{
-					value: JSON.stringify(items[0]),
-				},
-			],
-		}).then(
-			(_) => {
+		await tryExecuteAndNotify(
+			this.host,
+			DictionaryResource.patchDictionaryById({
+				id: items[0].key,
+				requestBody: [
+					{
+						value: JSON.stringify(items[0]),
+					},
+				],
+			})
+		).then(({ data }) => {
+			if (data) {
+				// TODO => save doesn't return items
+				// so update with the updated entity
 				this.updateItems(items);
-			},
-			(e) => {
-				this.logError(e);
 			}
-		);
+		});
 	}
 
 	/**
@@ -138,25 +140,51 @@ debugger;
 	 * @memberof UmbDictionaryStore
 	 */
 	async delete(key: string): Promise<void> {
-		DictionaryResource.deleteDictionaryByKey({
-			key,
-		}).then(
-			(res) => this.deleteItems(res),
-			(e) => {
-				this.logError(e);
-			}
+		const { data } = await tryExecuteAndNotify(
+			this.host,
+			DictionaryResource.deleteDictionaryByKey({
+				key,
+			})
 		);
+
+		if (!data) return;
+
+		this.deleteItems(data);
 	}
 
 	/**
 	 * @description - Export a Dictionary, optionally including child items.
 	 * @param {string} key
 	 * @param {boolean} includeChildren
-	 * @return {*}  {(Observable<Blob | null>)}
+	 * @return {*}  {(Observable<void | null>)}
 	 * @memberof UmbDictionaryStore
 	 */
-	async export(key: string, includeChildren: boolean): Promise<Blob> {
-		const blob = await DictionaryResource.getDictionaryExportByKey({ key, includeChildren });
-		return blob;
+	async export(key: string, includeChildren: boolean): Promise<void> {
+		await tryExecuteAndNotify(this.host, DictionaryResource.getDictionaryExportByKey({ key, includeChildren }));
+	}
+
+	/**
+	 * @description - Upload a Dictionary
+	 * @param {FormData} formData
+	 * @return {*}  {(Observable<DictionaryImport | undefined>)}
+	 * @memberof UmbDictionaryStore
+	 */
+	async upload(formData: FormData): Promise<DictionaryImport | undefined> {
+		const { data } = await tryExecuteAndNotify(
+			this.host,
+			DictionaryResource.postDictionaryUpload({
+				requestBody: {
+					file: formData,
+				},
+			})
+		);
+
+		return data;
+	}
+
+	/// TODO => refresh tree and potentially dashboard after importing
+	async import(file: string, parentId?: number): Promise<ContentResult | undefined> {
+		const { data } =  await tryExecuteAndNotify(this.host, DictionaryResource.postDictionaryImport({ file, parentId }));
+		return data;
 	}
 }

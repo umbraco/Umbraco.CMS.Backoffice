@@ -1,14 +1,17 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
+import { v4 as uuidv4 } from 'uuid';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
 import { UmbDictionaryStore } from '../../dictionary.store';
-import { v4 as uuidv4 } from 'uuid';
-import { DictionaryDetails } from '@umbraco-cms/models';
 
 @customElement('umb-tree-action-dictionary-create-page')
 export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionElement {
-	static styles = [UUITextStyles, css``];
+	static styles = [UUITextStyles, css`
+		uui-input {
+			width:100%;
+		}
+	`];
 
 	@query('#form')
 	private _form!: HTMLFormElement;
@@ -63,7 +66,6 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 								type="text"
 								id="nameinput"
 								name="name"
-								class="w-100"
 								label="name"
 								required
 								required-message="Name is required"></uui-input>

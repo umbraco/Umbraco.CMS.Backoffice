@@ -1,7 +1,40 @@
 import { rest } from 'msw';
 import { v4 as uuidv4 } from 'uuid';
 import { umbDictionaryData } from '../data/dictionary.data';
-import { CreatedResult } from '@umbraco-cms/backend-api';
+import { ContentResult, CreatedResult, DictionaryImport } from '@umbraco-cms/backend-api';
+import type { DictionaryDetails } from '@umbraco-cms/models';
+
+const uploadResponse: DictionaryImport = {
+	tempFileName: 'c:/path/to/tempfilename.udt',
+	dictionaryItems: [{
+		name: 'Uploaded dictionary',
+	}]
+};
+
+///
+const importResponse: DictionaryDetails = {
+	parentKey: null,
+	name: 'Uploaded dictionary',
+	key: 'b7e7d0ab-53ba-485d-dddd-12537f9925cb',
+	hasChildren: false,
+	type: 'dictionary',
+	isContainer: false,
+	icon: 'umb:book-alt',
+	translations: [{
+		displayName: 'English (United States)',
+		isoCode: 'en-US',
+		key: '37e7d0ab-53ba-425d-b8bd-12537f9925ca',
+		languageId: 1,
+		translation: 'I am an imported US value'
+	},
+	{
+		displayName: 'French',
+		isoCode: 'fr',
+		key: 'b4e7d0ab-53ba-485d-b8bd-12537f9925cd',
+		languageId: 2,
+		translation: 'I am an imported French value',
+	}],
+};
 
 // TODO: add schema
 export const handlers = [
@@ -118,7 +151,7 @@ export const handlers = [
 		return res(ctx.status(200), ctx.json(deletedKeys));
 	}),
 
-	// TODO => handle properly
+	// TODO => handle properly, querystring breaks handler
 	rest.get('/umbraco/management/api/v1/dictionary/export/:key', (req, res, ctx) => {
 		const key = req.params.key as string;
 		if (!key) return;
@@ -128,5 +161,33 @@ export const handlers = [
 
 		alert(`Downloads file for dictionary "${item?.name}", ${includeChildren === 'true' ? 'with' : 'without'} children.`)
 		return res(ctx.status(200));
+	}),
+	
+	rest.post('/umbraco/management/api/v1/dictionary/upload', async (req, res, ctx) => {
+		if (!req.arrayBuffer()) return;
+
+		return res(ctx.status(200), ctx.json(uploadResponse));
+	}),
+
+	rest.post('/umbraco/management/api/v1/dictionary/import', async (req, res, ctx) => {
+		const file = req.url.searchParams.get('file');
+
+		if (!file) return;
+
+		importResponse.parentKey = req.url.searchParams.get('parentId') ?? null;
+		umbDictionaryData.save([importResponse]);
+
+		// build the path to the new item => reflects the expected server response
+		const path = ['-1'];
+		if (importResponse.parentKey) path.push(importResponse.parentKey);
+
+		path.push(importResponse.key);
+
+		const contentResult: ContentResult = {
+			content: path.join(','),
+			statusCode: 200,
+		};
+
+		return res(ctx.status(200), ctx.json(contentResult));
 	}),
 ];

@@ -28,7 +28,7 @@ export class UmbContextMenuLayout extends LitElement {
 			}
 
 			uui-scroll-container {
-				padding: 0 var(--uui-size-4);
+				padding: var(--uui-size-4);
 			}
 
 			#headline {
@@ -43,10 +43,6 @@ export class UmbContextMenuLayout extends LitElement {
 				display: flex;
 				flex: 1;
 				flex-direction: column;
-			}
-
-			uui-input {
-				width: 100%;
 			}
 
 			#footer {
