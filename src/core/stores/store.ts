@@ -1,4 +1,5 @@
 import type { Observable } from 'rxjs';
+import { UmbControllerHostInterface } from '../controller/controller-host.mixin';
 import { UniqueBehaviorSubject } from '../observable-api/unique-behavior-subject';
 import { ApiError } from '../backend-api/core/ApiError';
 import { ProblemDetails } from '../backend-api/models/ProblemDetails';
@@ -32,6 +33,12 @@ export abstract class UmbDataStoreBase<T extends UmbDataStoreIdentifiers> implem
 	protected _items = new UniqueBehaviorSubject(<Array<T>>[]);
 	public readonly items = this._items.asObservable();
 
+	protected host: UmbControllerHostInterface;
+
+	constructor(host: UmbControllerHostInterface) {
+		this.host = host;
+	}
+
 	/**
 	 * @description - Writes the error detail to the browser console
 	 * @param {unknown} e
@@ -56,8 +63,6 @@ export abstract class UmbDataStoreBase<T extends UmbDataStoreIdentifiers> implem
 		this._items.next(remainingItems);
 	}
 
-
-
 	/**
 	 * @description - Update the store with new items. Existing items are updated, new items are added, old are kept. Items are matched by the compareKey.
 	 * @param {Array<T>} items
@@ -68,7 +73,7 @@ export abstract class UmbDataStoreBase<T extends UmbDataStoreIdentifiers> implem
 		const newData = [...this._items.getValue()];
 		items.forEach((newItem) => {
 			const storedItemIndex = newData.findIndex((item) => item[compareKey] === newItem[compareKey]);
-			if(storedItemIndex !== -1) {
+			if (storedItemIndex !== -1) {
 				newData[storedItemIndex] = newItem;
 			} else {
 				newData.push(newItem);

@@ -1,6 +1,7 @@
 import { map, Observable } from 'rxjs';
 import { UmbDataStoreBase } from '../../../core/stores/store';
 import { DictionaryResource, EntityTreeItem } from '@umbraco-cms/backend-api';
+import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import type { DictionaryDetails } from '@umbraco-cms/models';
 import { umbDictionaryData } from 'src/core/mocks/data/dictionary.data';
 
@@ -20,15 +21,13 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 * @return {*}  {Observable<Array<PagedEntityTreeItem>>}
 	 * @memberof UmbDictionaryStore
 	 */
-	getTreeRoot(): Observable<Array<UmbDictionaryStoreItemType>> {
-		DictionaryResource.getTreeDictionaryRoot({}).then(
-			(res) => {
-				this.updateItems(res.items);
-			},
-			(e) => {
-				this.logError(e);
-			}
-		);
+	getTreeRoot(): Observable<Array<EntityTreeItem>> {
+		tryExecuteAndNotify(this.host, DictionaryResource.getTreeDictionaryRoot({})).then(({ data }) => {
+			if (data) {
+				this.updateItems(data.items);
+			};
+		});
+
 		return this.items.pipe(map((items) => items.filter((item) => item.parentKey === null)));
 	}
 
@@ -38,17 +37,14 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 * @return {*}  {Observable<Array<UmbDictionaryStoreItemType>>}
 	 * @memberof UmbDataTypesStore
 	 */
-	getTreeItemChildren(key: string): Observable<Array<UmbDictionaryStoreItemType>> {
-		DictionaryResource.getTreeDictionaryChildren({
+	getTreeItemChildren(key: string): Observable<Array<EntityTreeItem>> {
+		tryExecuteAndNotify(this.host, DictionaryResource.getTreeDictionaryChildren({
 			parentKey: key,
-		}).then(
-			(res) => {
-				this.updateItems(res.items);
-			},
-			(e) => {
-				this.logError(e);
+		})).then(({ data }) => {
+			if (data) {
+			this.updateItems(data.items);
 			}
-		);
+		});
 
 		return this.items.pipe(map((items) => items.filter((item) => item.parentKey === key)));
 	}
@@ -60,14 +56,12 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 * @memberof UmbDictionaryStore
 	 */
 	getByKey(key: string): Observable<DictionaryDetails | null> {
-		DictionaryResource.getDictionaryByKey({ key }).then(
-			(res) => {
-				this.updateItems([res]);
-			},
-			(e) => {
-				this.logError(e);
-			}
-		);
+		tryExecuteAndNotify(this.host, DictionaryResource.getDictionaryByKey({ key })).then(
+			({ data }) => {
+				if (data) {
+					this.updateItems([data]);
+				}
+			});
 
 		return this.items.pipe(
 			map((dictionary) => (dictionary.find((entry) => entry.key === key) as DictionaryDetails) || null)
@@ -82,14 +76,12 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 	 * @memberof UmbDictionaryStore
 	 */
 	get(skip: number, take: number): Observable<DictionaryDetails[]> {
-		DictionaryResource.getDictionary({ skip, take }).then(
-			(res) => {
-				this.updateItems(res.items);
-			},
-			(e) => {
-				this.logError(e);
-			}
-		);
+		tryExecuteAndNotify(this.host, DictionaryResource.getDictionary({ skip, take })).then(
+			({data}) => {
+				if (data) {
+				this.updateItems(data.items);
+				}
+			});
 
 		return this.items.pipe(map((items) => items as DictionaryDetails[]));
 	}
