@@ -148,9 +148,9 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	}
 
 	private _create() {
-		if (!this._contextMenuService) return;
-
 		alert('Open content menu, to create an entry below the root dictionary item');
+
+		if (!this._contextMenuService) return;
 
 		// TODO => open method opens the root menu for the given key
 		// need to open to a particular action for the given node
