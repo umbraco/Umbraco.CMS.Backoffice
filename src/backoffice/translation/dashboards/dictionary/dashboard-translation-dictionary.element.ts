@@ -41,7 +41,6 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	@state()
 	private _tableConfig: UmbTableConfig = {
 		allowSelection: false,
-		hideIcon: false,
 	};
 
 	@state()
