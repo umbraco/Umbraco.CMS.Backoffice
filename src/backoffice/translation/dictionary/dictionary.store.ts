@@ -1,6 +1,11 @@
 import { map, Observable } from 'rxjs';
 import { UmbDataStoreBase } from '../../../core/stores/store';
-import { ContentResult, DictionaryImport, DictionaryItemsImport, DictionaryResource, EntityTreeItem } from '@umbraco-cms/backend-api';
+import {
+	ContentResult,
+	DictionaryImport,
+	DictionaryResource,
+	EntityTreeItem,
+} from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import type { DictionaryDetails } from '@umbraco-cms/models';
 import { umbDictionaryData } from 'src/core/mocks/data/dictionary.data';
@@ -165,16 +170,16 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 
 	/**
 	 * @description - Upload a Dictionary
-	 * @param {FormData} formData
+	 * @param {File} file
 	 * @return {*}  {(Observable<DictionaryImport | undefined>)}
 	 * @memberof UmbDictionaryStore
 	 */
-	async upload(formData: FormData): Promise<DictionaryImport | undefined> {
+	async upload(file: File): Promise<DictionaryImport | undefined> {
 		const { data } = await tryExecuteAndNotify(
 			this.host,
 			DictionaryResource.postDictionaryUpload({
 				requestBody: {
-					file: formData,
+					file,
 				},
 			})
 		);
@@ -184,7 +189,7 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 
 	/// TODO => refresh tree and potentially dashboard after importing
 	async import(file: string, parentId?: number): Promise<ContentResult | undefined> {
-		const { data } =  await tryExecuteAndNotify(this.host, DictionaryResource.postDictionaryImport({ file, parentId }));
+		const { data } = await tryExecuteAndNotify(this.host, DictionaryResource.postDictionaryImport({ file, parentId }));
 		return data;
 	}
 }

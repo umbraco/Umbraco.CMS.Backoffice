@@ -66,9 +66,15 @@ class UmbDictionaryData extends UmbEntityData<DictionaryDetails> {
 		return rootItems.map((item) => createEntityTreeItem(item));
 	}
 
+	/**
+	 * No mapping as this mutates the data and removes the translation array
+	 * DictionaryDetails derives from EntityTreeItem
+	 * @param key
+	 * @returns 
+	 */
 	getTreeItemChildren(key: string): Array<EntityTreeItem> {
 		const childItems = this.data.filter((item) => item.parentKey === key);
-		return childItems.map((item) => createEntityTreeItem(item));
+		return childItems;//.map((item) => createEntityTreeItem(item));
 	}
 
 	getTreeItem(keys: Array<string>): Array<EntityTreeItem> {

@@ -69,8 +69,8 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 		this._form?.requestSubmit();
 	}
 
-	private async _uploadDictionary(formData: FormData) {
-		this._uploadedDictionary = await this._dictionaryStore.upload(formData);
+	private async _uploadDictionary(file: File) {
+		this._uploadedDictionary = await this._dictionaryStore.upload(file);
 
 		if (!this._uploadedDictionary) {
 			this._showErrorView = true;
@@ -92,9 +92,9 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 		if (!form || !form.checkValidity()) return;
 
 		const formData = new FormData(this._form);
-		if (!formData) return;
+		if (!formData || !formData.get('file')) return;
 
-		await this._uploadDictionary(formData);
+		await this._uploadDictionary(formData.get('file') as File);
 	}
 
 	private _handleSelectionChange(e: CustomEvent) {

@@ -38,21 +38,7 @@ export abstract class UmbDataStoreBase<T extends UmbDataStoreIdentifiers> implem
 	constructor(host: UmbControllerHostInterface) {
 		this.host = host;
 	}
-
-	/**
-	 * @description - Writes the error detail to the browser console
-	 * @param {unknown} e
-	 * @memberof UmbDataStoreBase
-	 */
-	public logError(e: unknown) {
-		if (e instanceof ApiError) {
-			const error = e.body as ProblemDetails;
-			if (e.status === 400) {
-				console.log(error.detail);
-			}
-		}
-	}
-
+	
 	/**
 	 * @description - Delete items from the store.
 	 * @param {Array<string>} keys

@@ -45,12 +45,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	};
 
 	@state()
-	private _tableColumns: Array<UmbTableColumn> = [
-		{
-			name: 'Name',
-			alias: 'name',
-		},
-	];
+	private _tableColumns: Array<UmbTableColumn> = [];
 
 	@state()
 	private _tableItemsFiltered: Array<UmbTableItem> = [];
@@ -92,10 +87,19 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	}
 
 	/**
-	 * We don't know how many items exist for each dictionary until the data arrives
+	 * We don't know how many translation items exist for each dictionary until the data arrives
+	 * so can not generate the columns in advance. All dictionaries have entries for all languages
+	 * so safe to iterate the first item in the set
 	 * @returns
 	 */
 	private _setTableColumns() {
+		this._tableColumns = [
+			{
+				name: 'Name',
+				alias: 'name',
+			},
+		];
+
 		this._dictionaryItems[0].translations?.forEach((t) => {
 			this._tableColumns.push({
 				name: t.displayName ?? '',
@@ -128,9 +132,11 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 					value: t.translation
 						? html`<uui-icon
 								name="check"
+								title="Translation exists for ${t.displayName}"
 								style="color:var(--uui-color-positive-standalone);display:inline-block"></uui-icon>`
 						: html`<uui-icon
 								name="alert"
+								title="Translation does not exist for ${t.displayName}"
 								style="color:var(--uui-color-warning-standalone);display:inline-block"></uui-icon>`,
 				});
 			});
