@@ -17,20 +17,22 @@ import { UmbMediaStore } from './media/media/media.store';
 import { UmbMemberGroupStore } from './members/member-groups/member-group.store';
 import { UmbDictionaryStore } from './translation/dictionary/dictionary.store';
 import { UmbDocumentBlueprintStore } from './documents/document-blueprints/document-blueprint.store';
+import { UmbStylesheetStore } from './templating/stylesheets/stylesheets.store';
 
 import { UmbSectionStore } from './shared/components/section/section.store';
 import { UmbDataTypeStore } from './settings/data-types/data-type.store';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 // Domains
-import './settings';
 import './documents';
 import './media';
 import './members';
-import './translation';
-import './users';
 import './packages';
 import './search';
+import './settings';
+import './templating';
+import './translation';
+import './users';
 import './shared';
 
 @defineElement('umb-backoffice')
@@ -71,6 +73,7 @@ export class UmbBackofficeElement extends UmbLitElement {
 		this.provideContext('umbCurrentUserHistoryStore', new UmbCurrentUserHistoryStore());
 		this.provideContext('umbDictionaryStore', new UmbDictionaryStore(this));
 		this.provideContext('umbDocumentBlueprintStore', new UmbDocumentBlueprintStore(this));
+		this.provideContext('umbStylesheetStore', new UmbStylesheetStore(this));
 	}
 
 	render() {

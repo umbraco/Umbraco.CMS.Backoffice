@@ -11,11 +11,13 @@ export interface UmbDataStore<T> {
 	readonly storeAlias: string;
 	readonly items: Observable<Array<T>>;
 	updateItems(items: Array<T>): void;
+	deleteItems(keys: Array<string>): void;
 }
 
 export interface UmbTreeDataStore<T> extends UmbDataStore<T> {
 	getTreeRoot(): Observable<Array<T>>;
 	getTreeItemChildren(key: string): Observable<Array<T>>;
+	getTreeItem(keys: string): Observable<Array<T>>;
 }
 
 /**
@@ -91,4 +93,21 @@ export abstract class UmbNodeStoreBase<T extends UmbDataStoreIdentifiers> extend
 	 * @memberof UmbNodeStoreBase
 	 */
 	abstract save(data: T[]): Promise<void>;
+}
+
+/**
+ * @export
+ * @class UmbSystemFileStoreBase
+ * @implements {UmbDataStore<T>}
+ * @template T
+ * @description - Base class for Data Stores
+ */
+export abstract class UmbSystemFileStoreBase<T extends UmbDataStoreIdentifiers> extends UmbDataStoreBase<T> {
+	/**
+	 * @description - Request data by path. The data is added to the store and is returned as an Observable.
+	 * @param {string} path
+	 * @return {*}  {(Observable<unknown>)}
+	 * @memberof UmbDataStoreBase
+	 */
+	abstract getByPath(path: string): Observable<unknown>;
 }
