@@ -64,4 +64,4 @@ UserDashboard | Adds a custom dashboard to the user dialog that slides out when 
 Workspace | This is the main section/workspace of the backoffice to the right of the sidebar/tree. Examples of workspaces are editing content, viewing logs in the log viewer etc
 WorkspaceAction | This adds actions/buttons to a workspace such as Save, Save and Publish etc
 WorkspaceView | This is a view used inside a workspace used in conjuction with SectionView's that is main view when the Context/Content app is viewed.
-WorkspaceViewCollection | x
+WorkspaceViewCollection | This is the same as WorkspaceView however its specfic to displaying a entity from a store as a collection of items that use the CollectionView's and CollectionBulkAction's
