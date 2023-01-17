@@ -4,6 +4,7 @@ import {
 	DocumentTreeItem,
 	DocumentTypeTreeItem,
 	EntityTreeItem,
+	FileSystemTreeItem,
 	FolderTreeItem,
 } from '@umbraco-cms/backend-api';
 
@@ -148,4 +149,8 @@ export interface DocumentBlueprintDetails {
 	data: Array<any>;
 	icon: string;
 	documentTypeKey: string;
+}
+
+export interface StylesheetDetails extends FileSystemTreeItem {
+	type: 'stylesheet';
 }
