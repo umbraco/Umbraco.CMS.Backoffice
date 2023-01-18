@@ -3,7 +3,7 @@ import { umbStylesheetData } from '../data/stylesheet.data';
 
 // TODO: add schema
 export const handlers = [
-	rest.get('/umbraco/management/api/v1/tree/stylesheet/details/:path', (req, res, ctx) => {
+	rest.get('/umbraco/management/api/v1/stylesheet/details/:path', (req, res, ctx) => {
 		const path = req.params.path as string;
 		if (!path) return;
 		const stylesheet = umbStylesheetData.getByPath(path);
