@@ -11,7 +11,7 @@ export const handlers = [
 
 		const document = umbDocumentData.getByKey(key);
 
-		return res(ctx.status(200), ctx.json([document]));
+		return res(ctx.status(200), ctx.json(document));
 	}),
 
 	rest.post<DocumentDetails[]>('/umbraco/management/api/v1/document/save', async (req, res, ctx) => {
