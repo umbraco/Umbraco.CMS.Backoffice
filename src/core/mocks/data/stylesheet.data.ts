@@ -11,6 +11,7 @@ export const data: Array<StylesheetDetails> = [
 		type: 'stylesheet',
 		icon: 'umb:brackets',
 		hasChildren: false,
+		content: '',
 	},
 	{
 		path: 'folder 1',
@@ -19,6 +20,7 @@ export const data: Array<StylesheetDetails> = [
 		type: 'stylesheet',
 		icon: 'umb:folder',
 		hasChildren: true,
+		content: '',
 	},
 	{
 		path: 'folder 1/Another One.css',
@@ -27,6 +29,7 @@ export const data: Array<StylesheetDetails> = [
 		type: 'stylesheet',
 		icon: 'umb:brackets',
 		hasChildren: false,
+		content: '',
 	},
 ];
 
