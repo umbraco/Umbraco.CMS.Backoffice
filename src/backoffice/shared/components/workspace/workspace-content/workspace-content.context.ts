@@ -1,16 +1,16 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 import { UmbNotificationService } from '../../../../../core/notification';
 import { UmbNotificationDefaultData } from '../../../../../core/notification/layouts/default';
+import { UmbTreeItem } from '../../tree';
 import { UmbNodeStoreBase } from '@umbraco-cms/stores/store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController, UmbContextProviderController } from '@umbraco-cms/context-api';
-import { EntityTreeItem } from '@umbraco-cms/backend-api';
 import { createObservablePart, UniqueBehaviorSubject, UmbObserverController } from '@umbraco-cms/observable-api';
 
 // TODO: Consider if its right to have this many class-inheritance of WorkspaceContext
 // TODO: Could we extract this code into a 'Manager' of its own, which will be instantiated by the concrete Workspace Context. This will be more transparent and 'reuseable'
 export abstract class UmbWorkspaceContentContext<
-	ContentTypeType extends EntityTreeItem = EntityTreeItem,
+	ContentTypeType extends UmbTreeItem = UmbTreeItem,
 	StoreType extends UmbNodeStoreBase<ContentTypeType> = UmbNodeStoreBase<ContentTypeType>
 > {
 	protected _host: UmbControllerHostInterface;
@@ -72,7 +72,7 @@ export abstract class UmbWorkspaceContentContext<
 
 	create(parentKey: string | null) {
 		this.#isNew = true;
-		this.entityKey = uuidv4();
+		this.entityKey = uuid();
 		console.log("I'm new, and I will be created under ", parentKey);
 	}
 
