@@ -16,7 +16,7 @@ export class UmbTreeActionCreatePage2Element extends UmbTreeItemActionElement {
 	}
 
 	render() {
-		return html`<h2>Create page 2 for entity: ${this._entity.name}</h2>
+		return html`<h2>Create page 2 for entity: ${this._actionPage.name}</h2>
 			<p>This is the last create page, here you can go back og save (it just closes the modal for now)</p>
 			<uui-button label="Back" look="secondary" @click=${this._back}></uui-button>
 			<uui-button label="Save" look="primary" color="positive" @click=${this._save}></uui-button>`;

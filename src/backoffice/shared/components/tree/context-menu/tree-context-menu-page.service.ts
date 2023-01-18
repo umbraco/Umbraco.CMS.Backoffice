@@ -1,7 +1,7 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, nothing, PropertyValueMap } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import UmbTreeItemActionElement, { ActionPageEntity } from '../action/tree-item-action.element';
+import UmbTreeItemActionElement, { ActionPage } from '../action/tree-item-action.element';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { UniqueBehaviorSubject } from '@umbraco-cms/observable-api';
 
@@ -11,9 +11,9 @@ export class UmbTreeContextMenuPageService extends UmbLitElement {
 	static styles = [UUITextStyles, css``];
 
 	@property({ type: Object })
-	public actionEntity: ActionPageEntity = { key: '', name: '' };
+	public actionEntity: ActionPage = { unique: '', name: '' };
 
-	#entity = new UniqueBehaviorSubject({ key: '', name: '' } as ActionPageEntity);
+	#entity = new UniqueBehaviorSubject<ActionPage>({ unique: '', name: '' });
 	public readonly entity = this.#entity.asObservable();
 
 	@state()

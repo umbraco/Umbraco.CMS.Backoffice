@@ -7,7 +7,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import { UmbSectionContext } from '../section/section.context';
 import type { UmbTreeContextBase } from './tree.context';
 import { UmbTreeContextMenuService } from './context-menu/tree-context-menu.service';
-import type { Entity } from '@umbraco-cms/models';
+import { UmbTreeItem } from '.';
 import { UmbTreeDataStore } from '@umbraco-cms/stores/store';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
@@ -44,7 +44,7 @@ export class UmbTreeItemElement extends UmbLitElement {
 	hasChildren = false;
 
 	@state()
-	private _childItems?: Entity[];
+	private _childItems?: UmbTreeItem[];
 
 	@state()
 	private _href?: string;
@@ -138,7 +138,7 @@ export class UmbTreeItemElement extends UmbLitElement {
 		if (!this._sectionContext) return;
 
 		this.observe(this._sectionContext?.activeTreeItem, (treeItem) => {
-			this._isActive = this.unique === treeItem?.unique;
+			this._isActive = this.unique && treeItem?.unique ? this.unique === treeItem?.unique : false;
 		});
 	}
 
@@ -171,8 +171,7 @@ export class UmbTreeItemElement extends UmbLitElement {
 
 		this._loading = true;
 
-		// TODO: we should do something about these types, stop having our own version of Entity.
-		this.observe(this._store.getTreeItemChildren(this.unique) as Observable<Entity[]>, (childItems) => {
+		this.observe(this._store.getTreeItemChildren(this.unique) as Observable<UmbTreeItem[]>, (childItems) => {
 			this._childItems = childItems;
 			this._loading = false;
 		});
@@ -218,14 +217,14 @@ export class UmbTreeItemElement extends UmbLitElement {
 			${this._childItems
 				? repeat(
 						this._childItems,
-						(item) => item.key,
+						(item) => item.unique,
 						(item) =>
 							html`<umb-tree-item
-								.key=${item.key}
-								.label=${item.name}
-								.icon=${item.icon}
-								.entityType=${item.type}
-								.hasChildren=${item.hasChildren}></umb-tree-item>`
+								.unique=${item.unique}
+								.label=${item.name || ''}
+								.icon=${item.icon || ''}
+								.entityType=${item.type || ''}
+								.hasChildren=${item.hasChildren || false}></umb-tree-item>`
 				  )
 				: ''}
 		`;

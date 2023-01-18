@@ -6,10 +6,8 @@ import { UmbTreeContextMenuService } from '../context-menu/tree-context-menu.ser
 import type { ManifestTreeItemAction, ManifestTree } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
 
-// TODO: remove key when refactor is done
-export type ActionPageEntity = {
+export type ActionPage = {
 	unique: string;
-	key: string;
 	name: string;
 };
 
@@ -19,7 +17,7 @@ export default class UmbTreeItemActionElement extends UmbLitElement {
 	public treeAction?: ManifestTreeItemAction;
 
 	@state()
-	protected _entity: ActionPageEntity = { unique: '', name: '', key: '' };
+	protected _actionPage: ActionPage = { unique: '', name: '' };
 
 	protected _activeTree?: ManifestTree;
 	protected _activeTreeItem?: UmbTreeItem;
@@ -51,7 +49,7 @@ export default class UmbTreeItemActionElement extends UmbLitElement {
 		if (!this._actionPageService) return;
 
 		this.observe(this._actionPageService.entity, (entity) => {
-			this._entity = entity;
+			this._actionPage = entity;
 		});
 	}
 

@@ -1,5 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
-import type { ManifestSection, ManifestSectionView, ManifestTree, UmbTreeItem } from '@umbraco-cms/models';
+import { UmbTreeItem } from '../tree';
+import type { ManifestSection, ManifestSectionView, ManifestTree } from '@umbraco-cms/models';
 import { UniqueBehaviorSubject } from '@umbraco-cms/observable-api';
 
 export class UmbSectionContext {

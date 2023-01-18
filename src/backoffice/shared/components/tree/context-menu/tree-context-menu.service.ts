@@ -1,7 +1,7 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { ActionPageEntity } from '../action/tree-item-action.element';
+import { ActionPage } from '../action/tree-item-action.element';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 @customElement('umb-tree-context-menu-service')
@@ -52,15 +52,15 @@ export class UmbTreeContextMenuService extends UmbLitElement {
 	private _modalOpen = false;
 
 	@state()
-	private entity: { name: string; key: string } = { name: '', key: '' };
+	private _actionPage: ActionPage = { name: '', unique: '' };
 
 	connectedCallback() {
 		super.connectedCallback();
 		this.provideContext('umbTreeContextMenuService', this);
 	}
 
-	public open(entity: ActionPageEntity) {
-		this.entity = entity;
+	public open(actionPage: ActionPage) {
+		this._actionPage = actionPage;
 		this._modalOpen = true;
 	}
 
@@ -77,7 +77,7 @@ export class UmbTreeContextMenuService extends UmbLitElement {
 		return this._modalOpen
 			? html`<umb-tree-context-menu-page-service
 					id="action-modal"
-					.actionEntity=${this.entity}></umb-tree-context-menu-page-service>`
+					.actionEntity=${this._actionPage}></umb-tree-context-menu-page-service>`
 			: nothing;
 	}
 
