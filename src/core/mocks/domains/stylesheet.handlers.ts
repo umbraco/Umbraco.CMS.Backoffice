@@ -18,14 +18,16 @@ export const handlers = [
 	rest.get('/umbraco/management/api/v1/tree/stylesheet/children', (req, res, ctx) => {
 		const path = req.url.searchParams.get('path');
 		if (!path) return;
-		const data = umbStylesheetData.getTreeItemChildren(path);
+		const decodedPath = decodeURIComponent(path);
+		const data = umbStylesheetData.getTreeItemChildren(decodedPath);
 		return res(ctx.status(200), ctx.json(data));
 	}),
 
 	rest.get('/umbraco/management/api/v1/tree/stylesheet/item', (req, res, ctx) => {
 		const paths = req.url.searchParams.getAll('path');
 		if (!paths) return;
-		const data = umbStylesheetData.getTreeItem(paths);
+		const decodedPaths = paths.map((path) => decodeURIComponent(path));
+		const data = umbStylesheetData.getTreeItem(decodedPaths);
 		return res(ctx.status(200), ctx.json(data));
 	}),
 ];

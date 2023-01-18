@@ -1,15 +1,16 @@
 import { map, Observable } from 'rxjs';
 import { createStoreItem, UmbNodeStoreBase, UmbStoreItem } from '../../../core/stores/store';
+import { serverPathFromFileUnique, fileParentPath, fileUniqueFromServerPath } from '../utils';
 import type { StylesheetDetails } from '@umbraco-cms/models';
 import { StylesheetResource } from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import { createTreeItem, isTreeItem, UmbTreeItem } from 'src/backoffice/shared/components/tree';
 
-export type UmbStylesheetStoreDetailItem = StylesheetDetails & UmbStoreItem;
-export type UmbStylesheetStoreItem = UmbStylesheetStoreDetailItem | UmbTreeItem;
+export type UmbStylesheetDetailsStoreItem = StylesheetDetails & UmbStoreItem;
+export type UmbStylesheetStoreItem = UmbStylesheetDetailsStoreItem | UmbTreeItem;
 
-const isStylesheetDetail = (stylesheet: UmbStylesheetStoreItem): stylesheet is UmbStylesheetStoreDetailItem => {
-	return (stylesheet as UmbStylesheetStoreDetailItem).content !== undefined;
+const isStylesheetDetail = (stylesheet: UmbStylesheetStoreItem): stylesheet is UmbStylesheetDetailsStoreItem => {
+	return (stylesheet as UmbStylesheetDetailsStoreItem).content !== undefined;
 };
 
 export const STORE_ALIAS = 'umbStylesheetStore';
@@ -23,18 +24,24 @@ export const STORE_ALIAS = 'umbStylesheetStore';
 export class UmbStylesheetStore extends UmbNodeStoreBase<UmbStylesheetStoreItem> {
 	public readonly storeAlias = STORE_ALIAS;
 
-	getItem(unique: string): Observable<UmbStylesheetStoreDetailItem | null> {
-		fetch(`/umbraco/management/api/v1/stylesheets/details/${unique}`)
+	getItem(unique: string): Observable<UmbStylesheetDetailsStoreItem | null> {
+		const serverPath = serverPathFromFileUnique(unique);
+		const encodedServerPath = encodeURIComponent(serverPath);
+		fetch(`/umbraco/management/api/v1/stylesheet/details/${encodedServerPath}`)
 			.then((res) => res.json())
 			.then((data: StylesheetDetails) => {
-				const storeItem = createStoreItem(data.path, data);
+				const storeItem = createStoreItem(
+					fileUniqueFromServerPath(data.path),
+					fileUniqueFromServerPath(fileParentPath(data.path)),
+					data
+				);
 				this.updateItems([storeItem]);
 			});
 
 		return this.items.pipe(
 			map(
 				(items) =>
-					(items.find((item) => isStylesheetDetail(item) && item.unique === unique) as UmbStylesheetStoreDetailItem) ||
+					(items.find((item) => isStylesheetDetail(item) && item.unique === unique) as UmbStylesheetDetailsStoreItem) ||
 					null
 			)
 		);
@@ -43,27 +50,30 @@ export class UmbStylesheetStore extends UmbNodeStoreBase<UmbStylesheetStoreItem>
 	getTreeRoot(): Observable<Array<UmbTreeItem>> {
 		tryExecuteAndNotify(this.host, StylesheetResource.getTreeStylesheetRoot({})).then(({ data }) => {
 			if (data) {
-				const treeItems = data.items.map((item) => createTreeItem(item.path, null, item));
+				const treeItems = data.items.map((item) => createTreeItem(fileUniqueFromServerPath(item.path), null, item));
 				this.updateItems(treeItems);
 			}
 		});
 
 		return this.items.pipe(
-			map(
-				(items) => items.filter((item) => isTreeItem(item) && item.unique.includes('/') === false) as Array<UmbTreeItem>
-			)
+			map((items) => items.filter((item) => isTreeItem(item) && item.parentUnique === null) as Array<UmbTreeItem>)
 		);
 	}
 
 	getTreeItemChildren(unique: string): Observable<Array<UmbTreeItem>> {
+		const serverPath = serverPathFromFileUnique(unique);
+		const encodedServerPath = encodeURIComponent(serverPath);
+
 		tryExecuteAndNotify(
 			this.host,
 			StylesheetResource.getTreeStylesheetChildren({
-				path: unique,
+				path: encodedServerPath,
 			})
 		).then(({ data }) => {
 			if (data) {
-				const treeItems = data.items.map((item) => createTreeItem(item.path, unique, item));
+				const treeItems = data.items.map((item) =>
+					createTreeItem(fileUniqueFromServerPath(item.path), fileUniqueFromServerPath(fileParentPath(item.path)), item)
+				);
 				this.updateItems(treeItems);
 			}
 		});
@@ -71,29 +81,39 @@ export class UmbStylesheetStore extends UmbNodeStoreBase<UmbStylesheetStoreItem>
 		return this.items.pipe(
 			map(
 				(items) =>
-					items.filter((item) => isTreeItem(item) && item.unique.startsWith(unique + '/')) as Array<UmbTreeItem>
+					items.filter(
+						(item) => isTreeItem(item) && item.unique.startsWith(unique + encodeURIComponent('/'))
+					) as Array<UmbTreeItem>
 			)
 		);
 	}
 
-	getTreeItems(paths: Array<string>): Observable<Array<UmbTreeItem>> {
-		if (paths?.length > 0) {
+	getTreeItems(uniques: Array<string>): Observable<Array<UmbTreeItem>> {
+		if (uniques?.length > 0) {
+			const serverPaths = uniques.map((unique) => serverPathFromFileUnique(unique));
+			const encodedServerPaths = serverPaths.map((path) => encodeURIComponent(path));
+
 			tryExecuteAndNotify(
 				this.host,
 				StylesheetResource.getTreeStylesheetItem({
-					path: paths,
+					path: encodedServerPaths,
 				})
 			).then(({ data }) => {
 				if (data) {
-					// TODO: get parent unique from path
-					const treeItems = data.map((item, index) => createTreeItem(item.path, paths[index], item));
+					const treeItems = data.map((item) =>
+						createTreeItem(
+							fileUniqueFromServerPath(item.path),
+							fileUniqueFromServerPath(fileParentPath(item.path)),
+							item
+						)
+					);
 					this.updateItems(treeItems);
 				}
 			});
 		}
 
 		return this.items.pipe(
-			map((items) => items.filter((item) => isTreeItem(item) && paths.includes(item.unique)) as Array<UmbTreeItem>)
+			map((items) => items.filter((item) => isTreeItem(item) && uniques.includes(item.unique)) as Array<UmbTreeItem>)
 		);
 	}
 
