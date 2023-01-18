@@ -42,6 +42,10 @@ class UmbStylesheetData extends UmbEntityData<StylesheetDetails> {
 		super(data);
 	}
 
+	getByPath(path: string): StylesheetDetails | undefined {
+		return this.data.find((item) => item.path === path);
+	}
+
 	getTreeRoot(): PagedFileSystemTreeItem {
 		const items = this.data.filter((item) => item.path?.includes('/') === false);
 		const treeItems = items.map((item) => createFileSystemTreeItem(item));
