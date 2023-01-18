@@ -20,7 +20,7 @@ const isDocumentBlueprintDetails = (
 export class UmbDocumentBlueprintStore extends UmbNodeStoreBase<UmbDocumentStoreItemType> {
 	public readonly storeAlias = 'umbDocumentBlueprintStore';
 
-	getByKey(key: string): Observable<DocumentDetails | null> {
+	getItem(key: string): Observable<DocumentDetails | null> {
 		// TODO: implement call to end point
 		return this.items.pipe(
 			map(

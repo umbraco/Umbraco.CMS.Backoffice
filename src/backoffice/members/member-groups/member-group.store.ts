@@ -15,7 +15,7 @@ export type UmbMemberGroupStoreItemType = MemberGroupDetails | EntityTreeItem;
 export class UmbMemberGroupStore extends UmbNodeStoreBase<UmbMemberGroupStoreItemType> {
 	public readonly storeAlias = 'umbMemberGroupStore';
 
-	getByKey(key: string): Observable<UmbMemberGroupStoreItemType | null> {
+	getItem(key: string): Observable<UmbMemberGroupStoreItemType | null> {
 		return null as any;
 	}
 

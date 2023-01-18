@@ -20,7 +20,7 @@ export class UmbMediaTypeStore extends UmbNodeStoreBase<UmbMediaTypeStoreItemTyp
 	 * @return {*}  {(Observable<MediaTypeDetails | null>)}
 	 * @memberof UmbMediaTypesStore
 	 */
-	getByKey(key: string): Observable<UmbMediaTypeStoreItemType | null> {
+	getItem(key: string): Observable<UmbMediaTypeStoreItemType | null> {
 		// TODO: use backend cli when available.
 		/*
 		fetch(`/umbraco/backoffice/media-type/details/${key}`)

@@ -1,10 +1,10 @@
 import type { Observable } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 import { UmbControllerHostInterface } from '../controller/controller-host.mixin';
 import { UniqueBehaviorSubject } from '../observable-api/unique-behavior-subject';
 
-export interface UmbDataStoreIdentifiers {
-	key?: string;
-	[more: string]: any;
+export interface UmbStoreItem {
+	unique: string;
 }
 
 export interface UmbDataStore<T> {
@@ -20,6 +20,10 @@ export interface UmbTreeDataStore<T> extends UmbDataStore<T> {
 	getTreeItem(keys: string): Observable<Array<T>>;
 }
 
+export const createStoreItem = <T>(unique: string | null | undefined, data: T): UmbStoreItem & T => {
+	return Object.assign({ unique: unique || uuid() }, window.structuredClone(data));
+};
+
 /**
  * @export
  * @class UmbDataStoreBase
@@ -27,7 +31,7 @@ export interface UmbTreeDataStore<T> extends UmbDataStore<T> {
  * @template T
  * @description - Base class for Data Stores
  */
-export abstract class UmbDataStoreBase<T extends UmbDataStoreIdentifiers> implements UmbDataStore<T> {
+export abstract class UmbDataStoreBase<T extends UmbStoreItem> implements UmbDataStore<T> {
 	public abstract readonly storeAlias: string;
 
 	protected _items = new UniqueBehaviorSubject(<Array<T>>[]);
@@ -45,20 +49,19 @@ export abstract class UmbDataStoreBase<T extends UmbDataStoreIdentifiers> implem
 	 * @memberof UmbDataStoreBase
 	 */
 	public deleteItems(keys: Array<string>): void {
-		const remainingItems = this._items.getValue().filter((item) => item.key && keys.includes(item.key) === false);
+		const remainingItems = this._items.getValue().filter((item) => item.unique && keys.includes(item.unique) === false);
 		this._items.next(remainingItems);
 	}
 
 	/**
-	 * @description - Update the store with new items. Existing items are updated, new items are added, old are kept. Items are matched by the compareKey.
+	 * @description - Update the store with new items. Existing items are updated, new items are added, old are kept.
 	 * @param {Array<T>} items
-	 * @param {keyof T} [compareKey='key']
 	 * @memberof UmbDataStoreBase
 	 */
-	public updateItems(items: Array<T>, compareKey: keyof T = 'key'): void {
+	public updateItems(items: Array<T>): void {
 		const newData = [...this._items.getValue()];
 		items.forEach((newItem) => {
-			const storedItemIndex = newData.findIndex((item) => item[compareKey] === newItem[compareKey]);
+			const storedItemIndex = newData.findIndex((item) => item.unique === newItem.unique);
 			if (storedItemIndex !== -1) {
 				newData[storedItemIndex] = newItem;
 			} else {
@@ -77,14 +80,14 @@ export abstract class UmbDataStoreBase<T extends UmbDataStoreIdentifiers> implem
  * @template T
  * @description - Base class for Data Stores
  */
-export abstract class UmbNodeStoreBase<T extends UmbDataStoreIdentifiers> extends UmbDataStoreBase<T> {
+export abstract class UmbNodeStoreBase<T extends UmbStoreItem> extends UmbDataStoreBase<T> {
 	/**
-	 * @description - Request data by key. The data is added to the store and is returned as an Observable.
-	 * @param {string} key
+	 * @description - Request data by a unique string. The data is added to the store and is returned as an Observable.
+	 * @param {string} unique
 	 * @return {*}  {(Observable<unknown>)}
 	 * @memberof UmbDataStoreBase
 	 */
-	abstract getByKey(key: string): Observable<unknown>;
+	abstract getItem(unique: string): Observable<unknown>;
 
 	/**
 	 * @description - Save data.
@@ -93,21 +96,4 @@ export abstract class UmbNodeStoreBase<T extends UmbDataStoreIdentifiers> extend
 	 * @memberof UmbNodeStoreBase
 	 */
 	abstract save(data: T[]): Promise<void>;
-}
-
-/**
- * @export
- * @class UmbSystemFileStoreBase
- * @implements {UmbDataStore<T>}
- * @template T
- * @description - Base class for Data Stores
- */
-export abstract class UmbSystemFileStoreBase<T extends UmbDataStoreIdentifiers> extends UmbDataStoreBase<T> {
-	/**
-	 * @description - Request data by path. The data is added to the store and is returned as an Observable.
-	 * @param {string} path
-	 * @return {*}  {(Observable<unknown>)}
-	 * @memberof UmbDataStoreBase
-	 */
-	abstract getByPath(path: string): Observable<unknown>;
 }
