@@ -1,14 +1,18 @@
 import { map, Observable } from 'rxjs';
-import { UmbNodeStoreBase } from '../../../core/stores/store';
+import { createStoreItem, UmbNodeStoreBase, UmbStoreItem } from '@umbraco-cms/stores/store';
 import type { DocumentDetails } from '@umbraco-cms/models';
-import { DocumentResource, DocumentTreeItem, FolderTreeItem } from '@umbraco-cms/backend-api';
+import { DocumentResource } from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+import { createTreeItem, isTreeItem, UmbTreeItem } from 'src/backoffice/shared/components/tree';
 
-export const isDocumentDetails = (document: DocumentDetails | DocumentTreeItem): document is DocumentDetails => {
-	return (document as DocumentDetails).data !== undefined;
+export type UmbDocumentStoreDetailItem = DocumentDetails & UmbStoreItem;
+export type UmbDocumentStoreItem = UmbDocumentStoreDetailItem | UmbTreeItem;
+
+export const isDocumentDetail = (
+	document: UmbDocumentStoreDetailItem | UmbTreeItem
+): document is UmbDocumentStoreDetailItem => {
+	return (document as UmbDocumentStoreDetailItem).data !== undefined;
 };
-
-export type UmbDocumentStoreItemType = DocumentDetails | DocumentTreeItem;
 
 // TODO: research how we write names of global consts.
 export const STORE_ALIAS = 'umbDocumentStore';
@@ -16,30 +20,31 @@ export const STORE_ALIAS = 'umbDocumentStore';
 /**
  * @export
  * @class UmbDocumentStore
- * @extends {UmbDocumentStoreBase<DocumentDetails | DocumentTreeItem>}
+ * @extends {UmbDocumentStoreBase<UmbDocumentStoreItem>}
  * @description - Data Store for Documents
  */
-export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItemType> {
+export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItem> {
 	public readonly storeAlias = STORE_ALIAS;
 
-	getByKey(key: string): Observable<DocumentDetails | null> {
+	getItem(unique: string): Observable<UmbDocumentStoreDetailItem | null> {
 		// TODO: use backend cli when available.
-		fetch(`/umbraco/management/api/v1/document/details/${key}`)
+		fetch(`/umbraco/management/api/v1/document/details/${unique}`)
 			.then((res) => res.json())
-			.then((data) => {
-				this.updateItems(data);
+			.then((data: DocumentDetails) => {
+				const storeItem = createStoreItem(data.key, data);
+				this.updateItems([storeItem]);
 			});
 
 		return this.items.pipe(
 			map(
-				(documents) =>
-					(documents.find((document) => document.key === key && isDocumentDetails(document)) as DocumentDetails) || null
+				(items) =>
+					(items.find((item) => isDocumentDetail(item) && item.unique === unique) as UmbDocumentStoreDetailItem) || null
 			)
 		);
 	}
 
 	// TODO: make sure UI somehow can follow the status of this action.
-	save(data: DocumentDetails[]): Promise<void> {
+	save(data: UmbDocumentStoreDetailItem[]): Promise<void> {
 		// fetch from server and update store
 		// TODO: use Fetcher API.
 		let body: string;
@@ -61,7 +66,8 @@ export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItemType>
 		})
 			.then((res) => res.json())
 			.then((data: Array<DocumentDetails>) => {
-				this.updateItems(data);
+				const storeItems = data.map((item) => createStoreItem(item.key, item));
+				this.updateItems(storeItems);
 			});
 	}
 
@@ -75,14 +81,16 @@ export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItemType>
 				'Content-Type': 'application/json',
 			},
 		});
-		const data = await res.json();
-		this.updateItems(data);
+		const data = (await res.json()) as Array<DocumentDetails>;
+		const storeItems = data.map((item) => createStoreItem(item.key, item));
+		this.updateItems(storeItems);
 	}
 
-	getTreeRoot(): Observable<Array<DocumentTreeItem>> {
+	getTreeRoot(): Observable<Array<UmbTreeItem>> {
 		tryExecuteAndNotify(this.host, DocumentResource.getTreeDocumentRoot({})).then(({ data }) => {
 			if (data) {
-				this.updateItems(data.items);
+				const treeItems = data.items.map((item) => createTreeItem(item.key, item.parentKey, item));
+				this.updateItems(treeItems);
 			}
 		});
 
@@ -90,18 +98,21 @@ export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItemType>
 		// TODO: remove ignore when we know how to handle trashed items.
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		return this.items.pipe(map((items) => items.filter((item) => item.parentKey === null && !item.isTrashed)));
+		return this.items.pipe(
+			map((items) => items.filter((item) => isTreeItem(item) && item.parentUnique === null && !item.isTrashed))
+		);
 	}
 
-	getTreeItemChildren(key: string): Observable<Array<FolderTreeItem>> {
+	getTreeItemChildren(unique: string): Observable<Array<UmbTreeItem>> {
 		tryExecuteAndNotify(
 			this.host,
 			DocumentResource.getTreeDocumentChildren({
-				parentKey: key,
+				parentKey: unique,
 			})
 		).then(({ data }) => {
 			if (data) {
-				this.updateItems(data.items);
+				const treeItems = data.items.map((item) => createTreeItem(item.key, item.parentKey, item));
+				this.updateItems(treeItems);
 			}
 		});
 
@@ -109,23 +120,28 @@ export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItemType>
 		// TODO: remove ignore when we know how to handle trashed items.
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		return this.items.pipe(map((items) => items.filter((item) => item.parentKey === key && !item.isTrashed)));
+		return this.items.pipe(
+			map((items) => items.filter((item) => isTreeItem(item) && item.parentUnique === unique && !item.isTrashed))
+		);
 	}
 
-	getTreeItems(keys: Array<string>): Observable<Array<FolderTreeItem>> {
-		if (keys?.length > 0) {
+	getTreeItems(uniques: Array<string> = []): Observable<Array<UmbTreeItem>> {
+		if (uniques?.length > 0) {
 			tryExecuteAndNotify(
 				this.host,
 				DocumentResource.getTreeDocumentItem({
-					key: keys,
+					key: uniques,
 				})
 			).then(({ data }) => {
 				if (data) {
-					this.updateItems(data);
+					const treeItems = data.map((item) => createTreeItem(item.key, item.parentKey, item));
+					this.updateItems(treeItems);
 				}
 			});
 		}
 
-		return this.items.pipe(map((items) => items.filter((item) => keys.includes(item.key ?? ''))));
+		return this.items.pipe(
+			map((items) => items.filter((item) => isTreeItem(item) && uniques.includes(item.unique)) as Array<UmbTreeItem>)
+		);
 	}
 }
