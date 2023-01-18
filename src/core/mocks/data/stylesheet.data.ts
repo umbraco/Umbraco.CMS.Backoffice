@@ -50,7 +50,7 @@ class UmbStylesheetData extends UmbEntityData<StylesheetDetails> {
 	}
 
 	getTreeItemChildren(path: string): PagedFileSystemTreeItem {
-		const items = this.data.filter((item) => item.path?.startsWith(path));
+		const items = this.data.filter((item) => item.path?.startsWith(path + '/'));
 		const treeItems = items.map((item) => createFileSystemTreeItem(item));
 		const total = items.length;
 		return { items: treeItems, total };
