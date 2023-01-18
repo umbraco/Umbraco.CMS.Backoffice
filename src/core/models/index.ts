@@ -153,4 +153,5 @@ export interface DocumentBlueprintDetails {
 
 export interface StylesheetDetails extends FileSystemTreeItem {
 	type: 'stylesheet';
+	content: any;
 }
