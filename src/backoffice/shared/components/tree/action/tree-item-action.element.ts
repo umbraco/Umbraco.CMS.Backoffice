@@ -1,11 +1,14 @@
 import { customElement, property, state } from 'lit/decorators.js';
+import { UmbTreeItem } from '..';
 import { UmbSectionContext } from '../../section/section.context';
 import { UmbTreeContextMenuPageService } from '../context-menu/tree-context-menu-page.service';
 import { UmbTreeContextMenuService } from '../context-menu/tree-context-menu.service';
-import type { Entity, ManifestTreeItemAction, ManifestTree } from '@umbraco-cms/models';
+import type { ManifestTreeItemAction, ManifestTree } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
 
+// TODO: remove key when refactor is done
 export type ActionPageEntity = {
+	unique: string;
 	key: string;
 	name: string;
 };
@@ -16,10 +19,10 @@ export default class UmbTreeItemActionElement extends UmbLitElement {
 	public treeAction?: ManifestTreeItemAction;
 
 	@state()
-	protected _entity: ActionPageEntity = { name: '', key: '' };
+	protected _entity: ActionPageEntity = { unique: '', name: '', key: '' };
 
 	protected _activeTree?: ManifestTree;
-	protected _activeTreeItem?: Entity;
+	protected _activeTreeItem?: UmbTreeItem;
 
 	protected _sectionContext?: UmbSectionContext;
 	protected _treeContextMenuService?: UmbTreeContextMenuService;

@@ -1,10 +1,8 @@
 import { BehaviorSubject } from 'rxjs';
-import type { Entity, ManifestSection, ManifestSectionView, ManifestTree } from '@umbraco-cms/models';
+import type { ManifestSection, ManifestSectionView, ManifestTree, UmbTreeItem } from '@umbraco-cms/models';
 import { UniqueBehaviorSubject } from '@umbraco-cms/observable-api';
 
 export class UmbSectionContext {
-
-
 	#manifest;
 	public readonly manifest;
 
@@ -13,7 +11,7 @@ export class UmbSectionContext {
 	public readonly activeTree = this._activeTree.asObservable();
 
 	// TODO: what is the best context to put this in?
-	private _activeTreeItem = new UniqueBehaviorSubject<Entity | undefined>(undefined);
+	private _activeTreeItem = new UniqueBehaviorSubject<UmbTreeItem | undefined>(undefined);
 	public readonly activeTreeItem = this._activeTreeItem.asObservable();
 
 	// TODO: what is the best context to put this in?
@@ -24,7 +22,6 @@ export class UmbSectionContext {
 		this.#manifest = new UniqueBehaviorSubject<ManifestSection>(sectionManifest);
 		this.manifest = this.#manifest.asObservable();
 	}
-
 
 	public setManifest(data: ManifestSection) {
 		this.#manifest.next({ ...data });
@@ -38,7 +35,7 @@ export class UmbSectionContext {
 		this._activeTree.next(tree);
 	}
 
-	public setActiveTreeItem(item: Entity) {
+	public setActiveTreeItem(item: UmbTreeItem) {
 		this._activeTreeItem.next(item);
 	}
 

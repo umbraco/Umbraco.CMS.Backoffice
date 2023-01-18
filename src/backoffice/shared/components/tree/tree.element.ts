@@ -3,7 +3,8 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { UmbTreeContextBase } from './tree.context';
-import type { Entity, ManifestTree } from '@umbraco-cms/models';
+import { UmbTreeItem } from '.';
+import type { ManifestTree } from '@umbraco-cms/models';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 import { UmbTreeDataStore } from '@umbraco-cms/stores/store';
 import { UmbLitElement } from '@umbraco-cms/element';
@@ -60,13 +61,13 @@ export class UmbTreeElement extends UmbLitElement {
 	private _tree?: ManifestTree;
 
 	@state()
-	private _items: Entity[] = [];
+	private _items: UmbTreeItem[] = [];
 
 	@state()
 	private _loading = true;
 
 	private _treeContext?: UmbTreeContextBase;
-	private _store?: UmbTreeDataStore<Entity>;
+	private _store?: UmbTreeDataStore<UmbTreeItem>;
 
 	connectedCallback(): void {
 		super.connectedCallback();
@@ -108,7 +109,7 @@ export class UmbTreeElement extends UmbLitElement {
 
 		if (!this._tree?.meta.storeAlias) return;
 
-		this.consumeContext(this._tree.meta.storeAlias, (store: UmbTreeDataStore<Entity>) => {
+		this.consumeContext(this._tree.meta.storeAlias, (store: UmbTreeDataStore<UmbTreeItem>) => {
 			this._store = store;
 			this.provideContext('umbStore', store);
 		});
@@ -137,18 +138,17 @@ export class UmbTreeElement extends UmbLitElement {
 	}
 
 	render() {
-		// TODO: Fix Type Mismatch ` as Entity` in this template:
 		return html`
 			${repeat(
 				this._items,
-				(item) => item.key,
+				(item) => item.unique,
 				(item) =>
 					html`<umb-tree-item
-						.key=${item.key}
-						.label=${item.name}
-						.icon=${item.icon}
-						.entityType=${item.type}
-						.hasChildren=${item.hasChildren}
+						.unique=${item.unique}
+						.label=${item.name || ''}
+						.icon=${item.icon || ''}
+						.entityType=${item.type || ''}
+						.hasChildren=${item.hasChildren || false}
 						.loading=${this._loading}></umb-tree-item>`
 			)}
 		`;

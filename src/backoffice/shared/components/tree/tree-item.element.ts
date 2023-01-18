@@ -13,14 +13,14 @@ import { UmbLitElement } from '@umbraco-cms/element';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
 
 @customElement('umb-tree-item')
-export class UmbTreeItem extends UmbLitElement {
+export class UmbTreeItemElement extends UmbLitElement {
 	static styles = [UUITextStyles, css``];
 
 	@property({ type: String })
-	key = '';
+	unique = '';
 
 	@property({ type: String })
-	parentKey: string | null = null;
+	parentUnique: string | null = null;
 
 	@property({ type: String })
 	label = '';
@@ -102,19 +102,19 @@ export class UmbTreeItem extends UmbLitElement {
 
 	private _handleSelectedItem(event: Event) {
 		event.stopPropagation();
-		this._treeContext?.select(this.key);
+		this._treeContext?.select(this.unique);
 	}
 
 	private _handleDeselectedItem(event: Event) {
 		event.stopPropagation();
-		this._treeContext?.deselect(this.key);
+		this._treeContext?.deselect(this.unique);
 	}
 
 	private _observeSection() {
 		if (!this._sectionContext) return;
 
 		this.observe(this._sectionContext?.manifest, (section) => {
-			this._href = this._constructPath(section?.meta.pathname || '', this.entityType, this.key);
+			this._href = this._constructPath(section?.meta.pathname || '', this.entityType, this.unique);
 		});
 	}
 
@@ -129,7 +129,7 @@ export class UmbTreeItem extends UmbLitElement {
 	private _observeIsSelected() {
 		if (!this._treeContext) return;
 
-		this.observe(this._treeContext.selection.pipe(map((keys) => keys?.includes(this.key))), (isSelected) => {
+		this.observe(this._treeContext.selection.pipe(map((keys) => keys?.includes(this.unique))), (isSelected) => {
 			this._selected = isSelected || false;
 		});
 	}
@@ -138,7 +138,7 @@ export class UmbTreeItem extends UmbLitElement {
 		if (!this._sectionContext) return;
 
 		this.observe(this._sectionContext?.activeTreeItem, (treeItem) => {
-			this._isActive = this.key === treeItem?.key;
+			this._isActive = this.unique === treeItem?.unique;
 		});
 	}
 
@@ -156,8 +156,8 @@ export class UmbTreeItem extends UmbLitElement {
 	}
 
 	// TODO: how do we handle this?
-	private _constructPath(sectionPathname: string, type: string, key: string) {
-		return type ? `section/${sectionPathname}/${type}/edit/${key}` : undefined;
+	private _constructPath(sectionPathname: string, type: string, unique: string) {
+		return type ? `section/${sectionPathname}/${type}/edit/${unique}` : undefined;
 	}
 
 	// TODO: do we want to catch and emit a backoffice event here?
@@ -172,7 +172,7 @@ export class UmbTreeItem extends UmbLitElement {
 		this._loading = true;
 
 		// TODO: we should do something about these types, stop having our own version of Entity.
-		this.observe(this._store.getTreeItemChildren(this.key) as Observable<Entity[]>, (childItems) => {
+		this.observe(this._store.getTreeItemChildren(this.unique) as Observable<Entity[]>, (childItems) => {
 			this._childItems = childItems;
 			this._loading = false;
 		});
@@ -184,14 +184,14 @@ export class UmbTreeItem extends UmbLitElement {
 		this._sectionContext?.setActiveTree(this._treeContext?.tree);
 
 		this._sectionContext?.setActiveTreeItem({
-			key: this.key,
+			unique: this.unique,
 			name: this.label,
 			icon: this.icon,
 			type: this.entityType,
 			hasChildren: this.hasChildren,
-			parentKey: this.parentKey,
+			parentUnique: this.parentUnique,
 		});
-		this._treeContextMenuService?.open({ name: this.label, key: this.key });
+		this._treeContextMenuService?.open({ name: this.label, unique: this.unique });
 	}
 
 	render() {
@@ -248,6 +248,6 @@ export class UmbTreeItem extends UmbLitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-tree-item': UmbTreeItem;
+		'umb-tree-item': UmbTreeItemElement;
 	}
 }
