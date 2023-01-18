@@ -5,6 +5,7 @@ import { UniqueBehaviorSubject } from '../observable-api/unique-behavior-subject
 
 export interface UmbStoreItem {
 	unique: string;
+	parentUnique: string | null;
 }
 
 export interface UmbDataStore<T> {
@@ -20,8 +21,12 @@ export interface UmbTreeDataStore<T> extends UmbDataStore<T> {
 	getTreeItem(keys: string): Observable<Array<T>>;
 }
 
-export const createStoreItem = <T>(unique: string | null | undefined, data: T): UmbStoreItem & T => {
-	return Object.assign({ unique: unique || uuid() }, window.structuredClone(data));
+export const createStoreItem = <T>(
+	unique: string | null | undefined,
+	parentUnique: string | null | undefined,
+	data: T
+): UmbStoreItem & T => {
+	return Object.assign({ unique: unique || uuid(), parentUnique: parentUnique || null }, window.structuredClone(data));
 };
 
 /**

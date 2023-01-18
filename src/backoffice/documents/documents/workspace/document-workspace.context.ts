@@ -1,11 +1,13 @@
 import { UmbWorkspaceContentContext } from '../../../shared/components/workspace/workspace-content/workspace-content.context';
-import { STORE_ALIAS as DOCUMENT_STORE_ALIAS } from '../../../documents/documents/document.store';
-import type { UmbDocumentStore, UmbDocumentStoreItem } from '../../../documents/documents/document.store';
+import { STORE_ALIAS as DOCUMENT_STORE_ALIAS, UmbDocumentStoreItem } from '../../../documents/documents/document.store';
+import type { UmbDocumentStore, UmbDocumentDetailsStoreItem } from '../../../documents/documents/document.store';
 import type { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import type { DocumentDetails } from '@umbraco-cms/models';
 import { appendToFrozenArray } from '@umbraco-cms/observable-api';
 
-const DefaultDocumentData = {
+const DocumentDefaultData: UmbDocumentDetailsStoreItem = {
+	unique: '',
+	parentUnique: null,
 	key: '',
 	name: '',
 	icon: '',
@@ -32,11 +34,11 @@ const DefaultDocumentData = {
 			name: '',
 		},
 	],
-} as UmbDocumentStoreItem;
+};
 
 export class UmbWorkspaceDocumentContext extends UmbWorkspaceContentContext<UmbDocumentStoreItem, UmbDocumentStore> {
 	constructor(host: UmbControllerHostInterface) {
-		super(host, DefaultDocumentData, DOCUMENT_STORE_ALIAS, 'document');
+		super(host, DocumentDefaultData, DOCUMENT_STORE_ALIAS, 'document');
 	}
 
 	public setPropertyValue(alias: string, value: unknown) {

@@ -1,8 +1,7 @@
 import { v4 as uuid } from 'uuid';
+import { UmbStoreItem } from '@umbraco-cms/stores/store';
 
-export interface UmbTreeItem {
-	unique: string;
-	parentUnique: string | null;
+export interface UmbTreeItem extends UmbStoreItem {
 	name?: string | null;
 	type?: string | null;
 	icon?: string | null;

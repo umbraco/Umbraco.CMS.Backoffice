@@ -5,13 +5,13 @@ import { DocumentResource } from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import { createTreeItem, isTreeItem, UmbTreeItem } from 'src/backoffice/shared/components/tree';
 
-export type UmbDocumentStoreDetailItem = DocumentDetails & UmbStoreItem;
-export type UmbDocumentStoreItem = UmbDocumentStoreDetailItem | UmbTreeItem;
+export type UmbDocumentDetailsStoreItem = DocumentDetails & UmbStoreItem;
+export type UmbDocumentStoreItem = UmbDocumentDetailsStoreItem | UmbTreeItem;
 
 export const isDocumentDetail = (
-	document: UmbDocumentStoreDetailItem | UmbTreeItem
-): document is UmbDocumentStoreDetailItem => {
-	return (document as UmbDocumentStoreDetailItem).data !== undefined;
+	document: UmbDocumentDetailsStoreItem | UmbTreeItem
+): document is UmbDocumentDetailsStoreItem => {
+	return (document as DocumentDetails).data !== undefined;
 };
 
 // TODO: research how we write names of global consts.
@@ -26,25 +26,26 @@ export const STORE_ALIAS = 'umbDocumentStore';
 export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItem> {
 	public readonly storeAlias = STORE_ALIAS;
 
-	getItem(unique: string): Observable<UmbDocumentStoreDetailItem | null> {
+	getItem(unique: string): Observable<UmbDocumentDetailsStoreItem | null> {
 		// TODO: use backend cli when available.
 		fetch(`/umbraco/management/api/v1/document/details/${unique}`)
 			.then((res) => res.json())
 			.then((data: DocumentDetails) => {
-				const storeItem = createStoreItem(data.key, data);
+				const storeItem = createStoreItem(data.key, data.parentKey, data);
 				this.updateItems([storeItem]);
 			});
 
 		return this.items.pipe(
 			map(
 				(items) =>
-					(items.find((item) => isDocumentDetail(item) && item.unique === unique) as UmbDocumentStoreDetailItem) || null
+					(items.find((item) => isDocumentDetail(item) && item.unique === unique) as UmbDocumentDetailsStoreItem) ||
+					null
 			)
 		);
 	}
 
 	// TODO: make sure UI somehow can follow the status of this action.
-	save(data: UmbDocumentStoreDetailItem[]): Promise<void> {
+	save(data: UmbDocumentDetailsStoreItem[]): Promise<void> {
 		// fetch from server and update store
 		// TODO: use Fetcher API.
 		let body: string;
@@ -66,7 +67,7 @@ export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItem> {
 		})
 			.then((res) => res.json())
 			.then((data: Array<DocumentDetails>) => {
-				const storeItems = data.map((item) => createStoreItem(item.key, item));
+				const storeItems = data.map((item) => createStoreItem(item.key, item.parentKey, item));
 				this.updateItems(storeItems);
 			});
 	}
@@ -82,7 +83,7 @@ export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItem> {
 			},
 		});
 		const data = (await res.json()) as Array<DocumentDetails>;
-		const storeItems = data.map((item) => createStoreItem(item.key, item));
+		const storeItems = data.map((item) => createStoreItem(item.key, item.parentKey, item));
 		this.updateItems(storeItems);
 	}
 
