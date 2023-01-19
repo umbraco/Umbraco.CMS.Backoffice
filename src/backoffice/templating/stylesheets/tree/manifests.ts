@@ -1,3 +1,4 @@
+import { UMB_STYLESHEET_STORE_CONTEXT_TOKEN } from '../stylesheets.store';
 import type { ManifestTree, ManifestTreeItemAction } from '@umbraco-cms/models';
 
 const tree: ManifestTree = {
@@ -5,7 +6,7 @@ const tree: ManifestTree = {
 	alias: 'Umb.Tree.Stylesheets',
 	name: 'Stylesheets Tree',
 	meta: {
-		storeAlias: 'umbStylesheetStore',
+		storeAlias: UMB_STYLESHEET_STORE_CONTEXT_TOKEN.toString(),
 	},
 };
 
