@@ -5,6 +5,7 @@ import type { StylesheetDetails } from '@umbraco-cms/models';
 import { StylesheetResource } from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import { createTreeItem, isTreeItem, UmbTreeItem } from 'src/backoffice/shared/components/tree';
+import { UmbContextToken } from '@umbraco-cms/context-api';
 
 export type UmbStylesheetDetailsStoreItem = StylesheetDetails & UmbStoreItem;
 export type UmbStylesheetStoreItem = UmbStylesheetDetailsStoreItem | UmbTreeItem;
@@ -123,3 +124,5 @@ export class UmbStylesheetStore extends UmbNodeStoreBase<UmbStylesheetStoreItem>
 		});
 	}
 }
+
+export const UMB_STYLESHEET_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbStylesheetStore>(UmbStylesheetStore.name);
