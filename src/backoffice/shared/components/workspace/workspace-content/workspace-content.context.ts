@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { UmbNotificationService } from '../../../../../core/notification';
+import { UmbNotificationService, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN } from '../../../../../core/notification';
 import { UmbNotificationDefaultData } from '../../../../../core/notification/layouts/default';
 import { UmbTreeItem } from '../../tree';
 import { UmbNodeStoreBase } from '@umbraco-cms/stores/store';
@@ -40,7 +40,7 @@ export abstract class UmbWorkspaceContentContext<
 
 		this.entityType = entityType;
 
-		new UmbContextConsumerController(host, 'umbNotificationService', (_instance: UmbNotificationService) => {
+		new UmbContextConsumerController(host, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN, (_instance) => {
 			this._notificationService = _instance;
 		});
 

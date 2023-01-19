@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import { UmbTreeItem } from '../tree';
 import type { ManifestSection, ManifestSectionView, ManifestTree } from '@umbraco-cms/models';
 import { UniqueBehaviorSubject } from '@umbraco-cms/observable-api';
+import { UmbContextToken } from '@umbraco-cms/context-api';
 
 export class UmbSectionContext {
 	#manifest;
@@ -44,3 +45,5 @@ export class UmbSectionContext {
 		this._activeView.next(view);
 	}
 }
+
+export const UMB_SECTION_CONTEXT_TOKEN = new UmbContextToken<UmbSectionContext>(UmbSectionContext.name);

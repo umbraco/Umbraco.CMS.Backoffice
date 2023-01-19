@@ -4,6 +4,7 @@ import type { DocumentDetails } from '@umbraco-cms/models';
 import { DocumentResource } from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import { createTreeItem, isTreeItem, UmbTreeItem } from 'src/backoffice/shared/components/tree';
+import { UmbContextToken } from '@umbraco-cms/context-api';
 
 export type UmbDocumentDetailsStoreItem = DocumentDetails & UmbStoreItem;
 export type UmbDocumentStoreItem = UmbDocumentDetailsStoreItem | UmbTreeItem;
@@ -15,7 +16,7 @@ export const isDocumentDetail = (
 };
 
 // TODO: research how we write names of global consts.
-export const STORE_ALIAS = 'umbDocumentStore';
+export const STORE_ALIAS = 'UmbDocumentStore';
 
 /**
  * @export
@@ -146,3 +147,5 @@ export class UmbDocumentStore extends UmbNodeStoreBase<UmbDocumentStoreItem> {
 		);
 	}
 }
+
+export const UMB_DOCUMENT_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDocumentStore>(STORE_ALIAS);
