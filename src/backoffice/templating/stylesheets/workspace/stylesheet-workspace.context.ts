@@ -1,5 +1,5 @@
 import { UmbWorkspaceContentContext } from '../../../shared/components/workspace/workspace-content/workspace-content.context';
-import { UmbStylesheetDetailsStoreItem, UmbStylesheetStore, UmbStylesheetStoreItem } from '../stylesheets.store';
+import { UmbStylesheetDetailsStoreItem, UmbStylesheetStore, UmbStylesheetStoreItem } from '../stylesheet.store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
 const StylesheetDefaultData: UmbStylesheetDetailsStoreItem = {

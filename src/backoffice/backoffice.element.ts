@@ -29,7 +29,7 @@ import {
 
 import { UmbSectionStore, UMB_SECTION_STORE_CONTEXT_TOKEN } from './shared/components/section/section.store';
 import { UmbDataTypeStore, UMB_DATA_TYPE_STORE_CONTEXT_TOKEN } from './settings/data-types/data-type.store';
-import { UmbStylesheetStore, UMB_STYLESHEET_STORE_CONTEXT_TOKEN } from './templating/stylesheets/stylesheets.store';
+import { UmbStylesheetStore, UMB_STYLESHEET_STORE_CONTEXT_TOKEN } from './templating/stylesheets/stylesheet.store';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 // Domains

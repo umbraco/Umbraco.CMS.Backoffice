@@ -1,4 +1,4 @@
-import { UMB_STYLESHEET_STORE_CONTEXT_TOKEN } from '../stylesheets.store';
+import { UMB_STYLESHEET_STORE_CONTEXT_TOKEN } from '../stylesheet.store';
 import type { ManifestTree, ManifestTreeItemAction } from '@umbraco-cms/models';
 
 const tree: ManifestTree = {

@@ -2,7 +2,7 @@ import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { UmbStylesheetDetailsStoreItem } from '../stylesheets.store';
+import { UmbStylesheetDetailsStoreItem } from '../stylesheet.store';
 import { UmbStylesheetWorkspaceContext } from './stylesheet-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 
