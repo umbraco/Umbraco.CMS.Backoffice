@@ -2,7 +2,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
-import { UmbDictionaryStore } from '../../dictionary/dictionary.store';
+import { UmbDictionaryStore, UMB_DICTIONARY_STORE_CONTEXT_TOKEN } from '../../dictionary/dictionary.store';
 import { UmbTableColumn, UmbTableConfig, UmbTableItem } from 'src/backoffice/shared/components/table';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { UmbTreeContextMenuService } from 'src/backoffice/shared/components/tree/context-menu/tree-context-menu.service';
@@ -13,8 +13,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
-			#body-layout-padding {
-				padding: var(--uui-size-space-5);
+			:host {
 				display: flex;
 				flex-direction: column;
 				height: 100%;
@@ -69,7 +68,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 			this._contextMenuService = contextMenuService;
 		});
 
-		this.consumeContext('umbDictionaryStore', (dictionaryStore: UmbDictionaryStore) => {
+		this.consumeContext(UMB_DICTIONARY_STORE_CONTEXT_TOKEN, (dictionaryStore: UmbDictionaryStore) => {
 			this._dictionaryStore = dictionaryStore;
 			this._getDictionaryItems();
 		});
@@ -166,28 +165,24 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	}
 
 	render() {
-		return html` <umb-body-layout headline="Dictionary overview">
-			<div id="body-layout-padding">
-				<div id="dictionary-top-bar">
-					<uui-button type="button" look="outline" @click=${this._create}>Create dictionary item</uui-button>
-					<uui-input
-						@keyup="${this._filter}"
-						placeholder="Type to filter..."
-						label="Type to filter dictionary"
-						id="searchbar">
-						<uui-icon name="search" slot="prepend" id="searchbar_icon"></uui-icon>
-					</uui-input>
-				</div>
-				${when(
-					this._tableItemsFiltered.length,
-					() => html` <umb-table
-						.config=${this._tableConfig}
-						.columns=${this._tableColumns}
-						.items=${this._tableItemsFiltered}></umb-table>`,
-					() => html`<umb-empty-state>There were no dictionary items found.</umb-empty-state>`
-				)}
+		return html` <div id="dictionary-top-bar">
+				<uui-button type="button" look="outline" @click=${this._create}>Create dictionary item</uui-button>
+				<uui-input
+					@keyup="${this._filter}"
+					placeholder="Type to filter..."
+					label="Type to filter dictionary"
+					id="searchbar">
+					<uui-icon name="search" slot="prepend" id="searchbar_icon"></uui-icon>
+				</uui-input>
 			</div>
-		</umb-body-layout>`;
+			${when(
+				this._tableItemsFiltered.length,
+				() => html` <umb-table
+					.config=${this._tableConfig}
+					.columns=${this._tableColumns}
+					.items=${this._tableItemsFiltered}></umb-table>`,
+				() => html`<umb-empty-state>There were no dictionary items found.</umb-empty-state>`
+			)}`;
 	}
 }
 

@@ -3,7 +3,7 @@ import { css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 import { v4 as uuidv4 } from 'uuid';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { UmbDictionaryStore } from '../../dictionary.store';
+import { UmbDictionaryStore, UMB_DICTIONARY_STORE_CONTEXT_TOKEN } from '../../dictionary.store';
 
 @customElement('umb-tree-action-dictionary-create-page')
 export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionElement {
@@ -21,7 +21,7 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.consumeContext('umbDictionaryStore', (dictionaryStore: UmbDictionaryStore) => {
+		this.consumeContext(UMB_DICTIONARY_STORE_CONTEXT_TOKEN, (dictionaryStore: UmbDictionaryStore) => {
 			this._dictionaryStore = dictionaryStore;
 		});
 	}
@@ -49,9 +49,9 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 		await this._dictionaryStore.create(this._entity.key, key, formData.get('name') as string);
 
 		// use detail from new item to construct edit URL
-		const href = `/section/translation/dictionary/edit/${key}`;
-		history.pushState(null, '', href);
-		this._treeContextMenuService?.close();	
+		history.pushState(null, '', `/section/translation/dictionary/edit/${key}`);
+
+		this._treeContextMenuService.close();	
 	}
 
 	render() {

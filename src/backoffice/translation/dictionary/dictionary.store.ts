@@ -3,6 +3,7 @@ import { UmbDataStoreBase } from '../../../core/stores/store';
 import {
 	ContentResult,
 	DictionaryImport,
+	DictionaryOverview,
 	DictionaryResource,
 	EntityTreeItem,
 } from '@umbraco-cms/backend-api';
@@ -12,7 +13,7 @@ import { umbDictionaryData } from 'src/core/mocks/data/dictionary.data';
 
 import { UmbContextToken } from '@umbraco-cms/context-api';
 
-export type UmbDictionaryStoreItemType = DictionaryDetails | EntityTreeItem;
+export type UmbDictionaryStoreItemType = DictionaryDetails | DictionaryOverview | EntityTreeItem;
 export const STORE_ALIAS = 'UmbDictionaryStore';
 
 /**
@@ -36,7 +37,7 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 			}
 		});
 
-		return this.items.pipe(map((items) => items.filter((item) => item.parentKey === null)));
+		return this.items.pipe(map((items) => (items as EntityTreeItem[]).filter((item) => item.parentKey === null)));
 	}
 
 	/**
@@ -57,7 +58,7 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 			}
 		});
 
-		return this.items.pipe(map((items) => items.filter((item) => item.parentKey === key)));
+		return this.items.pipe(map((items) => (items as EntityTreeItem[]).filter((item) => item.parentKey === key)));
 	}
 
 	/**

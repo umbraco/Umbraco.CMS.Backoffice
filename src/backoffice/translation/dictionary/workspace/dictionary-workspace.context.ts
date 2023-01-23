@@ -1,5 +1,6 @@
 import { UmbWorkspaceContentContext } from '../../../shared/components/workspace/workspace-content/workspace-content.context';
 import type { UmbDictionaryStore, UmbDictionaryStoreItemType } from '../dictionary.store';
+import { STORE_ALIAS as DICTIONARY_STORE_ALIAS } from '../dictionary.store';
 import { UmbControllerHostInterface } from 'src/core/controller/controller-host.mixin';
 import type { DictionaryDetails } from '@umbraco-cms/models';
 
@@ -16,7 +17,7 @@ const DefaultDataTypeData = {
 
 export class UmbWorkspaceDictionaryContext extends UmbWorkspaceContentContext<UmbDictionaryStoreItemType, UmbDictionaryStore> {
 	constructor(host: UmbControllerHostInterface) {
-		super(host, DefaultDataTypeData, 'umbDictionaryStore', 'dictionary');
+		super(host, DefaultDataTypeData, DICTIONARY_STORE_ALIAS, 'dictionary');
 	}
 
     public setPropertyValue(isoCode: string, translation: string) {

@@ -27,7 +27,7 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 	constructor() {
 		super();
 
-		this.consumeContext('umbWorkspaceContext', (umbWorkspaceContext) => {
+		this.consumeContext('umbWorkspaceContext', (umbWorkspaceContext: UmbWorkspaceDictionaryContext) => {
 			this._workspaceContext = umbWorkspaceContext;
 			this._observeDictionary();
 		});

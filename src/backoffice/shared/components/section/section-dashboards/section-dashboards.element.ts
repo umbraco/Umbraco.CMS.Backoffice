@@ -41,7 +41,20 @@ export class UmbSectionDashboardsElement extends UmbLitElement {
 				height: 100%;
 				box-sizing: border-box;
 				display: block;
-				padding:var(--uui-size-5);
+				padding: var(--uui-size-5);
+			}
+
+			#header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				width: 100%;
+				min-height: 60px;
+				box-sizing: border-box;
+				margin:0;
+				padding:0 var(--uui-size-5);
+				background-color:var(--uui-color-surface);
+				border-bottom:1px solid var(--uui-color-border);
 			}
 		`,
 	];
@@ -149,6 +162,8 @@ export class UmbSectionDashboardsElement extends UmbLitElement {
 							)}
 						</uui-tab-group>
 				  `
+				: this._dashboards?.length === 1
+				? html`<h3 id="header">${this._dashboards[0].meta.label || this._dashboards[0].name}</h3>`
 				: nothing}
 		`;
 	}
