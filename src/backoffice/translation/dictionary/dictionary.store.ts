@@ -10,16 +10,19 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import type { DictionaryDetails } from '@umbraco-cms/models';
 import { umbDictionaryData } from 'src/core/mocks/data/dictionary.data';
 
+import { UmbContextToken } from '@umbraco-cms/context-api';
+
 export type UmbDictionaryStoreItemType = DictionaryDetails | EntityTreeItem;
+export const STORE_ALIAS = 'UmbDictionaryStore';
 
 /**
  * @export
  * @class UmbDictionaryStore
- * @extends {UmbDataStoreBase<UmbDictionaryStoreItemType | EntityTreeItem>}
+ * @extends {UmbDataStoreBase<UmbDictionaryStoreItemType>}
  * @description - Data Store for Dictionary Items.
  */
 export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemType> {
-	public readonly storeAlias = 'umbDictionaryStore';
+	public readonly storeAlias = STORE_ALIAS;
 
 	/**
 	 * @description - Get the root of the tree.
@@ -193,3 +196,5 @@ export class UmbDictionaryStore extends UmbDataStoreBase<UmbDictionaryStoreItemT
 		return data;
 	}
 }
+
+export const UMB_DICTIONARY_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDictionaryStore>(STORE_ALIAS);

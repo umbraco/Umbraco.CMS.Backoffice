@@ -1,3 +1,4 @@
+import { STORE_ALIAS } from '../dictionary.store';
 import type { ManifestTree, ManifestTreeItemAction } from '@umbraco-cms/models';
 
 const treeAlias = 'Umb.Tree.Dictionary';
@@ -8,7 +9,7 @@ const tree: ManifestTree = {
 	name: 'Dictionary Tree',
 	weight: 100,
 	meta: {
-		storeAlias: 'umbDictionaryStore',
+		storeAlias: STORE_ALIAS,
 	},
 };
 
