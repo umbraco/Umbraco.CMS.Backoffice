@@ -99,7 +99,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 			},
 		];
 
-		this._dictionaryItems[0].translations?.forEach((t) => {
+		this._dictionaryItems[0]?.translations?.forEach((t) => {
 			this._tableColumns.push({
 				name: t.displayName ?? '',
 				alias: t.displayName ?? '',
