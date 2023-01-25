@@ -8,7 +8,6 @@ import { createExtensionElement } from '@umbraco-cms/extensions-api';
 import type {
 	ManifestDashboard,
 	ManifestDashboardCollection,
-	ManifestSection,
 	ManifestWithMeta,
 } from '@umbraco-cms/models';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-registry';
@@ -71,7 +70,7 @@ export class UmbSectionDashboardsElement extends UmbLitElement {
 	@state()
 	private _currentSectionPathname = '';
 
-	private _currentSectionAlias = '';
+	private _currentSectionAlias?: string;
 	private _sectionContext?: UmbSectionContext;
 
 	constructor() {
@@ -86,12 +85,12 @@ export class UmbSectionDashboardsElement extends UmbLitElement {
 	private _observeSectionContext() {
 		if (!this._sectionContext) return;
 
-		this.observe(this._sectionContext.manifest.pipe(first()), (section) => {
-			if (section) {
-				this._currentSectionAlias = section.alias;
-				this._currentSectionPathname = section.meta.pathname;
-				this._observeDashboards();
-			}
+		this.observe(this._sectionContext.alias.pipe(first()), (alias) => {
+			this._currentSectionAlias = alias;
+			this._observeDashboards();
+		});
+		this.observe(this._sectionContext.pathname.pipe(first()), (pathname) => {
+			this._currentSectionPathname = pathname || '';
 		});
 	}
 
