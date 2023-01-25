@@ -1,8 +1,7 @@
 import { UmbWorkspaceContentContext } from '../../../shared/components/workspace/workspace-content/workspace-content.context';
-import type { UmbDictionaryStore, UmbDictionaryStoreItemType } from '../dictionary.store';
-import { STORE_ALIAS as DICTIONARY_STORE_ALIAS } from '../dictionary.store';
-import { UmbControllerHostInterface } from 'src/core/controller/controller-host.mixin';
+import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import type { DictionaryDetails } from '@umbraco-cms/models';
+import { UmbDictionaryDetailStore, UmbDictionaryDetailStoreItemType, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../dictionary.detail.store';
 
 const DefaultDataTypeData = {
 	key: '',
@@ -13,11 +12,11 @@ const DefaultDataTypeData = {
     isContainer: false,
     parentKey: null,
     translations: [],
-} as UmbDictionaryStoreItemType;
+} as UmbDictionaryDetailStoreItemType;
 
-export class UmbWorkspaceDictionaryContext extends UmbWorkspaceContentContext<UmbDictionaryStoreItemType, UmbDictionaryStore> {
+export class UmbWorkspaceDictionaryContext extends UmbWorkspaceContentContext<UmbDictionaryDetailStoreItemType, UmbDictionaryDetailStore> {
 	constructor(host: UmbControllerHostInterface) {
-		super(host, DefaultDataTypeData, DICTIONARY_STORE_ALIAS, 'dictionary');
+		super(host, DefaultDataTypeData, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN.toString(), 'dictionary');
 	}
 
     public setPropertyValue(isoCode: string, translation: string) {
@@ -29,6 +28,6 @@ export class UmbWorkspaceDictionaryContext extends UmbWorkspaceContentContext<Um
 			return dictionaryTranslation;
 		});
 
-		this.update({ translations: newDataSet } as Partial<UmbDictionaryStoreItemType>);		
+		this.update({ translations: newDataSet } as Partial<UmbDictionaryDetailStoreItemType>);		
 	}
 }

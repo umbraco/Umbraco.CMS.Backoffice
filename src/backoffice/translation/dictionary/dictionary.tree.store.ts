@@ -5,9 +5,9 @@ import { createObservablePart, ArrayState } from '@umbraco-cms/observable-api';
 import { UmbStoreBase } from '@umbraco-cms/store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
-
-export const UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDictionaryTreeStore>('UmbDictionaryTreeStore');
-
+export const UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDictionaryTreeStore>(
+	'UmbDictionaryTreeStore'
+);
 
 /**
  * @export
@@ -16,33 +16,30 @@ export const UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDi
  * @description - Tree Data Store for Data Types
  */
 export class UmbDictionaryTreeStore extends UmbStoreBase {
-
-
 	#data = new ArrayState<DocumentTreeItem>([], (x) => x.key);
 
-
-	constructor(host: UmbControllerHostInterface) {
+	constructor(private host: UmbControllerHostInterface) {
 		super(host, UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN.toString());
 	}
 
 	// TODO: How can we avoid having this in both stores?
 	/**
-	 * @description - Delete a Data Type.
-	 * @param {string[]} keys
-	 * @memberof UmbDictionarysStore
-	 * @return {*}  {Promise<void>}
+	 * @description - Delete a Dictionary. The Dictionary is removed from the store.
+	 * @param {string} key
+	 * @return {*}  {(Promise<void>)}
+	 * @memberof UmbDictionaryStore
 	 */
-	async delete(keys: string[]) {
-		// TODO: use backend cli when available.
-		await fetch('/umbraco/backoffice/data-type/delete', {
-			method: 'POST',
-			body: JSON.stringify(keys),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
+	async delete(key: string): Promise<void> {
+		const { data } = await tryExecuteAndNotify(
+			this.host,
+			DictionaryResource.deleteDictionaryByKey({
+				key,
+			})
+		);
 
-		this.#data.remove(keys);
+		if (!data) return;
+
+		this.#data.remove(data);
 	}
 
 	getTreeRoot() {
@@ -55,7 +52,9 @@ export class UmbDictionaryTreeStore extends UmbStoreBase {
 
 		// TODO: how do we handle trashed items?
 		// TODO: remove ignore when we know how to handle trashed items.
-		return createObservablePart(this.#data, (items) => items.filter((item) => item.parentKey === null && !item.isTrashed));
+		return createObservablePart(this.#data, (items) =>
+			items.filter((item) => item.parentKey === null && !item.isTrashed)
+		);
 	}
 
 	getTreeItemChildren(key: string) {
@@ -73,7 +72,9 @@ export class UmbDictionaryTreeStore extends UmbStoreBase {
 
 		// TODO: how do we handle trashed items?
 		// TODO: remove ignore when we know how to handle trashed items.
-		return createObservablePart(this.#data, (items) => items.filter((item) => item.parentKey === key && !item.isTrashed));
+		return createObservablePart(this.#data, (items) =>
+			items.filter((item) => item.parentKey === key && !item.isTrashed)
+		);
 	}
 
 	getTreeItems(keys: Array<string>) {

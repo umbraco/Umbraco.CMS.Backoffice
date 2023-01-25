@@ -2,11 +2,11 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
-import { UmbDictionaryStore, UMB_DICTIONARY_STORE_CONTEXT_TOKEN } from '../../dictionary/dictionary.store';
-import { UmbTableColumn, UmbTableConfig, UmbTableItem } from 'src/backoffice/shared/components/table';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { UmbTreeContextMenuService } from 'src/backoffice/shared/components/tree/context-menu/tree-context-menu.service';
 import type { DictionaryDetails } from '@umbraco-cms/models';
+import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary/dictionary.detail.store';
+import { UmbTableConfig, UmbTableColumn, UmbTableItem } from '../../../../backoffice/shared/components/table';
+import { UmbTreeContextMenuService } from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
@@ -53,7 +53,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	private _contextMenuService?: UmbTreeContextMenuService;
 
-	private _dictionaryStore?: UmbDictionaryStore;
+	private _detailStore?: UmbDictionaryDetailStore;
 
 	private _tableItems: Array<UmbTableItem> = [];
 
@@ -68,16 +68,16 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 			this._contextMenuService = contextMenuService;
 		});
 
-		this.consumeContext(UMB_DICTIONARY_STORE_CONTEXT_TOKEN, (dictionaryStore: UmbDictionaryStore) => {
-			this._dictionaryStore = dictionaryStore;
+		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (detailStore: UmbDictionaryDetailStore) => {
+			this._detailStore = detailStore;
 			this._getDictionaryItems();
 		});
 	}
 
 	private async _getDictionaryItems() {
-		if (!this._dictionaryStore) return;
+		if (!this._detailStore) return;
 
-		this.observe(this._dictionaryStore.get(0, 1000), (dictionaryItems: DictionaryDetails[]) => {
+		this.observe(this._detailStore.get(0, 1000), (dictionaryItems: DictionaryDetails[]) => {
 			this._dictionaryItems = dictionaryItems;
 			this._setTableColumns();
 			this._setTableItems();

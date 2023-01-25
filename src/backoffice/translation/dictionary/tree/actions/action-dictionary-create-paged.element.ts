@@ -3,26 +3,29 @@ import { css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 import { v4 as uuidv4 } from 'uuid';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { UmbDictionaryStore, UMB_DICTIONARY_STORE_CONTEXT_TOKEN } from '../../dictionary.store';
+import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary.detail.store';
 
 @customElement('umb-tree-action-dictionary-create-page')
 export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionElement {
-	static styles = [UUITextStyles, css`
-		uui-input {
-			width:100%;
-		}
-	`];
+	static styles = [
+		UUITextStyles,
+		css`
+			uui-input {
+				width: 100%;
+			}
+		`,
+	];
 
 	@query('#form')
 	private _form!: HTMLFormElement;
 
-	private _dictionaryStore!: UmbDictionaryStore;
+	private _detailStore!: UmbDictionaryDetailStore;
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.consumeContext(UMB_DICTIONARY_STORE_CONTEXT_TOKEN, (dictionaryStore: UmbDictionaryStore) => {
-			this._dictionaryStore = dictionaryStore;
+		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (detailStore: UmbDictionaryDetailStore) => {
+			this._detailStore = detailStore;
 		});
 	}
 
@@ -34,7 +37,7 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 		this._form?.requestSubmit();
 	}
 
-	private async _handleSubmit(e: SubmitEvent) {
+	private _handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
 		if (!this._treeContextMenuService) return;
@@ -46,12 +49,13 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 		const key = uuidv4();
 
 		// create the new item before routing to it
-		await this._dictionaryStore.create(this._entity.key, key, formData.get('name') as string);
+		this.observe(this._detailStore.create(this._entity.key, key, formData.get('name') as string), () => {	
+			// use detail from new item to construct edit URL
+			history.pushState(null, '', `/section/translation/dictionary/edit/${key}`);
 
-		// use detail from new item to construct edit URL
-		history.pushState(null, '', `/section/translation/dictionary/edit/${key}`);
-
-		this._treeContextMenuService.close();	
+			// TODO => why is this function not accessible?
+			// this._treeContextMenuService.close();
+		});
 	}
 
 	render() {

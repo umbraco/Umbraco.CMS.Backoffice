@@ -43,7 +43,7 @@ export class DictionaryResource {
      * @throws ApiError
      */
     public static postDictionary({
-        requestBody,
+        requestBody
     }: {
         requestBody?: DictionaryItem,
     }): CancelablePromise<CreatedResult> {
