@@ -2,7 +2,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { UmbDictionaryStore } from '../../dictionary.store';
+import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary.detail.store';
 
 @customElement('umb-tree-action-dictionary-export-page')
 export class UmbTreeActionDictionaryExportPageElement extends UmbTreeItemActionElement {
@@ -11,13 +11,13 @@ export class UmbTreeActionDictionaryExportPageElement extends UmbTreeItemActionE
 	@query('#form')
 	private _form!: HTMLFormElement;
 
-	private _dictionaryStore!: UmbDictionaryStore;
+	private _dictionaryDetailStore!: UmbDictionaryDetailStore;
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.consumeContext('umbDictionaryStore', (dictionaryStore: UmbDictionaryStore) => {
-			this._dictionaryStore = dictionaryStore;
+		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (dictionaryDetailStore: UmbDictionaryDetailStore) => {
+			this._dictionaryDetailStore = dictionaryDetailStore;
 		});
 	}
 
@@ -32,13 +32,13 @@ export class UmbTreeActionDictionaryExportPageElement extends UmbTreeItemActionE
 	private async _handleSubmit(e: SubmitEvent) {
 		e.preventDefault();;
 
-		if (!this._dictionaryStore) return;
+		if (!this._dictionaryDetailStore) return;
 
 		const form = e.target as HTMLFormElement;
 		if (!form) return;
 
 		const formData = new FormData(form);
-		await this._dictionaryStore.export(this._entity.key, (formData.get('includeDescendants') as string) === 'on');
+		await this._dictionaryDetailStore.export(this._entity.key, (formData.get('includeDescendants') as string) === 'on');
 	}
 
 	render() {

@@ -3,9 +3,9 @@ import { css, html } from 'lit';
 import { when } from 'lit-html/directives/when.js';
 import { customElement, query, state } from 'lit/decorators.js';
 import { repeat } from 'lit-html/directives/repeat.js';
-import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { UmbDictionaryStore } from '../../dictionary.store';
 import { DictionaryImport } from '@umbraco-cms/backend-api';
+import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
+import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary.detail.store';
 import { UmbTreeElement } from 'src/backoffice/shared/components/tree/tree.element';
 
 @customElement('umb-tree-action-dictionary-import-page')
@@ -22,7 +22,7 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	@query('#form')
 	private _form!: HTMLFormElement;
 
-	private _dictionaryStore!: UmbDictionaryStore;
+	private _dictionaryDetailStore!: UmbDictionaryDetailStore;
 
 	@state()
 	private _uploadedDictionary?: DictionaryImport;
@@ -42,8 +42,8 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.consumeContext('umbDictionaryStore', (dictionaryStore: UmbDictionaryStore) => {
-			this._dictionaryStore = dictionaryStore;
+		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (dictionaryDetailStore: UmbDictionaryDetailStore) => {
+			this._dictionaryDetailStore = dictionaryDetailStore;
 		});
 	}
 
@@ -55,11 +55,11 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 		if (!this._uploadedDictionary?.tempFileName) return;
 
 		// TODO => where do we get parentId? API expects a number, but we have a guid key
-		const result = await this._dictionaryStore.import(this._uploadedDictionary?.tempFileName);
+		const result = await this._dictionaryDetailStore.import(this._uploadedDictionary?.tempFileName);
 
 		const path = result?.content?.split(',');
 		if (path?.length) {
-			this._dictionaryStore.getByKey(path[path.length - 1]);
+			this._dictionaryDetailStore.getByKey(path[path.length - 1]);
 		}
 
 		this._treeContextMenuService?.close();
@@ -70,7 +70,7 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	}
 
 	private async _uploadDictionary(file: File) {
-		this._uploadedDictionary = await this._dictionaryStore.upload(file);
+		this._uploadedDictionary = await this._dictionaryDetailStore.upload(file);
 
 		if (!this._uploadedDictionary) {
 			this._showErrorView = true;

@@ -1,8 +1,8 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { UmbModalService } from '../../../../../core/modal';
-import { UmbDictionaryStore } from '../../dictionary.store';
+import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../core/modal';
+import { UmbDictionaryTreeStore, UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN } from '../../dictionary.tree.store';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
 
 @customElement('umb-tree-action-data-type-delete')
@@ -10,17 +10,17 @@ export default class UmbTreeActionDictionaryDeleteElement extends UmbTreeItemAct
 	static styles = [UUITextStyles, css``];
 
 	private _modalService?: UmbModalService;
-	private _dictionaryStore?: UmbDictionaryStore;
+	private _dictionaryTreeStore?: UmbDictionaryTreeStore;
 
 	connectedCallback(): void {
 		super.connectedCallback();
 
-		this.consumeContext('umbModalService', (modalService: UmbModalService) => {
+		this.consumeContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, (modalService: UmbModalService) => {
 			this._modalService = modalService;
 		});
 
-		this.consumeContext('umbDictionaryStore', (dictionaryStore: UmbDictionaryStore) => {
-			this._dictionaryStore = dictionaryStore;
+		this.consumeContext(UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN, (dictionaryTreeStore: UmbDictionaryTreeStore) => {
+			this._dictionaryTreeStore = dictionaryTreeStore;
 		});
 	}
 
@@ -33,8 +33,8 @@ export default class UmbTreeActionDictionaryDeleteElement extends UmbTreeItemAct
 		});
 
 		modalHandler?.onClose().then(({ confirmed }: { confirmed: boolean }) => {
-			if (confirmed && this._treeContextMenuService && this._dictionaryStore && this._activeTreeItem) {
-				this._dictionaryStore?.delete(this._activeTreeItem.key);
+			if (confirmed && this._treeContextMenuService && this._dictionaryTreeStore && this._activeTreeItem) {
+				this._dictionaryTreeStore?.delete(this._activeTreeItem.key);
 				this._treeContextMenuService.close();
 			}
 		});
