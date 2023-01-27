@@ -1,7 +1,7 @@
+import { DictionaryItem } from '@umbraco-cms/backend-api';
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
-import { v4 as uuidv4 } from 'uuid';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
 import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary.detail.store';
 
@@ -46,12 +46,11 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 		if (!form || !form.checkValidity()) return;
 
 		const formData = new FormData(form);
-		const key = uuidv4();
 
 		// create the new item before routing to it
-		this.observe(this._detailStore.create(this._entity.key, key, formData.get('name') as string), () => {	
+		this.observe(this._detailStore.create(this._entity.key, formData.get('name') as string), (newDictionaryItem: DictionaryItem) => {	
 			// use detail from new item to construct edit URL
-			history.pushState(null, '', `/section/translation/dictionary/edit/${key}`);
+			history.pushState(null, '', `/section/translation/dictionary/edit/${newDictionaryItem.key}`);
 
 			// TODO => why is this function not accessible?
 			// this._treeContextMenuService.close();

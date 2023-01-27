@@ -1,6 +1,6 @@
-import { UmbWorkspaceContentContext } from '../../../shared/components/workspace/workspace-content/workspace-content.context';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import type { DictionaryDetails } from '@umbraco-cms/models';
+import { UmbWorkspaceContentContext } from '../../../shared/components/workspace/workspace-content/workspace-content.context';
 import { UmbDictionaryDetailStore, UmbDictionaryDetailStoreItemType, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../dictionary.detail.store';
 
 const DefaultDataTypeData = {

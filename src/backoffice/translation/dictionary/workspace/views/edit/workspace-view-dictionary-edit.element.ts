@@ -2,10 +2,9 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { UmbWorkspaceDictionaryContext } from '../../dictionary-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
-import type { DictionaryDetails } from '@umbraco-cms/models';
-import { DictionaryTranslation } from '@umbraco-cms/backend-api';
+import { DictionaryItem, DictionaryItemTranslationModel } from '@umbraco-cms/backend-api';
+import { UmbWorkspaceDictionaryContext } from '../../dictionary-workspace.context';
 
 @customElement('umb-workspace-view-dictionary-edit')
 export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
@@ -20,7 +19,7 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 	];
 
 	@state()
-	_dictionary?: DictionaryDetails;
+	_dictionary?: DictionaryItem;
 
 	private _workspaceContext?: UmbWorkspaceDictionaryContext;
 
@@ -42,14 +41,15 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 			if (!dictionary) return;
 
 			// TODO: handle if model is not of the type wanted.
-			this._dictionary = dictionary as DictionaryDetails;
+			this._dictionary = dictionary as DictionaryItem;
 		});
 	}
 
-	private _renderTranslation(translation: DictionaryTranslation) {
+	// TODO => model does not provide the culture name, only code
+	private _renderTranslation(translation: DictionaryItemTranslationModel) {
 		return html`
 			<umb-workspace-property
-				label="${translation.displayName ?? ''}"
+				label="${translation.isoCode ?? ''}"
 				alias="${translation.isoCode ?? ''}"
 				property-editor-ui-alias="Umb.PropertyEditorUI.TextArea"
 				.value="${translation.translation}"></umb-workspace-property>`;
@@ -62,7 +62,7 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 				
 				${repeat(
 					this._dictionary?.translations ?? [],
-					(item) => item.key,
+					(item) => item.isoCode,
 					(item) => this._renderTranslation(item)
 				)}
 			</uui-box>

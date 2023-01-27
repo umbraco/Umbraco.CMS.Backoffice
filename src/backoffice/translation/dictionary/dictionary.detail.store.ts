@@ -1,19 +1,18 @@
 import {
 	ContentResult,
-	Dictionary,
 	DictionaryImport,
+	DictionaryItem,
 	DictionaryOverview,
 	DictionaryResource,
 } from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import type { DictionaryDetails } from '@umbraco-cms/models';
 import { ArrayState, createObservablePart } from '@umbraco-cms/observable-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 import { UmbStoreBase } from '@umbraco-cms/store';
 import { Observable } from 'rxjs';
 
-export type UmbDictionaryDetailStoreItemType = DictionaryDetails | Dictionary | DictionaryOverview;
+export type UmbDictionaryDetailStoreItemType = DictionaryItem | DictionaryOverview;
 export const UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDictionaryDetailStore>(
 	'UmbDictionaryDetailStore'
 );
@@ -34,10 +33,10 @@ export class UmbDictionaryDetailStore extends UmbStoreBase {
 	/**
 	 * @description - Request a Dictionary by key. The Dictionary is added to the store and is returned as an Observable.
 	 * @param {string} key
-	 * @return {*}  {(Observable<DictionaryDetails | null>)}
+	 * @return {*}  {(Observable<DictionaryItem>)}
 	 * @memberof UmbDictionaryStore
 	 */
-	getByKey(key: string): Observable<Dictionary> {
+	getByKey(key: string): Observable<DictionaryItem> {
 		tryExecuteAndNotify(this.host, DictionaryResource.getDictionaryByKey({ key })).then(({ data }) => {
 			if (data) {
 				this.#data.appendOne(data);
@@ -46,7 +45,7 @@ export class UmbDictionaryDetailStore extends UmbStoreBase {
 
 		return createObservablePart(
 			this.#data,
-			(dictionary) => dictionary.find((entry) => entry.key === key) as Dictionary
+			(dictionary) => dictionary.find((entry) => entry.key === key) as DictionaryItem
 		);
 	}
 
@@ -67,26 +66,25 @@ export class UmbDictionaryDetailStore extends UmbStoreBase {
 		return createObservablePart(this.#data, (dictionary) => dictionary as DictionaryOverview[]);
 	}
 
-	create(parentId: string, key: string, name: string): Observable<Dictionary> {
+	create(parentKey: string, name: string): Observable<DictionaryItem> {
 		tryExecuteAndNotify(
 			this.host,
 			DictionaryResource.postDictionary({
 				requestBody: {
-					parentId,
-					key,
+					parentKey,
+					name,
 				},
 			})
 		).then(({ data }) => {
 			if (!data) return;
 
-			// TODO => how do we set the name, given only the key is saved?
-			data.value.name = name;
 			this.#data.appendOne(data.value);
 		});
 
+		// TODO => find by name? should be key, but we don't have a key yet
 		return createObservablePart(
 			this.#data,
-			(dictionary) => dictionary.find((entry) => entry.key === key) as Dictionary
+			(dictionary) => dictionary.find((entry) => entry.name === name) as DictionaryItem
 		);
 	}
 
@@ -97,17 +95,16 @@ export class UmbDictionaryDetailStore extends UmbStoreBase {
 	 * @return {*}  {(Promise<void>)}
 	 * @memberof UmbDictionaryStore
 	 */
-	async save(items: Array<UmbDictionaryDetailStoreItemType>): Promise<void> {
+	async save(items: Array<DictionaryItem>): Promise<void> {
 		if (!items[0].key) return;
 		await tryExecuteAndNotify(
 			this.host,
-			DictionaryResource.patchDictionaryById({
-				id: items[0].key,
-				requestBody: [
-					{
-						value: JSON.stringify(items[0]),
-					},
-				],
+			DictionaryResource.putDictionaryByKey({
+				key: items[0].key,
+				requestBody: {
+					name: items[0].name,
+					translations: items[0].translations,
+				},
 			})
 		).then(({ data }) => {
 			if (data) {

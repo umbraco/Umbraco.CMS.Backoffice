@@ -74,7 +74,7 @@ class UmbDictionaryData extends UmbEntityData<DictionaryDetails> {
 	 */
 	getTreeItemChildren(key: string): Array<EntityTreeItem> {
 		const childItems = this.data.filter((item) => item.parentKey === key);
-		return childItems;//.map((item) => createEntityTreeItem(item));
+		return childItems;
 	}
 
 	getTreeItem(keys: Array<string>): Array<EntityTreeItem> {

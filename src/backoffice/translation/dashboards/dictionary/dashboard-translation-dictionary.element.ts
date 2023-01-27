@@ -7,6 +7,7 @@ import type { DictionaryDetails } from '@umbraco-cms/models';
 import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary/dictionary.detail.store';
 import { UmbTableConfig, UmbTableColumn, UmbTableItem } from '../../../../backoffice/shared/components/table';
 import { UmbTreeContextMenuService } from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
+import { DictionaryOverview } from '@umbraco-cms/backend-api';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
@@ -49,7 +50,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	private _tableItemsFiltered: Array<UmbTableItem> = [];
 
 	@state()
-	private _dictionaryItems: DictionaryDetails[] = [];
+	private _dictionaryItems: DictionaryOverview[] = [];
 
 	private _contextMenuService?: UmbTreeContextMenuService;
 
@@ -77,7 +78,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	private async _getDictionaryItems() {
 		if (!this._detailStore) return;
 
-		this.observe(this._detailStore.get(0, 1000), (dictionaryItems: DictionaryDetails[]) => {
+		this.observe(this._detailStore.get(0, 1000), (dictionaryItems: DictionaryOverview[]) => {
 			this._dictionaryItems = dictionaryItems;
 			this._setTableColumns();
 			this._setTableItems();
@@ -127,7 +128,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 				tableItem.data.push({
 					columnAlias: t.displayName,
-					value: t.translation
+					value: t.hasTranslation
 						? html`<uui-icon
 								name="check"
 								title="Translation exists for ${t.displayName}"
