@@ -10,7 +10,7 @@ import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/exte
 import { UmbLitElement } from '@umbraco-cms/element';
 
 import './section-sidebar-menu/section-sidebar-menu.element.ts';
-import './section-views/section-views.element.ts';
+import './section-views-navigation/section-views-navigation.element.ts';
 
 @customElement('umb-section')
 export class UmbSectionElement extends UmbLitElement {
@@ -197,7 +197,7 @@ export class UmbSectionElement extends UmbLitElement {
 				  `
 				: nothing}
 			<umb-section-main>
-				${this._views && this._views.length > 0 ? html`<umb-section-views></umb-section-views>` : nothing}
+				${this._views && this._views.length > 0 ? html`<umb-section-views-navigation></umb-section-views-navigation>` : nothing}
 				${this._routes && this._routes.length > 0
 					? html`<router-slot id="router-slot" .routes="${this._routes}"></router-slot>`
 					: nothing}

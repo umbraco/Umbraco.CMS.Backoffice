@@ -8,8 +8,8 @@ import { umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { UmbObserverController } from '@umbraco-cms/observable-api';
 
-@customElement('umb-section-views')
-export class UmbSectionViewsElement extends UmbLitElement {
+@customElement('umb-section-views-navigation')
+export class UmbSectionViewsNavigationElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -92,10 +92,10 @@ export class UmbSectionViewsElement extends UmbLitElement {
 	}
 
 	render() {
-		return html` ${this._views.length > 0 ? html` <div id="header">${this._renderViews()}</div> ` : nothing} `;
+		return html` ${this._views.length > 0 ? html` <div id="header">${this._renderTabs()}</div> ` : nothing} `;
 	}
 
-	private _renderViews() {
+	private _renderTabs() {
 		return html`
 			${this._views?.length > 0
 				? html`
@@ -118,10 +118,10 @@ export class UmbSectionViewsElement extends UmbLitElement {
 	}
 }
 
-export default UmbSectionViewsElement;
+export default UmbSectionViewsNavigationElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-section-views': UmbSectionViewsElement;
+		'umb-section-views': UmbSectionViewsNavigationElement;
 	}
 }
