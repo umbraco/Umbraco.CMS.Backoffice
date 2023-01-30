@@ -192,7 +192,9 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 					placeholder="Type to filter..."
 					label="Type to filter dictionary"
 					id="searchbar">
-					<uui-icon name="search" slot="prepend" id="searchbar_icon"></uui-icon>
+					<div slot="prepend">
+						<uui-icon name="search" id="searchbar_icon"></uui-icon>
+					</div>
 				</uui-input>
 			</div>
 			${when(
