@@ -6,6 +6,8 @@ import {
 	DictionaryResource,
 } from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
+import { ArrayState } from '@umbraco-cms/observable-api';
+import { UmbEntityDetailStore, UmbStoreBase } from '@umbraco-cms/store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { ArrayState, createObservablePart } from '@umbraco-cms/observable-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
@@ -23,11 +25,18 @@ export const UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<Umb
  * @extends {UmbStoreBase}
  * @description - Details Data Store for Data Types
  */
-export class UmbDictionaryDetailStore extends UmbStoreBase {
+// TODO: use the right type for dictionary:
+export class UmbDictionaryDetailStore extends UmbStoreBase implements UmbEntityDetailStore<EntityTreeItem> {
 	#data = new ArrayState<UmbDictionaryDetailStoreItemType>([], (x) => x.key);
 
 	constructor(private host: UmbControllerHostInterface) {
 		super(host, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN.toString());
+	}
+
+
+	getScaffold(entityType: string, parentKey: string | null) {
+		return {
+		} as EntityTreeItem;
 	}
 
 	/**
@@ -81,10 +90,8 @@ export class UmbDictionaryDetailStore extends UmbStoreBase {
 			this.#data.appendOne(data.value);
 		});
 
-		// TODO => find by name? should be key, but we don't have a key yet
-		return createObservablePart(
-			this.#data,
-			(dictionary) => dictionary.find((entry) => entry.name === name) as DictionaryItem
+		return this.#data.getObservablePart((documents) =>
+			documents.find((document) => document.key === key)
 		);
 	}
 
