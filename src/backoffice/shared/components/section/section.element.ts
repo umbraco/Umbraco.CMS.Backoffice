@@ -66,8 +66,8 @@ export class UmbSectionElement extends UmbLitElement {
 
 		this.observe(umbExtensionsRegistry.extensionsOfType('workspace'), (workspaceExtensions) => {
 			this._workspaces = workspaceExtensions;
-			this._createMenuRoutes();
-		});
+			this._createRoutes();
+		}, 'observeWorkspaceExtensions');
 	}
 
 	private _observeSidebarMenuItem(sectionAlias?: string) {
@@ -78,16 +78,47 @@ export class UmbSectionElement extends UmbLitElement {
 					.pipe(map((manifests) => manifests.filter((manifest) => manifest.meta.sections.includes(sectionAlias)))),
 				(manifests) => {
 					this._menuItems = manifests;
-					this._createMenuRoutes();
+					this._createRoutes();
 				}
+				, 'observeSidebarMenuItemExtensions'
 			);
 		} else {
 			this._menuItems = undefined;
-			this._createMenuRoutes();
+			this._createRoutes();
 		}
 	}
 
-	private _createMenuRoutes() {
+
+
+	private _observeSection() {
+		if (!this._sectionContext) return;
+
+		this.observe(
+			this._sectionContext.alias, (alias) => {
+				this._sectionAlias = alias;
+				this._observeViews();
+			}
+			, 'observeSectionContextAlias');
+	}
+
+	private _observeViews() {
+
+		this.observe(umbExtensionsRegistry?.extensionsOfType('sectionView'), (views) => {
+				const sectionViews = views.filter((view) => {
+					return this._sectionAlias ? view.meta.sections.includes(this._sectionAlias) : false
+				}).sort((a, b) => b.meta.weight - a.meta.weight);
+				if(sectionViews.length > 0) {
+					this._views = sectionViews;
+					this._createRoutes();
+				}
+			}
+		, 'observeSectionViewExtensions');
+	}
+
+
+
+
+	private _createRoutes() {
 
 		// TODO: find a way to make this reuseable across:
 		const workspaceRoutes = this._workspaces?.map((workspace: ManifestWorkspace) => {
@@ -126,49 +157,7 @@ export class UmbSectionElement extends UmbLitElement {
 			];
 		});
 
-		this._routes = [
-			{
-				path: 'dashboard',
-				component: () => import('./section-dashboards/section-dashboards.element'),
-			},
-			...(workspaceRoutes?.flat() || []),
-			{
-				path: '**',
-				redirectTo: 'dashboard',
-			},
-		];
-	}
-
-
-
-	private _observeSection() {
-		if (!this._sectionContext) return;
-
-		this.observe(
-			this._sectionContext.alias, (alias) => {
-				this._sectionAlias = alias;
-				this._observeViews();
-			}
-		);
-	}
-
-	private _observeViews() {
-
-		this.observe(umbExtensionsRegistry?.extensionsOfType('sectionView'), (views) => {
-				const sectionViews = views.filter((view) => {
-					return this._sectionAlias ? view.meta.sections.includes(this._sectionAlias) : false
-				}).sort((a, b) => b.meta.weight - a.meta.weight);
-				if(sectionViews.length > 0) {
-					this._views = sectionViews;
-					this._createViewRoutes();
-				}
-			}
-		);
-	}
-
-	private _createViewRoutes() {
-
-		this._routes =
+		const sectionViewRoutes =
 			this._views?.map((view) => {
 				return {
 					path: 'view/' + view.meta.pathname,
@@ -179,13 +168,33 @@ export class UmbSectionElement extends UmbLitElement {
 				};
 			}) ?? [];
 
-		if (this._views && this._views.length > 0) {
-			this._routes.push({
-				path: '**',
-				redirectTo: 'view/' + this._views?.[0]?.meta.pathname,
-			});
+
+		if (sectionViewRoutes && sectionViewRoutes.length > 0) {
+			this._routes = [
+				...(sectionViewRoutes?.flat() || []),
+				...(workspaceRoutes?.flat() || []),
+				{
+					path: '**',
+					redirectTo: 'view/' + this._views?.[0]?.meta.pathname,
+				}
+			];
+		} else {
+			this._routes = [
+				{
+					path: 'dashboard',
+					component: () => import('./section-dashboards/section-dashboards.element'),
+				},
+				...(workspaceRoutes?.flat() || []),
+				{
+					path: '**',
+					redirectTo: 'dashboard',
+				},
+			];
 		}
 	}
+
+
+
 
 	render() {
 		return html`
