@@ -15,14 +15,14 @@ export class PartialViewResource {
      * @throws ApiError
      */
     public static getTreePartialViewChildren({
-        path,
-        skip,
-        take = 100,
-    }: {
-        path?: string,
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedFileSystemTreeItem> {
+path,
+skip,
+take = 100,
+}: {
+path?: string,
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedFileSystemTreeItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/partial-view/children',
@@ -39,10 +39,10 @@ export class PartialViewResource {
      * @throws ApiError
      */
     public static getTreePartialViewItem({
-        path,
-    }: {
-        path?: Array<string>,
-    }): CancelablePromise<Array<FileSystemTreeItem>> {
+path,
+}: {
+path?: Array<string>,
+}): CancelablePromise<Array<FileSystemTreeItem>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/partial-view/item',
@@ -57,12 +57,12 @@ export class PartialViewResource {
      * @throws ApiError
      */
     public static getTreePartialViewRoot({
-        skip,
-        take = 100,
-    }: {
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedFileSystemTreeItem> {
+skip,
+take = 100,
+}: {
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedFileSystemTreeItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/partial-view/root',

@@ -11,4 +11,3 @@ export type EntityTreeItem = {
     isContainer?: boolean;
     parentKey?: string | null;
 };
-

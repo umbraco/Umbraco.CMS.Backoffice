@@ -13,4 +13,3 @@ export type CreatedResult = {
     statusCode?: number | null;
     location?: string;
 };
-

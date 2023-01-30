@@ -11,4 +11,3 @@ export type HealthCheckResult = {
     actions?: Array<HealthCheckAction> | null;
     readMoreLink?: string | null;
 };
-

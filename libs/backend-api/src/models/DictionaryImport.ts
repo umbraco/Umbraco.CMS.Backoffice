@@ -8,4 +8,3 @@ export type DictionaryImport = {
     dictionaryItems?: Array<DictionaryItemsImport>;
     tempFileName?: string | null;
 };
-

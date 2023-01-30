@@ -7,4 +7,3 @@ export type TemplateCreateModel = {
     alias?: string;
     content?: string | null;
 };
-

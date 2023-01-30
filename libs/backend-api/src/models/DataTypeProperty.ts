@@ -6,4 +6,3 @@ export type DataTypeProperty = {
     alias?: string;
     value?: any;
 };
-

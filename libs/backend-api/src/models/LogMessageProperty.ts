@@ -6,4 +6,3 @@ export type LogMessageProperty = {
     name?: string;
     value?: string | null;
 };
-

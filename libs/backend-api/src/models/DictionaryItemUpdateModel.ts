@@ -8,4 +8,3 @@ export type DictionaryItemUpdateModel = {
     name?: string;
     translations?: Array<DictionaryItemTranslationModel>;
 };
-

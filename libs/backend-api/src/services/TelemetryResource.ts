@@ -15,12 +15,12 @@ export class TelemetryResource {
      * @throws ApiError
      */
     public static getTelemetry({
-        skip,
-        take,
-    }: {
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedTelemetry> {
+skip,
+take,
+}: {
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedTelemetry> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/telemetry',
@@ -47,10 +47,10 @@ export class TelemetryResource {
      * @throws ApiError
      */
     public static postTelemetryLevel({
-        requestBody,
-    }: {
-        requestBody?: Telemetry,
-    }): CancelablePromise<any> {
+requestBody,
+}: {
+requestBody?: Telemetry,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/umbraco/management/api/v1/telemetry/level',

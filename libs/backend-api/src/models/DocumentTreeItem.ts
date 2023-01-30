@@ -16,4 +16,3 @@ export type DocumentTreeItem = {
     isPublished?: boolean;
     isEdited?: boolean;
 };
-

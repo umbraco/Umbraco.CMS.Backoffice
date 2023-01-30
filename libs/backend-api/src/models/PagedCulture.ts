@@ -8,4 +8,3 @@ export type PagedCulture = {
     total: number;
     items: Array<Culture>;
 };
-

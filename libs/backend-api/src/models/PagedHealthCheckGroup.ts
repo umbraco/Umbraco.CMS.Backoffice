@@ -8,4 +8,3 @@ export type PagedHealthCheckGroup = {
     total: number;
     items: Array<HealthCheckGroup>;
 };
-

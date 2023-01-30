@@ -26,4 +26,3 @@ export type PropertyInfo = {
     getMethod?: MethodInfo;
     setMethod?: MethodInfo;
 };
-

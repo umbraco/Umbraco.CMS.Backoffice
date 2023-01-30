@@ -15,10 +15,10 @@ export class RelationResource {
      * @throws ApiError
      */
     public static getRelationById({
-        id,
-    }: {
-        id: number,
-    }): CancelablePromise<Relation> {
+id,
+}: {
+id: number,
+}): CancelablePromise<Relation> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/relation/{id}',
@@ -36,16 +36,16 @@ export class RelationResource {
      * @throws ApiError
      */
     public static getRelationChildRelationByChildId({
-        childId,
-        skip,
-        take,
-        relationTypeAlias = '',
-    }: {
-        childId: number,
-        skip?: number,
-        take?: number,
-        relationTypeAlias?: string,
-    }): CancelablePromise<PagedRelation> {
+childId,
+skip,
+take,
+relationTypeAlias = '',
+}: {
+childId: number,
+skip?: number,
+take?: number,
+relationTypeAlias?: string,
+}): CancelablePromise<PagedRelation> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/relation/child-relation/{childId}',

@@ -10,4 +10,3 @@ export type TemplateQuerySettings = {
     properties?: Array<TemplateQueryProperty>;
     operators?: Array<TemplateQueryOperator>;
 };
-

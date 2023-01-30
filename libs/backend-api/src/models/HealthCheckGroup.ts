@@ -8,4 +8,3 @@ export type HealthCheckGroup = {
     name?: string | null;
     checks?: Array<HealthCheck>;
 };
-

@@ -8,4 +8,3 @@ export type PagedTelemetry = {
     total: number;
     items: Array<Telemetry>;
 };
-

@@ -7,4 +7,3 @@ export type Folder = {
     key?: string;
     parentKey?: string | null;
 };
-

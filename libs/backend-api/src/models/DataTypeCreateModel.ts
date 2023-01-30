@@ -11,4 +11,3 @@ export type DataTypeCreateModel = {
     data?: Array<DataTypeProperty>;
     parentKey?: string | null;
 };
-

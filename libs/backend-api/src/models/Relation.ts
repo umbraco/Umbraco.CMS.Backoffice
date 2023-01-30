@@ -10,4 +10,3 @@ export type Relation = {
     createDate?: string;
     comment?: string | null;
 };
-

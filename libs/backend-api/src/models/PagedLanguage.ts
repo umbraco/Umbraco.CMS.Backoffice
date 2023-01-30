@@ -8,4 +8,3 @@ export type PagedLanguage = {
     total: number;
     items: Array<Language>;
 };
-

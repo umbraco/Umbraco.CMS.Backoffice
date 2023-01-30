@@ -6,4 +6,3 @@ export type Culture = {
     name?: string;
     englishName?: string;
 };
-

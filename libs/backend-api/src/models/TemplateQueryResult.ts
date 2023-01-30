@@ -10,4 +10,3 @@ export type TemplateQueryResult = {
     resultCount?: number;
     executionTime?: number;
 };
-

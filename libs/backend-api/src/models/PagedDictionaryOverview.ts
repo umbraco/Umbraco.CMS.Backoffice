@@ -8,4 +8,3 @@ export type PagedDictionaryOverview = {
     total: number;
     items: Array<DictionaryOverview>;
 };
-

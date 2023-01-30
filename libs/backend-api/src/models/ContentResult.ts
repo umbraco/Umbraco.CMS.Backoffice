@@ -7,4 +7,3 @@ export type ContentResult = {
     contentType?: string | null;
     statusCode?: number | null;
 };
-

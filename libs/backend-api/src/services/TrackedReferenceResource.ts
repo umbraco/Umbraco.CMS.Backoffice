@@ -14,16 +14,16 @@ export class TrackedReferenceResource {
      * @throws ApiError
      */
     public static getTrackedReferenceById({
-        id,
-        skip,
-        take,
-        filterMustBeIsDependency,
-    }: {
-        id: number,
-        skip?: number,
-        take?: number,
-        filterMustBeIsDependency?: boolean,
-    }): CancelablePromise<PagedRelationItem> {
+id,
+skip,
+take,
+filterMustBeIsDependency,
+}: {
+id: number,
+skip?: number,
+take?: number,
+filterMustBeIsDependency?: boolean,
+}): CancelablePromise<PagedRelationItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tracked-reference/{id}',
@@ -43,16 +43,16 @@ export class TrackedReferenceResource {
      * @throws ApiError
      */
     public static getTrackedReferenceDescendantsByParentId({
-        parentId,
-        skip,
-        take,
-        filterMustBeIsDependency,
-    }: {
-        parentId: number,
-        skip?: number,
-        take?: number,
-        filterMustBeIsDependency?: boolean,
-    }): CancelablePromise<PagedRelationItem> {
+parentId,
+skip,
+take,
+filterMustBeIsDependency,
+}: {
+parentId: number,
+skip?: number,
+take?: number,
+filterMustBeIsDependency?: boolean,
+}): CancelablePromise<PagedRelationItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tracked-reference/descendants/{parentId}',
@@ -72,16 +72,16 @@ export class TrackedReferenceResource {
      * @throws ApiError
      */
     public static getTrackedReferenceItem({
-        ids,
-        skip,
-        take,
-        filterMustBeIsDependency,
-    }: {
-        ids?: Array<number>,
-        skip?: number,
-        take?: number,
-        filterMustBeIsDependency?: boolean,
-    }): CancelablePromise<PagedRelationItem> {
+ids,
+skip,
+take,
+filterMustBeIsDependency,
+}: {
+ids?: Array<number>,
+skip?: number,
+take?: number,
+filterMustBeIsDependency?: boolean,
+}): CancelablePromise<PagedRelationItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tracked-reference/item',

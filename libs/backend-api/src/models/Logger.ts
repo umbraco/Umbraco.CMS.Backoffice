@@ -8,4 +8,3 @@ export type Logger = {
     name?: string;
     level?: LogLevel;
 };
-

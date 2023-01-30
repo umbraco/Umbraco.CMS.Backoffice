@@ -8,4 +8,3 @@ export type PagedDocumentBlueprintTreeItem = {
     total: number;
     items: Array<DocumentBlueprintTreeItem>;
 };
-

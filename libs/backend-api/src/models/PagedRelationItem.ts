@@ -8,4 +8,3 @@ export type PagedRelationItem = {
     total: number;
     items: Array<RelationItem>;
 };
-

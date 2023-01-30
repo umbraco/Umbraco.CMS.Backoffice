@@ -15,16 +15,16 @@ export class DocumentTypeResource {
      * @throws ApiError
      */
     public static getTreeDocumentTypeChildren({
-        parentKey,
-        skip,
-        take = 100,
-        foldersOnly = false,
-    }: {
-        parentKey?: string,
-        skip?: number,
-        take?: number,
-        foldersOnly?: boolean,
-    }): CancelablePromise<PagedDocumentTypeTreeItem> {
+parentKey,
+skip,
+take = 100,
+foldersOnly = false,
+}: {
+parentKey?: string,
+skip?: number,
+take?: number,
+foldersOnly?: boolean,
+}): CancelablePromise<PagedDocumentTypeTreeItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/document-type/children',
@@ -42,10 +42,10 @@ export class DocumentTypeResource {
      * @throws ApiError
      */
     public static getTreeDocumentTypeItem({
-        key,
-    }: {
-        key?: Array<string>,
-    }): CancelablePromise<Array<DocumentTypeTreeItem>> {
+key,
+}: {
+key?: Array<string>,
+}): CancelablePromise<Array<DocumentTypeTreeItem>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/document-type/item',
@@ -60,14 +60,14 @@ export class DocumentTypeResource {
      * @throws ApiError
      */
     public static getTreeDocumentTypeRoot({
-        skip,
-        take = 100,
-        foldersOnly = false,
-    }: {
-        skip?: number,
-        take?: number,
-        foldersOnly?: boolean,
-    }): CancelablePromise<PagedDocumentTypeTreeItem> {
+skip,
+take = 100,
+foldersOnly = false,
+}: {
+skip?: number,
+take?: number,
+foldersOnly?: boolean,
+}): CancelablePromise<PagedDocumentTypeTreeItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/document-type/root',

@@ -9,4 +9,3 @@ export type DataTypeReference = {
     type?: string;
     properties?: Array<DataTypePropertyReference>;
 };
-

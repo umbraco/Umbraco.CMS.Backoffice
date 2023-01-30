@@ -10,4 +10,3 @@ export type DataTypeUpdateModel = {
     propertyEditorUiAlias?: string | null;
     data?: Array<DataTypeProperty>;
 };
-

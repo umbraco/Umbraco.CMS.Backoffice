@@ -12,4 +12,3 @@ export type FolderTreeItem = {
     parentKey?: string | null;
     isFolder?: boolean;
 };
-

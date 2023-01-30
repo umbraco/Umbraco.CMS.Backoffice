@@ -13,4 +13,3 @@ export type CustomAttributeData = {
     readonly constructorArguments?: Array<CustomAttributeTypedArgument>;
     readonly namedArguments?: Array<CustomAttributeNamedArgument>;
 };
-

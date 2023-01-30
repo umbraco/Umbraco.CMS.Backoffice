@@ -10,4 +10,3 @@ export type HealthCheckWithResult = {
     description?: string | null;
     results?: Array<HealthCheckResult> | null;
 };
-

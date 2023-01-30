@@ -12,4 +12,3 @@ export type DataType = {
     key?: string;
     parentKey?: string | null;
 };
-

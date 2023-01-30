@@ -14,12 +14,12 @@ export class CultureResource {
      * @throws ApiError
      */
     public static getCulture({
-        skip,
-        take,
-    }: {
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedCulture> {
+skip,
+take = 100,
+}: {
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedCulture> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/culture',

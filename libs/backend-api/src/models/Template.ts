@@ -8,4 +8,3 @@ export type Template = {
     content?: string | null;
     key?: string;
 };
-

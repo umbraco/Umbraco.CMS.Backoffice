@@ -8,4 +8,3 @@ export type PagedLogger = {
     total: number;
     items: Array<Logger>;
 };
-

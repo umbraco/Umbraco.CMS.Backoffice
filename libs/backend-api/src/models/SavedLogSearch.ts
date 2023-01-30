@@ -6,4 +6,3 @@ export type SavedLogSearch = {
     name?: string;
     query?: string;
 };
-

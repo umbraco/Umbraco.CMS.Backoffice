@@ -9,4 +9,3 @@ export type TemplateQueryOperator = {
     operator?: Operator;
     applicableTypes?: Array<TemplateQueryPropertyType>;
 };
-

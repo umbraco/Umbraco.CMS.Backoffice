@@ -6,4 +6,3 @@ export type Field = {
     name?: string;
     values?: Array<string>;
 };
-

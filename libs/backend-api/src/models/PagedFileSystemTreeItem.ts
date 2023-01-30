@@ -8,4 +8,3 @@ export type PagedFileSystemTreeItem = {
     total: number;
     items: Array<FileSystemTreeItem>;
 };
-

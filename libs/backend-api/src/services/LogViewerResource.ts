@@ -20,12 +20,12 @@ export class LogViewerResource {
      * @throws ApiError
      */
     public static getLogViewerLevel({
-        skip,
-        take = 100,
-    }: {
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedLogger> {
+skip,
+take = 100,
+}: {
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedLogger> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/log-viewer/level',
@@ -41,12 +41,12 @@ export class LogViewerResource {
      * @throws ApiError
      */
     public static getLogViewerLevelCount({
-        startDate,
-        endDate,
-    }: {
-        startDate?: string,
-        endDate?: string,
-    }): CancelablePromise<any> {
+startDate,
+endDate,
+}: {
+startDate?: string,
+endDate?: string,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/log-viewer/level-count',
@@ -65,22 +65,22 @@ export class LogViewerResource {
      * @throws ApiError
      */
     public static getLogViewerLog({
-        skip,
-        take = 100,
-        orderDirection,
-        filterExpression,
-        logLevel,
-        startDate,
-        endDate,
-    }: {
-        skip?: number,
-        take?: number,
-        orderDirection?: Direction,
-        filterExpression?: string,
-        logLevel?: Array<LogLevel>,
-        startDate?: string,
-        endDate?: string,
-    }): CancelablePromise<PagedLogMessage> {
+skip,
+take = 100,
+orderDirection,
+filterExpression,
+logLevel,
+startDate,
+endDate,
+}: {
+skip?: number,
+take?: number,
+orderDirection?: Direction,
+filterExpression?: string,
+logLevel?: Array<LogLevel>,
+startDate?: string,
+endDate?: string,
+}): CancelablePromise<PagedLogMessage> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/log-viewer/log',
@@ -101,16 +101,16 @@ export class LogViewerResource {
      * @throws ApiError
      */
     public static getLogViewerMessageTemplate({
-        skip,
-        take = 100,
-        startDate,
-        endDate,
-    }: {
-        skip?: number,
-        take?: number,
-        startDate?: string,
-        endDate?: string,
-    }): CancelablePromise<PagedLogTemplate> {
+skip,
+take = 100,
+startDate,
+endDate,
+}: {
+skip?: number,
+take?: number,
+startDate?: string,
+endDate?: string,
+}): CancelablePromise<PagedLogTemplate> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/log-viewer/message-template',
@@ -131,12 +131,12 @@ export class LogViewerResource {
      * @throws ApiError
      */
     public static getLogViewerSavedSearch({
-        skip,
-        take = 100,
-    }: {
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedSavedLogSearch> {
+skip,
+take = 100,
+}: {
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedSavedLogSearch> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/log-viewer/saved-search',
@@ -152,10 +152,10 @@ export class LogViewerResource {
      * @throws ApiError
      */
     public static postLogViewerSavedSearch({
-        requestBody,
-    }: {
-        requestBody?: SavedLogSearch,
-    }): CancelablePromise<any> {
+requestBody,
+}: {
+requestBody?: SavedLogSearch,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/umbraco/management/api/v1/log-viewer/saved-search',
@@ -172,10 +172,10 @@ export class LogViewerResource {
      * @throws ApiError
      */
     public static getLogViewerSavedSearchByName({
-        name,
-    }: {
-        name: string,
-    }): CancelablePromise<SavedLogSearch> {
+name,
+}: {
+name: string,
+}): CancelablePromise<SavedLogSearch> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/log-viewer/saved-search/{name}',
@@ -193,10 +193,10 @@ export class LogViewerResource {
      * @throws ApiError
      */
     public static deleteLogViewerSavedSearchByName({
-        name,
-    }: {
-        name: string,
-    }): CancelablePromise<any> {
+name,
+}: {
+name: string,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/umbraco/management/api/v1/log-viewer/saved-search/{name}',
@@ -214,12 +214,12 @@ export class LogViewerResource {
      * @throws ApiError
      */
     public static getLogViewerValidateLogsSize({
-        startDate,
-        endDate,
-    }: {
-        startDate?: string,
-        endDate?: string,
-    }): CancelablePromise<any> {
+startDate,
+endDate,
+}: {
+startDate?: string,
+endDate?: string,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/log-viewer/validate-logs-size',

@@ -7,4 +7,3 @@ import type { IntPtr } from './IntPtr';
 export type RuntimeMethodHandle = {
     value?: IntPtr;
 };
-

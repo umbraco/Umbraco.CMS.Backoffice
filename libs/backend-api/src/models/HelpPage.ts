@@ -8,4 +8,3 @@ export type HelpPage = {
     url?: string | null;
     type?: string | null;
 };
-

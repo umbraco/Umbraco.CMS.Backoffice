@@ -9,4 +9,3 @@ export type UserSettings = {
     minNonAlphaNumericLength?: number;
     consentLevels?: Array<ConsentLevel>;
 };
-

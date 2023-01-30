@@ -10,4 +10,3 @@ export type FileSystemTreeItem = {
     path?: string;
     isFolder?: boolean;
 };
-

@@ -13,4 +13,3 @@ export type ContentTreeItem = {
     noAccess?: boolean;
     isTrashed?: boolean;
 };
-

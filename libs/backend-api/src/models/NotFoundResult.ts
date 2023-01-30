@@ -5,4 +5,3 @@
 export type NotFoundResult = {
     statusCode?: number;
 };
-

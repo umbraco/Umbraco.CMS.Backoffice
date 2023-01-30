@@ -8,4 +8,3 @@ export type PagedSavedLogSearch = {
     total: number;
     items: Array<SavedLogSearch>;
 };
-

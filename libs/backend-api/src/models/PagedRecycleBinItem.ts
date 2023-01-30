@@ -8,4 +8,3 @@ export type PagedRecycleBinItem = {
     total: number;
     items: Array<RecycleBinItem>;
 };
-

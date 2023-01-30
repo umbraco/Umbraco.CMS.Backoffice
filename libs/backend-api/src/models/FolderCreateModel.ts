@@ -6,4 +6,3 @@ export type FolderCreateModel = {
     name?: string;
     parentKey?: string | null;
 };
-

@@ -22,10 +22,10 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static postDataType({
-        requestBody,
-    }: {
-        requestBody?: DataTypeCreateModel,
-    }): CancelablePromise<any> {
+requestBody,
+}: {
+requestBody?: DataTypeCreateModel,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/umbraco/management/api/v1/data-type',
@@ -42,10 +42,10 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static getDataTypeByKey({
-        key,
-    }: {
-        key: string,
-    }): CancelablePromise<DataType> {
+key,
+}: {
+key: string,
+}): CancelablePromise<DataType> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/data-type/{key}',
@@ -63,10 +63,10 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static deleteDataTypeByKey({
-        key,
-    }: {
-        key: string,
-    }): CancelablePromise<any> {
+key,
+}: {
+key: string,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/umbraco/management/api/v1/data-type/{key}',
@@ -84,12 +84,12 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static putDataTypeByKey({
-        key,
-        requestBody,
-    }: {
-        key: string,
-        requestBody?: DataTypeUpdateModel,
-    }): CancelablePromise<any> {
+key,
+requestBody,
+}: {
+key: string,
+requestBody?: DataTypeUpdateModel,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/umbraco/management/api/v1/data-type/{key}',
@@ -109,10 +109,10 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static getDataTypeByKeyReferences({
-        key,
-    }: {
-        key: string,
-    }): CancelablePromise<Array<DataTypeReference>> {
+key,
+}: {
+key: string,
+}): CancelablePromise<Array<DataTypeReference>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/data-type/{key}/references',
@@ -130,10 +130,10 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static postDataTypeFolder({
-        requestBody,
-    }: {
-        requestBody?: FolderCreateModel,
-    }): CancelablePromise<any> {
+requestBody,
+}: {
+requestBody?: FolderCreateModel,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/umbraco/management/api/v1/data-type/folder',
@@ -147,10 +147,10 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static getDataTypeFolderByKey({
-        key,
-    }: {
-        key: string,
-    }): CancelablePromise<Folder> {
+key,
+}: {
+key: string,
+}): CancelablePromise<Folder> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/data-type/folder/{key}',
@@ -168,10 +168,10 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static deleteDataTypeFolderByKey({
-        key,
-    }: {
-        key: string,
-    }): CancelablePromise<any> {
+key,
+}: {
+key: string,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/umbraco/management/api/v1/data-type/folder/{key}',
@@ -189,12 +189,12 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static putDataTypeFolderByKey({
-        key,
-        requestBody,
-    }: {
-        key: string,
-        requestBody?: FolderUpdateModel,
-    }): CancelablePromise<any> {
+key,
+requestBody,
+}: {
+key: string,
+requestBody?: FolderUpdateModel,
+}): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/umbraco/management/api/v1/data-type/folder/{key}',
@@ -214,16 +214,16 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static getTreeDataTypeChildren({
-        parentKey,
-        skip,
-        take = 100,
-        foldersOnly = false,
-    }: {
-        parentKey?: string,
-        skip?: number,
-        take?: number,
-        foldersOnly?: boolean,
-    }): CancelablePromise<PagedFolderTreeItem> {
+parentKey,
+skip,
+take = 100,
+foldersOnly = false,
+}: {
+parentKey?: string,
+skip?: number,
+take?: number,
+foldersOnly?: boolean,
+}): CancelablePromise<PagedFolderTreeItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/data-type/children',
@@ -241,10 +241,10 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static getTreeDataTypeItem({
-        key,
-    }: {
-        key?: Array<string>,
-    }): CancelablePromise<Array<FolderTreeItem>> {
+key,
+}: {
+key?: Array<string>,
+}): CancelablePromise<Array<FolderTreeItem>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/data-type/item',
@@ -259,14 +259,14 @@ export class DataTypeResource {
      * @throws ApiError
      */
     public static getTreeDataTypeRoot({
-        skip,
-        take = 100,
-        foldersOnly = false,
-    }: {
-        skip?: number,
-        take?: number,
-        foldersOnly?: boolean,
-    }): CancelablePromise<PagedFolderTreeItem> {
+skip,
+take = 100,
+foldersOnly = false,
+}: {
+skip?: number,
+take?: number,
+foldersOnly?: boolean,
+}): CancelablePromise<PagedFolderTreeItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/data-type/root',

@@ -17,12 +17,12 @@ export class HealthCheckResource {
      * @throws ApiError
      */
     public static getHealthCheckGroup({
-        skip,
-        take = 100,
-    }: {
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedHealthCheckGroup> {
+skip,
+take = 100,
+}: {
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedHealthCheckGroup> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/health-check-group',
@@ -38,10 +38,10 @@ export class HealthCheckResource {
      * @throws ApiError
      */
     public static getHealthCheckGroupByName({
-        name,
-    }: {
-        name: string,
-    }): CancelablePromise<HealthCheckGroupWithResult> {
+name,
+}: {
+name: string,
+}): CancelablePromise<HealthCheckGroupWithResult> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/health-check-group/{name}',
@@ -59,10 +59,10 @@ export class HealthCheckResource {
      * @throws ApiError
      */
     public static postHealthCheckExecuteAction({
-        requestBody,
-    }: {
-        requestBody?: HealthCheckAction,
-    }): CancelablePromise<HealthCheckResult> {
+requestBody,
+}: {
+requestBody?: HealthCheckAction,
+}): CancelablePromise<HealthCheckResult> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/umbraco/management/api/v1/health-check/execute-action',

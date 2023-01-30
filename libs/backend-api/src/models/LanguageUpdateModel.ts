@@ -2,10 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type Language = {
+export type LanguageUpdateModel = {
     name?: string;
     isDefault?: boolean;
     isMandatory?: boolean;
     fallbackIsoCode?: string | null;
-    isoCode?: string;
 };

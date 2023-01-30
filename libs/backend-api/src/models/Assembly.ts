@@ -38,4 +38,3 @@ export type Assembly = {
     readonly hostContext?: number;
     securityRuleSet?: SecurityRuleSet;
 };
-

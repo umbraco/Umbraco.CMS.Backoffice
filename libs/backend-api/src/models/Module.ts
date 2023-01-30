@@ -17,4 +17,3 @@ export type Module = {
     readonly customAttributes?: Array<CustomAttributeData>;
     readonly metadataToken?: number;
 };
-

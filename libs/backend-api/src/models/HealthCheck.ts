@@ -7,4 +7,3 @@ export type HealthCheck = {
     name?: string;
     description?: string | null;
 };
-

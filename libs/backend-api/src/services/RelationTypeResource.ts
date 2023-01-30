@@ -15,10 +15,10 @@ export class RelationTypeResource {
      * @throws ApiError
      */
     public static getTreeRelationTypeItem({
-        key,
-    }: {
-        key?: Array<string>,
-    }): CancelablePromise<Array<FolderTreeItem>> {
+key,
+}: {
+key?: Array<string>,
+}): CancelablePromise<Array<FolderTreeItem>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/relation-type/item',
@@ -33,12 +33,12 @@ export class RelationTypeResource {
      * @throws ApiError
      */
     public static getTreeRelationTypeRoot({
-        skip,
-        take = 100,
-    }: {
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedEntityTreeItem> {
+skip,
+take = 100,
+}: {
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedEntityTreeItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/relation-type/root',

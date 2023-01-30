@@ -14,4 +14,3 @@ export type DocumentBlueprintTreeItem = {
     documentTypeAlias?: string;
     documentTypeName?: string | null;
 };
-

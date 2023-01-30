@@ -8,4 +8,3 @@ export type TemplateQueryProperty = {
     alias?: string;
     type?: TemplateQueryPropertyType;
 };
-

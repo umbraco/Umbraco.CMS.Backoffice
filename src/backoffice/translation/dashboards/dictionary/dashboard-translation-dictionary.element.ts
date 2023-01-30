@@ -3,11 +3,17 @@ import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
 import { UmbLitElement } from '@umbraco-cms/element';
-import type { DictionaryDetails } from '@umbraco-cms/models';
-import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary/dictionary.detail.store';
+import {
+	UmbDictionaryDetailStore,
+	UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN,
+} from '../../dictionary/dictionary.detail.store';
 import { UmbTableConfig, UmbTableColumn, UmbTableItem } from '../../../../backoffice/shared/components/table';
-import { UmbTreeContextMenuService } from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
-import { DictionaryOverview } from '@umbraco-cms/backend-api';
+import {
+	UmbTreeContextMenuService,
+	UMB_TREE_CONTEXT_MENU_SERVICE_CONTEXT_TOKEN,
+} from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
+import { DictionaryOverview, Language, LanguageResource } from '@umbraco-cms/backend-api';
+import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
@@ -58,16 +64,27 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	private _tableItems: Array<UmbTableItem> = [];
 
+	private _languages: Array<Language> = [];
+
 	constructor() {
 		super();
 	}
 
-	connectedCallback() {
+	async connectedCallback() {
 		super.connectedCallback();
 
-		this.consumeContext('umbTreeContextMenuService', (contextMenuService: UmbTreeContextMenuService) => {
-			this._contextMenuService = contextMenuService;
-		});
+		this.consumeContext(
+			UMB_TREE_CONTEXT_MENU_SERVICE_CONTEXT_TOKEN,
+			(contextMenuService: UmbTreeContextMenuService) => {
+				this._contextMenuService = contextMenuService;
+			}
+		);
+
+		// TODO => temp until language service exists. Need languages as the dictionary response
+		// includes the translated iso codes only, no friendly names and no way to tell if a dictionary
+		// is missing a translation
+		const languagesItems = await LanguageResource.getLanguage({ skip: 0, take: 1000 });
+		this._languages = languagesItems.items;
 
 		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (detailStore: UmbDictionaryDetailStore) => {
 			this._detailStore = detailStore;
@@ -99,10 +116,12 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 			},
 		];
 
-		this._dictionaryItems[0]?.translations?.forEach((t) => {
+		this._languages.forEach((l) => {
+			if (!l.name) return;
+
 			this._tableColumns.push({
-				name: t.displayName ?? '',
-				alias: t.displayName ?? '',
+				name: l.name ?? '',
+				alias: l.isoCode ?? '',
 			});
 		});
 	}
@@ -123,19 +142,20 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 				],
 			};
 
-			dictionary.translations?.forEach((t) => {
-				if (!t.displayName) return;
+			this._languages.forEach((l) => {
+				if (!l.isoCode) return;
+
 				tableItem.data.push({
-					columnAlias: t.displayName,
-					value: t.hasTranslation
+					columnAlias: l.isoCode,
+					value: dictionary.translatedIsoCodes?.includes(l.isoCode)
 						? html`<uui-icon
 								name="check"
-								title="Translation exists for ${t.displayName}"
+								title="Translation exists for ${l.name}"
 								style="color:var(--uui-color-positive-standalone);display:inline-block"></uui-icon>`
 						: html`<uui-icon
 								name="alert"
-								title="Translation does not exist for ${t.displayName}"
-								style="color:var(--uui-color-warning-standalone);display:inline-block"></uui-icon>`,
+								title="Translation does not exist for ${l.name}"
+								style="color:var(--uui-color-danger-standalone);display:inline-block"></uui-icon>`,
 				});
 			});
 

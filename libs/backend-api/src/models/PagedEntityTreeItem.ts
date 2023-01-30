@@ -8,4 +8,3 @@ export type PagedEntityTreeItem = {
     total: number;
     items: Array<EntityTreeItem>;
 };
-

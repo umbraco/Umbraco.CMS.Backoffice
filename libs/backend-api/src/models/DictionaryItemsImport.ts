@@ -6,4 +6,3 @@ export type DictionaryItemsImport = {
     name?: string | null;
     level?: number;
 };
-

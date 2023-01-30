@@ -7,4 +7,3 @@ export type TemplateUpdateModel = {
     alias?: string;
     content?: string | null;
 };
-

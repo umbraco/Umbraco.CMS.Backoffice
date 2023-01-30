@@ -8,4 +8,3 @@ export type RedirectUrlStatus = {
     status?: RedirectStatus;
     userIsAdmin?: boolean;
 };
-

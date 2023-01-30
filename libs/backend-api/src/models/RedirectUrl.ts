@@ -10,4 +10,3 @@ export type RedirectUrl = {
     contentKey?: string;
     culture?: string | null;
 };
-

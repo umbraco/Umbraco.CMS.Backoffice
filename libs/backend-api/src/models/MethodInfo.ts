@@ -50,4 +50,3 @@ export type MethodInfo = {
     returnType?: Type;
     returnTypeCustomAttributes?: ICustomAttributeProvider;
 };
-

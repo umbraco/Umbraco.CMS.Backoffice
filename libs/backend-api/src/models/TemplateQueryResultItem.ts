@@ -6,4 +6,3 @@ export type TemplateQueryResultItem = {
     icon?: string;
     name?: string;
 };
-

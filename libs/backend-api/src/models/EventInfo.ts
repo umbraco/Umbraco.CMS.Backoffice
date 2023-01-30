@@ -26,4 +26,3 @@ export type EventInfo = {
     readonly isMulticast?: boolean;
     eventHandlerType?: Type;
 };
-

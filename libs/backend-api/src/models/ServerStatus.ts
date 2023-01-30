@@ -7,4 +7,3 @@ import type { RuntimeLevel } from './RuntimeLevel';
 export type ServerStatus = {
     serverStatus?: RuntimeLevel;
 };
-

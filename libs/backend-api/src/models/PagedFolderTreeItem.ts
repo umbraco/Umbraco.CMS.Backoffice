@@ -8,4 +8,3 @@ export type PagedFolderTreeItem = {
     total: number;
     items: Array<FolderTreeItem>;
 };
-

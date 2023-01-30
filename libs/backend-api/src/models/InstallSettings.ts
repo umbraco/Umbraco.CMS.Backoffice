@@ -9,4 +9,3 @@ export type InstallSettings = {
     user?: UserSettings;
     databases?: Array<DatabaseSettings>;
 };
-

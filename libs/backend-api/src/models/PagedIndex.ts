@@ -8,4 +8,3 @@ export type PagedIndex = {
     total: number;
     items: Array<Index>;
 };
-

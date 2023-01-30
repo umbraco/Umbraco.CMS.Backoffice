@@ -8,4 +8,3 @@ export type PagedSearcher = {
     total: number;
     items: Array<Searcher>;
 };
-

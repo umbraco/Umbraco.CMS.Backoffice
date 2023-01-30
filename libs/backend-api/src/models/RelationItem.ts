@@ -13,4 +13,3 @@ export type RelationItem = {
     relationTypeIsBidirectional?: boolean;
     relationTypeIsDependency?: boolean;
 };
-

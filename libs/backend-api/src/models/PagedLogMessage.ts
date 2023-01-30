@@ -8,4 +8,3 @@ export type PagedLogMessage = {
     total: number;
     items: Array<LogMessage>;
 };
-

@@ -15,12 +15,12 @@ export class SearcherResource {
      * @throws ApiError
      */
     public static getSearcher({
-        skip,
-        take,
-    }: {
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedSearcher> {
+skip,
+take,
+}: {
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedSearcher> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/searcher',
@@ -36,16 +36,16 @@ export class SearcherResource {
      * @throws ApiError
      */
     public static getSearcherBySearcherNameQuery({
-        searcherName,
-        term,
-        skip,
-        take,
-    }: {
-        searcherName: string,
-        term?: string,
-        skip?: number,
-        take?: number,
-    }): CancelablePromise<PagedSearchResult> {
+searcherName,
+term,
+skip,
+take,
+}: {
+searcherName: string,
+term?: string,
+skip?: number,
+take?: number,
+}): CancelablePromise<PagedSearchResult> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/searcher/{searcherName}/query',

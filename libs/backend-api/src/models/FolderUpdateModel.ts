@@ -5,4 +5,3 @@
 export type FolderUpdateModel = {
     name?: string;
 };
-

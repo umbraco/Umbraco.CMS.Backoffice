@@ -5,4 +5,3 @@
 export type Searcher = {
     name?: string;
 };
-

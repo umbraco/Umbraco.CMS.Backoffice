@@ -8,4 +8,3 @@ export type PagedRedirectUrl = {
     total: number;
     items: Array<RedirectUrl>;
 };
-

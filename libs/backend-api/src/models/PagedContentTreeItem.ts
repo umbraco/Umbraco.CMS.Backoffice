@@ -8,4 +8,3 @@ export type PagedContentTreeItem = {
     total: number;
     items: Array<ContentTreeItem>;
 };
-

@@ -8,4 +8,3 @@ export type ConsentLevel = {
     level?: TelemetryLevel;
     description?: string;
 };
-

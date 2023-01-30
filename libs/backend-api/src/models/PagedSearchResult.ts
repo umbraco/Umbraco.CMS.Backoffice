@@ -8,4 +8,3 @@ export type PagedSearchResult = {
     total: number;
     items: Array<SearchResult>;
 };
-

@@ -15,16 +15,16 @@ export class MediaTypeResource {
      * @throws ApiError
      */
     public static getTreeMediaTypeChildren({
-        parentKey,
-        skip,
-        take = 100,
-        foldersOnly = false,
-    }: {
-        parentKey?: string,
-        skip?: number,
-        take?: number,
-        foldersOnly?: boolean,
-    }): CancelablePromise<PagedFolderTreeItem> {
+parentKey,
+skip,
+take = 100,
+foldersOnly = false,
+}: {
+parentKey?: string,
+skip?: number,
+take?: number,
+foldersOnly?: boolean,
+}): CancelablePromise<PagedFolderTreeItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/media-type/children',
@@ -42,10 +42,10 @@ export class MediaTypeResource {
      * @throws ApiError
      */
     public static getTreeMediaTypeItem({
-        key,
-    }: {
-        key?: Array<string>,
-    }): CancelablePromise<Array<FolderTreeItem>> {
+key,
+}: {
+key?: Array<string>,
+}): CancelablePromise<Array<FolderTreeItem>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/media-type/item',
@@ -60,14 +60,14 @@ export class MediaTypeResource {
      * @throws ApiError
      */
     public static getTreeMediaTypeRoot({
-        skip,
-        take = 100,
-        foldersOnly = false,
-    }: {
-        skip?: number,
-        take?: number,
-        foldersOnly?: boolean,
-    }): CancelablePromise<PagedFolderTreeItem> {
+skip,
+take = 100,
+foldersOnly = false,
+}: {
+skip?: number,
+take?: number,
+foldersOnly?: boolean,
+}): CancelablePromise<PagedFolderTreeItem> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/media-type/root',

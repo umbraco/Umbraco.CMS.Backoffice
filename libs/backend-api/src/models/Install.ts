@@ -11,4 +11,3 @@ export type Install = {
     database: DatabaseInstall;
     telemetryLevel?: TelemetryLevel;
 };
-

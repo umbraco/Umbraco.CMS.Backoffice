@@ -9,4 +9,3 @@ export type UpgradeSettings = {
     oldVersion?: string;
     readonly reportUrl?: string;
 };
-

@@ -13,4 +13,3 @@ export type DocumentTypeTreeItem = {
     isFolder?: boolean;
     isElement?: boolean;
 };
-

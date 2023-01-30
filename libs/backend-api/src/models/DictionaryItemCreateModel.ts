@@ -9,4 +9,3 @@ export type DictionaryItemCreateModel = {
     translations?: Array<DictionaryItemTranslationModel>;
     parentKey?: string | null;
 };
-

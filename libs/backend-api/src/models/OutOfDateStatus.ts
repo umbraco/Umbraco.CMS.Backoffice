@@ -7,4 +7,3 @@ import type { OutOfDateType } from './OutOfDateType';
 export type OutOfDateStatus = {
     status?: OutOfDateType;
 };
-

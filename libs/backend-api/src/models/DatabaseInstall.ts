@@ -12,4 +12,3 @@ export type DatabaseInstall = {
     useIntegratedAuthentication?: boolean;
     connectionString?: string | null;
 };
-
