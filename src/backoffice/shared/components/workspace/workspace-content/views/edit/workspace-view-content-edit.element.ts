@@ -1,7 +1,6 @@
 import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
-import { distinctUntilChanged } from 'rxjs';
 import { repeat } from 'lit/directives/repeat.js';
 import type { UmbWorkspaceEntityContextInterface } from '../../../workspace-context/workspace-entity-context.interface';
 import type { ContentProperty, ContentPropertyData, DocumentDetails, MediaDetails } from '@umbraco-cms/models';
