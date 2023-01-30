@@ -125,7 +125,6 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 			dictionary.translations?.forEach((t) => {
 				if (!t.displayName) return;
-
 				tableItem.data.push({
 					columnAlias: t.displayName,
 					value: t.hasTranslation

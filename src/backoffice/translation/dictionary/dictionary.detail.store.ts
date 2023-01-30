@@ -6,12 +6,10 @@ import {
 	DictionaryResource,
 } from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
-import { ArrayState } from '@umbraco-cms/observable-api';
 import { UmbEntityDetailStore, UmbStoreBase } from '@umbraco-cms/store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { ArrayState, createObservablePart } from '@umbraco-cms/observable-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
-import { UmbStoreBase } from '@umbraco-cms/store';
 import { Observable } from 'rxjs';
 
 export type UmbDictionaryDetailStoreItemType = DictionaryItem | DictionaryOverview;
@@ -26,7 +24,7 @@ export const UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<Umb
  * @description - Details Data Store for Data Types
  */
 // TODO: use the right type for dictionary:
-export class UmbDictionaryDetailStore extends UmbStoreBase implements UmbEntityDetailStore<EntityTreeItem> {
+export class UmbDictionaryDetailStore extends UmbStoreBase implements UmbEntityDetailStore<UmbDictionaryDetailStoreItemType> {
 	#data = new ArrayState<UmbDictionaryDetailStoreItemType>([], (x) => x.key);
 
 	constructor(private host: UmbControllerHostInterface) {
@@ -36,7 +34,7 @@ export class UmbDictionaryDetailStore extends UmbStoreBase implements UmbEntityD
 
 	getScaffold(entityType: string, parentKey: string | null) {
 		return {
-		} as EntityTreeItem;
+		} as UmbDictionaryDetailStoreItemType;
 	}
 
 	/**
@@ -91,7 +89,7 @@ export class UmbDictionaryDetailStore extends UmbStoreBase implements UmbEntityD
 		});
 
 		return this.#data.getObservablePart((documents) =>
-			documents.find((document) => document.key === key)
+			documents.find((document) => document.name === name) as DictionaryItem
 		);
 	}
 

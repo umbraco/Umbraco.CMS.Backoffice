@@ -43,7 +43,7 @@ export const handlers = [
 		if (!key) return;
 
 		const dictionary = umbDictionaryData.getByKey(key);
-
+debugger;
 		return res(ctx.status(200), ctx.json(dictionary));
 	}),
 

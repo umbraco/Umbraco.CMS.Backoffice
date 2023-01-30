@@ -7,7 +7,7 @@ export const data: Array<DictionaryDetails> = [
 	{
 		parentKey: null,
 		name: 'Hello',
-		key: 'b7e7d0ab-53ba-485d-b8bd-12537f9925cb',
+		key: 'aae7d0ab-53ba-485d-b8bd-12537f9925cb',
 		hasChildren: true,
 		type: 'dictionary',
 		isContainer: false,
@@ -22,15 +22,15 @@ export const data: Array<DictionaryDetails> = [
 		{
 			displayName: 'French',
 			isoCode: 'fr',
-			key: 'b7e7d0ab-53ba-485d-b8bd-12537f9925cd',
+			key: 'be7d0ab-53ba-485d-b8bd-12537f9925cd',
 			languageId: 2,
 			translation: '',
 		}],
 	},
 	{
-		parentKey: 'b7e7d0ab-53ba-485d-b8bd-12537f9925cb',
+		parentKey: 'aae7d0ab-53ba-485d-b8bd-12537f9925cb',
 		name: 'Hello again',
-		key: 'b7e7d0ab-53bb-485d-b8bd-12537f9925cb',
+		key: 'bbe7d0ab-53bb-485d-b8bd-12537f9925cb',
 		hasChildren: false,
 		type: 'dictionary',
 		isContainer: false,

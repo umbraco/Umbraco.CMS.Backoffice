@@ -1,26 +1,37 @@
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import type { DictionaryDetails } from '@umbraco-cms/models';
-import { UmbWorkspaceContentContext } from '../../../shared/components/workspace/workspace-content/workspace-content.context';
-import { UmbDictionaryDetailStore, UmbDictionaryDetailStoreItemType, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../dictionary.detail.store';
+import {
+	UmbDictionaryDetailStoreItemType,
+	UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN,
+} from '../dictionary.detail.store';
+import { UmbEntityWorkspaceManager } from 'src/backoffice/shared/components/workspace/workspace-context/entity-manager-controller';
+import { UmbWorkspaceContext } from 'src/backoffice/shared/components/workspace/workspace-context/workspace-context';
+import { UmbWorkspaceEntityContextInterface } from 'src/backoffice/shared/components/workspace/workspace-context/workspace-entity-context.interface';
 
-const DefaultDataTypeData = {
-	key: '',
-    name: '',
-    type: 'dictionary',
-    icon: 'umb:book-alt',
-    hasChildren: false,
-    isContainer: false,
-    parentKey: null,
-    translations: [],
-} as UmbDictionaryDetailStoreItemType;
+export class UmbWorkspaceDictionaryContext
+	extends UmbWorkspaceContext
+	implements UmbWorkspaceEntityContextInterface<UmbDictionaryDetailStoreItemType | undefined>
+{
+	#manager = new UmbEntityWorkspaceManager(this._host, 'dictionary', UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN);
 
-export class UmbWorkspaceDictionaryContext extends UmbWorkspaceContentContext<UmbDictionaryDetailStoreItemType, UmbDictionaryDetailStore> {
-	constructor(host: UmbControllerHostInterface) {
-		super(host, DefaultDataTypeData, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN.toString(), 'dictionary');
+	public readonly name = this.#manager.state.getObservablePart((state) => state?.name);
+	public readonly data = this.#manager.state.asObservable();
+
+	setName(name: string) {
+		this.#manager.state.update({ name: name });
 	}
 
-    public setPropertyValue(isoCode: string, translation: string) {
-		const data = this.getData();
+	getEntityType = this.#manager.getEntityType;
+	getUnique = this.#manager.getEntityKey;
+	getEntityKey = this.#manager.getEntityKey;
+	getStore = this.#manager.getStore;
+	getData = this.#manager.getData;
+	load = this.#manager.load;
+	create = this.#manager.create;
+	save = this.#manager.save;
+	destroy = this.#manager.destroy;
+
+	public setPropertyValue(isoCode: string, translation: string) {
+		const data = this.#manager.getData();
 		const newDataSet = (data as DictionaryDetails).translations.map((dictionaryTranslation) => {
 			if (dictionaryTranslation.isoCode === isoCode) {
 				return { ...dictionaryTranslation, translation };
@@ -28,6 +39,6 @@ export class UmbWorkspaceDictionaryContext extends UmbWorkspaceContentContext<Um
 			return dictionaryTranslation;
 		});
 
-		this.update({ translations: newDataSet } as Partial<UmbDictionaryDetailStoreItemType>);		
+		this.#manager.state.update({ translations: newDataSet } as Partial<UmbDictionaryDetailStoreItemType>);
 	}
 }
