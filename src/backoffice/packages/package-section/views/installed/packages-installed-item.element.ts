@@ -1,15 +1,27 @@
-import { html, nothing } from 'lit';
+import { html, css, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { firstValueFrom, map } from 'rxjs';
 
 import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../core/modal';
-import { createExtensionElement , umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
+import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 
 import type { ManifestPackageView } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 @customElement('umb-packages-installed-item')
 export class UmbPackagesInstalledItem extends UmbLitElement {
+	static styles = css`
+		:host {
+			display: flex;
+		}
+
+		.migrate {
+			padding: calc(var(--uui-size-2, 6px) + 1px);
+			margin-right: calc(var(--uui-size-2, 6px) + 1px);
+			width: 500px;
+			text-align: right;
+		}
+	`;
 	@property({ type: Object })
 	package!: any; // TODO: Use real type
 
@@ -51,7 +63,7 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 	render() {
 		return html`
 			<uui-ref-node-package name=${this.package.name} version=${this.package.version} @open=${this._onClick}>
-				<uui-action-bar slot="actions">
+				<uui-action-bar style="display: block" slot="actions">
 					${this._packageView
 						? html`<uui-button
 								look="primary"
@@ -61,7 +73,18 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 						: nothing}
 				</uui-action-bar>
 			</uui-ref-node-package>
+			${this._renderMigrateButton()}
 		`;
+	}
+
+	private _renderMigrateButton() {
+		//TODO: Check for migrations
+		if (!this.package.hasMigration) return nothing;
+		return html`<div class="migrate">
+			<uui-button look="primary" color="warning" label="Run pending package migrations">
+				Run pending package migrations
+			</uui-button>
+		</div>`;
 	}
 
 	private async _onConfigure() {

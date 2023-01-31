@@ -1,12 +1,20 @@
-import { html } from 'lit';
+import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { IRoute, IRoutingInfo } from 'router-slot';
 import type { ManifestWorkspace } from '@umbraco-cms/models';
-import { createExtensionElement , umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
+import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 @customElement('umb-installed-packages-section-view')
 export class UmbInstalledPackagesSectionViewElement extends UmbLitElement {
+	static styles = [
+		css`
+			:host {
+				display: block;
+			}
+		`,
+	];
+
 	@state()
 	private _routes: IRoute[] = [];
 
@@ -48,7 +56,7 @@ export class UmbInstalledPackagesSectionViewElement extends UmbLitElement {
 
 		routes.push({
 			path: '**',
-			redirectTo: 'section/packages/view/installed/overview', //TODO: this should be dynamic
+			redirectTo: 'overview', //TODO: this should be dynamic
 		});
 		this._routes = routes;
 	}
