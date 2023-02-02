@@ -7,14 +7,6 @@ import { UmbLitElement } from '@umbraco-cms/element';
 
 @customElement('umb-created-packages-section-view')
 export class UmbCreatedPackagesSectionViewElement extends UmbLitElement {
-	static styles = [
-		css`
-			:host {
-				display: block;
-			}
-		`,
-	];
-
 	@state()
 	private _routes: IRoute[] = [];
 
