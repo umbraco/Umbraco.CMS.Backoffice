@@ -111,6 +111,45 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 				<div slot="editor">
 					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
 				</div>
+			</umb-workspace-property-layout>
+			<umb-workspace-property-layout label="Media Types" description="">
+				<div slot="editor">
+					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
+				</div>
+			</umb-workspace-property-layout>
+			<umb-workspace-property-layout label="Languages" description="">
+				<div slot="editor">
+					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
+				</div>
+			</umb-workspace-property-layout>
+			<umb-workspace-property-layout label="Dictionary" description="">
+				<div slot="editor">
+					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
+				</div> </umb-workspace-property-layout
+			><umb-workspace-property-layout label="Data Types" description="">
+				<div slot="editor">
+					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
+				</div>
+			</umb-workspace-property-layout>
+			<umb-workspace-property-layout label="Templates" description="">
+				<div slot="editor">
+					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
+				</div>
+			</umb-workspace-property-layout>
+			<umb-workspace-property-layout label="Stylesheets" description="">
+				<div slot="editor">
+					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
+				</div>
+			</umb-workspace-property-layout>
+			<umb-workspace-property-layout label="Scripts" description="">
+				<div slot="editor">
+					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
+				</div>
+			</umb-workspace-property-layout>
+			<umb-workspace-property-layout label="Partial Views" description="">
+				<div slot="editor">
+					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
+				</div>
 			</umb-workspace-property-layout>`;
 	}
 
