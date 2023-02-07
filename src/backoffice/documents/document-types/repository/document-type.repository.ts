@@ -1,32 +1,31 @@
 import type { RepositoryTreeDataSource } from '../../../../../libs/repository/repository-tree-data-source.interface';
-import { DocumentTreeServerDataSource } from './sources/document.tree.server.data';
-import { UmbDocumentTreeStore, UMB_DOCUMENT_TREE_STORE_CONTEXT_TOKEN } from './document.tree.store';
-import { UmbDocumentDetailStore, UMB_DOCUMENT_DETAIL_STORE_CONTEXT_TOKEN } from './document.detail.store';
-import { UmbDocumentServerDataSource } from './sources/document.server.data';
+import { DocumentTypeTreeServerDataSource } from './sources/document-type.tree.server.data';
+import { UmbDocumentTypeServerDataSource } from './sources/document-type.server.data';
+import { UmbDocumentTypeTreeStore, UMB_DOCUMENT_TYPE_TREE_STORE_CONTEXT_TOKEN } from './document-type.tree.store';
+import { UmbDocumentTypeStore, UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from './document-type.detail.store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
-import { ProblemDetails } from '@umbraco-cms/backend-api';
+import { ProblemDetails, DocumentType } from '@umbraco-cms/backend-api';
 import type { UmbTreeRepository } from 'libs/repository/tree-repository.interface';
 import { UmbDetailRepository } from '@umbraco-cms/repository';
-import type { DocumentDetails } from '@umbraco-cms/models';
 import { UmbNotificationService, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/notification';
 
-type ItemDetailType = DocumentDetails;
+type ItemType = DocumentType;
 
 // Move to documentation / JSdoc
 /* We need to create a new instance of the repository from within the element context. We want the notifications to be displayed in the right context. */
 // element -> context -> repository -> (store) -> data source
 // All methods should be async and return a promise. Some methods might return an observable as part of the promise response.
-export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailRepository<ItemDetailType> {
+export class UmbDocumentTypeRepository implements UmbTreeRepository, UmbDetailRepository<ItemType> {
 	#init!: Promise<unknown>;
 
 	#host: UmbControllerHostInterface;
 
 	#treeSource: RepositoryTreeDataSource;
-	#treeStore?: UmbDocumentTreeStore;
+	#treeStore?: UmbDocumentTypeTreeStore;
 
-	#detailDataSource: UmbDocumentServerDataSource;
-	#detailStore?: UmbDocumentDetailStore;
+	#detailDataSource: UmbDocumentTypeServerDataSource;
+	#detailStore?: UmbDocumentTypeStore;
 
 	#notificationService?: UmbNotificationService;
 
@@ -34,15 +33,15 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 		this.#host = host;
 
 		// TODO: figure out how spin up get the correct data source
-		this.#treeSource = new DocumentTreeServerDataSource(this.#host);
-		this.#detailDataSource = new UmbDocumentServerDataSource(this.#host);
+		this.#treeSource = new DocumentTypeTreeServerDataSource(this.#host);
+		this.#detailDataSource = new UmbDocumentTypeServerDataSource(this.#host);
 
 		this.#init = Promise.all([
-			new UmbContextConsumerController(this.#host, UMB_DOCUMENT_TREE_STORE_CONTEXT_TOKEN, (instance) => {
+			new UmbContextConsumerController(this.#host, UMB_DOCUMENT_TYPE_TREE_STORE_CONTEXT_TOKEN, (instance) => {
 				this.#treeStore = instance;
 			}),
 
-			new UmbContextConsumerController(this.#host, UMB_DOCUMENT_DETAIL_STORE_CONTEXT_TOKEN, (instance) => {
+			new UmbContextConsumerController(this.#host, UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN, (instance) => {
 				this.#detailStore = instance;
 			}),
 
@@ -144,7 +143,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 
 	// Could potentially be general methods:
 
-	async createDetail(template: ItemDetailType) {
+	async createDetail(template: ItemType) {
 		await this.#init;
 
 		if (!template || !template.key) {
@@ -166,14 +165,14 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 		return { error };
 	}
 
-	async saveDetail(template: ItemDetailType) {
+	async saveDetail(item: ItemType) {
 		await this.#init;
 
-		if (!template || !template.key) {
-			throw new Error('Template is missing');
+		if (!item || !item.key) {
+			throw new Error('Document-Type is missing');
 		}
 
-		const { error } = await this.#detailDataSource.update(template);
+		const { error } = await this.#detailDataSource.update(item);
 
 		if (!error) {
 			const notification = { data: { message: `Document saved` } };
@@ -183,8 +182,8 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 		// TODO: we currently don't use the detail store for anything.
 		// Consider to look up the data before fetching from the server
 		// Consider notify a workspace if a template is updated in the store while someone is editing it.
-		this.#detailStore?.append(template);
-		this.#treeStore?.updateItem(template.key, { name: template.name });
+		this.#detailStore?.append(item);
+		this.#treeStore?.updateItem(item.key, { name: item.name });
 		// TODO: would be nice to align the stores on methods/methodNames.
 
 		return { error };
@@ -214,60 +213,5 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 		// TODO: would be nice to align the stores on methods/methodNames.
 
 		return { error };
-	}
-
-	// Listing all currently known methods we need to implement:
-	// these currently only covers posting data
-	// TODO: find a good way to split these
-	async saveAndPublish() {
-		alert('save and publish');
-	}
-
-	async saveAndPreview() {
-		alert('save and preview');
-	}
-
-	async saveAndSchedule() {
-		alert('save and schedule');
-	}
-
-	async createBlueprint() {
-		alert('create document blueprint');
-	}
-
-	async move() {
-		alert('move');
-	}
-
-	async copy() {
-		alert('copy');
-	}
-
-	async sortChildrenOf() {
-		alert('sort');
-	}
-
-	async setCultureAndHostnames() {
-		alert('set culture and hostnames');
-	}
-
-	async setPermissions() {
-		alert('set permissions');
-	}
-
-	async setPublicAccess() {
-		alert('set public access');
-	}
-
-	async publish() {
-		alert('publish');
-	}
-
-	async unpublish() {
-		alert('unpublish');
-	}
-
-	async rollback() {
-		alert('rollback');
 	}
 }

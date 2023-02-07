@@ -15,8 +15,8 @@ import {
 	UmbBackofficeContext,
 	UMB_BACKOFFICE_CONTEXT_TOKEN,
 } from './shared/components/backoffice-frame/backoffice.context';
-import { UmbDocumentTypeDetailStore } from './documents/document-types/document-type.detail.store';
-import { UmbDocumentTypeTreeStore } from './documents/document-types/document-type.tree.store';
+import { UmbDocumentTypeDetailStore } from './documents/document-types/repository/document-type.detail.store';
+import { UmbDocumentTypeTreeStore } from './documents/document-types/repository/document-type.tree.store';
 import { UmbMediaTypeDetailStore } from './media/media-types/media-type.detail.store';
 import { UmbMediaTypeTreeStore } from './media/media-types/media-type.tree.store';
 import { UmbDocumentDetailStore } from './documents/documents/repository/document.detail.store';

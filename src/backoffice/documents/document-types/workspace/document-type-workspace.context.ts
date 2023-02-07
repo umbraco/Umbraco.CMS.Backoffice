@@ -4,19 +4,20 @@ import { UmbWorkspaceEntityContextInterface } from '../../../shared/components/w
 import { UMB_DOCUMENT_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../document-type.detail.store';
 import type { DocumentTypeDetails } from '@umbraco-cms/models';
 
-export class UmbWorkspaceDocumentTypeContext extends UmbWorkspaceContext implements UmbWorkspaceEntityContextInterface<DocumentTypeDetails | undefined> {
-
+export class UmbWorkspaceDocumentTypeContext
+	extends UmbWorkspaceContext
+	implements UmbWorkspaceEntityContextInterface<DocumentTypeDetails | undefined>
+{
 	#manager = new UmbEntityWorkspaceManager(this._host, 'document-type', UMB_DOCUMENT_TYPE_DETAIL_STORE_CONTEXT_TOKEN);
 
 	public readonly data = this.#manager.state.asObservable();
 	public readonly name = this.#manager.state.getObservablePart((state) => state?.name);
 
-
 	setName(name: string) {
-		this.#manager.state.update({name: name})
+		this.#manager.state.update({ name: name });
 	}
 	setIcon(icon: string) {
-		this.#manager.state.update({icon: icon})
+		this.#manager.state.update({ icon: icon });
 	}
 	getEntityType = this.#manager.getEntityType;
 	getUnique = this.#manager.getEntityKey;

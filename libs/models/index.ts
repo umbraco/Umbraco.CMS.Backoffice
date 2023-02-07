@@ -65,6 +65,7 @@ export interface UserGroupDetails extends UserGroupEntity {
 	permissions: Array<string>;
 }
 
+/*
 // Data Types
 export interface DataTypeDetails extends FolderTreeItem {
 	key: string; // TODO: Remove this when the backend is fixed
@@ -77,13 +78,7 @@ export interface DataTypePropertyData {
 	alias: string;
 	value: any;
 }
-
-// Document Types
-export interface DocumentTypeDetails extends DocumentTypeTreeItem {
-	key: string; // TODO: Remove this when the backend is fixed
-	alias: string;
-	properties: [];
-}
+*/
 
 // TODO: Make sure Entity Type/interface.
 export interface MemberTypeDetails extends EntityTreeItem {
@@ -103,16 +98,6 @@ export interface ContentProperty {
 export interface ContentPropertyData {
 	alias: string;
 	value: any;
-}
-
-// Documents
-export interface DocumentDetails extends DocumentTreeItem {
-	key: string; // TODO: Remove this when the backend is fixed
-	isTrashed: boolean; // TODO: remove only temp part of refactor
-	properties: Array<ContentProperty>;
-	data: Array<ContentPropertyData>;
-	variants: Array<any>; // TODO: define variant data
-	//layout?: any; // TODO: define layout type - make it non-optional
 }
 
 // Media

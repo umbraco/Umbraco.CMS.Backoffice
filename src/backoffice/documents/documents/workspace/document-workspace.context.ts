@@ -68,8 +68,7 @@ export class UmbDocumentWorkspaceContext
 			this.#draft.next(data)
 		})
 	}
-
-	 */
+	*/
 
 	setPropertyValue(alias: string, value: unknown) {
 		const entry = { alias: alias, value: value };
