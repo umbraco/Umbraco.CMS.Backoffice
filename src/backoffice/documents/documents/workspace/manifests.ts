@@ -52,6 +52,8 @@ const workspaceViews: Array<ManifestWorkspaceView> = [
 ];
 
 const workspaceViewCollections: Array<ManifestWorkspaceViewCollection> = [
+	/*
+	// TODO: Reenable this:
 	{
 		type: 'workspaceViewCollection',
 		alias: 'Umb.WorkspaceView.Document.Collection',
@@ -66,6 +68,7 @@ const workspaceViewCollections: Array<ManifestWorkspaceViewCollection> = [
 			repositoryAlias: DOCUMENT_REPOSITORY_ALIAS,
 		},
 	},
+	*/
 ];
 
 const workspaceActions: Array<ManifestWorkspaceAction> = [
