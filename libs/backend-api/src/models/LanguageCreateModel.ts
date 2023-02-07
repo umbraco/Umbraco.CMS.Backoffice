@@ -9,3 +9,4 @@ export type LanguageCreateModel = {
     fallbackIsoCode?: string | null;
     isoCode?: string;
 };
+

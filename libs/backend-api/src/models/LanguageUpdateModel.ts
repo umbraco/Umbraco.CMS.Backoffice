@@ -8,3 +8,4 @@ export type LanguageUpdateModel = {
     isMandatory?: boolean;
     fallbackIsoCode?: string | null;
 };
+

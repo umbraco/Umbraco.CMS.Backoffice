@@ -17,12 +17,12 @@ export class LanguageResource {
      * @throws ApiError
      */
     public static getLanguage({
-skip,
-take = 100,
-}: {
-skip?: number,
-take?: number,
-}): CancelablePromise<PagedLanguage> {
+        skip,
+        take = 100,
+    }: {
+        skip?: number,
+        take?: number,
+    }): CancelablePromise<PagedLanguage> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/language',
@@ -38,10 +38,10 @@ take?: number,
      * @throws ApiError
      */
     public static postLanguage({
-requestBody,
-}: {
-requestBody?: LanguageCreateModel,
-}): CancelablePromise<any> {
+        requestBody,
+    }: {
+        requestBody?: LanguageCreateModel,
+    }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/umbraco/management/api/v1/language',
@@ -59,10 +59,10 @@ requestBody?: LanguageCreateModel,
      * @throws ApiError
      */
     public static getLanguageByIsoCode({
-isoCode,
-}: {
-isoCode: string,
-}): CancelablePromise<Language> {
+        isoCode,
+    }: {
+        isoCode: string,
+    }): CancelablePromise<Language> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/language/{isoCode}',
@@ -80,10 +80,10 @@ isoCode: string,
      * @throws ApiError
      */
     public static deleteLanguageByIsoCode({
-isoCode,
-}: {
-isoCode: string,
-}): CancelablePromise<any> {
+        isoCode,
+    }: {
+        isoCode: string,
+    }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/umbraco/management/api/v1/language/{isoCode}',
@@ -102,12 +102,12 @@ isoCode: string,
      * @throws ApiError
      */
     public static putLanguageByIsoCode({
-isoCode,
-requestBody,
-}: {
-isoCode: string,
-requestBody?: LanguageUpdateModel,
-}): CancelablePromise<any> {
+        isoCode,
+        requestBody,
+    }: {
+        isoCode: string,
+        requestBody?: LanguageUpdateModel,
+    }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/umbraco/management/api/v1/language/{isoCode}',
