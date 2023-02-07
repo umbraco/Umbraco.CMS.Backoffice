@@ -20,7 +20,7 @@ export class UmbDocumentTypeTreeStore extends UmbStoreBase {
 	 * @memberof UmbDocumentTypeTreeStore
 	 */
 	constructor(host: UmbControllerHostInterface) {
-		super(host, UMB_DOCUMENT_TREE_STORE_CONTEXT_TOKEN.toString());
+		super(host, UMB_DOCUMENT_TYPE_TREE_STORE_CONTEXT_TOKEN.toString());
 	}
 
 	/**
