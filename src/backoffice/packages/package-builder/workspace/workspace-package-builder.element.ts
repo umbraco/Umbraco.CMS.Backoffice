@@ -3,7 +3,7 @@ import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 import { UmbLitElement } from '@umbraco-cms/element';
-import '../../../shared/property-editors/uis/document-picker/property-editor-ui-document-picker.element';
+import '../../../shared/components/input-document-picker/input-document-picker.element';
 import '../../../shared/property-editors/uis/media-picker/property-editor-ui-media-picker.element';
 import '../../../shared/property-editors/uis/checkbox-list/property-editor-ui-checkbox-list.element';
 
@@ -99,7 +99,7 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 	private _renderEditors() {
 		return html`<umb-workspace-property-layout label="Content" description="">
 				<div slot="editor">
-					<umb-property-editor-ui-document-picker></umb-property-editor-ui-document-picker>
+					<umb-input-document-picker max="1"></umb-input-document-picker>
 				</div>
 			</umb-workspace-property-layout>
 			<umb-workspace-property-layout label="Media" description="">
