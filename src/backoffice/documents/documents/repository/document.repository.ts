@@ -166,14 +166,14 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 		return { error };
 	}
 
-	async saveDetail(template: ItemDetailType) {
+	async saveDetail(item: ItemDetailType) {
 		await this.#init;
 
-		if (!template || !template.key) {
-			throw new Error('Template is missing');
+		if (!item || !item.key) {
+			throw new Error('Document is missing');
 		}
 
-		const { error } = await this.#detailDataSource.update(template);
+		const { error } = await this.#detailDataSource.update(item);
 
 		if (!error) {
 			const notification = { data: { message: `Document saved` } };
@@ -182,9 +182,9 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 
 		// TODO: we currently don't use the detail store for anything.
 		// Consider to look up the data before fetching from the server
-		// Consider notify a workspace if a template is updated in the store while someone is editing it.
-		this.#detailStore?.append(template);
-		this.#treeStore?.updateItem(template.key, { name: template.name });
+		// Consider notify a workspace if a document is updated in the store while someone is editing it.
+		this.#detailStore?.append(item);
+		this.#treeStore?.updateItem(item.key, { name: item.name });
 		// TODO: would be nice to align the stores on methods/methodNames.
 
 		return { error };
@@ -208,7 +208,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 
 		// TODO: we currently don't use the detail store for anything.
 		// Consider to look up the data before fetching from the server.
-		// Consider notify a workspace if a template is deleted from the store while someone is editing it.
+		// Consider notify a workspace if a document is deleted from the store while someone is editing it.
 		this.#detailStore?.remove([key]);
 		this.#treeStore?.removeItem(key);
 		// TODO: would be nice to align the stores on methods/methodNames.
