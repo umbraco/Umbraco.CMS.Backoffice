@@ -4,14 +4,14 @@ import { customElement, state } from 'lit/decorators.js';
 import { distinctUntilChanged } from 'rxjs';
 import { UmbWorkspaceDocumentTypeContext } from '../../document-type-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
-import type { DocumentTypeDetails } from '@umbraco-cms/models';
+import type { DocumentType } from '@umbraco-cms/backend-api';
 
 @customElement('umb-workspace-view-document-type-design')
 export class UmbWorkspaceViewDocumentTypeDesignElement extends UmbLitElement {
 	static styles = [UUITextStyles, css``];
 
 	@state()
-	_documentType?: DocumentTypeDetails | null;
+	_documentType?: DocumentType | null;
 
 	private _workspaceContext?: UmbWorkspaceDocumentTypeContext;
 
