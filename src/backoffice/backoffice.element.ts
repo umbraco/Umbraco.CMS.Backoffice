@@ -15,7 +15,7 @@ import {
 	UmbBackofficeContext,
 	UMB_BACKOFFICE_CONTEXT_TOKEN,
 } from './shared/components/backoffice-frame/backoffice.context';
-import { UmbDocumentTypeDetailStore } from './documents/document-types/repository/document-type.detail.store';
+import { UmbDocumentTypeStore } from './documents/document-types/repository/document-type.store';
 import { UmbDocumentTypeTreeStore } from './documents/document-types/repository/document-type.tree.store';
 import { UmbMediaTypeDetailStore } from './media/media-types/media-type.detail.store';
 import { UmbMediaTypeTreeStore } from './media/media-types/media-type.tree.store';
@@ -88,7 +88,7 @@ export class UmbBackofficeElement extends UmbLitElement {
 		new UmbUserStore(this);
 		new UmbMediaTypeDetailStore(this);
 		new UmbMediaTypeTreeStore(this);
-		new UmbDocumentTypeDetailStore(this);
+		new UmbDocumentTypeStore(this);
 		new UmbDocumentTypeTreeStore(this);
 		new UmbMemberTypeDetailStore(this);
 		new UmbMemberTypeTreeStore(this);

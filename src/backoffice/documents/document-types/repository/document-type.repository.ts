@@ -2,7 +2,7 @@ import type { RepositoryTreeDataSource } from '../../../../../libs/repository/re
 import { DocumentTypeTreeServerDataSource } from './sources/document-type.tree.server.data';
 import { UmbDocumentTypeServerDataSource } from './sources/document-type.server.data';
 import { UmbDocumentTypeTreeStore, UMB_DOCUMENT_TYPE_TREE_STORE_CONTEXT_TOKEN } from './document-type.tree.store';
-import { UmbDocumentTypeStore, UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from './document-type.detail.store';
+import { UmbDocumentTypeStore, UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from './document-type.store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
 import { ProblemDetails, DocumentType } from '@umbraco-cms/backend-api';
