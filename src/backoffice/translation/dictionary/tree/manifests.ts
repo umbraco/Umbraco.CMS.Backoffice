@@ -7,7 +7,6 @@ const tree: ManifestTree = {
 	type: 'tree',
 	alias: treeAlias,
 	name: 'Dictionary Tree',
-	weight: 100,
 	meta: {
 		storeAlias: UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN.toString(),
 	},
@@ -19,7 +18,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		alias: 'Umb.TreeItemAction.Dictionary.Create',
 		name: 'Tree Item Action Create',
 		loader: () => import('./actions/action-dictionary-create.element'),
-		weight: 200,
+		weight: 100,
 		meta: {
 			entityType: 'dictionary',
 			label: 'Create',
@@ -31,7 +30,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		alias: 'Umb.TreeItemAction.Dictionary.Move',
 		name: 'Tree Item Action Move',
 		loader: () => import('./actions/action-dictionary-move.element'),
-		weight: 200,
+		weight: 100,
 		meta: {
 			entityType: 'dictionary',
 			label: 'Move',
@@ -44,7 +43,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		alias: 'Umb.TreeItemAction.Dictionary.Export',
 		name: 'Tree Item Action Export',
 		loader: () => import('./actions/action-dictionary-export.element'),
-		weight: 200,
+		weight: 100,
 		meta: {
 			entityType: 'dictionary',
 			label: 'Export',
@@ -57,7 +56,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		alias: 'Umb.TreeItemAction.Dictionary.Import',
 		name: 'Tree Item Action Import',
 		loader: () => import('./actions/action-dictionary-import.element'),
-		weight: 200,
+		weight: 100,
 		meta: {
 			entityType: 'dictionary',
 			label: 'Import',
@@ -81,7 +80,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		alias: 'Umb.TreeItemAction.Dictionary.Reload',
 		name: 'Tree Item Action Reload',
 		loader: () => import('./actions/action-dictionary-reload.element'),
-		weight: 200,
+		weight: 100,
 		meta: {
 			entityType: 'dictionary',
 			label: 'Reload',

@@ -7,12 +7,12 @@ import {
 	UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN,
 } from '../../dictionary/dictionary.detail.store';
 import { UmbTableConfig, UmbTableColumn, UmbTableItem } from '../../../../backoffice/shared/components/table';
-import { UmbLitElement } from '@umbraco-cms/element';
-import { DictionaryItem, DictionaryOverview, Language, LanguageResource } from '@umbraco-cms/backend-api';
 import {
 	UmbTreeContextMenuService,
 	UMB_TREE_CONTEXT_MENU_SERVICE_CONTEXT_TOKEN,
-} from 'src/backoffice/shared/components/tree/context-menu/tree-context-menu.service';
+} from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
+import { UmbLitElement } from '@umbraco-cms/element';
+import { DictionaryOverview, Language } from '@umbraco-cms/backend-api';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
@@ -74,11 +74,11 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 			this.#detailStore = detailStore;
 			this.#languages = await this.#detailStore.getLanguages();
 
-			this._getDictionaryItems();
+			this.#getDictionaryItems();
 		});
 	}
 
-	private async _getDictionaryItems() {
+	async #getDictionaryItems() {
 		if (!this.#detailStore) return;
 
 		this.observe(this.#detailStore.get(0, 1000), (dictionaryItems: DictionaryOverview[]) => {
@@ -120,7 +120,9 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 				data: [
 					{
 						columnAlias: 'name',
-						value: html`<a style="font-weight:bold" href="/section/translation/dictionary/edit/${dictionary.key}">
+						value: html`<a
+							style="font-weight:bold; padding-left:${(dictionary.level ?? 0) * 10}px"
+							href="/section/translation/dictionary/edit/${dictionary.key}">
 							${dictionary.name}</a
 						> `,
 					},
@@ -129,7 +131,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 			this.#languages.forEach((l) => {
 				if (!l.isoCode) return;
-				
+
 				tableItem.data.push({
 					columnAlias: l.isoCode,
 					value: dictionary.translatedIsoCodes?.includes(l.isoCode)
@@ -160,10 +162,11 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 		if (!this.#contextMenuService) return;
 
 		// TODO => from where can we get a contextMenuService instance?
-		// this.#contextMenuService.open({
-		// 	key: '',
-		// 	name: 'Create',
-		// });
+		// TODO => key should be null for root items
+		this.#contextMenuService.open({
+			key: '',
+			name: 'Create',
+		});
 	}
 
 	render() {
