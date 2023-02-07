@@ -14,7 +14,7 @@ export class UmbDocumentWorkspaceContext
 {
 	#isNew = false;
 	#host: UmbControllerHostInterface;
-	#templateDetailRepo: UmbDocumentRepository;
+	#repository: UmbDocumentRepository;
 
 	#data = new ObjectState<EntityType | undefined>(undefined);
 	data = this.#data.asObservable();
@@ -23,7 +23,7 @@ export class UmbDocumentWorkspaceContext
 	constructor(host: UmbControllerHostInterface) {
 		super(host);
 		this.#host = host;
-		this.#templateDetailRepo = new UmbDocumentRepository(this.#host);
+		this.#repository = new UmbDocumentRepository(this.#host);
 	}
 
 	getData() {
@@ -83,7 +83,7 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	async load(entityKey: string) {
-		const { data } = await this.#templateDetailRepo.requestDetails(entityKey);
+		const { data } = await this.#repository.requestDetails(entityKey);
 		if (data) {
 			this.#isNew = false;
 			this.#data.next(data);
@@ -91,7 +91,7 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	async createScaffold(parentKey: string | null) {
-		const { data } = await this.#templateDetailRepo.createDetailsScaffold(parentKey);
+		const { data } = await this.#repository.createDetailsScaffold(parentKey);
 		if (!data) return;
 		this.#isNew = true;
 		this.#data.next(data);
@@ -100,16 +100,16 @@ export class UmbDocumentWorkspaceContext
 	async save() {
 		if (!this.#data.value) return;
 		if (this.#isNew) {
-			await this.#templateDetailRepo.createDetail(this.#data.value);
+			await this.#repository.createDetail(this.#data.value);
 		} else {
-			await this.#templateDetailRepo.saveDetail(this.#data.value);
+			await this.#repository.saveDetail(this.#data.value);
 		}
 		// If it went well, then its not new anymore?.
 		this.#isNew = false;
 	}
 
 	async delete(key: string) {
-		await this.#templateDetailRepo.delete(key);
+		await this.#repository.delete(key);
 	}
 
 	/*

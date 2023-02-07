@@ -8,7 +8,6 @@ import {
 	UMB_COLLECTION_CONTEXT_TOKEN,
 } from '../../../../../../shared/collection/collection.context';
 
-import '../../../../../../shared/components/content-property/content-property.element';
 import '../../../../../../shared/collection/dashboards/dashboard-collection.element';
 import { UmbWorkspaceEntityContextInterface } from '../../../workspace-context/workspace-entity-context.interface';
 import { UmbLitElement } from '@umbraco-cms/element';
@@ -46,7 +45,6 @@ export class UmbWorkspaceViewCollectionElement extends UmbLitElement {
 	protected _provideWorkspace() {
 		const entityKey = this._workspaceContext?.getEntityKey();
 		if (entityKey != null) {
-
 			const manifestMeta = this.manifest.meta;
 
 			this._collectionContext = new UmbCollectionContext(

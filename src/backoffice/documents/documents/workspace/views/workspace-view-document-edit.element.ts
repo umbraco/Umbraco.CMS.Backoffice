@@ -2,9 +2,8 @@ import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import type { UmbWorkspaceEntityContextInterface } from '../../../workspace-context/workspace-entity-context.interface';
-import type { ContentProperty, ContentPropertyData, DocumentDetails, MediaDetails } from '@umbraco-cms/models';
-
+import { UmbDocumentWorkspaceContext } from '../document-workspace.context';
+import type { ContentProperty, ContentPropertyData } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 @customElement('umb-workspace-view-content-edit')
@@ -25,20 +24,17 @@ export class UmbWorkspaceViewContentEditElement extends UmbLitElement {
 	@state()
 	_data: ContentPropertyData[] = [];
 
-	private _workspaceContext?: UmbWorkspaceEntityContextInterface<DocumentDetails | MediaDetails>;
+	private _workspaceContext?: UmbDocumentWorkspaceContext;
 
 	constructor() {
 		super();
 
 		// TODO: Figure out how to get the magic string for the workspace context.
-		this.consumeContext<UmbWorkspaceEntityContextInterface<DocumentDetails | MediaDetails>>(
-			'umbWorkspaceContext',
-			(workspaceContext) => {
-				this._workspaceContext = workspaceContext;
-				console.log('workspaceContext', workspaceContext);
-				this._observeContent();
-			}
-		);
+		this.consumeContext<UmbDocumentWorkspaceContext>('umbWorkspaceContext', (workspaceContext) => {
+			this._workspaceContext = workspaceContext;
+			console.log('document workspaceContext', workspaceContext);
+			this._observeContent();
+		});
 	}
 
 	private _observeContent() {
