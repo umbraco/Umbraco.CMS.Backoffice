@@ -5,7 +5,7 @@ import type { DocumentDetails } from '@umbraco-cms/models';
 import { appendToFrozenArray, ObjectState } from '@umbraco-cms/observable-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
-// TODO: should this contex be called DocumentDraft instead of workspace? or should the draft be part of this?
+// TODO: should this context be called DocumentDraft instead of workspace? or should the draft be part of this?
 
 type EntityType = DocumentDetails;
 export class UmbDocumentWorkspaceContext
