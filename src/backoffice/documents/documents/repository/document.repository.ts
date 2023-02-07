@@ -5,19 +5,18 @@ import { UmbDocumentDetailStore, UMB_DOCUMENT_DETAIL_STORE_CONTEXT_TOKEN } from 
 import { UmbDocumentServerDataSource } from './sources/document.server.data';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
-import { ProblemDetails } from '@umbraco-cms/backend-api';
+import { ProblemDetails, Document } from '@umbraco-cms/backend-api';
 import type { UmbTreeRepository } from 'libs/repository/tree-repository.interface';
 import { UmbDetailRepository } from '@umbraco-cms/repository';
-import type { DocumentDetails } from '@umbraco-cms/models';
 import { UmbNotificationService, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/notification';
 
-type ItemDetailType = DocumentDetails;
+type ItemType = Document;
 
 // Move to documentation / JSdoc
 /* We need to create a new instance of the repository from within the element context. We want the notifications to be displayed in the right context. */
 // element -> context -> repository -> (store) -> data source
 // All methods should be async and return a promise. Some methods might return an observable as part of the promise response.
-export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailRepository<ItemDetailType> {
+export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailRepository<ItemType> {
 	#init!: Promise<unknown>;
 
 	#host: UmbControllerHostInterface;
@@ -144,7 +143,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 
 	// Could potentially be general methods:
 
-	async createDetail(item: ItemDetailType) {
+	async createDetail(item: ItemType) {
 		await this.#init;
 
 		if (!item || !item.key) {
@@ -166,7 +165,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 		return { error };
 	}
 
-	async saveDetail(item: ItemDetailType) {
+	async saveDetail(item: ItemType) {
 		await this.#init;
 
 		if (!item || !item.key) {
