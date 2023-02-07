@@ -2,9 +2,10 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { UmbLitElement } from '@umbraco-cms/element';
-import { DictionaryItem, DictionaryItemTranslationModel } from '@umbraco-cms/backend-api';
 import { UmbWorkspaceDictionaryContext } from '../../dictionary-workspace.context';
+import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../../dictionary.detail.store';
+import { UmbLitElement } from '@umbraco-cms/element';
+import { DictionaryItem, Language } from '@umbraco-cms/backend-api';
 
 @customElement('umb-workspace-view-dictionary-edit')
 export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
@@ -19,40 +20,51 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 	];
 
 	@state()
-	_dictionary?: DictionaryItem;
+	private _dictionary?: DictionaryItem;
 
-	private _workspaceContext?: UmbWorkspaceDictionaryContext;
+	#detailStore!: UmbDictionaryDetailStore;
+
+	#languages: Array<Language> = [];
+
+	#workspaceContext?: UmbWorkspaceDictionaryContext;
 
 	constructor() {
 		super();
 
-		this.consumeContext('umbWorkspaceContext', (umbWorkspaceContext: UmbWorkspaceDictionaryContext) => {
-			this._workspaceContext = umbWorkspaceContext;
-			this._observeDictionary();
+		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, async (detailStore) => {
+			this.#detailStore = detailStore;
+		});
+
+		this.consumeContext('umbWorkspaceContext', async (umbWorkspaceContext: UmbWorkspaceDictionaryContext) => {
+			this.#workspaceContext = umbWorkspaceContext;
+			this.#languages = await this.#detailStore.getLanguages();
+			this.#observeDictionary();
 		});
 	}
 
-	private _observeDictionary() {
-		if (!this._workspaceContext) {
+	#observeDictionary() {
+		if (!this.#workspaceContext) {
 			return;
 		}
 
-		this.observe(this._workspaceContext.data, (dictionary) => {
+		this.observe(this.#workspaceContext.data, (dictionary) => {
 			if (!dictionary) return;
 
 			// TODO: handle if model is not of the type wanted.
 			this._dictionary = dictionary as DictionaryItem;
+			console.log(this._dictionary);
 		});
 	}
 
-	// TODO => model does not provide the culture name, only code
-	private _renderTranslation(translation: DictionaryItemTranslationModel) {
+	#renderTranslation(language: Language) {
+		const translation = this._dictionary?.translations?.find(x => x.isoCode === language.isoCode);
+
 		return html`
 			<umb-workspace-property
-				label="${translation.isoCode ?? ''}"
-				alias="${translation.isoCode ?? ''}"
+				label="${language.name ?? ''}"
+				alias="${language.isoCode ?? ''}"
 				property-editor-ui-alias="Umb.PropertyEditorUI.TextArea"
-				.value="${translation.translation}"></umb-workspace-property>`;
+				.value="${translation?.translation ?? ''}"></umb-workspace-property>`;
 	}
 
 	render() {
@@ -61,9 +73,9 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 				<p>Edit the different language versions for the dictionary item '<em>${this._dictionary?.name}</em>' below.</p>
 				
 				${repeat(
-					this._dictionary?.translations ?? [],
+					this.#languages,
 					(item) => item.isoCode,
-					(item) => this._renderTranslation(item)
+					(item) => this.#renderTranslation(item)
 				)}
 			</uui-box>
 		`;

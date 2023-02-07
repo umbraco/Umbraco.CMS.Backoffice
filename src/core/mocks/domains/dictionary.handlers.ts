@@ -43,13 +43,13 @@ const overviewData: Array<DictionaryOverview> = [
 		name: 'Hello',
 		key: 'aae7d0ab-53ba-485d-b8bd-12537f9925cb',
 		level: 1,
-		translatedIsoCodes: ['en', 'fr'],
+		translatedIsoCodes: ['en'],
 	},
 	{
 		name: 'Hello again',
 		key: 'bbe7d0ab-53bb-485d-b8bd-12537f9925cb',
 		level: 2,
-		translatedIsoCodes: ['en'],
+		translatedIsoCodes: ['en', 'fr'],
 	},
 ];
 
@@ -60,6 +60,7 @@ export const handlers = [
 		if (!key) return;
 
 		const dictionary = umbDictionaryData.getByKey(key);
+		console.log(dictionary);
 		return res(ctx.status(200), ctx.json(dictionary));
 	}),
 

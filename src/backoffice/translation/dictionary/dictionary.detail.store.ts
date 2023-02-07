@@ -5,6 +5,7 @@ import {
 	DictionaryItem,
 	DictionaryOverview,
 	DictionaryResource,
+	LanguageResource,
 } from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
 import { UmbEntityDetailStore, UmbStoreBase } from '@umbraco-cms/store';
@@ -24,17 +25,18 @@ export const UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<Umb
  * @description - Details Data Store for Data Types
  */
 // TODO: use the right type for dictionary:
-export class UmbDictionaryDetailStore extends UmbStoreBase implements UmbEntityDetailStore<UmbDictionaryDetailStoreItemType> {
+export class UmbDictionaryDetailStore
+	extends UmbStoreBase
+	implements UmbEntityDetailStore<UmbDictionaryDetailStoreItemType>
+{
 	#data = new ArrayState<UmbDictionaryDetailStoreItemType>([], (x) => x.key);
 
 	constructor(private host: UmbControllerHostInterface) {
 		super(host, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN.toString());
 	}
 
-
 	getScaffold(entityType: string, parentKey: string | null) {
-		return {
-		} as UmbDictionaryDetailStoreItemType;
+		return {} as UmbDictionaryDetailStoreItemType;
 	}
 
 	/**
@@ -88,8 +90,8 @@ export class UmbDictionaryDetailStore extends UmbStoreBase implements UmbEntityD
 			this.#data.appendOne(data.value);
 		});
 
-		return this.#data.getObservablePart((documents) =>
-			documents.find((document) => document.name === name) as DictionaryItem
+		return this.#data.getObservablePart(
+			(documents) => documents.find((document) => document.name === name) as DictionaryItem
 		);
 	}
 
@@ -173,5 +175,25 @@ export class UmbDictionaryDetailStore extends UmbStoreBase implements UmbEntityD
 	async import(file: string, parentId?: number): Promise<ContentResult | undefined> {
 		const { data } = await tryExecuteAndNotify(this.host, DictionaryResource.postDictionaryImport({ file, parentId }));
 		return data;
+	}
+
+	// TODO => temp until language service exists. Need languages as the dictionary response
+	// includes the translated iso codes only, no friendly names and no way to tell if a dictionary
+	// is missing a translation
+	async getLanguages() {
+		const { data } = await tryExecuteAndNotify(this.host, LanguageResource.getLanguage({ skip: 0, take: 1000 }));
+
+		// default first, then sorted by name
+		// easier to unshift than conditionally sorting by bool and string
+		const languages = data?.items.sort((a, b) => {
+			a.name = a.name ?? '';
+			b.name = b.name ?? '';
+			return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
+		}) ?? [];
+
+		const defaultIndex = languages.findIndex((x) => x.isDefault);
+		languages.unshift(...languages.splice(defaultIndex, 1));
+
+		return languages;
 	}
 }

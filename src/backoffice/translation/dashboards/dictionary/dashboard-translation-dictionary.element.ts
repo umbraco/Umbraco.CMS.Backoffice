@@ -72,23 +72,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, async (detailStore) => {
 			this.#detailStore = detailStore;
-
-			// TODO => temp until language service exists. Need languages as the dictionary response
-			// includes the translated iso codes only, no friendly names and no way to tell if a dictionary
-			// is missing a translation
-			const languagesItems = await LanguageResource.getLanguage({ skip: 0, take: 1000 });
-
-			// default first, then sorted by name
-			// easier to unshift than conditionally sorting by bool and string
-			this.#languages = languagesItems.items
-				.sort((a, b) => {
-					a.name = a.name ?? '';
-					b.name = b.name ?? '';
-					return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
-				});
-
-			const defaultIndex = this.#languages.findIndex(x => x.isDefault);
-			this.#languages.unshift(...this.#languages.splice(defaultIndex, 1));
+			this.#languages = await this.#detailStore.getLanguages();
 
 			this._getDictionaryItems();
 		});

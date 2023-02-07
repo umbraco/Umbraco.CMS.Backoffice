@@ -1,13 +1,14 @@
 import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { distinctUntilChanged } from 'rxjs';
-import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbWorkspaceEntityElement } from '../../../../backoffice/shared/components/workspace/workspace-entity-element.interface';
 import { UmbWorkspaceDictionaryContext } from './dictionary-workspace.context';
+import { UmbLitElement } from '@umbraco-cms/element';
 
 @customElement('umb-workspace-dictionary')
-export class UmbWorkspaceDictionaryElement extends UmbLitElement {
+export class UmbWorkspaceDictionaryElement extends UmbLitElement implements UmbWorkspaceEntityElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -25,26 +26,20 @@ export class UmbWorkspaceDictionaryElement extends UmbLitElement {
 	];
 
 	@state()
-	private _dictionaryName = '';
-
-	private _entityKey!: string;
-	@property()
-	public get entityKey(): string {
-		return this._entityKey;
-	}
-	public set entityKey(value: string) {
-		this._entityKey = value;
-		if (this._entityKey) {
-			this._workspaceContext.load(this._entityKey);
-		}
-	}
+	private _dictionaryName!: string;
 
 	private _workspaceContext: UmbWorkspaceDictionaryContext = new UmbWorkspaceDictionaryContext(this);
 
+	public load(entityKey: string) {
+		this._workspaceContext.load(entityKey);
+	}
+
+	public create(parentKey: string | null) {
+		this._workspaceContext.create(parentKey);
+	}
+
 	constructor() {
 		super();
-
-		this.provideContext('umbWorkspaceContext', this._workspaceContext);
 
 		this.observe(this._workspaceContext.data.pipe(distinctUntilChanged()), (dictionary) => {
 			if (dictionary && dictionary.name !== this._dictionaryName) {

@@ -47,7 +47,7 @@ export const data: Array<DictionaryDetails> = [
 			isoCode: 'fr',
 			key: 'b7e7d0ab-53ba-482d-b8bd-12537f9925cd',
 			languageId: 2,
-			translation: ''
+			translation: 'Hello in fr'
 		}],
 	},
 ];
