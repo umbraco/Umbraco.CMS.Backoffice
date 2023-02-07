@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 import { v4 as uuidv4 } from 'uuid';
 import { umbDictionaryData } from '../data/dictionary.data';
-import { ContentResult, CreatedResult, DictionaryImport } from '@umbraco-cms/backend-api';
+import { ContentResult, CreatedResult, DictionaryImport, DictionaryOverview } from '@umbraco-cms/backend-api';
 import type { DictionaryDetails } from '@umbraco-cms/models';
 
 const uploadResponse: DictionaryImport = {
@@ -22,7 +22,7 @@ const importResponse: DictionaryDetails = {
 	icon: 'umb:book-alt',
 	translations: [{
 		displayName: 'English (United States)',
-		isoCode: 'en-US',
+		isoCode: 'en',
 		key: '37e7d0ab-53ba-425d-b8bd-12537f9925ca',
 		languageId: 1,
 		translation: 'I am an imported US value'
@@ -36,6 +36,23 @@ const importResponse: DictionaryDetails = {
 	}],
 };
 
+
+// alternate data for dashboard view
+const overviewData: Array<DictionaryOverview> = [
+	{
+		name: 'Hello',
+		key: 'aae7d0ab-53ba-485d-b8bd-12537f9925cb',
+		level: 1,
+		translatedIsoCodes: ['en', 'fr'],
+	},
+	{
+		name: 'Hello again',
+		key: 'bbe7d0ab-53bb-485d-b8bd-12537f9925cb',
+		level: 2,
+		translatedIsoCodes: ['en'],
+	},
+];
+
 // TODO: add schema
 export const handlers = [
 	rest.get('/umbraco/management/api/v1/dictionary/:key', (req, res, ctx) => {
@@ -43,7 +60,6 @@ export const handlers = [
 		if (!key) return;
 
 		const dictionary = umbDictionaryData.getByKey(key);
-debugger;
 		return res(ctx.status(200), ctx.json(dictionary));
 	}),
 
@@ -52,7 +68,10 @@ debugger;
 		const take = req.url.searchParams.get('take');
 		if (!skip || !take) return;
 
-		const items = umbDictionaryData.getList(parseInt(skip), parseInt(take));
+		// overview is DictionaryOverview[], umbDictionaryData provides DictionaryDetails[]
+		// which are incompatible types to mock, so we can do a filthy replacement here
+		//const items = umbDictionaryData.getList(parseInt(skip), parseInt(take));
+		const items = overviewData;
 
 		const response = {
 			total: items.length,

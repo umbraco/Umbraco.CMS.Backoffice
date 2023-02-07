@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import {
 	ContentResult,
 	DictionaryImport,
@@ -10,7 +11,6 @@ import { UmbEntityDetailStore, UmbStoreBase } from '@umbraco-cms/store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { ArrayState, createObservablePart } from '@umbraco-cms/observable-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
-import { Observable } from 'rxjs';
 
 export type UmbDictionaryDetailStoreItemType = DictionaryItem | DictionaryOverview;
 export const UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDictionaryDetailStore>(
@@ -73,7 +73,7 @@ export class UmbDictionaryDetailStore extends UmbStoreBase implements UmbEntityD
 		return createObservablePart(this.#data, (dictionary) => dictionary as DictionaryOverview[]);
 	}
 
-	create(parentKey: string, name: string): Observable<DictionaryItem> {
+	create(parentKey?: string, name?: string): Observable<DictionaryItem> {
 		tryExecuteAndNotify(
 			this.host,
 			DictionaryResource.postDictionary({

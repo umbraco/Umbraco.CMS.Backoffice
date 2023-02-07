@@ -52,6 +52,7 @@ import './search';
 import './templating';
 import './shared';
 import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbTreeContextMenuService, UMB_TREE_CONTEXT_MENU_SERVICE_CONTEXT_TOKEN } from './shared/components/tree/context-menu/tree-context-menu.service';
 
 @defineElement('umb-backoffice')
 export class UmbBackofficeElement extends UmbLitElement {

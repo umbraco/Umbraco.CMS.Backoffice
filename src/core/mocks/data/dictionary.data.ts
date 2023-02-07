@@ -14,7 +14,7 @@ export const data: Array<DictionaryDetails> = [
 		icon: 'umb:book-alt',
 		translations: [{
 			displayName: 'English (United States)',
-			isoCode: 'en-US',
+			isoCode: 'en',
 			key: 'b7e7d0ab-53ba-485d-b8bd-12537f9925ca',
 			languageId: 1,
 			translation: 'hello in en-US'
@@ -37,7 +37,7 @@ export const data: Array<DictionaryDetails> = [
 		icon: 'umb:book-alt',
 		translations: [{
 			displayName: 'English (United States)',
-			isoCode: 'en-US',
+			isoCode: 'en',
 			key: 'b7e7d0ab-53ba-485d-b8bd-1253ee9925cb',
 			languageId: 1,
 			translation: 'Hello again in en-US'
@@ -47,7 +47,7 @@ export const data: Array<DictionaryDetails> = [
 			isoCode: 'fr',
 			key: 'b7e7d0ab-53ba-482d-b8bd-12537f9925cd',
 			languageId: 2,
-			translation: 'Hello again in French'
+			translation: ''
 		}],
 	},
 ];

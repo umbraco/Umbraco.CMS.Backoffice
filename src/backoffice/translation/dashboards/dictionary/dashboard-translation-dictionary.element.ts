@@ -2,18 +2,17 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
-import { UmbLitElement } from '@umbraco-cms/element';
 import {
 	UmbDictionaryDetailStore,
 	UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN,
 } from '../../dictionary/dictionary.detail.store';
 import { UmbTableConfig, UmbTableColumn, UmbTableItem } from '../../../../backoffice/shared/components/table';
+import { UmbLitElement } from '@umbraco-cms/element';
+import { DictionaryItem, DictionaryOverview, Language, LanguageResource } from '@umbraco-cms/backend-api';
 import {
 	UmbTreeContextMenuService,
 	UMB_TREE_CONTEXT_MENU_SERVICE_CONTEXT_TOKEN,
-} from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
-import { DictionaryOverview, Language, LanguageResource } from '@umbraco-cms/backend-api';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+} from 'src/backoffice/shared/components/tree/context-menu/tree-context-menu.service';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
@@ -50,84 +49,86 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	};
 
 	@state()
-	private _tableColumns: Array<UmbTableColumn> = [];
-
-	@state()
 	private _tableItemsFiltered: Array<UmbTableItem> = [];
 
-	@state()
-	private _dictionaryItems: DictionaryOverview[] = [];
+	#dictionaryItems: DictionaryOverview[] = [];
 
-	private _contextMenuService?: UmbTreeContextMenuService;
+	#detailStore!: UmbDictionaryDetailStore;
 
-	private _detailStore?: UmbDictionaryDetailStore;
+	#contextMenuService?: UmbTreeContextMenuService;
 
-	private _tableItems: Array<UmbTableItem> = [];
+	#tableItems: Array<UmbTableItem> = [];
 
-	private _languages: Array<Language> = [];
+	#tableColumns: Array<UmbTableColumn> = [];
+
+	#languages: Array<Language> = [];
 
 	constructor() {
 		super();
 	}
 
-	async connectedCallback() {
+	connectedCallback() {
 		super.connectedCallback();
 
-		this.consumeContext(
-			UMB_TREE_CONTEXT_MENU_SERVICE_CONTEXT_TOKEN,
-			(contextMenuService: UmbTreeContextMenuService) => {
-				this._contextMenuService = contextMenuService;
-			}
-		);
+		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, async (detailStore) => {
+			this.#detailStore = detailStore;
 
-		// TODO => temp until language service exists. Need languages as the dictionary response
-		// includes the translated iso codes only, no friendly names and no way to tell if a dictionary
-		// is missing a translation
-		const languagesItems = await LanguageResource.getLanguage({ skip: 0, take: 1000 });
-		this._languages = languagesItems.items;
+			// TODO => temp until language service exists. Need languages as the dictionary response
+			// includes the translated iso codes only, no friendly names and no way to tell if a dictionary
+			// is missing a translation
+			const languagesItems = await LanguageResource.getLanguage({ skip: 0, take: 1000 });
 
-		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (detailStore: UmbDictionaryDetailStore) => {
-			this._detailStore = detailStore;
+			// default first, then sorted by name
+			// easier to unshift than conditionally sorting by bool and string
+			this.#languages = languagesItems.items
+				.sort((a, b) => {
+					a.name = a.name ?? '';
+					b.name = b.name ?? '';
+					return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
+				});
+
+			const defaultIndex = this.#languages.findIndex(x => x.isDefault);
+			this.#languages.unshift(...this.#languages.splice(defaultIndex, 1));
+
 			this._getDictionaryItems();
 		});
 	}
 
 	private async _getDictionaryItems() {
-		if (!this._detailStore) return;
+		if (!this.#detailStore) return;
 
-		this.observe(this._detailStore.get(0, 1000), (dictionaryItems: DictionaryOverview[]) => {
-			this._dictionaryItems = dictionaryItems;
-			this._setTableColumns();
-			this._setTableItems();
+		this.observe(this.#detailStore.get(0, 1000), (dictionaryItems: DictionaryOverview[]) => {
+			this.#dictionaryItems = dictionaryItems;
+			this.#setTableColumns();
+			this.#setTableItems();
 		});
 	}
 
 	/**
 	 * We don't know how many translation items exist for each dictionary until the data arrives
-	 * so can not generate the columns in advance. All dictionaries have entries for all languages
-	 * so safe to iterate the first item in the set
+	 * so can not generate the columns in advance.
 	 * @returns
 	 */
-	private _setTableColumns() {
-		this._tableColumns = [
+	#setTableColumns() {
+		this.#tableColumns = [
 			{
 				name: 'Name',
 				alias: 'name',
 			},
 		];
 
-		this._languages.forEach((l) => {
+		this.#languages.forEach((l) => {
 			if (!l.name) return;
 
-			this._tableColumns.push({
+			this.#tableColumns.push({
 				name: l.name ?? '',
 				alias: l.isoCode ?? '',
 			});
 		});
 	}
 
-	private _setTableItems() {
-		this._tableItems = this._dictionaryItems.map((dictionary) => {
+	#setTableItems() {
+		this.#tableItems = this.#dictionaryItems.map((dictionary) => {
 			// key is name to allow filtering on the displayed value
 			const tableItem: UmbTableItem = {
 				key: dictionary.name ?? '',
@@ -142,9 +143,9 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 				],
 			};
 
-			this._languages.forEach((l) => {
+			this.#languages.forEach((l) => {
 				if (!l.isoCode) return;
-
+				
 				tableItem.data.push({
 					columnAlias: l.isoCode,
 					value: dictionary.translatedIsoCodes?.includes(l.isoCode)
@@ -162,23 +163,20 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 			return tableItem;
 		});
 
-		this._tableItemsFiltered = this._tableItems;
+		this._tableItemsFiltered = this.#tableItems;
 	}
 
-	private _filter(e: { target: HTMLInputElement }) {
+	#filter(e: { target: HTMLInputElement }) {
 		this._tableItemsFiltered = e.target.value
-			? this._tableItems.filter((t) => t.key.includes(e.target.value))
-			: this._tableItems;
+			? this.#tableItems.filter((t) => t.key.includes(e.target.value))
+			: this.#tableItems;
 	}
 
-	private _create() {
-		alert('Open content menu, to create an entry below the root dictionary item');
+	#create() {
+		if (!this.#contextMenuService) return;
 
-		if (!this._contextMenuService) return;
-
-		// TODO => open method opens the root menu for the given key
-		// need to open to a particular action for the given node
-		// this._contextMenuService.open({
+		// TODO => from where can we get a contextMenuService instance?
+		// this.#contextMenuService.open({
 		// 	key: '',
 		// 	name: 'Create',
 		// });
@@ -186,9 +184,9 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	render() {
 		return html` <div id="dictionary-top-bar">
-				<uui-button type="button" look="outline" @click=${this._create}>Create dictionary item</uui-button>
+				<uui-button type="button" look="outline" @click=${this.#create}>Create dictionary item</uui-button>
 				<uui-input
-					@keyup="${this._filter}"
+					@keyup="${this.#filter}"
 					placeholder="Type to filter..."
 					label="Type to filter dictionary"
 					id="searchbar">
@@ -201,7 +199,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 				this._tableItemsFiltered.length,
 				() => html` <umb-table
 					.config=${this._tableConfig}
-					.columns=${this._tableColumns}
+					.columns=${this.#tableColumns}
 					.items=${this._tableItemsFiltered}></umb-table>`,
 				() => html`<umb-empty-state>There were no dictionary items found.</umb-empty-state>`
 			)}`;

@@ -1,8 +1,8 @@
 import './dictionary-workspace.element';
 import { Meta, Story } from '@storybook/web-components';
 import { html } from 'lit-html';
+import { data } from '../../../../core/mocks/data/dictionary.data';
 import type { UmbWorkspaceDictionaryElement } from './dictionary-workspace.element';
-import { data as dictionaryNodes } from 'src/core/mocks/data/dictionary.data';
 
 export default {
 	title: 'Workspaces/Dictionary',
@@ -11,6 +11,6 @@ export default {
 } as Meta;
 
 export const AAAOverview: Story<UmbWorkspaceDictionaryElement> = () =>
-	html` <umb-dictionary-workspace id="${dictionaryNodes[0].key}"></umb-dictionary-workspace>`;
+	html` <umb-dictionary-workspace id="${data[0].key}"></umb-dictionary-workspace>`;
 
 AAAOverview.storyName = 'Overview';

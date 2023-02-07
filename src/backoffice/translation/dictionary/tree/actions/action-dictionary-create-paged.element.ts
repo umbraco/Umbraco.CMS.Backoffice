@@ -40,8 +40,6 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 	private _handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
-		if (!this._treeContextMenuService) return;
-
 		const form = e.target as HTMLFormElement;
 		if (!form || !form.checkValidity()) return;
 
@@ -52,8 +50,7 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 			// use detail from new item to construct edit URL
 			history.pushState(null, '', `/section/translation/dictionary/edit/${newDictionaryItem.key}`);
 
-			// TODO => why is this function not accessible?
-			// this._treeContextMenuService.close();
+			this._treeContextMenuService?.close();
 		});
 	}
 

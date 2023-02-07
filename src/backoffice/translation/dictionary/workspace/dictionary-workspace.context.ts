@@ -1,11 +1,12 @@
-import type { DictionaryDetails } from '@umbraco-cms/models';
 import {
 	UmbDictionaryDetailStoreItemType,
 	UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN,
 } from '../dictionary.detail.store';
-import { UmbEntityWorkspaceManager } from 'src/backoffice/shared/components/workspace/workspace-context/entity-manager-controller';
-import { UmbWorkspaceContext } from 'src/backoffice/shared/components/workspace/workspace-context/workspace-context';
-import { UmbWorkspaceEntityContextInterface } from 'src/backoffice/shared/components/workspace/workspace-context/workspace-entity-context.interface';
+import { UmbEntityWorkspaceManager } from '../../../../backoffice/shared/components/workspace/workspace-context/entity-manager-controller';
+import { UmbWorkspaceContext } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-context';
+import { UmbWorkspaceEntityContextInterface } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-entity-context.interface';
+import type { DictionaryDetails } from '@umbraco-cms/models';
+import { EntityTreeItem } from '@umbraco-cms/backend-api';
 
 export class UmbWorkspaceDictionaryContext
 	extends UmbWorkspaceContext
@@ -39,6 +40,6 @@ export class UmbWorkspaceDictionaryContext
 			return dictionaryTranslation;
 		});
 
-		this.#manager.state.update({ translations: newDataSet } as Partial<UmbDictionaryDetailStoreItemType>);
+		this.#manager.state.update({ translations: newDataSet } as Partial<EntityTreeItem>);
 	}
 }
