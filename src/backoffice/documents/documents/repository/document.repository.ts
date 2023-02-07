@@ -144,14 +144,14 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 
 	// Could potentially be general methods:
 
-	async createDetail(template: ItemDetailType) {
+	async createDetail(item: ItemDetailType) {
 		await this.#init;
 
-		if (!template || !template.key) {
-			throw new Error('Template is missing');
+		if (!item || !item.key) {
+			throw new Error('Document is missing');
 		}
 
-		const { error } = await this.#detailDataSource.insert(template);
+		const { error } = await this.#detailDataSource.insert(item);
 
 		if (!error) {
 			const notification = { data: { message: `Document created` } };
@@ -160,7 +160,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 
 		// TODO: we currently don't use the detail store for anything.
 		// Consider to look up the data before fetching from the server
-		this.#detailStore?.append(template);
+		this.#detailStore?.append(item);
 		// TODO: Update tree store with the new item? or ask tree to request the new item?
 
 		return { error };
