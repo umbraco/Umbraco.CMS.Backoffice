@@ -1,14 +1,14 @@
 import { UmbEntityWorkspaceManager } from '../../../shared/components/workspace/workspace-context/entity-manager-controller';
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
 import { UmbWorkspaceEntityContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-entity-context.interface';
-import { UMB_DOCUMENT_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../document-type.detail.store';
-import type { DocumentTypeDetails } from '@umbraco-cms/models';
+import { UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from '../document-type.store';
+import type { DocumentType } from '@umbraco-cms/backend-api';
 
 export class UmbWorkspaceDocumentTypeContext
 	extends UmbWorkspaceContext
-	implements UmbWorkspaceEntityContextInterface<DocumentTypeDetails | undefined>
+	implements UmbWorkspaceEntityContextInterface<DocumentType | undefined>
 {
-	#manager = new UmbEntityWorkspaceManager(this._host, 'document-type', UMB_DOCUMENT_TYPE_DETAIL_STORE_CONTEXT_TOKEN);
+	#manager = new UmbEntityWorkspaceManager(this._host, 'document-type', UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN);
 
 	public readonly data = this.#manager.state.asObservable();
 	public readonly name = this.#manager.state.getObservablePart((state) => state?.name);
