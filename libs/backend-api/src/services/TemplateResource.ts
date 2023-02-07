@@ -32,6 +32,7 @@ export class TemplateResource {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -74,6 +75,7 @@ export class TemplateResource {
                 'key': key,
             },
             errors: {
+                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -99,6 +101,7 @@ export class TemplateResource {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -136,17 +139,10 @@ export class TemplateResource {
      * @returns TemplateScaffold Success
      * @throws ApiError
      */
-    public static getTemplateScaffold({
-        masterTemplateAlias,
-    }: {
-        masterTemplateAlias?: string,
-    }): CancelablePromise<TemplateScaffold> {
+    public static getTemplateScaffold(): CancelablePromise<TemplateScaffold> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/template/scaffold',
-            query: {
-                'masterTemplateAlias': masterTemplateAlias,
-            },
             errors: {
                 404: `Not Found`,
             },
