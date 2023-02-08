@@ -9,7 +9,7 @@ export const data: Array<DictionaryDetails> = [
 		name: 'Hello',
 		key: 'aae7d0ab-53ba-485d-b8bd-12537f9925cb',
 		hasChildren: true,
-		type: 'dictionary',
+		type: 'dictionary-item',
 		isContainer: false,
 		icon: 'umb:book-alt',
 		translations: [{
@@ -32,7 +32,7 @@ export const data: Array<DictionaryDetails> = [
 		name: 'Hello again',
 		key: 'bbe7d0ab-53bb-485d-b8bd-12537f9925cb',
 		hasChildren: false,
-		type: 'dictionary',
+		type: 'dictionary-item',
 		isContainer: false,
 		icon: 'umb:book-alt',
 		translations: [{

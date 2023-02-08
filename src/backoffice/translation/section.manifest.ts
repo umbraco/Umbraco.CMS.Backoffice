@@ -20,7 +20,6 @@ const dashboards: Array<ManifestDashboard> = [
 		name: 'Dictionary Translation Dashboard',
 		elementName: 'umb-dashboard-translation-dictionary',
 		loader: () => import('./dashboards/dictionary/dashboard-translation-dictionary.element'),
-		weight: 500,
 		meta: {
 			label: 'Dictionary overview',
 			sections: [sectionAlias],

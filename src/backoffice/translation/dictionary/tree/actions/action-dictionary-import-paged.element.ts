@@ -3,10 +3,10 @@ import { css, html } from 'lit';
 import { when } from 'lit-html/directives/when.js';
 import { customElement, query, state } from 'lit/decorators.js';
 import { repeat } from 'lit-html/directives/repeat.js';
-import { DictionaryImport } from '@umbraco-cms/backend-api';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
 import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary.detail.store';
-import { UmbTreeElement } from 'src/backoffice/shared/components/tree/tree.element';
+import { UmbTreeElement } from '../../../../../backoffice/shared/components/tree/tree.element';
+import { DictionaryImport } from '@umbraco-cms/backend-api';
 
 @customElement('umb-tree-action-dictionary-import-page')
 export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionElement {
@@ -53,9 +53,9 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 
 	private async _importDictionary() {
 		if (!this._uploadedDictionary?.tempFileName) return;
-
+		
 		// TODO => where do we get parentId? API expects a number, but we have a guid key
-		const result = await this._dictionaryDetailStore.import(this._uploadedDictionary?.tempFileName);
+		const result = await this._dictionaryDetailStore.import(this._uploadedDictionary.tempFileName, this._selection[0]);
 
 		const path = result?.content?.split(',');
 		if (path?.length) {
@@ -69,8 +69,14 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 		this._form?.requestSubmit();
 	}
 
-	private async _uploadDictionary(file: File) {
-		this._uploadedDictionary = await this._dictionaryDetailStore.upload(file);
+	private async _handleSubmit(e: SubmitEvent) {
+		e.preventDefault();
+
+		if (!this._treeContextMenuService) return;
+		if (!this._form.checkValidity()) return;
+
+		const formData = new FormData(this._form);
+		this._uploadedDictionary = await this._dictionaryDetailStore.upload(formData);
 
 		if (!this._uploadedDictionary) {
 			this._showErrorView = true;
@@ -81,20 +87,6 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 
 		this._showUploadView = false;
 		this._showImportView = true;
-	}
-
-	private async _handleSubmit(e: SubmitEvent) {
-		e.preventDefault();
-
-		if (!this._treeContextMenuService) return;
-
-		const form = e.target as HTMLFormElement;
-		if (!form || !form.checkValidity()) return;
-
-		const formData = new FormData(this._form);
-		if (!formData || !formData.get('file')) return;
-
-		await this._uploadDictionary(formData.get('file') as File);
 	}
 
 	private _handleSelectionChange(e: CustomEvent) {

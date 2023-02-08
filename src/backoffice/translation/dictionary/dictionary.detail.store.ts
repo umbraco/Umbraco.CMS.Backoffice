@@ -145,11 +145,12 @@ export class UmbDictionaryDetailStore
 	 * @description - Export a Dictionary, optionally including child items.
 	 * @param {string} key
 	 * @param {boolean} includeChildren
-	 * @return {*}  {(Observable<void | null>)}
+	 * @return {*}  {(Observable<Blob | undefined>)}
 	 * @memberof UmbDictionaryStore
 	 */
-	async export(key: string, includeChildren: boolean): Promise<void> {
-		await tryExecuteAndNotify(this.host, DictionaryResource.getDictionaryExportByKey({ key, includeChildren }));
+	async export(key: string, includeChildren: boolean): Promise<Blob | undefined> {
+		const { data } = await tryExecuteAndNotify(this.host, DictionaryResource.getDictionaryExportByKey({ key, includeChildren }));
+		return data;
 	}
 
 	/**
@@ -158,13 +159,11 @@ export class UmbDictionaryDetailStore
 	 * @return {*}  {(Observable<DictionaryImport | undefined>)}
 	 * @memberof UmbDictionaryStore
 	 */
-	async upload(file: File): Promise<DictionaryImport | undefined> {
+	async upload(formData: FormData): Promise<DictionaryImport | undefined> {
 		const { data } = await tryExecuteAndNotify(
 			this.host,
 			DictionaryResource.postDictionaryUpload({
-				requestBody: {
-					file,
-				},
+				requestBody: formData,
 			})
 		);
 
@@ -172,8 +171,9 @@ export class UmbDictionaryDetailStore
 	}
 
 	/// TODO => refresh tree and potentially dashboard after importing
-	async import(file: string, parentId?: number): Promise<ContentResult | undefined> {
-		const { data } = await tryExecuteAndNotify(this.host, DictionaryResource.postDictionaryImport({ file, parentId }));
+	async import(file: string, parentKey?: string): Promise<ContentResult | undefined> {
+		// TODO => parentKey will be a guid param once #13786 is merged and API regenerated
+		const { data } = await tryExecuteAndNotify(this.host, DictionaryResource.postDictionaryImport({ file, parentKey }));
 		return data;
 	}
 

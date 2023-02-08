@@ -1,11 +1,9 @@
 import { UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN } from '../dictionary.tree.store';
 import type { ManifestTree, ManifestTreeItemAction } from '@umbraco-cms/models';
 
-const treeAlias = 'Umb.Tree.Dictionary';
-
 const tree: ManifestTree = {
 	type: 'tree',
-	alias: treeAlias,
+	alias: 'Umb.Tree.Dictionary',
 	name: 'Dictionary Tree',
 	meta: {
 		storeAlias: UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN.toString(),
@@ -20,7 +18,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-create.element'),
 		weight: 100,
 		meta: {
-			entityType: 'dictionary',
+			entityType: 'dictionary-item',
 			label: 'Create',
 			icon: 'umb:add',
 		},
@@ -32,7 +30,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-move.element'),
 		weight: 100,
 		meta: {
-			entityType: 'dictionary',
+			entityType: 'dictionary-item',
 			label: 'Move',
 			icon: 'umb:enter',
 			
@@ -45,7 +43,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-export.element'),
 		weight: 100,
 		meta: {
-			entityType: 'dictionary',
+			entityType: 'dictionary-item',
 			label: 'Export',
 			icon: 'umb:download-alt',
 		},
@@ -58,7 +56,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-import.element'),
 		weight: 100,
 		meta: {
-			entityType: 'dictionary',
+			entityType: 'dictionary-item',
 			label: 'Import',
 			icon: 'umb:page-up',
 		},
@@ -70,7 +68,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-delete.element'),
 		weight: 100,
 		meta: {
-			entityType: 'dictionary',
+			entityType: 'dictionary-item',
 			label: 'Delete',
 			icon: 'umb:trash',
 		},
@@ -82,7 +80,7 @@ const treeItemActions: Array<ManifestTreeItemAction> = [
 		loader: () => import('./actions/action-dictionary-reload.element'),
 		weight: 100,
 		meta: {
-			entityType: 'dictionary',
+			entityType: 'dictionary-item',
 			label: 'Reload',
 			icon: 'umb:refresh',
 		},

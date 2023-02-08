@@ -10,6 +10,7 @@ const sidebarMenuItem: ManifestSidebarMenuItem = {
 		label: 'Dictionary',
 		icon: 'umb:folder',
 		sections: ['Umb.Section.Translation'],
+		entityType: 'dictionary-item'
 	},
 };
 

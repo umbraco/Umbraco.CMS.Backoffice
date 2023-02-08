@@ -17,7 +17,7 @@ const importResponse: DictionaryDetails = {
 	name: 'Uploaded dictionary',
 	key: 'b7e7d0ab-53ba-485d-dddd-12537f9925cb',
 	hasChildren: false,
-	type: 'dictionary',
+	type: 'dictionary-item',
 	isContainer: false,
 	icon: 'umb:book-alt',
 	translations: [{

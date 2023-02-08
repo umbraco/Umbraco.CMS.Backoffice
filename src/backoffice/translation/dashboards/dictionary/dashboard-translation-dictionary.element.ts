@@ -122,7 +122,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 						columnAlias: 'name',
 						value: html`<a
 							style="font-weight:bold; padding-left:${(dictionary.level ?? 0) * 10}px"
-							href="/section/translation/dictionary/edit/${dictionary.key}">
+							href="/section/translation/dictionary-item/edit/${dictionary.key}">
 							${dictionary.name}</a
 						> `,
 					},
@@ -158,10 +158,10 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 			: this.#tableItems;
 	}
 
-	#create() {
+	#create() {debugger;
 		if (!this.#contextMenuService) return;
 
-		// TODO => from where can we get a contextMenuService instance?
+		// TODO => from where can we get a contextMenuService instance? Or do we want to reconsider the creation steps for new dictionary items?
 		// TODO => key should be null for root items
 		this.#contextMenuService.open({
 			key: '',

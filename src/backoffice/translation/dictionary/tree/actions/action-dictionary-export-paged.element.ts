@@ -38,6 +38,7 @@ export class UmbTreeActionDictionaryExportPageElement extends UmbTreeItemActionE
 		if (!form) return;
 
 		const formData = new FormData(form);
+		/// TODO => decide where to handle file downloads - should be a single entry point
 		await this._dictionaryDetailStore.export(this._entity.key, (formData.get('includeDescendants') as string) === 'on');
 	}
 

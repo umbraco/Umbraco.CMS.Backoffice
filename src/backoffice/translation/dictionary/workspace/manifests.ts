@@ -8,7 +8,7 @@ const workspace: ManifestWorkspace = {
 	name: 'Dictionary Workspace',
 	loader: () => import('./dictionary-workspace.element'),
 	meta: {
-		entityType: 'dictionary',
+		entityType: 'dictionary-item',
 	},
 };
 
