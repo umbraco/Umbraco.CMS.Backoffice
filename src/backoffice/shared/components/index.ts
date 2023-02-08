@@ -14,4 +14,5 @@ import './section/section-sidebar/section-sidebar.element';
 import './section/section.element';
 import './tree/tree.element';
 import './workspace/workspace-content/workspace-content.element';
+import './empty-state/empty-state.element';
 import './context-menu-layout/context-menu-layout.element';
