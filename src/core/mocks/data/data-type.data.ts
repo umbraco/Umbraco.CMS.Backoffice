@@ -1,7 +1,6 @@
 import { UmbEntityData } from './entity.data';
 import { createFolderTreeItem } from './utils';
-import { FolderTreeItem } from '@umbraco-cms/backend-api';
-import type { DataType } from '@umbraco-cms/backend-api';
+import type { FolderTreeItem, DataType } from '@umbraco-cms/backend-api';
 
 export const data: Array<DataType> = [
 	{
