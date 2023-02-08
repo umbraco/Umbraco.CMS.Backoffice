@@ -69,12 +69,12 @@ export interface UserGroupDetails extends UserGroupEntity {
 // Data Types
 export interface DataTypeDetails extends FolderTreeItem {
 	key: string; // TODO: Remove this when the backend is fixed
-	propertyEditorModelAlias: string | null;
-	propertyEditorUIAlias: string | null;
-	data: Array<DataTypePropertyData>;
+	propertyEditorAlias: string | null;
+	propertyEditorUiAlias: string | null;
+	data: Array<DataTypeProperty>;
 }
 
-export interface DataTypePropertyData {
+export interface DataTypeProperty {
 	alias: string;
 	value: any;
 }

@@ -14,13 +14,12 @@ import {
 	UmbTableOrderedEvent,
 	UmbTableSelectedEvent,
 } from '../../../../../shared/components/table';
-import type { DocumentDetails } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { EntityTreeItem } from '@umbraco-cms/backend-api';
+import { DocumentTreeItem, EntityTreeItem } from '@umbraco-cms/backend-api';
 
 import './column-layouts/document-table-actions-column-layout.element';
 
-type EntityType = DocumentDetails;
+type EntityType = DocumentTreeItem;
 
 @customElement('umb-document-table-collection-view')
 export class UmbDocumentTableCollectionViewElement extends UmbLitElement {

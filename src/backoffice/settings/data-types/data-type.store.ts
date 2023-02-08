@@ -1,29 +1,23 @@
-import type { DataTypeDetails } from '@umbraco-cms/models';
+import type { DataType } from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
 import { ArrayState } from '@umbraco-cms/observable-api';
 import { UmbEntityDetailStore, UmbStoreBase } from '@umbraco-cms/store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
-
-export const UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDataTypeDetailStore>('UmbDataTypeDetailStore');
-
+export const UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDataTypeStore>('UmbDataTypeStore');
 
 /**
  * @export
- * @class UmbDataTypeDetailStore
+ * @class UmbDataTypeStore
  * @extends {UmbStoreBase}
  * @description - Details Data Store for Data Types
  */
-export class UmbDataTypeDetailStore extends UmbStoreBase implements UmbEntityDetailStore<DataTypeDetails> {
-
-
-	#data = new ArrayState<DataTypeDetails>([], (x) => x.key);
-
+export class UmbDataTypeStore extends UmbStoreBase implements UmbEntityDetailStore<DataType> {
+	#data = new ArrayState<DataType>([], (x) => x.key);
 
 	constructor(host: UmbControllerHostInterface) {
 		super(host, UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN.toString());
 	}
-
 
 	getScaffold(entityType: string, parentKey: string | null) {
 		return {
@@ -33,16 +27,16 @@ export class UmbDataTypeDetailStore extends UmbStoreBase implements UmbEntityDet
 			type: 'data-type',
 			hasChildren: false,
 			parentKey: '',
-			propertyEditorModelAlias: '',
-			propertyEditorUIAlias: '',
+			propertyEditorAlias: '',
+			propertyEditorUiAlias: '',
 			data: [],
-		} as DataTypeDetails;
+		} as DataType;
 	}
 
 	/**
 	 * @description - Request a Data Type by key. The Data Type is added to the store and is returned as an Observable.
 	 * @param {string} key
-	 * @return {*}  {(Observable<DataTypeDetails | undefined>)}
+	 * @return {*}  {(Observable<DataType | undefined>)}
 	 * @memberof UmbDataTypesStore
 	 */
 	getByKey(key: string) {
@@ -53,20 +47,17 @@ export class UmbDataTypeDetailStore extends UmbStoreBase implements UmbEntityDet
 				this.#data.append(data);
 			});
 
-
-		return this.#data.getObservablePart((documents) =>
-			documents.find((document) => document.key === key)
-		);
+		return this.#data.getObservablePart((documents) => documents.find((document) => document.key === key));
 	}
 
 	// TODO: make sure UI somehow can follow the status of this action.
 	/**
 	 * @description - Save a Data Type.
-	 * @param {Array<DataTypeDetails>} dataTypes
+	 * @param {Array<DataType>} dataTypes
 	 * @memberof UmbDataTypesStore
 	 * @return {*}  {Promise<void>}
 	 */
-	save(data: DataTypeDetails[]) {
+	save(data: DataType[]) {
 		// fetch from server and update store
 		// TODO: use Fetcher API.
 		let body: string;
@@ -87,7 +78,7 @@ export class UmbDataTypeDetailStore extends UmbStoreBase implements UmbEntityDet
 			},
 		})
 			.then((res) => res.json())
-			.then((data: Array<DataTypeDetails>) => {
+			.then((data: Array<DataType>) => {
 				this.#data.append(data);
 			});
 	}

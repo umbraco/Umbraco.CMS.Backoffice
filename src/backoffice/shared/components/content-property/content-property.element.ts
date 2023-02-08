@@ -3,9 +3,10 @@ import { css, html } from 'lit';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { customElement, property, state } from 'lit/decorators.js';
 
-import {  UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../../../settings/data-types/data-type.detail.store';
-import type { UmbDataTypeDetailStore } from '../../../settings/data-types/data-type.detail.store';
-import type { ContentProperty, DataTypeDetails, DataTypePropertyData } from '@umbraco-cms/models';
+import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../../../settings/data-types/data-type.store';
+import type { UmbDataTypeStore } from '../../../settings/data-types/data-type.store';
+import type { ContentProperty } from '@umbraco-cms/models';
+import type { DataType, DataTypeProperty } from '@umbraco-cms/backend-api';
 
 import '../workspace-property/workspace-property.element';
 import { UmbLitElement } from '@umbraco-cms/element';
@@ -40,13 +41,13 @@ export class UmbContentPropertyElement extends UmbLitElement {
 	value?: object | string;
 
 	@state()
-	private _propertyEditorUIAlias?: string;
+	private _propertyEditorUiAlias?: string;
 
 	@state()
-	private _dataTypeData: DataTypePropertyData[] = [];
+	private _dataTypeData: DataTypeProperty[] = [];
 
-	private _dataTypeStore?: UmbDataTypeDetailStore;
-	private _dataTypeObserver?: UmbObserverController<DataTypeDetails | null>;
+	private _dataTypeStore?: UmbDataTypeStore;
+	private _dataTypeObserver?: UmbObserverController<DataType | null>;
 
 	constructor() {
 		super();
@@ -64,7 +65,7 @@ export class UmbContentPropertyElement extends UmbLitElement {
 		if (dataTypeKey) {
 			this._dataTypeObserver = this.observe(this._dataTypeStore.getByKey(dataTypeKey), (dataType) => {
 				this._dataTypeData = dataType?.data || [];
-				this._propertyEditorUIAlias = dataType?.propertyEditorUIAlias || undefined;
+				this._propertyEditorUiAlias = dataType?.propertyEditorUiAlias || undefined;
 			});
 		}
 	}
@@ -74,7 +75,7 @@ export class UmbContentPropertyElement extends UmbLitElement {
 			alias=${ifDefined(this._property?.alias)}
 			label=${ifDefined(this._property?.label)}
 			description=${ifDefined(this._property?.description)}
-			property-editor-ui-alias="${ifDefined(this._propertyEditorUIAlias)}"
+			property-editor-ui-alias="${ifDefined(this._propertyEditorUiAlias)}"
 			.value=${this.value}
 			.config=${this._dataTypeData}></umb-workspace-property>`;
 	}

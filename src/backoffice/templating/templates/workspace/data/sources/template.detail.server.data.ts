@@ -58,13 +58,16 @@ export class UmbTemplateDetailServerDataSource implements TemplateDetailDataSour
 			error = parentError;
 		}
 
+		/*
+		// TODO: Revisit template models, masterTemplateAlias is not here anymore?
 		const { data: scaffoldData, error: scaffoldError } = await tryExecuteAndNotify(
 			this.#host,
 			TemplateResource.getTemplateScaffold({ masterTemplateAlias })
 		);
+		*/
 
-		error = scaffoldError;
-		data.content = scaffoldData?.content || '';
+		//error = scaffoldError;
+		//data.content = scaffoldData?.content || '';
 
 		return { data, error };
 	}

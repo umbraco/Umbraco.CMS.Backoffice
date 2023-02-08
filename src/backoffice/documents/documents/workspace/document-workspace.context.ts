@@ -1,13 +1,13 @@
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
 import { UmbDocumentRepository } from '../repository/document.repository';
 import type { UmbWorkspaceEntityContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-entity-context.interface';
-import type { DocumentDetails } from '@umbraco-cms/models';
+import type { Document } from '@umbraco-cms/backend-api';
 import { appendToFrozenArray, ObjectState } from '@umbraco-cms/observable-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
 // TODO: should this context be called DocumentDraft instead of workspace? or should the draft be part of this?
 
-type EntityType = DocumentDetails;
+type EntityType = Document;
 export class UmbDocumentWorkspaceContext
 	extends UmbWorkspaceContext
 	implements UmbWorkspaceEntityContextInterface<EntityType | undefined>
@@ -18,7 +18,7 @@ export class UmbDocumentWorkspaceContext
 
 	#data = new ObjectState<EntityType | undefined>(undefined);
 	data = this.#data.asObservable();
-	name = this.#data.getObservablePart((data) => data?.name);
+	name = this.#data.getObservablePart((data) => undefined); // TODO: implement name for current variant. Consider workspace/context for each variant.
 
 	constructor(host: UmbControllerHostInterface) {
 		super(host);
@@ -45,7 +45,7 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	setName(name: string) {
-		this.#data.update({ name });
+		//this.#data.update({ name });
 	}
 	/*
 	getEntityType = this.#manager.getEntityType;
@@ -75,9 +75,9 @@ export class UmbDocumentWorkspaceContext
 
 		const currentData = this.#data.value;
 		if (currentData) {
-			const newDataSet = appendToFrozenArray(currentData.data, entry, (x) => x.alias);
-
-			this.#data.update({ data: newDataSet });
+			// TODO: make a partial update method for array of data.
+			//const newDataSet = appendToFrozenArray(currentData.properties, entry, (x) => x.alias);
+			//this.#data.update({ data: newDataSet });
 		}
 	}
 

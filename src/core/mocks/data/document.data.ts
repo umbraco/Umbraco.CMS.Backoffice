@@ -1,49 +1,10 @@
 import { UmbEntityData } from './entity.data';
 import { createDocumentTreeItem } from './utils';
-import { DocumentTreeItem, PagedDocumentTreeItem } from '@umbraco-cms/backend-api';
-import type { DocumentDetails } from '@umbraco-cms/models';
+import { ContentState, Document, DocumentTreeItem, PagedDocumentTreeItem } from '@umbraco-cms/backend-api';
 
-export const data: Array<DocumentDetails> = [
-	{
-		name: 'Multiple Text String',
-		type: 'document',
-		icon: 'favorite',
-		hasChildren: false,
-		key: '6f31e382-458c-4f96-95ea-cc26c51009d4',
-		isContainer: false,
-		parentKey: null,
-		noAccess: false,
-		isProtected: false,
-		isPublished: false,
-		isEdited: false,
-		isTrashed: false,
-		properties: [
-			{
-				alias: 'multipleTextString',
-				label: 'Multiple Text String',
-				description: '',
-				dataTypeKey: 'dt-multipleTextString',
-			},
-		],
-		data: [
-			{
-				alias: 'multipleTextString',
-				value: [
-					{
-						value: 'Value 1',
-					},
-					{
-						value: 'Value 2',
-					},
-					{
-						value: 'Value 3',
-					},
-				],
-			},
-		],
-		variants: [],
-	},
-	{
+/*
+
+{
 		name: 'All Property Editors',
 		type: 'document',
 		icon: 'favorite',
@@ -247,179 +208,101 @@ export const data: Array<DocumentDetails> = [
 		data: [],
 		variants: [],
 	},
+
+*/
+
+export const data: Array<Document> = [
 	{
-		name: 'Document 1',
-		type: 'document',
-		icon: 'document',
-		hasChildren: false,
-		key: '74e4008a-ea4f-4793-b924-15e02fd380d1',
-		isContainer: false,
-		parentKey: null,
-		noAccess: false,
-		isProtected: false,
-		isPublished: false,
-		isEdited: false,
-		isTrashed: false,
+		urls: [
+			{
+				culture: 'en-US',
+				url: '/',
+			},
+		],
+		templateKey: null,
+		key: 'c05da24d-7740-447b-9cdc-bd8ce2172e38',
+		contentTypeKey: '29643452-cff9-47f2-98cd-7de4b6807681',
 		properties: [
 			{
-				alias: 'myHeadline',
-				label: 'Headline',
-				description: 'Text string property',
-				dataTypeKey: 'dt-textBox',
+				culture: null,
+				segment: null,
+				alias: 'masterText',
+				value: 'i have a master text',
 			},
 			{
-				alias: 'myDescription',
-				label: 'Description',
-				description: 'Textarea property',
-				dataTypeKey: 'dt-textArea',
+				culture: null,
+				segment: null,
+				alias: 'pageTitle',
+				value: 'with a page title',
+			},
+			{
+				culture: null,
+				segment: null,
+				alias: 'blogPostText',
+				value: 'My first blog post',
+			},
+			{
+				culture: 'en-us',
+				segment: null,
+				alias: 'blogTextStringUnderMasterTab',
+				value: 'in the master tab',
+			},
+			{
+				culture: 'en-us',
+				segment: null,
+				alias: 'blogTextStringUnderGroupUnderMasterTab',
+				value: 'which is under another group in the tab',
+			},
+			{
+				culture: null,
+				segment: null,
+				alias: 'localBlogTabString',
+				value: '1234567',
 			},
 		],
-		data: [
+		variants: [
 			{
-				alias: 'myHeadline',
-				value: 'The daily life at Umbraco HQ',
-			},
-			{
-				alias: 'myDescription',
-				value: 'Every day, a rabbit in a military costume greets me at the front door',
+				state: ContentState.PUBLISHED,
+				publishDate: '2023-02-06T15:31:51.354764',
+				culture: 'en-us',
+				segment: null,
+				name: 'Blog post A',
+				createDate: '2023-02-06T15:31:46.876902',
+				updateDate: '2023-02-06T15:31:51.354764',
 			},
 		],
-		variants: [{ name: 'fake data' }],
-		/*
-	// Concept for node layout, separation of design from config and data.
-	layout: [
-	  {
-		type: 'group',
-		children: [
-		  {
-			type: 'property',
-			alias: 'myHeadline'
-		  },
-		  {
-			type: 'property',
-			alias: 'myDescription'
-		  }
-		]
-	  }
-	],
-	*/
 	},
+];
+
+// TODO: make tree data:
+export const treeData: Array<DocumentTreeItem> = [
 	{
-		name: 'Document 2',
-		type: 'document',
-		icon: 'favorite',
-		hasChildren: false,
-		key: '74e4008a-ea4f-4793-b924-15e02fd380d2',
+		isProtected: false,
+		isPublished: true,
+		isEdited: false,
+		noAccess: false,
+		isTrashed: false,
+		key: 'c05da24d-7740-447b-9cdc-bd8ce2172e38',
 		isContainer: false,
 		parentKey: null,
-		noAccess: false,
-		isProtected: false,
-		isPublished: false,
-		isEdited: false,
-		isTrashed: false,
-		properties: [
-			{
-				alias: 'myHeadline',
-				label: 'Text string label',
-				description: 'this is a text string property',
-				dataTypeKey: 'dt-textBox',
-			},
-			{
-				alias: 'myDescription',
-				label: 'Textarea label',
-				description: 'This is the a textarea property',
-				dataTypeKey: 'dt-textArea',
-			},
-			{
-				alias: 'myExternalEditor',
-				label: 'My JS Property Editor',
-				description: 'This is the a external property',
-				dataTypeKey: 'dt-custom',
-			},
-			{
-				alias: 'myContentPicker',
-				label: 'Content Picker',
-				description: 'This is a content picker',
-				dataTypeKey: 'dt-contentPicker',
-			},
-		],
-		data: [
-			{
-				alias: 'myHeadline',
-				value: 'Is it all just fun and curling and scary rabbits?',
-			},
-			{
-				alias: 'myDescription',
-				value:
-					"So no, there's not confetti every day. And no, there's not champagne every week or a crazy rabbit running around 🐰",
-			},
-			{
-				alias: 'myExternalEditor',
-				value: 'Tex lkasdfkljdfsa 1',
-			},
-			{
-				alias: 'myContextExampleEditor',
-				value: '',
-			},
-			{
-				alias: 'myContentPicker',
-				value: '',
-			},
-		],
-		variants: [{ name: 'Variant 1' }],
-	},
-	{
-		name: 'Document 3',
+		name: 'Blog post A',
 		type: 'document',
-		icon: 'document',
+		icon: 'icon-item-arrangement',
 		hasChildren: true,
-		key: 'cdd30288-2d1c-41b4-89a9-61647b4a10d5',
-		isContainer: false,
-		parentKey: null,
-		noAccess: false,
-		isProtected: false,
-		isPublished: false,
-		isEdited: false,
-		isTrashed: false,
-		properties: [
-			{
-				alias: 'myDescription',
-				label: 'Description',
-				description: 'Textarea property',
-				dataTypeKey: 'dt-textArea',
-			},
-		],
-		data: [
-			{
-				alias: 'myDescription',
-				value: 'Every day, a rabbit in a military costume greets me at the front door',
-			},
-		],
-		variants: [],
 	},
 	{
-		name: 'Document 4',
-		type: 'document',
-		icon: 'document',
-		hasChildren: false,
-		key: 'f6f7a5b2-e7c0-463a-97bc-6cb5b9bcf447',
-		isContainer: false,
-		parentKey: 'cdd30288-2d1c-41b4-89a9-61647b4a10d5',
-		noAccess: false,
 		isProtected: false,
 		isPublished: false,
 		isEdited: false,
+		noAccess: false,
 		isTrashed: false,
-		properties: [
-			{
-				alias: 'myDescription',
-				label: 'Description',
-				description: 'Textarea property',
-				dataTypeKey: 'dt-textArea',
-			},
-		],
-		data: [],
-		variants: [],
+		key: 'fd56a0b5-01a0-4da2-b428-52773bfa9cc4',
+		isContainer: false,
+		parentKey: 'c05da24d-7740-447b-9cdc-bd8ce2172e38',
+		name: 'Blog post B',
+		type: 'document',
+		icon: 'icon-item-arrangement',
+		hasChildren: false,
 	},
 ];
 
@@ -427,9 +310,9 @@ export const data: Array<DocumentDetails> = [
 // TODO: all properties are optional in the server schema. I don't think this is correct.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-class UmbDocumentData extends UmbEntityData<DocumentDetails> {
+class UmbDocumentData extends UmbEntityData<DocumentTreeItem> {
 	constructor() {
-		super(data);
+		super(treeData);
 	}
 
 	getTreeRoot(): PagedDocumentTreeItem {

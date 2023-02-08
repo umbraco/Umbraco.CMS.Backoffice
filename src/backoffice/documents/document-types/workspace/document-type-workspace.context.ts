@@ -1,7 +1,7 @@
 import { UmbEntityWorkspaceManager } from '../../../shared/components/workspace/workspace-context/entity-manager-controller';
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
 import { UmbWorkspaceEntityContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-entity-context.interface';
-import { UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from '../document-type.store';
+import { UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from '../repository/document-type.store';
 import type { DocumentType } from '@umbraco-cms/backend-api';
 
 export class UmbWorkspaceDocumentTypeContext

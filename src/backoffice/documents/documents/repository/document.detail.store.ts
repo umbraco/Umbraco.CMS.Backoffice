@@ -1,4 +1,4 @@
-import type { DocumentDetails } from '@umbraco-cms/models';
+import { Document } from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
 import { ArrayState } from '@umbraco-cms/observable-api';
 import { UmbStoreBase } from '@umbraco-cms/store';
@@ -11,8 +11,7 @@ import { UmbControllerHostInterface } from '@umbraco-cms/controller';
  * @description - Data Store for Template Details
  */
 export class UmbDocumentDetailStore extends UmbStoreBase {
-
-	#data = new ArrayState<DocumentDetails>([], (x) => x.key);
+	#data = new ArrayState<Document>([], (x) => x.key);
 
 	/**
 	 * Creates an instance of UmbDocumentDetailStore.
@@ -28,7 +27,7 @@ export class UmbDocumentDetailStore extends UmbStoreBase {
 	 * @param {DocumentDetails} document
 	 * @memberof UmbDocumentDetailStore
 	 */
-	append(document: DocumentDetails) {
+	append(document: Document) {
 		this.#data.append([document]);
 	}
 

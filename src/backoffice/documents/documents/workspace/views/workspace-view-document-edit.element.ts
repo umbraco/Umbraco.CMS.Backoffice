@@ -3,11 +3,11 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { UmbDocumentWorkspaceContext } from '../document-workspace.context';
-import type { ContentProperty, ContentPropertyData } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
+import { DocumentProperty } from '@umbraco-cms/backend-api';
 
-@customElement('umb-workspace-view-content-edit')
-export class UmbWorkspaceViewContentEditElement extends UmbLitElement {
+@customElement('umb-workspace-view-document-edit')
+export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -19,10 +19,7 @@ export class UmbWorkspaceViewContentEditElement extends UmbLitElement {
 	];
 
 	@state()
-	_properties: ContentProperty[] = [];
-
-	@state()
-	_data: ContentPropertyData[] = [];
+	_properties: DocumentProperty[] = [];
 
 	private _workspaceContext?: UmbDocumentWorkspaceContext;
 
@@ -51,8 +48,7 @@ export class UmbWorkspaceViewContentEditElement extends UmbLitElement {
 			this._workspaceContext.data,
 			(content) => {
 				this._properties = content?.properties || [];
-				this._data = content?.data || [];
-				console.log('content', content);
+				//this._data = content?.data || [];
 
 				/*
 				Maybe we should not give the value(Data), but the umb-content-property should get the context and observe its own data.
@@ -70,19 +66,17 @@ export class UmbWorkspaceViewContentEditElement extends UmbLitElement {
 					this._properties,
 					(property) => property.alias,
 					(property) =>
-						html`<umb-content-property
-							.property=${property}
-							.value=${this._data.find((data) => data.alias === property.alias)?.value}></umb-content-property> `
+						html`<umb-content-property .property=${property} .value=${property.value}></umb-content-property> `
 				)}
 			</uui-box>
 		`;
 	}
 }
 
-export default UmbWorkspaceViewContentEditElement;
+export default UmbWorkspaceViewDocumentEditElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-workspace-view-content-edit': UmbWorkspaceViewContentEditElement;
+		'umb-workspace-view-document-edit': UmbWorkspaceViewDocumentEditElement;
 	}
 }

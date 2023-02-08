@@ -1,4 +1,4 @@
-import { UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from '../document-type.store';
+import { UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from '../repository/document-type.store';
 import type { ManifestTree, ManifestTreeItemAction } from '@umbraco-cms/models';
 
 const tree: ManifestTree = {

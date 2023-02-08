@@ -183,7 +183,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 		// Consider to look up the data before fetching from the server
 		// Consider notify a workspace if a document is updated in the store while someone is editing it.
 		this.#detailStore?.append(item);
-		this.#treeStore?.updateItem(item.key, { name: item.name });
+		//this.#treeStore?.updateItem(item.key, { name: item.name });// Port data to tree store.
 		// TODO: would be nice to align the stores on methods/methodNames.
 
 		return { error };

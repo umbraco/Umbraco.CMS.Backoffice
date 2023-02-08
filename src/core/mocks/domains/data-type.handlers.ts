@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 import { umbDataTypeData } from '../data/data-type.data';
-import type { DataTypeDetails } from '@umbraco-cms/models';
+import type { FolderTreeItem } from '@umbraco-cms/backend-api';
 
 // TODO: add schema
 export const handlers = [
@@ -13,7 +13,7 @@ export const handlers = [
 		return res(ctx.status(200), ctx.json([dataType]));
 	}),
 
-	rest.post<DataTypeDetails[]>('/umbraco/backoffice/data-type/save', async (req, res, ctx) => {
+	rest.post<FolderTreeItem[]>('/umbraco/backoffice/data-type/save', async (req, res, ctx) => {
 		const data = await req.json();
 		if (!data) return;
 

@@ -6,8 +6,8 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 /**
  * A data source for the Document that fetches data from the server
  * @export
- * @class UmbDocumentDetailServerDataSource
- * @implements {DocumentDetailDataSource}
+ * @class UmbDocumentServerDataSource
+ * @implements {RepositoryDetailDataSource}
  */
 export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<Document> {
 	#host: UmbControllerHostInterface;
@@ -156,7 +156,7 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 	 * Deletes a Document on the server
 	 * @param {string} key
 	 * @return {*}
-	 * @memberof UmbDocumentDetailServerDataSource
+	 * @memberof UmbDocumentServerDataSource
 	 */
 	// TODO: Error mistake in this:
 	async delete(key: string) {

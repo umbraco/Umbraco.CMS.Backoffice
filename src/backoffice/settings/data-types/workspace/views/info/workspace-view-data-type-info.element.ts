@@ -3,15 +3,16 @@ import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { distinctUntilChanged } from 'rxjs';
 import { UmbWorkspaceDataTypeContext } from '../../data-type-workspace.context';
-import type { DataTypeDetails } from '@umbraco-cms/models';
+
 import { UmbLitElement } from '@umbraco-cms/element';
+import { DataType } from '@umbraco-cms/backend-api';
 
 @customElement('umb-workspace-view-data-type-info')
 export class UmbWorkspaceViewDataTypeInfoElement extends UmbLitElement {
 	static styles = [UUITextStyles, css``];
 
 	@state()
-	_dataType?: DataTypeDetails;
+	_dataType?: DataType;
 
 	private _workspaceContext?: UmbWorkspaceDataTypeContext;
 
@@ -30,10 +31,7 @@ export class UmbWorkspaceViewDataTypeInfoElement extends UmbLitElement {
 
 		this.observe(this._workspaceContext.data.pipe(distinctUntilChanged()), (dataType) => {
 			if (!dataType) return;
-
-			// TODO: handle if model is not of the type wanted.
-			// TODO: Make method to identify wether data is of type DataTypeDetails
-			this._dataType = dataType as DataTypeDetails;
+			this._dataType = dataType;
 		});
 	}
 
@@ -48,11 +46,11 @@ export class UmbWorkspaceViewDataTypeInfoElement extends UmbLitElement {
 					<div slot="editor">${this._dataType?.key}</div>
 				</umb-workspace-property-layout>
 				<umb-workspace-property-layout label="Property Editor Alias">
-					<div slot="editor">${this._dataType?.propertyEditorModelAlias}</div>
+					<div slot="editor">${this._dataType?.propertyEditorAlias}</div>
 				</umb-workspace-property-layout>
 
 				<umb-workspace-property-layout label="Property Editor UI Alias">
-					<div slot="editor">${this._dataType?.propertyEditorUIAlias}</div>
+					<div slot="editor">${this._dataType?.propertyEditorUiAlias}</div>
 				</umb-workspace-property-layout>
 			</uui-box>
 		`;

@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 import { umbDocumentData } from '../data/document.data';
-import type { DocumentDetails } from '@umbraco-cms/models';
+import type { Document } from '@umbraco-cms/backend-api';
 
 // TODO: add schema
 export const handlers = [
@@ -14,7 +14,7 @@ export const handlers = [
 		return res(ctx.status(200), ctx.json([document]));
 	}),
 
-	rest.post<DocumentDetails[]>('/umbraco/management/api/v1/document/save', async (req, res, ctx) => {
+	rest.post<Document[]>('/umbraco/management/api/v1/document/save', async (req, res, ctx) => {
 		console.warn('Please move to schema');
 		const data = await req.json();
 		if (!data) return;
