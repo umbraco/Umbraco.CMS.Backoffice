@@ -52,7 +52,6 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 
 			// TODO: handle if model is not of the type wanted.
 			this._dictionary = dictionary as DictionaryItem;
-			console.log(this._dictionary);
 		});
 	}
 
