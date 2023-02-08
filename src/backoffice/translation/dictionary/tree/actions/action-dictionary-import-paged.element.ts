@@ -53,8 +53,7 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 
 	private async _importDictionary() {
 		if (!this._uploadedDictionary?.tempFileName) return;
-		
-		// TODO => where do we get parentId? API expects a number, but we have a guid key
+
 		const result = await this._dictionaryDetailStore.import(this._uploadedDictionary.tempFileName, this._selection[0]);
 
 		const path = result?.content?.split(',');
