@@ -27,7 +27,7 @@ import { UmbMemberTypeDetailStore } from './members/member-types/member-type.det
 import { UmbMemberTypeTreeStore } from './members/member-types/member-type.tree.store';
 import { UmbMemberGroupStore } from './members/member-groups/member-group.details.store';
 import { UmbDictionaryDetailStore } from './translation/dictionary/dictionary.detail.store';
-import { UmbDictionaryTreeStore } from './translation/dictionary/dictionary.tree.store';
+import { UmbDictionaryTreeStore } from './translation/dictionary/tree/data/dictionary.tree.store';
 import { UmbDocumentBlueprintDetailStore } from './documents/document-blueprints/document-blueprint.detail.store';
 import { UmbDocumentBlueprintTreeStore } from './documents/document-blueprints/document-blueprint.tree.store';
 import { UmbDataTypeDetailStore } from './settings/data-types/data-type.detail.store';

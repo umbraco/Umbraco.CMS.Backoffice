@@ -1,4 +1,4 @@
-import { UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN } from '../dictionary.tree.store';
+import { UmbDictionaryTreeRepository } from './data/dictionary.tree.repository';
 import type { ManifestTree, ManifestTreeItemAction } from '@umbraco-cms/models';
 
 const tree: ManifestTree = {
@@ -6,7 +6,7 @@ const tree: ManifestTree = {
 	alias: 'Umb.Tree.Dictionary',
 	name: 'Dictionary Tree',
 	meta: {
-		storeAlias: UMB_DICTIONARY_TREE_STORE_CONTEXT_TOKEN.toString(),
+		repository: UmbDictionaryTreeRepository,
 	},
 };
 
