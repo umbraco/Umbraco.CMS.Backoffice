@@ -272,6 +272,61 @@ export const data: Array<Document> = [
 			},
 		],
 	},
+	{
+		urls: [],
+		templateKey: null,
+		key: 'fd56a0b5-01a0-4da2-b428-52773bfa9cc4',
+		contentTypeKey: '29643452-cff9-47f2-98cd-7de4b6807681',
+		properties: [
+			{
+				culture: null,
+				segment: null,
+				alias: 'masterText',
+				value: 'i have a master text B',
+			},
+			{
+				culture: null,
+				segment: null,
+				alias: 'pageTitle',
+				value: 'with a page title B',
+			},
+			{
+				culture: null,
+				segment: null,
+				alias: 'blogPostText',
+				value: 'My first blog post B',
+			},
+			{
+				culture: 'en-us',
+				segment: null,
+				alias: 'blogTextStringUnderMasterTab',
+				value: 'in the master tab B',
+			},
+			{
+				culture: 'en-us',
+				segment: null,
+				alias: 'blogTextStringUnderGroupUnderMasterTab',
+				value: 'which is under another group in the tab B',
+			},
+			{
+				culture: null,
+				segment: null,
+				alias: 'localBlogTabString',
+				value: '1234567890',
+			},
+		],
+		variants: [
+			{
+				state: ContentState.DRAFT,
+				publishDate: '2023-02-06T15:32:24.957009',
+				culture: 'en-us',
+				segment: null,
+				name: 'Blog post B',
+				createDate: '2023-02-06T15:32:05.350038',
+				updateDate: '2023-02-06T15:32:24.957009',
+			},
+		],
+	},
 ];
 
 // TODO: make tree data:
