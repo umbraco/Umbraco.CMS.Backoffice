@@ -24,11 +24,20 @@ export class UmbDataTypeStore extends UmbStoreBase {
 
 	/**
 	 * Append a data-type to the store
-	 * @param {DataType} document
+	 * @param {DataType} dataType
 	 * @memberof UmbDataTypeStore
 	 */
-	append(document: DataType) {
-		this.#data.append([document]);
+	append(dataType: DataType) {
+		this.#data.append([dataType]);
+	}
+
+	/**
+	 * Append a data-type to the store
+	 * @param {key} DataType key.
+	 * @memberof UmbDataTypeStore
+	 */
+	byKey(key: DataType['key']) {
+		return this.#data.getObservablePart((x) => x.find((y) => y.key === key));
 	}
 
 	/**
@@ -41,4 +50,4 @@ export class UmbDataTypeStore extends UmbStoreBase {
 	}
 }
 
-export const UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDataTypeStore>(UmbDataTypeStore.name);
+export const UMB_DATA_TYPE_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDataTypeStore>(UmbDataTypeStore.name);

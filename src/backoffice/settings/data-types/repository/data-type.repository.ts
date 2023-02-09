@@ -1,18 +1,14 @@
 import type { RepositoryTreeDataSource } from '../../../../../libs/repository/repository-tree-data-source.interface';
-import { DocumentTypeTreeServerDataSource } from './sources/document-type.tree.server.data';
-import { UmbDocumentTypeServerDataSource } from './sources/document-type.server.data';
-import { UmbDocumentTypeTreeStore, UMB_DATA_TYPE_TREE_STORE_CONTEXT_TOKEN } from './data-type.tree.store';
-import { UmbDocumentTypeStore, UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from './document-type.store';
+import { UmbDataTypeTreeStore, UMB_DATA_TYPE_TREE_STORE_CONTEXT_TOKEN } from './data-type.tree.store';
+import { UmbDataTypeServerDataSource } from './sources/data-type.server.data';
+import { UmbDataTypeStore, UMB_DATA_TYPE_STORE_CONTEXT_TOKEN } from './data-type.store';
+import { DataTypeTreeServerDataSource } from './sources/data-type.tree.server.data';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
-import { ProblemDetails, DocumentType } from '@umbraco-cms/backend-api';
+import { ProblemDetails, DataType } from '@umbraco-cms/backend-api';
 import type { UmbTreeRepository } from 'libs/repository/tree-repository.interface';
 import { UmbDetailRepository } from '@umbraco-cms/repository';
 import { UmbNotificationService, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/notification';
-import { UmbDataTypeTreeStore } from '../tree/data-type.tree.store';
-import { UmbDataTypeServerDataSource } from './sources/data-type.server.data';
-import { UmbDataTypeStore } from './data-type.store';
-import { DataTypeTreeServerDataSource } from './sources/data-type.tree.server.data';
 
 type ItemType = DataType;
 

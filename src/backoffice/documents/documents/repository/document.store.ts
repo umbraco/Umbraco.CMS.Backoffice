@@ -32,6 +32,15 @@ export class UmbDocumentStore extends UmbStoreBase {
 	}
 
 	/**
+	 * Append a document to the store
+	 * @param {Document} document
+	 * @memberof UmbDocumentStore
+	 */
+	byKey(key: Document['key']) {
+		return this.#data.getObservablePart((x) => x.find((y) => y.key === key));
+	}
+
+	/**
 	 * Removes documents in the store with the given uniques
 	 * @param {string[]} uniques
 	 * @memberof UmbDocumentDetailStore
