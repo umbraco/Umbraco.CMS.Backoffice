@@ -45,7 +45,7 @@ export class UmbDataTypeStore extends UmbStoreBase {
 	 * @param {string[]} uniques
 	 * @memberof UmbDataTypeStore
 	 */
-	remove(uniques: string[]) {
+	remove(uniques: Array<DataType['key']>) {
 		this.#data.remove(uniques);
 	}
 }
