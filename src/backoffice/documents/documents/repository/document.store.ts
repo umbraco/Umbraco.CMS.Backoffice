@@ -10,7 +10,7 @@ import { UmbControllerHostInterface } from '@umbraco-cms/controller';
  * @extends {UmbStoreBase}
  * @description - Data Store for Template Details
  */
-export class UmbDocumentDetailStore extends UmbStoreBase {
+export class UmbDocumentStore extends UmbStoreBase {
 	#data = new ArrayState<Document>([], (x) => x.key);
 
 	/**
@@ -19,7 +19,7 @@ export class UmbDocumentDetailStore extends UmbStoreBase {
 	 * @memberof UmbDocumentDetailStore
 	 */
 	constructor(host: UmbControllerHostInterface) {
-		super(host, UmbDocumentDetailStore.name);
+		super(host, UmbDocumentStore.name);
 	}
 
 	/**
@@ -41,6 +41,4 @@ export class UmbDocumentDetailStore extends UmbStoreBase {
 	}
 }
 
-export const UMB_DOCUMENT_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDocumentDetailStore>(
-	UmbDocumentDetailStore.name
-);
+export const UMB_DOCUMENT_DETAIL_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbDocumentStore>(UmbDocumentStore.name);

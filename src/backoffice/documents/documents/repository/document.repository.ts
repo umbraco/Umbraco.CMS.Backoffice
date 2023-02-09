@@ -1,7 +1,7 @@
 import type { RepositoryTreeDataSource } from '../../../../../libs/repository/repository-tree-data-source.interface';
 import { DocumentTreeServerDataSource } from './sources/document.tree.server.data';
 import { UmbDocumentTreeStore, UMB_DOCUMENT_TREE_STORE_CONTEXT_TOKEN } from './document.tree.store';
-import { UmbDocumentDetailStore, UMB_DOCUMENT_DETAIL_STORE_CONTEXT_TOKEN } from './document.detail.store';
+import { UmbDocumentStore, UMB_DOCUMENT_DETAIL_STORE_CONTEXT_TOKEN } from './document.store';
 import { UmbDocumentServerDataSource } from './sources/document.server.data';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
@@ -25,7 +25,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 	#treeStore?: UmbDocumentTreeStore;
 
 	#detailDataSource: UmbDocumentServerDataSource;
-	#detailStore?: UmbDocumentDetailStore;
+	#detailStore?: UmbDocumentStore;
 
 	#notificationService?: UmbNotificationService;
 
