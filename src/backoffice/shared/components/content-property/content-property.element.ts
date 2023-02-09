@@ -5,8 +5,8 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../../../settings/data-types/data-type.store';
 import type { UmbDataTypeStore } from '../../../settings/data-types/data-type.store';
-import type { ContentProperty } from '@umbraco-cms/models';
-import type { DataType, DataTypeProperty } from '@umbraco-cms/backend-api';
+//import type { ContentProperty } from '@umbraco-cms/models';
+import type { DataType, DataTypeProperty, DocumentTypePropertyType } from '@umbraco-cms/backend-api';
 
 import '../workspace-property/workspace-property.element';
 import { UmbLitElement } from '@umbraco-cms/element';
@@ -24,12 +24,13 @@ export class UmbContentPropertyElement extends UmbLitElement {
 	];
 
 	// TODO: Consider if we just need to get the DataType Key?..
-	private _property?: ContentProperty;
+	// TODO: consider if we should make a base type of the DocumentTypePropertyType, which could become the ContentProperty. A shared common type for all properties.
+	private _property?: DocumentTypePropertyType;
 	@property({ type: Object, attribute: false })
-	public get property(): ContentProperty | undefined {
+	public get property(): DocumentTypePropertyType | undefined {
 		return this._property;
 	}
-	public set property(value: ContentProperty | undefined) {
+	public set property(value: DocumentTypePropertyType | undefined) {
 		const oldProperty = this._property;
 		this._property = value;
 		if (this._property?.dataTypeKey !== oldProperty?.dataTypeKey) {
@@ -73,9 +74,9 @@ export class UmbContentPropertyElement extends UmbLitElement {
 	render() {
 		return html`<umb-workspace-property
 			alias=${ifDefined(this._property?.alias)}
-			label=${ifDefined(this._property?.label)}
-			description=${ifDefined(this._property?.description)}
-			property-editor-ui-alias="${ifDefined(this._propertyEditorUiAlias)}"
+			label=${ifDefined(this._property?.name)}
+			description=${ifDefined(this._property?.description || undefined)}
+			property-editor-ui-alias=${ifDefined(this._propertyEditorUiAlias)}
 			.value=${this.value}
 			.config=${this._dataTypeData}></umb-workspace-property>`;
 	}

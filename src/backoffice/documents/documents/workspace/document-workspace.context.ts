@@ -156,6 +156,11 @@ export class UmbDocumentWorkspaceContext
 		);
 	}
 
+	propertyStructure() {
+		// TODO: handle composition of document types.
+		return this.#documentTypes.getObservablePart((data) => data[0]?.properties);
+	}
+
 	setPropertyValue(alias: string, value: unknown) {
 		const entry = { alias: alias, value: value };
 

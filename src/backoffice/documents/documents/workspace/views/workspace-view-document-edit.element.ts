@@ -4,7 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { UmbDocumentWorkspaceContext } from '../document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DocumentProperty } from '@umbraco-cms/backend-api';
+import { DocumentProperty, DocumentTypePropertyType } from '@umbraco-cms/backend-api';
 
 @customElement('umb-workspace-view-document-edit')
 export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
@@ -19,7 +19,10 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 	];
 
 	@state()
-	_properties: DocumentProperty[] = [];
+	_propertyData: DocumentProperty[] = [];
+
+	@state()
+	_propertyStructures: DocumentTypePropertyType[] = [];
 
 	private _workspaceContext?: UmbDocumentWorkspaceContext;
 
@@ -45,9 +48,9 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 		Should use a Observable for example: this._workspaceContext.properties
 		*/
 		this.observe(
-			this._workspaceContext.properties,
-			(content) => {
-				this._properties = content?.properties || [];
+			this._workspaceContext.propertiesOf(null, null),
+			(properties) => {
+				this._propertyData = properties || [];
 				//this._data = content?.data || [];
 
 				/*
@@ -58,9 +61,9 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 			'observeWorkspaceContextData'
 		);
 		this.observe(
-			this._workspaceContext.dataTypes,
-			(content) => {
-				this._dataTypes = content?.dataTypes || [];
+			this._workspaceContext.propertyStructure(),
+			(propertyStructure) => {
+				this._propertyStructures = propertyStructure || [];
 			},
 			'observeWorkspaceContextData'
 		);
@@ -70,10 +73,13 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 		return html`
 			<uui-box>
 				${repeat(
-					this._properties,
+					this._propertyStructures,
 					(property) => property.alias,
 					(property) =>
-						html`<umb-content-property .property=${property} .value=${property.value}></umb-content-property> `
+						html`<umb-content-property
+							.property=${property}
+							.value=${this._propertyData.filter((x) => x.alias === property.alias)?.[0]
+								?.value}></umb-content-property> `
 				)}
 			</uui-box>
 		`;

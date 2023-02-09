@@ -1,6 +1,7 @@
 import {
 	ContentTreeItem,
 	DocumentTreeItem,
+	DocumentTypePropertyType,
 	DocumentTypeTreeItem,
 	EntityTreeItem,
 	FolderTreeItem,

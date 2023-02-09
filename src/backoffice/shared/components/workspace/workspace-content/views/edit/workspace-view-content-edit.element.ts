@@ -35,7 +35,6 @@ export class UmbWorkspaceViewContentEditElement extends UmbLitElement {
 			'umbWorkspaceContext',
 			(workspaceContext) => {
 				this._workspaceContext = workspaceContext;
-				console.log('workspaceContext', workspaceContext);
 				this._observeContent();
 			}
 		);
@@ -51,6 +50,9 @@ export class UmbWorkspaceViewContentEditElement extends UmbLitElement {
 
 		Should use a Observable for example: this._workspaceContext.properties
 		*/
+
+		/*
+		// TODO: broken for now, as we need to transfer into the repository way:
 		this.observe(
 			this._workspaceContext.data,
 			(content) => {
@@ -58,13 +60,12 @@ export class UmbWorkspaceViewContentEditElement extends UmbLitElement {
 				this._properties = content?.properties || [];
 				console.log('content', content);
 
-				/*
-				Maybe we should not give the value(Data), but the umb-content-property should get the context and observe its own data.
-				This would become a more specific Observer therefor better performance?.. Note to self: Debate with Mads how he sees this perspective.
-				*/
+				//Maybe we should not give the value(Data), but the umb-content-property should get the context and observe its own data.
+				//This would become a more specific Observer therefor better performance?.. Note to self: Debate with Mads how he sees this perspective.
 			},
 			'observeWorkspaceContextData'
 		);
+		*/
 	}
 
 	render() {
