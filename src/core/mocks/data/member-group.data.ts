@@ -1,11 +1,11 @@
 import { UmbEntityData } from './entity.data';
 import { createEntityTreeItem } from './utils';
-import { EntityTreeItem, PagedEntityTreeItem } from '@umbraco-cms/backend-api';
 import type { MemberGroupDetails } from '@umbraco-cms/models';
+import { EntityTreeItem, PagedEntityTreeItem } from '@umbraco-cms/backend-api';
 
 export const data: Array<MemberGroupDetails> = [
 	{
-		name: 'Member Group 1',
+		name: 'Member Group AAA',
 		type: 'member-group',
 		icon: 'umb:document',
 		hasChildren: false,
