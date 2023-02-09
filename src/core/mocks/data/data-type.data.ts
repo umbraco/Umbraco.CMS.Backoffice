@@ -164,7 +164,15 @@ export const data: Array<DataType> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.CheckboxList',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.CheckboxList',
-		data: [],
+		data: [
+			{
+				alias: 'itemList',
+				value: [
+					{ label: 'Label 1', key: '123' },
+					{ label: 'Label 2', key: '456' },
+				],
+			},
+		],
 	},
 	{
 		name: 'Block List',

@@ -1,5 +1,6 @@
 import { UmbDocumentRepository } from '../repository/document.repository';
-import { UmbEntityActionBase } from '../../../shared/components/entity-action';
+import { UmbEntityActionBase } from '../../../shared/entity-actions';
+import { UmbExecutedEvent } from '../../../../core/events';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
 export class UmbRollbackDocumentEntityAction extends UmbEntityActionBase<UmbDocumentRepository> {
@@ -8,6 +9,8 @@ export class UmbRollbackDocumentEntityAction extends UmbEntityActionBase<UmbDocu
 	}
 
 	async execute() {
+		console.log(`execute for: ${this.unique}`);
 		await this.repository?.rollback();
+		this.host.dispatchEvent(new UmbExecutedEvent());
 	}
 }
