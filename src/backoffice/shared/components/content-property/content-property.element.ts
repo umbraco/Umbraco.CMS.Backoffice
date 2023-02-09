@@ -3,8 +3,8 @@ import { css, html } from 'lit';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { customElement, property, state } from 'lit/decorators.js';
 
-import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../../../settings/data-types/data-type.store';
-import type { UmbDataTypeStore } from '../../../settings/data-types/data-type.store';
+import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../../../settings/data-types/repository/data-type.store';
+import type { UmbDataTypeStore } from '../../../settings/data-types/repository/data-type.store';
 //import type { ContentProperty } from '@umbraco-cms/models';
 import type { DataType, DataTypeProperty, DocumentTypePropertyType } from '@umbraco-cms/backend-api';
 

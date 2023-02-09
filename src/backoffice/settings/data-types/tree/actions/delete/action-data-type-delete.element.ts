@@ -2,8 +2,8 @@ import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../../core/modal';
-import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../../../data-type.store';
-import type { UmbDataTypeStore } from '../../../data-type.store';
+import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../../../repository/data-type.store';
+import type { UmbDataTypeStore } from '../../../repository/data-type.store';
 import UmbTreeItemActionElement from '../../../../../shared/components/tree/action/tree-item-action.element';
 
 @customElement('umb-tree-action-data-type-delete')

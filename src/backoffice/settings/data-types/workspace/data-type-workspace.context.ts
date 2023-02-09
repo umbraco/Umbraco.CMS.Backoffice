@@ -1,7 +1,7 @@
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
 import { UmbWorkspaceEntityContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-entity-context.interface';
 import { UmbEntityWorkspaceManager } from '../../../shared/components/workspace/workspace-context/entity-manager-controller';
-import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../data-type.store';
+import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../repository/data-type.store';
 import type { DataType } from '@umbraco-cms/backend-api';
 import { appendToFrozenArray } from '@umbraco-cms/observable-api';
 
