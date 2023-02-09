@@ -32,6 +32,15 @@ export class UmbDocumentTypeStore extends UmbStoreBase {
 	}
 
 	/**
+	 * Append a document-type to the store
+	 * @param {DocumentType} document
+	 * @memberof UmbDocumentTypeStore
+	 */
+	byKey(key: DocumentType['key']) {
+		return this.#data.getObservablePart((x) => x.find((y) => y.key === key));
+	}
+
+	/**
 	 * Removes document-types in the store with the given uniques
 	 * @param {string[]} uniques
 	 * @memberof UmbDocumentTypeStore

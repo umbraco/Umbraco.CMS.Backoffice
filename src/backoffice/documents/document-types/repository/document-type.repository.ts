@@ -141,6 +141,11 @@ export class UmbDocumentTypeRepository implements UmbTreeRepository, UmbDetailRe
 		return { data, error };
 	}
 
+	async byKey(key: string) {
+		await this.#init;
+		return this.#detailStore!.byKey(key);
+	}
+
 	// Could potentially be general methods:
 
 	async createDetail(template: ItemType) {

@@ -45,7 +45,7 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 		Should use a Observable for example: this._workspaceContext.properties
 		*/
 		this.observe(
-			this._workspaceContext.data,
+			this._workspaceContext.properties,
 			(content) => {
 				this._properties = content?.properties || [];
 				//this._data = content?.data || [];
@@ -54,6 +54,13 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 				Maybe we should not give the value(Data), but the umb-content-property should get the context and observe its own data.
 				This would become a more specific Observer therefor better performance?.. Note to self: Debate with Mads how he sees this perspective.
 				*/
+			},
+			'observeWorkspaceContextData'
+		);
+		this.observe(
+			this._workspaceContext.dataTypes,
+			(content) => {
+				this._dataTypes = content?.dataTypes || [];
 			},
 			'observeWorkspaceContextData'
 		);
