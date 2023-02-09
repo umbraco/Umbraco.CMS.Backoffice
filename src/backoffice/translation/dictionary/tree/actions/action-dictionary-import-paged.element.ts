@@ -22,8 +22,6 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	@query('#form')
 	private _form!: HTMLFormElement;
 
-	private _dictionaryDetailStore!: UmbDictionaryDetailStore;
-
 	@state()
 	private _uploadedDictionary?: DictionaryImport;
 
@@ -37,45 +35,47 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	private _showErrorView = false;
 
 	@state()
-	_selection: Array<string> = [];
+	private _selection: Array<string> = [];
+
+	#dictionaryDetailStore!: UmbDictionaryDetailStore;
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (dictionaryDetailStore: UmbDictionaryDetailStore) => {
-			this._dictionaryDetailStore = dictionaryDetailStore;
+		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (dictionaryDetailStore) => {
+			this.#dictionaryDetailStore = dictionaryDetailStore;
 		});
 	}
 
-	private _back() {
+	#back() {
 		this._actionPageService?.closeTopPage();
 	}
 
-	private async _importDictionary() {
+	async #importDictionary() {
 		if (!this._uploadedDictionary?.tempFileName) return;
 
-		const result = await this._dictionaryDetailStore.import(this._uploadedDictionary.tempFileName, this._selection[0]);
+		const result = await this.#dictionaryDetailStore.import(this._uploadedDictionary.tempFileName, this._selection[0]);
 
 		const path = result?.content?.split(',');
 		if (path?.length) {
-			this._dictionaryDetailStore.getByKey(path[path.length - 1]);
+			this.#dictionaryDetailStore.getByKey(path[path.length - 1]);
 		}
 
 		this._treeContextMenuService?.close();
 	}
 
-	private _submitForm() {
+	#submitForm() {
 		this._form?.requestSubmit();
 	}
 
-	private async _handleSubmit(e: SubmitEvent) {
+	async #handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
 		if (!this._treeContextMenuService) return;
 		if (!this._form.checkValidity()) return;
 
 		const formData = new FormData(this._form);
-		this._uploadedDictionary = await this._dictionaryDetailStore.upload(formData);
+		this._uploadedDictionary = await this.#dictionaryDetailStore.upload(formData);
 
 		if (!this._uploadedDictionary) {
 			this._showErrorView = true;
@@ -84,23 +84,24 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 			return;
 		}
 
+		this._showErrorView = false;
 		this._showUploadView = false;
 		this._showImportView = true;
 	}
 
-	private _handleSelectionChange(e: CustomEvent) {
+	#handleSelectionChange(e: CustomEvent) {
 		e.stopPropagation();
 		const element = e.target as UmbTreeElement;
 		this._selection = element.selection;
 	}
 
-	private _renderUploadView() {
+	#renderUploadView() {
 		return html`<p>
 				To import a dictionary item, find the ".udt" file on your computer by clicking the "Import" button (you'll be
 				asked for confirmation on the next screen)
 			</p>
 			<uui-form>
-				<form id="form" name="form" @submit=${this._handleSubmit}>
+				<form id="form" name="form" @submit=${this.#handleSubmit}>
 					<uui-form-layout-item>
 						<uui-label for="file" slot="label" required>File</uui-label>
 						<div>
@@ -114,12 +115,12 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 					</uui-form-layout-item>
 				</form>
 			</uui-form>
-			<uui-button slot="actions" type="button" label="Cancel" @click=${this._back}></uui-button>
-			<uui-button slot="actions" type="button" label="Import" look="primary" @click=${this._submitForm}></uui-button>`;
+			<uui-button slot="actions" type="button" label="Cancel" @click=${this.#back}></uui-button>
+			<uui-button slot="actions" type="button" label="Import" look="primary" @click=${this.#submitForm}></uui-button>`;
 	}
 
 	/// TODO => Tree view needs isolation and single-select option
-	private _renderImportView() {
+	#renderImportView() {
 		if (!this._uploadedDictionary?.dictionaryItems) return;
 
 		return html`
@@ -135,19 +136,25 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 			<b>Choose where to import dictionary items (optional)</b>
 			<umb-tree
 				alias="Umb.Tree.Dictionary"
-				@selected=${this._handleSelectionChange}
+				@selected=${this.#handleSelectionChange}
 				.selection=${this._selection}
 				selectable></umb-tree>
 
-			<uui-button slot="actions" type="button" label="Cancel" @click=${this._back}></uui-button>
-			<uui-button slot="actions" type="button" label="Import" look="primary" @click=${this._importDictionary}></uui-button>
+			<uui-button slot="actions" type="button" label="Cancel" @click=${this.#back}></uui-button>
+			<uui-button slot="actions" type="button" label="Import" look="primary" @click=${this.#importDictionary}></uui-button>
 		`;
+	}
+
+	// TODO => Determine what to display when dictionary import/upload fails
+	#renderErrorView() {
+		return html`Something went wrong`;
 	}
 
 	render() {
 		return html` <umb-context-menu-layout headline="Import">
-			${when(this._showUploadView, () => this._renderUploadView())}
-			${when(this._showImportView, () => this._renderImportView())}
+			${when(this._showUploadView, () => this.#renderUploadView())}
+			${when(this._showImportView, () => this.#renderImportView())}
+			${when(this._showErrorView, () => this.#renderErrorView())}
 		</umb-context-menu-layout>`;
 	}
 }
