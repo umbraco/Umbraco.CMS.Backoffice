@@ -4,6 +4,14 @@ import type { FolderTreeItem, DataType } from '@umbraco-cms/backend-api';
 
 export const data: Array<DataType> = [
 	{
+		key: '0cc0eba1-9960-42c9-bf9b-60e150b429ae',
+		parentKey: null,
+		name: 'Textstring',
+		propertyEditorAlias: 'Umbraco.TextBox',
+		propertyEditorUiAlias: null,
+		data: [],
+	},
+	{
 		name: 'Text',
 		key: 'dt-textBox',
 		parentKey: null,
