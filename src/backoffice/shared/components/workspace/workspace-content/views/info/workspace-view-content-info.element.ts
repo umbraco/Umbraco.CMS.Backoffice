@@ -4,6 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { UmbWorkspaceEntityContextInterface } from '../../../workspace-context/workspace-entity-context.interface';
 import type { DocumentDetails, MediaDetails } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
+import '../../../../history-ui-maker/history-ui-maker.element';
 
 @customElement('umb-workspace-view-content-info')
 export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
@@ -11,8 +12,30 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 		UUITextStyles,
 		css`
 			:host {
-				display: block;
+				display: grid;
+				gap: var(--uui-size-layout-1);
 				margin: var(--uui-size-layout-1);
+				grid-template-columns: 1fr 350px;
+			}
+
+			div.container {
+				display: flex;
+				flex-direction: column;
+				gap: var(--uui-size-layout-1);
+			}
+
+			/*TODO: Do we want to set up a layout element for this setup? (css styles of :host and div.container) */
+
+			div.headline {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+
+			div.headline h2 {
+				font-size: var(--uui-type-h5-size);
+				font-weight: bold;
+				margin: 0;
 			}
 		`,
 	];
@@ -44,7 +67,19 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 	}
 
 	render() {
-		return html`<div>Info Workspace View for ${this._nodeName}</div>`;
+		return html`<div class="container">
+				<uui-box headline="Links"> Info Workspace View for ${this._nodeName} </uui-box>
+				<uui-box>
+					<div class="headline" slot="headline">
+						<h2>History</h2>
+						<uui-button label="Rollback" look="outline">Rollback...</uui-button>
+					</div>
+					<umb-history-ui-maker></umb-history-ui-maker>
+				</uui-box>
+			</div>
+			<div class="container">
+				<uui-box headline="General"></uui-box>
+			</div>`;
 	}
 }
 
