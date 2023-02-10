@@ -9,7 +9,7 @@ export const handlers = [
 
 		const dataType = umbDataTypeData.getByKey(key);
 
-		return res(ctx.status(200), ctx.json([dataType]));
+		return res(ctx.status(200), ctx.json(dataType));
 	}),
 
 	rest.post('/umbraco/backoffice/data-type/:key', async (req, res, ctx) => {

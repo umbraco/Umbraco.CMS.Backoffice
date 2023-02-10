@@ -729,22 +729,24 @@ export const treeData: Array<DocumentTypeTreeItem> = [
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 class UmbDocumentTypeData extends UmbEntityData<DocumentTypeTreeItem> {
+	private treeData = treeData;
+
 	constructor() {
-		super(treeData);
+		super(data);
 	}
 
 	getTreeRoot(): Array<EntityTreeItem> {
-		const rootItems = this.data.filter((item) => item.parentKey === null);
+		const rootItems = this.treeData.filter((item) => item.parentKey === null);
 		return rootItems.map((item) => createDocumentTypeTreeItem(item));
 	}
 
 	getTreeItemChildren(key: string): Array<EntityTreeItem> {
-		const childItems = this.data.filter((item) => item.parentKey === key);
+		const childItems = this.treeData.filter((item) => item.parentKey === key);
 		return childItems.map((item) => createDocumentTypeTreeItem(item));
 	}
 
 	getTreeItem(keys: Array<string>): Array<EntityTreeItem> {
-		const items = this.data.filter((item) => keys.includes(item.key ?? ''));
+		const items = this.treeData.filter((item) => keys.includes(item.key ?? ''));
 		return items.map((item) => createDocumentTypeTreeItem(item));
 	}
 }

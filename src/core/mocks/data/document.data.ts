@@ -416,27 +416,29 @@ export const treeData: Array<DocumentTreeItem> = [
 // TODO: all properties are optional in the server schema. I don't think this is correct.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-class UmbDocumentData extends UmbEntityData<DocumentTreeItem> {
+class UmbDocumentData extends UmbEntityData<Document> {
+	private treeData = treeData;
+
 	constructor() {
-		super(treeData);
+		super(data);
 	}
 
 	getTreeRoot(): PagedDocumentTreeItem {
-		const items = this.data.filter((item) => item.parentKey === null);
+		const items = this.treeData.filter((item) => item.parentKey === null);
 		const treeItems = items.map((item) => createDocumentTreeItem(item));
 		const total = items.length;
 		return { items: treeItems, total };
 	}
 
 	getTreeItemChildren(key: string): PagedDocumentTreeItem {
-		const items = this.data.filter((item) => item.parentKey === key);
+		const items = this.treeData.filter((item) => item.parentKey === key);
 		const treeItems = items.map((item) => createDocumentTreeItem(item));
 		const total = items.length;
 		return { items: treeItems, total };
 	}
 
 	getTreeItem(keys: Array<string>): Array<DocumentTreeItem> {
-		const items = this.data.filter((item) => keys.includes(item.key ?? ''));
+		const items = this.treeData.filter((item) => keys.includes(item.key ?? ''));
 		return items.map((item) => createDocumentTreeItem(item));
 	}
 }
