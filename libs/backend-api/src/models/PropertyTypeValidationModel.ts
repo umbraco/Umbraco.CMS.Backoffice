@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type PropertyTypeValidation = {
+export type PropertyTypeValidationModel = {
     mandatory?: boolean;
     mandatoryMessage?: string | null;
     regEx?: string | null;

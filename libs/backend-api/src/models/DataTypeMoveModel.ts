@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type PropertyTypeAppearance = {
-    labelOnTop?: boolean;
+export type DataTypeMoveModel = {
+    targetKey?: string | null;
 };
 

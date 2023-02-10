@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type ContentTypeCleanup = {
+export type ContentTypeCleanupModel = {
     preventCleanup?: boolean;
     keepAllVersionsNewerThanDays?: number | null;
     keepLatestVersionPerDayForDays?: number | null;

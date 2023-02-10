@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export enum ContentState {
+export enum ContentStateModel {
     NOT_CREATED = 'NotCreated',
     DRAFT = 'Draft',
     PUBLISHED = 'Published',

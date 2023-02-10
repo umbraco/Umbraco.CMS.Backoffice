@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type DocumentTypePropertyTypeContainer = {
+export type PropertyTypeContainerViewModelBaseModel = {
     key?: string;
     parentKey?: string | null;
     name?: string | null;

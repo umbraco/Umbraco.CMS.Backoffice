@@ -2,8 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type ContentTypeSort = {
-    key?: string;
-    sortOrder?: number;
+export type DataTypeCopyModel = {
+    targetKey?: string | null;
 };
 

@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type ContentUrlInfo = {
+export type ContentUrlInfoModel = {
     culture?: string | null;
     url?: string;
 };

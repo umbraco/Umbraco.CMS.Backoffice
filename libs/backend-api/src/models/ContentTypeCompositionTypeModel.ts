@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export enum ContentTypeCompositionType {
+export enum ContentTypeCompositionTypeModel {
     COMPOSITION = 'Composition',
     INHERITANCE = 'Inheritance',
 }

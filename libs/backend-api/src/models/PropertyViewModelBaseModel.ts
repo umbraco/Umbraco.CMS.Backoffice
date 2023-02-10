@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type DocumentProperty = {
+export type PropertyViewModelBaseModel = {
     culture?: string | null;
     segment?: string | null;
     alias?: string;
