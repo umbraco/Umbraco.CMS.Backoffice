@@ -171,9 +171,9 @@ export class UmbDictionaryDetailStore
 	}
 
 	/// TODO => refresh tree and potentially dashboard after importing
-	async import(file: string, parentKey?: string): Promise<ContentResult | undefined> {
+	async import(file: string, parentId?: number): Promise<ContentResult | undefined> {
 		// TODO => parentKey will be a guid param once #13786 is merged and API regenerated
-		const { data } = await tryExecuteAndNotify(this.host, DictionaryResource.postDictionaryImport({ file, parentKey }));
+		const { data } = await tryExecuteAndNotify(this.host, DictionaryResource.postDictionaryImport({ file, parentId }));
 		return data;
 	}
 

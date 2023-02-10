@@ -172,7 +172,7 @@ export const handlers = [
 	}),
 
 	// TODO => handle properly, querystring breaks handler
-	rest.get('/umbraco/management/api/v1/dictionary/export/:key', (req, res, ctx) => {
+	rest.get('/umbraco/management/api/v1/dictionary/:key/export', (req, res, ctx) => {
 		const key = req.params.key as string;
 		if (!key) return;
 

@@ -54,7 +54,8 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	async #importDictionary() {
 		if (!this._uploadedDictionary?.tempFileName) return;
 
-		const result = await this.#dictionaryDetailStore.import(this._uploadedDictionary.tempFileName, this._selection[0]);
+		// TODO => fix when backend expects parent guid not parent id
+		const result = await this.#dictionaryDetailStore.import(this._uploadedDictionary.tempFileName, parseInt(this._selection[0]));
 
 		const path = result?.content?.split(',');
 		if (path?.length) {

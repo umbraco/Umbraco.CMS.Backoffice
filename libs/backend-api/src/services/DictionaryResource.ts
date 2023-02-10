@@ -141,7 +141,7 @@ includeChildren?: boolean,
 }): CancelablePromise<Blob> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/umbraco/management/api/v1/dictionary/export/{key}',
+            url: '/umbraco/management/api/v1/dictionary/{key}/export',
             path: {
                 'key': key,
             },
