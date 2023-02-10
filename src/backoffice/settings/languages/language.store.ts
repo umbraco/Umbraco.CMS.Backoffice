@@ -76,7 +76,7 @@ export class UmbLanguageStore extends UmbStoreBase {
 		const queue = isoCodes.map((isoCode) =>
 			tryExecuteAndNotify(
 				this._host,
-				LanguageResource.deleteLanguageByIsoCode({ isoCode }).then(() => isoCode)
+				tryExecuteAndNotify(this, LanguageResource.deleteLanguageByIsoCode({ isoCode })).then(() => isoCode)
 			)
 		);
 		const results = await Promise.all(queue);
