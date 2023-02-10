@@ -2,7 +2,7 @@ import { UmbWorkspaceContext } from '../../../shared/components/workspace/worksp
 import { UmbDocumentRepository } from '../repository/document.repository';
 import type { UmbWorkspaceEntityContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-entity-context.interface';
 import { UmbDocumentTypeRepository } from '../../document-types/repository/document-type.repository';
-import type { Document, DocumentType } from '@umbraco-cms/backend-api';
+import type { DocumentModel, DocumentTypeModel } from '@umbraco-cms/backend-api';
 import {
 	partialUpdateFrozenArray,
 	ObjectState,
@@ -14,7 +14,7 @@ import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
 // TODO: should this context be called DocumentDraft instead of workspace? or should the draft be part of this?
 
-type EntityType = Document;
+type EntityType = DocumentModel;
 export class UmbDocumentWorkspaceContext
 	extends UmbWorkspaceContext
 	implements UmbWorkspaceEntityContextInterface<EntityType | undefined>
@@ -28,7 +28,7 @@ export class UmbDocumentWorkspaceContext
 	#data = new ObjectState<EntityType | undefined>(undefined);
 	documentTypeKey = this.#data.getObservablePart((data) => data?.contentTypeKey);
 
-	#documentTypes = new ArrayState<DocumentType>([], (x) => x.key);
+	#documentTypes = new ArrayState<DocumentTypeModel>([], (x) => x.key);
 	documentTypes = this.#documentTypes.asObservable();
 
 	constructor(host: UmbControllerHostInterface) {
@@ -77,7 +77,7 @@ export class UmbDocumentWorkspaceContext
 		});
 	}
 
-	async loadDataTypeOfDocumentType(documentType?: DocumentType) {
+	async loadDataTypeOfDocumentType(documentType?: DocumentTypeModel) {
 		if (!documentType) return;
 
 		// Load inherited and composed types:
