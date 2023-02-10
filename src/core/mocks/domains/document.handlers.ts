@@ -45,7 +45,6 @@ export const handlers = [
 	}),
 
 	rest.get(umbracoPath('/document/:key'), (req, res, ctx) => {
-		debugger;
 		const key = req.params.key as string;
 		if (!key) return;
 
