@@ -98,7 +98,7 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 	 * @memberof UmbDocumentServerDataSource
 	 */
 	// TODO: Error mistake in this:
-	async update(document: Document) {
+	async update(document: DocumentModel) {
 		if (!document.key) {
 			const error: ProblemDetailsModel = { title: 'Document key is missing' };
 			return { error };
