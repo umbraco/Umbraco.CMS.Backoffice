@@ -121,7 +121,7 @@ export class UmbTemplateRepository implements UmbTreeRepository, UmbDetailReposi
 		return this.#detailDataSource.createScaffold(parentKey);
 	}
 
-	async requestDetails(key: string) {
+	async requestByKey(key: string) {
 		await this.#init;
 
 		// TODO: should we show a notification if the key is missing?

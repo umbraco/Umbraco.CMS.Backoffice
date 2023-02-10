@@ -2,12 +2,8 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { customElement, property, state } from 'lit/decorators.js';
-
-import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN } from '../../../settings/data-types/repository/data-type.store';
-import type { UmbDataTypeStore } from '../../../settings/data-types/repository/data-type.store';
-//import type { ContentProperty } from '@umbraco-cms/models';
+import { UmbDataTypeRepository } from '../../../settings/data-types/repository/data-type.repository';
 import type { DataType, DataTypeProperty, DocumentTypePropertyType } from '@umbraco-cms/backend-api';
-
 import '../workspace-property/workspace-property.element';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { UmbObserverController } from '@umbraco-cms/observable-api';
@@ -47,24 +43,15 @@ export class UmbContentPropertyElement extends UmbLitElement {
 	@state()
 	private _dataTypeData: DataTypeProperty[] = [];
 
-	private _dataTypeStore?: UmbDataTypeStore;
+	private _dataTypeRepository: UmbDataTypeRepository = new UmbDataTypeRepository(this);
 	private _dataTypeObserver?: UmbObserverController<DataType | null>;
 
-	constructor() {
-		super();
-
-		this.consumeContext(UMB_DATA_TYPE_DETAIL_STORE_CONTEXT_TOKEN, (instance) => {
-			this._dataTypeStore = instance;
-			this._observeDataType(this._property?.dataTypeKey);
-		});
-	}
-
-	private _observeDataType(dataTypeKey?: string) {
-		if (!this._dataTypeStore) return;
-
+	private async _observeDataType(dataTypeKey?: string) {
 		this._dataTypeObserver?.destroy();
 		if (dataTypeKey) {
-			this._dataTypeObserver = this.observe(this._dataTypeStore.getByKey(dataTypeKey), (dataType) => {
+			// We do not need to have await here, this is only to ensure that the data is loaded before we try to observe it, and thereby update the DOM with it.
+			await this._dataTypeRepository.requestByKey(dataTypeKey);
+			this._dataTypeObserver = this.observe(await this._dataTypeRepository.byKey(dataTypeKey), (dataType) => {
 				this._dataTypeData = dataType?.data || [];
 				this._propertyEditorUiAlias = dataType?.propertyEditorUiAlias || undefined;
 			});

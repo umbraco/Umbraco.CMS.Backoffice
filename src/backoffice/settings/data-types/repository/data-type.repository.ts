@@ -123,8 +123,7 @@ export class UmbDataTypeRepository implements UmbTreeRepository, UmbDetailReposi
 		return this.#detailDataSource.createScaffold(parentKey);
 	}
 
-	// TODO: consider getting rid of the word details:
-	async requestDetails(key: string) {
+	async requestByKey(key: string) {
 		await this.#init;
 
 		// TODO: should we show a notification if the key is missing?

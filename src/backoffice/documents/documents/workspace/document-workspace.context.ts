@@ -42,7 +42,7 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	async load(entityKey: string) {
-		const { data } = await this.#documentRepository.requestDetails(entityKey);
+		const { data } = await this.#documentRepository.requestByKey(entityKey);
 		if (data) {
 			this.#isNew = false;
 			this.#data.next(data);
@@ -59,7 +59,7 @@ export class UmbDocumentWorkspaceContext
 	async loadDocumentType(key?: string) {
 		if (!key) return;
 
-		const { data } = await this.#documentTypeRepository.requestDetails(key);
+		const { data } = await this.#documentTypeRepository.requestByKey(key);
 		if (!data) return;
 
 		// Load inherited and composed types:
