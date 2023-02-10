@@ -9,7 +9,6 @@ import {
 import { UmbTableConfig, UmbTableColumn, UmbTableItem } from '../../../../backoffice/shared/components/table';
 import {
 	UmbTreeContextMenuService,
-	UMB_TREE_CONTEXT_MENU_SERVICE_CONTEXT_TOKEN,
 } from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { DictionaryOverview, Language } from '@umbraco-cms/backend-api';
@@ -158,7 +157,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 			: this.#tableItems;
 	}
 
-	#create() {debugger;
+	#create() {
 		if (!this.#contextMenuService) return;
 
 		// TODO => from where can we get a contextMenuService instance? Or do we want to reconsider the creation steps for new dictionary items?

@@ -28,20 +28,20 @@ export class UmbWorkspaceDictionaryElement extends UmbLitElement implements UmbW
 	@state()
 	private _dictionaryName!: string;
 
-	private _workspaceContext: UmbWorkspaceDictionaryContext = new UmbWorkspaceDictionaryContext(this);
+	#workspaceContext: UmbWorkspaceDictionaryContext = new UmbWorkspaceDictionaryContext(this);
 
-	public load(entityKey: string) {
-		this._workspaceContext.load(entityKey);
+	load(entityKey: string) {
+		this.#workspaceContext.load(entityKey);
 	}
 
-	public create(parentKey: string | null) {
-		this._workspaceContext.create(parentKey);
+	create(parentKey: string | null) {
+		this.#workspaceContext.create(parentKey);
 	}
 
 	constructor() {
 		super();
 
-		this.observe(this._workspaceContext.data.pipe(distinctUntilChanged()), (dictionary) => {
+		this.observe(this.#workspaceContext.data.pipe(distinctUntilChanged()), (dictionary) => {
 			if (dictionary && dictionary.name !== this._dictionaryName) {
 				this._dictionaryName = dictionary.name ?? '';
 			}
@@ -49,12 +49,12 @@ export class UmbWorkspaceDictionaryElement extends UmbLitElement implements UmbW
 	}
 
 	// TODO. find a way where we don't have to do this for all workspaces.
-	private _handleInput(event: UUIInputEvent) {
+	#handleInput(event: UUIInputEvent) {
 		if (event instanceof UUIInputEvent) {
 			const target = event.composedPath()[0] as UUIInputElement;
 
 			if (typeof target?.value === 'string') {
-				this._workspaceContext?.setName(target.value);
+				this.#workspaceContext?.setName(target.value);
 			}
 		}
 	}
@@ -62,7 +62,7 @@ export class UmbWorkspaceDictionaryElement extends UmbLitElement implements UmbW
 	render() {
 		return html`
 			<umb-workspace-layout alias="Umb.Workspace.Dictionary">
-				<uui-input id="header" slot="header" .value=${this._dictionaryName} @input="${this._handleInput}">
+				<uui-input id="header" slot="header" .value=${this._dictionaryName} @input="${this.#handleInput}">
 				</uui-input>
 			</umb-workspace-layout>
 		`;

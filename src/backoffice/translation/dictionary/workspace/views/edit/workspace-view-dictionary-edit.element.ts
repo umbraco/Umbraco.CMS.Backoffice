@@ -31,7 +31,7 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 	constructor() {
 		super();
 
-		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, async (detailStore) => {
+		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (detailStore) => {
 			this.#detailStore = detailStore;
 		});
 
