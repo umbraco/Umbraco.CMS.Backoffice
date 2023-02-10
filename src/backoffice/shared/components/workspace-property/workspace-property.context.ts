@@ -1,5 +1,5 @@
 import { UmbWorkspaceEntityContextInterface } from '../workspace/workspace-context/workspace-entity-context.interface';
-import type { DataType } from '@umbraco-cms/backend-api';
+import type { DataTypeModel } from '@umbraco-cms/backend-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { ObjectState } from '@umbraco-cms/observable-api';
 import { UmbContextConsumerController, UmbContextProviderController } from '@umbraco-cms/context-api';
@@ -10,7 +10,7 @@ export type WorkspacePropertyData<ValueType> = {
 	label?: string;
 	description?: string;
 	value?: ValueType | null;
-	config?: DataType['data']; // This could potentially then come from hardcoded JS object and not the DataType store.
+	config?: DataTypeModel['data']; // This could potentially then come from hardcoded JS object and not the DataType store.
 };
 
 export class UmbWorkspacePropertyContext<ValueType = unknown> {

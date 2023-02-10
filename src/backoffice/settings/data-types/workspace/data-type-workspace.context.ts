@@ -1,11 +1,11 @@
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
 import { UmbWorkspaceEntityContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-entity-context.interface';
 import { UmbDataTypeRepository } from '../repository/data-type.repository';
-import type { DataType } from '@umbraco-cms/backend-api';
+import type { DataTypeModel } from '@umbraco-cms/backend-api';
 import { appendToFrozenArray, ObjectState } from '@umbraco-cms/observable-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
-type EntityType = DataType;
+type EntityType = DataTypeModel;
 
 export class UmbWorkspaceDataTypeContext
 	extends UmbWorkspaceContext

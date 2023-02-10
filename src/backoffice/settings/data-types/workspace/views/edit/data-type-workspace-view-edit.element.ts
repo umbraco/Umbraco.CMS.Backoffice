@@ -4,7 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../../core/modal';
 import { UmbWorkspaceDataTypeContext } from '../../data-type-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
-import type { DataType } from '@umbraco-cms/backend-api';
+import type { DataTypeModel } from '@umbraco-cms/backend-api';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 
 import '../../../../../shared/property-editors/shared/property-editor-config/property-editor-config.element';
@@ -23,7 +23,7 @@ export class UmbDataTypeWorkspaceViewEditElement extends UmbLitElement {
 	];
 
 	@state()
-	_dataType?: DataType;
+	_dataType?: DataTypeModel;
 
 	@state()
 	private _propertyEditorUIIcon = '';
@@ -66,7 +66,7 @@ export class UmbDataTypeWorkspaceViewEditElement extends UmbLitElement {
 			if (!dataType) return;
 
 			// TODO: handle if model is not of the type wanted.
-			this._dataType = dataType as DataType;
+			this._dataType = dataType;
 
 			if (this._dataType.propertyEditorUiAlias !== this._propertyEditorUiAlias) {
 				this._observePropertyEditorUI(this._dataType.propertyEditorUiAlias || undefined);

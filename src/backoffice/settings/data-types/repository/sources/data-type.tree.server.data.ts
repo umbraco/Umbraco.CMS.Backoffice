@@ -1,5 +1,5 @@
 import type { RepositoryTreeDataSource } from '../../../../../../libs/repository/repository-tree-data-source.interface';
-import { ProblemDetails, DataTypeResource } from '@umbraco-cms/backend-api';
+import { ProblemDetailsModel, DataTypeResource } from '@umbraco-cms/backend-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 
@@ -15,7 +15,7 @@ export class DataTypeTreeServerDataSource implements RepositoryTreeDataSource {
 	// TODO: how do we handle trashed items?
 	async trashItems(keys: Array<string>) {
 		if (!keys) {
-			const error: ProblemDetails = { title: 'DataType keys is missing' };
+			const error: ProblemDetailsModel = { title: 'DataType keys is missing' };
 			return { error };
 		}
 
@@ -71,7 +71,7 @@ export class DataTypeTreeServerDataSource implements RepositoryTreeDataSource {
 	 */
 	async getChildrenOf(parentKey: string | null) {
 		if (!parentKey) {
-			const error: ProblemDetails = { title: 'Parent key is missing' };
+			const error: ProblemDetailsModel = { title: 'Parent key is missing' };
 			return { error };
 		}
 
@@ -91,7 +91,7 @@ export class DataTypeTreeServerDataSource implements RepositoryTreeDataSource {
 	 */
 	async getItems(keys: Array<string>) {
 		if (keys) {
-			const error: ProblemDetails = { title: 'Keys are missing' };
+			const error: ProblemDetailsModel = { title: 'Keys are missing' };
 			return { error };
 		}
 
