@@ -1,8 +1,8 @@
 import { UmbEntityData } from './entity.data';
 import { createFolderTreeItem } from './utils';
-import type { FolderTreeItem, DataType } from '@umbraco-cms/backend-api';
+import type { FolderTreeItemModel, DataTypeModel } from '@umbraco-cms/backend-api';
 
-export const data: Array<DataType> = [
+export const data: Array<DataTypeModel> = [
 	{
 		key: '0cc0eba1-9960-42c9-bf9b-60e150b429ae',
 		parentKey: null,
@@ -46,7 +46,16 @@ export const data: Array<DataType> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.ColorPicker',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.ColorPicker',
-		data: [],
+		data: [
+			{
+				alias: 'includeLabels',
+				value: false,
+			},
+			{
+				alias: 'colors',
+				value: ['#000000', '#373737', '#9e9e9e', '#607d8b', '#2196f3', '#03a9f4', '#3f51b5', '#9c27b0', '#673ab7'],
+			},
+		],
 	},
 	{
 		name: 'Content Picker',
@@ -67,7 +76,33 @@ export const data: Array<DataType> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.ColorPicker.EyeDropper',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.EyeDropper',
-		data: [],
+		data: [
+			{
+				alias: 'palette',
+				value: [
+					'#d0021b',
+					'#f5a623',
+					'#f8e71c',
+					'#8b572a',
+					'#7ed321',
+					'#417505',
+					'#bd10e0',
+					'#9013fe',
+					'#4a90e2',
+					'#50e3c2',
+					'#b8e986',
+					'#000',
+					'#444',
+					'#888',
+					'#ccc',
+					'#fff',
+				],
+			},
+			{
+				alias: 'showAlpha',
+				value: false,
+			},
+		],
 	},
 	{
 		name: 'Multi URL Picker',
@@ -324,22 +359,22 @@ export const data: Array<DataType> = [
 // TODO: all properties are optional in the server schema. I don't think this is correct.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-class UmbDataTypeData extends UmbEntityData<FolderTreeItem> {
+class UmbDataTypeData extends UmbEntityData<DataTypeModel> {
 	constructor() {
 		super(data);
 	}
 
-	getTreeRoot(): Array<FolderTreeItem> {
+	getTreeRoot(): Array<FolderTreeItemModel> {
 		const rootItems = this.data.filter((item) => item.parentKey === null);
 		return rootItems.map((item) => createFolderTreeItem(item));
 	}
 
-	getTreeItemChildren(key: string): Array<FolderTreeItem> {
+	getTreeItemChildren(key: string): Array<FolderTreeItemModel> {
 		const childItems = this.data.filter((item) => item.parentKey === key);
 		return childItems.map((item) => createFolderTreeItem(item));
 	}
 
-	getTreeItem(keys: Array<string>): Array<FolderTreeItem> {
+	getTreeItem(keys: Array<string>): Array<FolderTreeItemModel> {
 		const items = this.data.filter((item) => keys.includes(item.key ?? ''));
 		return items.map((item) => createFolderTreeItem(item));
 	}

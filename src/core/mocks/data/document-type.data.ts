@@ -1,13 +1,8 @@
 import { UmbEntityData } from './entity.data';
 import { createDocumentTypeTreeItem } from './utils';
-import {
-	DocumentTypeTreeItem,
-	EntityTreeItem,
-	DocumentType,
-	ContentTypeCompositionType,
-} from '@umbraco-cms/backend-api';
+import type { DocumentTypeTreeItemModel, DocumentTypeModel } from '@umbraco-cms/backend-api';
 
-export const data: Array<DocumentType> = [
+export const data: Array<DocumentTypeModel> = [
 	{
 		allowedTemplateKeys: [],
 		defaultTemplateKey: null,
@@ -728,24 +723,24 @@ export const treeData: Array<DocumentTypeTreeItem> = [
 // TODO: all properties are optional in the server schema. I don't think this is correct.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-class UmbDocumentTypeData extends UmbEntityData<DocumentTypeTreeItem> {
+class UmbDocumentTypeData extends UmbEntityData<DocumentTypeTreeItemModel> {
 	private treeData = treeData;
 
 	constructor() {
 		super(data);
 	}
 
-	getTreeRoot(): Array<EntityTreeItem> {
+	getTreeRoot(): Array<DocumentTypeTreeItemModel> {
 		const rootItems = this.treeData.filter((item) => item.parentKey === null);
 		return rootItems.map((item) => createDocumentTypeTreeItem(item));
 	}
 
-	getTreeItemChildren(key: string): Array<EntityTreeItem> {
+	getTreeItemChildren(key: string): Array<DocumentTypeTreeItemModel> {
 		const childItems = this.treeData.filter((item) => item.parentKey === key);
 		return childItems.map((item) => createDocumentTypeTreeItem(item));
 	}
 
-	getTreeItem(keys: Array<string>): Array<EntityTreeItem> {
+	getTreeItem(keys: Array<string>): Array<DocumentTypeTreeItemModel> {
 		const items = this.treeData.filter((item) => keys.includes(item.key ?? ''));
 		return items.map((item) => createDocumentTypeTreeItem(item));
 	}

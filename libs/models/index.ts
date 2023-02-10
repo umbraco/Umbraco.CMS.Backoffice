@@ -1,13 +1,9 @@
 import {
-	ContentTreeItem,
-	DocumentTreeItem,
-	DocumentTypePropertyType,
-	DocumentTypeTreeItem,
-	EntityTreeItem,
-	FolderTreeItem,
-	ProblemDetails,
+	ContentTreeItemModel,
+	EntityTreeItemModel,
+	FolderTreeItemModel,
+	ProblemDetailsModel,
 } from '@umbraco-cms/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
 // Extension Manifests
 export * from '@umbraco-cms/extensions-registry';
@@ -28,7 +24,7 @@ export interface Entity {
 	parentKey: string | null;
 }
 
-export interface ContentDetails extends ContentTreeItem {
+export interface ContentDetails extends ContentTreeItemModel {
 	isTrashed: boolean; // TODO: remove only temp part of refactor
 	properties: Array<ContentProperty>;
 	//data: Array<ContentPropertyData>;
@@ -68,7 +64,7 @@ export interface UserGroupDetails extends UserGroupEntity {
 
 /*
 // Data Types
-export interface DataTypeDetails extends FolderTreeItem {
+export interface DataTypeDetails extends FolderTreeItemModel {
 	key: string; // TODO: Remove this when the backend is fixed
 	propertyEditorAlias: string | null;
 	propertyEditorUiAlias: string | null;
@@ -82,7 +78,7 @@ export interface DataTypeProperty {
 */
 
 // TODO: Make sure Entity Type/interface.
-export interface MemberTypeDetails extends EntityTreeItem {
+export interface MemberTypeDetails extends EntityTreeItemModel {
 	key: string; // TODO: Remove this when the backend is fixed
 	alias: string;
 	properties: [];
@@ -102,7 +98,7 @@ export interface ContentPropertyData {
 }
 
 // Media
-export interface MediaDetails extends ContentTreeItem {
+export interface MediaDetails extends ContentTreeItemModel {
 	key: string; // TODO: Remove this when the backend is fixed
 	isTrashed: boolean; // TODO: remove only temp part of refactor
 	properties: Array<ContentProperty>;
@@ -113,19 +109,23 @@ export interface MediaDetails extends ContentTreeItem {
 
 // Media Types
 
-export interface MediaTypeDetails extends FolderTreeItem {
+export interface MediaTypeDetails extends FolderTreeItemModel {
 	key: string; // TODO: Remove this when the backend is fixed
 	alias: string;
 	properties: [];
 }
 
 // Member Groups
-export interface MemberGroupDetails extends EntityTreeItem {
+export interface MemberGroupDetails extends EntityTreeItemModel {
+	key: string; // TODO: Remove this when the backend is fixed
+}
+
+export interface MemberDetails extends EntityTreeItemModel {
 	key: string; // TODO: Remove this when the backend is fixed
 }
 
 // Dictionary
-export interface DictionaryDetails extends EntityTreeItem {
+export interface DictionaryDetails extends EntityTreeItemModel {
 	key: string; // TODO: Remove this when the backend is fixed
 }
 
@@ -142,9 +142,5 @@ export interface DocumentBlueprintDetails {
 
 export interface DataSourceResponse<T = undefined> {
 	data?: T;
-	error?: ProblemDetails;
-}
-
-export interface UmbRepositoryFactory<T> {
-	new (host: UmbControllerHostInterface): T;
+	error?: ProblemDetailsModel;
 }

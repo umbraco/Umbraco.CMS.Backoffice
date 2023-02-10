@@ -15,11 +15,11 @@ import {
 	UmbTableSelectedEvent,
 } from '../../../../../shared/components/table';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DocumentTreeItem, EntityTreeItem } from '@umbraco-cms/backend-api';
+import { DocumentTreeItemModel, EntityTreeItemModel } from '@umbraco-cms/backend-api';
 
 import './column-layouts/document-table-actions-column-layout.element';
 
-type EntityType = DocumentTreeItem;
+type EntityType = DocumentTreeItemModel;
 
 @customElement('umb-document-table-collection-view')
 export class UmbDocumentTableCollectionViewElement extends UmbLitElement {
@@ -42,7 +42,7 @@ export class UmbDocumentTableCollectionViewElement extends UmbLitElement {
 	];
 
 	@state()
-	private _items?: Array<EntityTreeItem>;
+	private _items?: Array<EntityTreeItemModel>;
 
 	@state()
 	private _tableConfig: UmbTableConfig = {
@@ -94,7 +94,7 @@ export class UmbDocumentTableCollectionViewElement extends UmbLitElement {
 		});
 	}
 
-	private _createTableItems(items: Array<EntityTreeItem>) {
+	private _createTableItems(items: Array<EntityTreeItemModel>) {
 		this._tableItems = items.map((item) => {
 			// TODO: use unique instead of key
 			if (!item.key) throw new Error('Item key is missing.');

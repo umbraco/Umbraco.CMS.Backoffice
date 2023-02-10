@@ -1,13 +1,14 @@
 import type {
-	ContentTreeItem,
-	DocumentTreeItem,
-	DocumentTypeTreeItem,
-	EntityTreeItem,
-	FolderTreeItem,
+	ContentTreeItemModel,
+	DocumentTreeItemModel,
+	DocumentTypeTreeItemModel,
+	EntityTreeItemModel,
+	FolderTreeItemModel,
+	DocumentTypeModel,
+	DocumentModel,
 } from '@umbraco-cms/backend-api';
-import type { Document, DocumentType } from '@umbraco-cms/backend-api';
 
-export const createEntityTreeItem = (item: any): EntityTreeItem => {
+export const createEntityTreeItem = (item: any): EntityTreeItemModel => {
 	return {
 		name: item.name,
 		type: item.type,
@@ -19,7 +20,7 @@ export const createEntityTreeItem = (item: any): EntityTreeItem => {
 	};
 };
 
-export const createFolderTreeItem = (item: any): FolderTreeItem => {
+export const createFolderTreeItem = (item: any): FolderTreeItemModel => {
 	return {
 		...createEntityTreeItem(item),
 		isFolder: item.isFolder,
@@ -27,7 +28,7 @@ export const createFolderTreeItem = (item: any): FolderTreeItem => {
 };
 
 // TODO: remove isTrashed type extension when we have found a solution to trashed items
-export const createContentTreeItem = (item: any): ContentTreeItem & { isTrashed: boolean } => {
+export const createContentTreeItem = (item: any): ContentTreeItemModel & { isTrashed: boolean } => {
 	return {
 		...createEntityTreeItem(item),
 		noAccess: item.noAccess,
@@ -36,8 +37,7 @@ export const createContentTreeItem = (item: any): ContentTreeItem & { isTrashed:
 };
 
 // TODO: remove isTrashed type extension when we have found a solution to trashed items
-export const createDocumentTreeItem = (item: Document): DocumentTreeItem & { isTrashed: boolean } => {
-	// TODO: Create mock data:
+export const createDocumentTreeItem = (item: DocumentModel): DocumentTreeItemModel & { isTrashed: boolean } => {
 	return {
 		...createContentTreeItem(item),
 		/*
@@ -50,7 +50,7 @@ export const createDocumentTreeItem = (item: Document): DocumentTreeItem & { isT
 	};
 };
 
-export const createDocumentTypeTreeItem = (item: DocumentType): DocumentTypeTreeItem => {
+export const createDocumentTypeTreeItem = (item: DocumentTypeModel): DocumentTypeTreeItemModel => {
 	return {
 		...createFolderTreeItem(item),
 		isElement: item.isElement,

@@ -1,5 +1,5 @@
 import { RepositoryDetailDataSource } from '@umbraco-cms/repository';
-import { DocumentResource, ProblemDetails, Document } from '@umbraco-cms/backend-api';
+import { DocumentResource, ProblemDetailsModel, DocumentModel } from '@umbraco-cms/backend-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 
@@ -9,7 +9,7 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
  * @class UmbDocumentServerDataSource
  * @implements {RepositoryDetailDataSource}
  */
-export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<Document> {
+export class UmbDocumentDetailServerDataSource implements RepositoryDetailDataSource<DocumentModel> {
 	#host: UmbControllerHostInterface;
 
 	/**
@@ -29,7 +29,7 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 	 */
 	async get(key: string) {
 		if (!key) {
-			const error: ProblemDetails = { title: 'Key is missing' };
+			const error: ProblemDetailsModel = { title: 'Key is missing' };
 			return { error };
 		}
 
@@ -48,7 +48,7 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 	 * @memberof UmbDocumentServerDataSource
 	 */
 	async createScaffold(parentKey: string | null) {
-		const data: Document = {
+		const data: DocumentModel = {
 			properties: [],
 			variants: [],
 		};
@@ -79,7 +79,7 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 		}
 		//return tryExecuteAndNotify(this.#host, DocumentResource.postDocument(payload));
 		// TODO: use resources when end point is ready:
-		return tryExecuteAndNotify<Document>(
+		return tryExecuteAndNotify<DocumentModel>(
 			this.#host,
 			fetch('/umbraco/management/api/v1/document/save', {
 				method: 'POST',
@@ -100,7 +100,7 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 	// TODO: Error mistake in this:
 	async update(document: Document) {
 		if (!document.key) {
-			const error: ProblemDetails = { title: 'Document key is missing' };
+			const error: ProblemDetailsModel = { title: 'Document key is missing' };
 			return { error };
 		}
 		//const payload = { key: document.key, requestBody: document };
@@ -110,12 +110,12 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 		try {
 			body = JSON.stringify(document);
 		} catch (error) {
-			const myError: ProblemDetails = { title: 'JSON could not parse' };
+			const myError: ProblemDetailsModel = { title: 'JSON could not parse' };
 			return { error: myError };
 		}
 
 		// TODO: use resources when end point is ready:
-		return tryExecuteAndNotify<Document>(
+		return tryExecuteAndNotify<DocumentModel>(
 			this.#host,
 			fetch('/umbraco/management/api/v1/document/save', {
 				method: 'POST',
@@ -135,12 +135,12 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 	 */
 	async trash(key: string) {
 		if (!key) {
-			const error: ProblemDetails = { title: 'Key is missing' };
+			const error: ProblemDetailsModel = { title: 'Key is missing' };
 			return { error };
 		}
 
 		// TODO: use resources when end point is ready:
-		return tryExecuteAndNotify<Document>(
+		return tryExecuteAndNotify<DocumentModel>(
 			this.#host,
 			fetch('/umbraco/management/api/v1/document/trash', {
 				method: 'POST',
@@ -161,7 +161,7 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 	// TODO: Error mistake in this:
 	async delete(key: string) {
 		if (!key) {
-			const error: ProblemDetails = { title: 'Key is missing' };
+			const error: ProblemDetailsModel = { title: 'Key is missing' };
 			return { error };
 		}
 

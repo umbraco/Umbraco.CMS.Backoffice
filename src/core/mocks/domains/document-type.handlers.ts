@@ -52,6 +52,6 @@ export const handlers = [
 
 		const document = umbDocumentTypeData.getByKey(key);
 
-		return res(ctx.status(200), ctx.json([document]));
+		return res(ctx.status(200), ctx.json(document));
 	}),
 ];
