@@ -1,6 +1,5 @@
 import { rest } from 'msw';
 import { umbDataTypeData } from '../data/data-type.data';
-import type { FolderTreeItem } from '@umbraco-cms/backend-api';
 
 // TODO: add schema
 export const handlers = [
@@ -13,7 +12,7 @@ export const handlers = [
 		return res(ctx.status(200), ctx.json([dataType]));
 	}),
 
-	rest.post<FolderTreeItem[]>('/umbraco/backoffice/data-type/:key', async (req, res, ctx) => {
+	rest.post('/umbraco/backoffice/data-type/:key', async (req, res, ctx) => {
 		const data = await req.json();
 		if (!data) return;
 
@@ -22,7 +21,7 @@ export const handlers = [
 		return res(ctx.status(200), ctx.json(saved));
 	}),
 
-	rest.put<FolderTreeItem[]>('/umbraco/backoffice/data-type/:key', async (req, res, ctx) => {
+	rest.put('/umbraco/backoffice/data-type/:key', async (req, res, ctx) => {
 		const data = await req.json();
 		if (!data) return;
 
@@ -32,7 +31,6 @@ export const handlers = [
 	}),
 
 	rest.delete<string[]>('/umbraco/backoffice/data-type/:key', async (req, res, ctx) => {
-		console.warn('Please move to schema');
 		const key = req.params.key as string;
 		if (!key) return;
 
