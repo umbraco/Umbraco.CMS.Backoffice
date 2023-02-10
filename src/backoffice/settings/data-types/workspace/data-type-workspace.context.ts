@@ -16,6 +16,7 @@ export class UmbWorkspaceDataTypeContext
 	#dataTypeRepository: UmbDataTypeRepository;
 
 	#data = new ObjectState<EntityType | undefined>(undefined);
+	data = this.#data.asObservable();
 	name = this.#data.getObservablePart((data) => data?.name);
 	key = this.#data.getObservablePart((data) => data?.key);
 
