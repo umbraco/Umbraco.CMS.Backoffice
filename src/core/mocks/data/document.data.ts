@@ -421,7 +421,7 @@ export const treeData: Array<DocumentTreeItemModel> = [
 // TODO: all properties are optional in the server schema. I don't think this is correct.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-class UmbDocumentData extends UmbEntityData<Document> {
+class UmbDocumentData extends UmbEntityData<DocumentModel> {
 	private treeData = treeData;
 
 	constructor() {
