@@ -23,7 +23,9 @@ export class UmbDictionaryDetailServerDataSource implements DictionaryDetailData
 	 * @memberof UmbDictionaryDetailServerDataSource
 	 */
 	async createScaffold(parentKey: string) {
-		const data: DictionaryItem = {};
+		const data: DictionaryItem = {
+			name: '',
+		};
 		return { data };
 	}
 	/**
@@ -64,12 +66,13 @@ export class UmbDictionaryDetailServerDataSource implements DictionaryDetailData
 
 	/**
 	 * @description - Inserts a new Dictionary on the server
-	 * @param {DictionaryItem} dictionary
+	 * @param {string} parentKey
+	 * @param {string} name
 	 * @return {*}
 	 * @memberof UmbDictionaryDetailServerDataSource
 	 */
-	async insert(dictionary: DictionaryItem) {
-		const payload = { requestBody: dictionary };
+	async insert(parentKey: string, name: string) {
+		const payload = { requestBody: { parentKey, name } };
 		return tryExecuteAndNotify(this.#host, DictionaryResource.postDictionary(payload));
 	}
 

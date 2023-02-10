@@ -66,7 +66,7 @@ export class UmbDictionaryDetailRepository {
 
 		// TODO: should we show a notification if the key is missing?
 		// Investigate what is best for Acceptance testing, cause in that perspective a thrown error might be the best choice?
-		// TODO: return error here or in data source? Lower is better?
+		// TODO: return error here or in data source? Lower is better to avoid other callers having to manage error states
 		if (!key) {
 			const error: ProblemDetails = { title: 'Key is missing' };
 			return { error };
@@ -112,29 +112,29 @@ export class UmbDictionaryDetailRepository {
 		return { error };
 	}
 
-	async insert(dictionary: DictionaryItem) {
+	async insert(parentKey: string, name: string) {
 		await this.#init();
 
 		// TODO: should we show a notification if the template is missing?
 		// Investigate what is best for Acceptance testing, cause in that perspective a thrown error might be the best choice?
-		if (!dictionary) {
-			const error: ProblemDetails = { title: 'Dictionary is missing' };
+		if (!parentKey) {
+			const error: ProblemDetails = { title: 'Parent key is missing' };
 			return { error };
 		}
 
-		const { error } = await this.#dataSource.insert(dictionary);
+		if (!name) {
+			const error: ProblemDetails = { title: 'Name is missing' };
+			return { error };
+		}
+
+		const { data, error } = await this.#dataSource.insert(parentKey, name);
 
 		if (!error) {
-			const notification = { data: { message: `Dictionary created` } };
+			const notification = { data: { message: `Dictionary '${name}' created` } };
 			this.#notificationService?.peek('positive', notification);
 		}
 
-		// TODO: we currently don't use the detail store for anything.
-		// Consider to look up the data before fetching from the server
-		this.#detailStore?.append(dictionary);
-		// TODO: Update tree store with the new item?
-
-		return { error };
+		return { data, error };
 	}
 
 	async export(key: string, includeChildren = false) {

@@ -5,7 +5,7 @@ export interface DictionaryDetailDataSource {
     createScaffold(parentKey: string): Promise<DataSourceResponse<DictionaryItem>>;
     get(skip?: number, take?: number): Promise<DataSourceResponse<PagedDictionaryOverview>>;
     getByKey(key: string): Promise<DataSourceResponse<DictionaryItem>>;
-    insert(dictionary: DictionaryItem): Promise<DataSourceResponse>;
+    insert(parentKey: string, name: string): Promise<DataSourceResponse>;
     update(dictionary: DictionaryItem): Promise<DataSourceResponse>;
     delete(key: string): Promise<DataSourceResponse>;
     export(key: string, includeChildren: boolean): Promise<DataSourceResponse<Blob>>;

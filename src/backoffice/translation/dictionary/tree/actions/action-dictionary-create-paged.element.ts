@@ -32,7 +32,7 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 		this._form?.requestSubmit();
 	}
 
-	#handleSubmit(e: SubmitEvent) {
+	async #handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
 		const form = e.target as HTMLFormElement;
@@ -41,12 +41,13 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 		const formData = new FormData(form);
 
 		// create the new item before routing to it
-		// this.observe(this.#detailRepo.create(this._entity.key, formData.get('name') as string), (newDictionaryItem) => {	
-		// 	// use detail from new item to construct edit URL
-		// 	history.pushState(null, '', `/section/translation/dictionary/edit/${newDictionaryItem.key}`);
+		const { data } = await this.#detailRepo.insert(this._entity.key, formData.get('name') as string);
 
-		// 	this._treeContextMenuService?.close();
-		// });
+		// TODO => investigate how to route to the new item - location header or provide key for new item
+		// use detail from new item to construct edit URL
+		// history.pushState(null, '', `/section/translation/dictionary/edit/${newDictionaryItem.key}`);
+
+		// this._treeContextMenuService?.close();		
 	}
 
 	render() {

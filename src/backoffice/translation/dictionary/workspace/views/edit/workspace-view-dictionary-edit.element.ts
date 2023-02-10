@@ -2,12 +2,12 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { ifDefined } from 'lit-html/directives/if-defined.js';
+import { UUITextareaElement, UUITextareaEvent } from '@umbraco-ui/uui';
 import { UmbWorkspaceDictionaryContext } from '../../dictionary-workspace.context';
 import { UmbDictionaryDetailRepository } from '../../data/dictionary.detail.repository';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DictionaryItem, DictionaryItemTranslationModel, Language } from '@umbraco-cms/backend-api';
-import { ifDefined } from 'lit-html/directives/if-defined.js';
-import { UUITextareaElement, UUITextareaEvent } from '@umbraco-ui/uui';
+import { DictionaryItem, Language } from '@umbraco-cms/backend-api';
 
 @customElement('umb-workspace-view-dictionary-edit')
 export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
@@ -31,8 +31,6 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 
 	#workspaceContext!: UmbWorkspaceDictionaryContext;
 
-	#translations: Array<DictionaryItemTranslationModel> = [];
-
 	async connectedCallback() {
 		super.connectedCallback();
 
@@ -48,14 +46,13 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 	#observeDictionary() {
 		this.observe(this.#workspaceContext.dictionary, (dictionary) => {
 			this._dictionary = dictionary;
-			this.#translations = [...(dictionary?.translations ?? [])];
 		});
 	}
 
 	#renderTranslation(language: Language) {
 		if (!language.isoCode) return;
 
-		const translation = this.#translations?.find((x) => x.isoCode === language.isoCode);
+		const translation = this._dictionary?.translations?.find((x) => x.isoCode === language.isoCode);
 
 		return html` <umb-workspace-property-layout label=${language.name ?? language.isoCode}>
 			<uui-textarea
