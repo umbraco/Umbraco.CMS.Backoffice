@@ -28,7 +28,7 @@ export class UmbMediaTypeDetailStore extends UmbStoreBase implements UmbEntityDe
 	/**
 	 * @description - Request a Data Type by key. The Data Type is added to the store and is returned as an Observable.
 	 * @param {string} key
-	 * @return {*}  {(Observable<DataType | undefined>)}
+	 * @return {*}  {(Observable<DataTypeModel | undefined>)}
 	 * @memberof UmbMediaTypesStore
 	 */
 	getByKey(key: string) {

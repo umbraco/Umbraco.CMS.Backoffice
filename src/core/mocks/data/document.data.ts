@@ -1,7 +1,7 @@
 import { UmbEntityData } from './entity.data';
 import { createDocumentTreeItem } from './utils';
 import {
-	ContentState,
+	ContentStateModel,
 	DocumentModel,
 	DocumentTreeItemModel,
 	PagedDocumentTreeItemModel,
@@ -230,7 +230,7 @@ export const data: Array<DocumentModel> = [
 		properties: [],
 		variants: [
 			{
-				state: ContentState.PUBLISHED,
+				state: ContentStateModel.PUBLISHED,
 				publishDate: '2023-02-06T15:31:51.354764',
 				culture: 'en-us',
 				segment: null,
@@ -290,7 +290,7 @@ export const data: Array<DocumentModel> = [
 		],
 		variants: [
 			{
-				state: ContentState.PUBLISHED,
+				state: ContentStateModel.PUBLISHED,
 				publishDate: '2023-02-06T15:31:51.354764',
 				culture: 'en-us',
 				segment: null,
@@ -345,7 +345,7 @@ export const data: Array<DocumentModel> = [
 		],
 		variants: [
 			{
-				state: ContentState.DRAFT,
+				state: ContentStateModel.DRAFT,
 				publishDate: '2023-02-06T15:32:24.957009',
 				culture: 'en-us',
 				segment: null,

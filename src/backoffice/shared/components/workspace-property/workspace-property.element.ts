@@ -10,7 +10,7 @@ import '../../property-actions/shared/property-action-menu/property-action-menu.
 import '../../../../backoffice/shared/components/workspace/workspace-property-layout/workspace-property-layout.element';
 import { UmbObserverController } from '@umbraco-cms/observable-api';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DataTypeProperty } from '@umbraco-cms/backend-api';
+import { DataTypePropertyModel } from '@umbraco-cms/backend-api';
 
 /**
  *  @element umb-workspace-property
@@ -124,7 +124,7 @@ export class UmbWorkspacePropertyElement extends UmbLitElement {
 	 * @default ''
 	 */
 	@property({ type: Object, attribute: false })
-	public set config(value: DataTypeProperty[]) {
+	public set config(value: DataTypePropertyModel[]) {
 		console.log('got config', value);
 		this._propertyContext.setConfig(value);
 	}

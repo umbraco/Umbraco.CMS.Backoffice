@@ -3,7 +3,7 @@ import { css, html } from 'lit';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbDataTypeRepository } from '../../../settings/data-types/repository/data-type.repository';
-import type { DataType, DataTypeProperty, DocumentTypePropertyType } from '@umbraco-cms/backend-api';
+import type { DataTypeModel, DataTypePropertyModel, DocumentTypePropertyTypeModel } from '@umbraco-cms/backend-api';
 import '../workspace-property/workspace-property.element';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { UmbObserverController } from '@umbraco-cms/observable-api';
@@ -21,12 +21,12 @@ export class UmbContentPropertyElement extends UmbLitElement {
 
 	// TODO: Consider if we just need to get the DataType Key?..
 	// TODO: consider if we should make a base type of the DocumentTypePropertyType, which could become the ContentProperty. A shared common type for all properties.
-	private _property?: DocumentTypePropertyType;
+	private _property?: DocumentTypePropertyTypeModel;
 	@property({ type: Object, attribute: false })
-	public get property(): DocumentTypePropertyType | undefined {
+	public get property(): DocumentTypePropertyTypeModel | undefined {
 		return this._property;
 	}
-	public set property(value: DocumentTypePropertyType | undefined) {
+	public set property(value: DocumentTypePropertyTypeModel | undefined) {
 		const oldProperty = this._property;
 		this._property = value;
 		if (this._property?.dataTypeKey !== oldProperty?.dataTypeKey) {
@@ -41,10 +41,10 @@ export class UmbContentPropertyElement extends UmbLitElement {
 	private _propertyEditorUiAlias?: string;
 
 	@state()
-	private _dataTypeData: DataTypeProperty[] = [];
+	private _dataTypeData: DataTypePropertyModel[] = [];
 
 	private _dataTypeRepository: UmbDataTypeRepository = new UmbDataTypeRepository(this);
-	private _dataTypeObserver?: UmbObserverController<DataType | null>;
+	private _dataTypeObserver?: UmbObserverController<DataTypeModel | null>;
 
 	private async _observeDataType(dataTypeKey?: string) {
 		this._dataTypeObserver?.destroy();

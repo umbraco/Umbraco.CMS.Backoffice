@@ -1,18 +1,17 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
-import { distinctUntilChanged } from 'rxjs';
+import { customElement, state } from 'lit/decorators';
 import { UmbWorkspaceDataTypeContext } from '../../data-type-workspace.context';
 
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DataType } from '@umbraco-cms/backend-api';
+import { DataTypeModel } from '@umbraco-cms/backend-api';
 
 @customElement('umb-workspace-view-data-type-info')
 export class UmbWorkspaceViewDataTypeInfoElement extends UmbLitElement {
 	static styles = [UUITextStyles, css``];
 
 	@state()
-	_dataType?: DataType;
+	_dataType?: DataTypeModel;
 
 	private _workspaceContext?: UmbWorkspaceDataTypeContext;
 

@@ -61,7 +61,7 @@ export class UmbUserStore extends UmbStoreBase implements UmbEntityDetailStore<U
 	/**
 	 * @description - Request a User by key. The User is added to the store and is returned as an Observable.
 	 * @param {string} key
-	 * @return {*}  {(Observable<DataType | null>)}
+	 * @return {*}  {(Observable<DataTypeModel | null>)}
 	 * @memberof UmbDataTypeStore
 	 */
 	getByKey(key: string) {
