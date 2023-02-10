@@ -4,8 +4,8 @@ import { when } from 'lit-html/directives/when.js';
 import { customElement, query, state } from 'lit/decorators.js';
 import { repeat } from 'lit-html/directives/repeat.js';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary.detail.store';
 import { UmbTreeElement } from '../../../../../backoffice/shared/components/tree/tree.element';
+import { UmbDictionaryDetailRepository } from '../../workspace/data/dictionary.detail.repository';
 import { DictionaryImport } from '@umbraco-cms/backend-api';
 
 @customElement('umb-tree-action-dictionary-import-page')
@@ -37,14 +37,10 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	@state()
 	private _selection: Array<string> = [];
 
-	#dictionaryDetailStore!: UmbDictionaryDetailStore;
+	#detailRepo = new UmbDictionaryDetailRepository(this);
 
 	connectedCallback() {
 		super.connectedCallback();
-
-		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (dictionaryDetailStore) => {
-			this.#dictionaryDetailStore = dictionaryDetailStore;
-		});
 	}
 
 	#back() {
@@ -55,11 +51,11 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 		if (!this._uploadedDictionary?.tempFileName) return;
 
 		// TODO => fix when backend expects parent guid not parent id
-		const result = await this.#dictionaryDetailStore.import(this._uploadedDictionary.tempFileName, parseInt(this._selection[0]));
+		const { data } = await this.#detailRepo.import(this._uploadedDictionary.tempFileName, parseInt(this._selection[0]));
 
-		const path = result?.content?.split(',');
+		const path = data?.content?.split(',');
 		if (path?.length) {
-			this.#dictionaryDetailStore.getByKey(path[path.length - 1]);
+			this.#detailRepo.getByKey(path[path.length - 1]);
 		}
 
 		this._treeContextMenuService?.close();
@@ -76,7 +72,9 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 		if (!this._form.checkValidity()) return;
 
 		const formData = new FormData(this._form);
-		this._uploadedDictionary = await this.#dictionaryDetailStore.upload(formData);
+		const { data } = await this.#detailRepo.upload(formData);
+
+		this._uploadedDictionary = data;
 
 		if (!this._uploadedDictionary) {
 			this._showErrorView = true;

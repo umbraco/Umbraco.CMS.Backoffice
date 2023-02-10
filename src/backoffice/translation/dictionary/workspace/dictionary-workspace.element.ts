@@ -2,13 +2,11 @@ import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { distinctUntilChanged } from 'rxjs';
-import { UmbWorkspaceEntityElement } from '../../../../backoffice/shared/components/workspace/workspace-entity-element.interface';
 import { UmbWorkspaceDictionaryContext } from './dictionary-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 
-@customElement('umb-workspace-dictionary')
-export class UmbWorkspaceDictionaryElement extends UmbLitElement implements UmbWorkspaceEntityElement {
+@customElement('umb-dictionary-workspace')
+export class UmbWorkspaceDictionaryElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -25,28 +23,31 @@ export class UmbWorkspaceDictionaryElement extends UmbLitElement implements UmbW
 		`,
 	];
 
-	@state()
-	private _dictionaryName!: string;
-
-	#workspaceContext: UmbWorkspaceDictionaryContext = new UmbWorkspaceDictionaryContext(this);
-
 	load(entityKey: string) {
 		this.#workspaceContext.load(entityKey);
 	}
 
 	create(parentKey: string | null) {
-		this.#workspaceContext.create(parentKey);
+		this.#isNew = true;
+		this.#workspaceContext.createScaffold(parentKey);
 	}
 
-	constructor() {
-		super();
+	@state()
+	private _name?: string | null = '';
 
-		this.observe(this.#workspaceContext.data.pipe(distinctUntilChanged()), (dictionary) => {
-			if (dictionary && dictionary.name !== this._dictionaryName) {
-				this._dictionaryName = dictionary.name ?? '';
-			}
+	#workspaceContext = new UmbWorkspaceDictionaryContext(this);
+	#isNew = false;
+
+	async connectedCallback() {
+		super.connectedCallback();
+
+		this.provideContext('umbWorkspaceContext', this.#workspaceContext);
+
+		this.observe(this.#workspaceContext.name, (name) => {
+			this._name = name;
 		});
 	}
+
 
 	// TODO. find a way where we don't have to do this for all workspaces.
 	#handleInput(event: UUIInputEvent) {
@@ -62,7 +63,7 @@ export class UmbWorkspaceDictionaryElement extends UmbLitElement implements UmbW
 	render() {
 		return html`
 			<umb-workspace-layout alias="Umb.Workspace.Dictionary">
-				<uui-input id="header" slot="header" .value=${this._dictionaryName} @input="${this.#handleInput}">
+				<uui-input id="header" slot="header" .value=${this._name} @input="${this.#handleInput}">
 				</uui-input>
 			</umb-workspace-layout>
 		`;
@@ -73,6 +74,6 @@ export default UmbWorkspaceDictionaryElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-workspace-dictionary': UmbWorkspaceDictionaryElement;
+		'umb-dictionary-workspace': UmbWorkspaceDictionaryElement;
 	}
 }

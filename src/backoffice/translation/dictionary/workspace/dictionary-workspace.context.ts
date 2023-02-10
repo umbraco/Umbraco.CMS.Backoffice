@@ -1,45 +1,45 @@
-import {
-	UmbDictionaryDetailStoreItemType,
-	UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN,
-} from '../dictionary.detail.store';
-import { UmbEntityWorkspaceManager } from '../../../../backoffice/shared/components/workspace/workspace-context/entity-manager-controller';
-import { UmbWorkspaceContext } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-context';
-import { UmbWorkspaceEntityContextInterface } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-entity-context.interface';
-import type { DictionaryDetails } from '@umbraco-cms/models';
-import { EntityTreeItem } from '@umbraco-cms/backend-api';
+import { UmbDictionaryDetailRepository } from './data/dictionary.detail.repository';
+import { DictionaryItem } from '@umbraco-cms/backend-api';
+import { UmbControllerHostInterface } from '@umbraco-cms/controller';
+import { createObservablePart, DeepState } from '@umbraco-cms/observable-api';
 
-export class UmbWorkspaceDictionaryContext
-	extends UmbWorkspaceContext
-	implements UmbWorkspaceEntityContextInterface<UmbDictionaryDetailStoreItemType | undefined>
-{
-	#manager = new UmbEntityWorkspaceManager(this._host, 'dictionary', UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN);
+export class UmbWorkspaceDictionaryContext {
+	#host: UmbControllerHostInterface;
+	#detailRepo: UmbDictionaryDetailRepository;
 
-	public readonly name = this.#manager.state.getObservablePart((state) => state?.name);
-	public readonly data = this.#manager.state.asObservable();
+	#data = new DeepState<DictionaryItem | undefined>(undefined);
+	data = this.#data.asObservable();
+	name = createObservablePart(this.#data, (data) => data?.name);
+	dictionary = createObservablePart(this.#data, (data) => data);
 
-	setName(name: string) {
-		this.#manager.state.update({ name: name });
+	constructor(host: UmbControllerHostInterface) {
+		this.#host = host;
+		this.#detailRepo = new UmbDictionaryDetailRepository(this.#host);
 	}
 
-	getEntityType = this.#manager.getEntityType;
-	getUnique = this.#manager.getEntityKey;
-	getEntityKey = this.#manager.getEntityKey;
-	getStore = this.#manager.getStore;
-	getData = this.#manager.getData;
-	load = this.#manager.load;
-	create = this.#manager.create;
-	save = this.#manager.save;
-	destroy = this.#manager.destroy;
+	setName(value: string) {
+		this.#data.next({ ...this.#data.value, name: value });
+	}
 
-	public setPropertyValue(isoCode: string, translation: string) {
-		const data = this.#manager.getData();
-		const newDataSet = (data as DictionaryDetails).translations.map((dictionaryTranslation) => {
-			if (dictionaryTranslation.isoCode === isoCode) {
-				return { ...dictionaryTranslation, translation };
-			}
-			return dictionaryTranslation;
-		});
+	setValue(dictionary: DictionaryItem) {
+		this.#data.next({ ...this.#data.value, translations: dictionary.translations });
+	}
 
-		this.#manager.state.update({ translations: newDataSet } as Partial<EntityTreeItem>);
+	async load(entityKey: string) {
+		const { data } = await this.#detailRepo.getByKey(entityKey);
+		if (data) {
+			this.#data.next(data);
+		}
+	}	
+
+	async createScaffold(parentKey: string | null) {
+		const { data } = await this.#detailRepo.createScaffold(parentKey);
+		if (!data) return;
+		this.#data.next(data);
+	}
+
+	async save() {
+		if (!this.#data.value) return;
+		this.#detailRepo.update(this.#data.value);
 	}
 }

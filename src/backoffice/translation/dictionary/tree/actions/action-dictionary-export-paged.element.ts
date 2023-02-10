@@ -2,7 +2,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary.detail.store';
+import { UmbDictionaryDetailRepository } from '../../workspace/data/dictionary.detail.repository';
 
 @customElement('umb-tree-action-dictionary-export-page')
 export class UmbTreeActionDictionaryExportPageElement extends UmbTreeItemActionElement {
@@ -11,14 +11,10 @@ export class UmbTreeActionDictionaryExportPageElement extends UmbTreeItemActionE
 	@query('#form')
 	private _form!: HTMLFormElement;
 
-	#dictionaryDetailStore!: UmbDictionaryDetailStore;
+	#detailRepo = new UmbDictionaryDetailRepository(this);
 
 	connectedCallback() {
 		super.connectedCallback();
-
-		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (dictionaryDetailStore) => {
-			this.#dictionaryDetailStore = dictionaryDetailStore;
-		});
 	}
 
 	#back() {
@@ -32,14 +28,14 @@ export class UmbTreeActionDictionaryExportPageElement extends UmbTreeItemActionE
 	async #handleSubmit(e: SubmitEvent) {
 		e.preventDefault();;
 
-		if (!this.#dictionaryDetailStore) return;
+		if (!this.#detailRepo) return;
 
 		const form = e.target as HTMLFormElement;
 		if (!form) return;
 
 		const formData = new FormData(form);
 		/// TODO => decide where to handle file downloads - should be a single entry point
-		await this.#dictionaryDetailStore.export(this._entity.key, (formData.get('includeDescendants') as string) === 'on');
+		await this.#detailRepo.export(this._entity.key, (formData.get('includeDescendants') as string) === 'on');
 	}
 
 	render() {

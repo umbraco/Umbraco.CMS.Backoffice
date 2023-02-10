@@ -2,16 +2,12 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
-import {
-	UmbDictionaryDetailStore,
-	UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN,
-} from '../../dictionary/dictionary.detail.store';
 import { UmbTableConfig, UmbTableColumn, UmbTableItem } from '../../../../backoffice/shared/components/table';
-import {
-	UmbTreeContextMenuService,
-} from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
+import { UmbTreeContextMenuService } from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
+import { UmbDictionaryDetailRepository } from '../../dictionary/workspace/data/dictionary.detail.repository';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DictionaryOverview, Language } from '@umbraco-cms/backend-api';
+import { DictionaryOverview, Language, LanguageResource } from '@umbraco-cms/backend-api';
+import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
@@ -52,7 +48,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	#dictionaryItems: DictionaryOverview[] = [];
 
-	#detailStore!: UmbDictionaryDetailStore;
+	#detailRepo!: UmbDictionaryDetailRepository;
 
 	#contextMenuService?: UmbTreeContextMenuService;
 
@@ -66,25 +62,21 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 		super();
 	}
 
-	connectedCallback() {
+	async connectedCallback() {
 		super.connectedCallback();
 
-		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, async (detailStore) => {
-			this.#detailStore = detailStore;
-			this.#languages = await this.#detailStore.getLanguages();
-
-			this.#getDictionaryItems();
-		});
-	}
+		this.#detailRepo = new UmbDictionaryDetailRepository(this);
+		this.#languages = await this.#detailRepo.getLanguages();
+		await this.#getDictionaryItems();
+	}	
 
 	async #getDictionaryItems() {
-		if (!this.#detailStore) return;
+		if (!this.#detailRepo) return;
 
-		this.observe(this.#detailStore.get(0, 1000), (dictionaryItems: DictionaryOverview[]) => {
-			this.#dictionaryItems = dictionaryItems;
-			this.#setTableColumns();
-			this.#setTableItems();
-		});
+		const { data } = await this.#detailRepo.get(0, 1000);
+		this.#dictionaryItems = data?.items ?? [];
+		this.#setTableColumns();
+		this.#setTableItems();
 	}
 
 	/**

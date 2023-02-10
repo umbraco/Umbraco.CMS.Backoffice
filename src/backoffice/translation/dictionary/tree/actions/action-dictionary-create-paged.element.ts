@@ -2,7 +2,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { UmbDictionaryDetailStore, UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN } from '../../dictionary.detail.store';
+import { UmbDictionaryDetailRepository } from '../../workspace/data/dictionary.detail.repository';
 
 @customElement('umb-tree-action-dictionary-create-page')
 export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionElement {
@@ -18,14 +18,10 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 	@query('#form')
 	private _form!: HTMLFormElement;
 
-	#detailStore!: UmbDictionaryDetailStore;
+	#detailRepo = new UmbDictionaryDetailRepository(this);
 
 	connectedCallback() {
 		super.connectedCallback();
-
-		this.consumeContext(UMB_DICTIONARY_DETAIL_STORE_CONTEXT_TOKEN, (detailStore) => {
-			this.#detailStore = detailStore;
-		});
 	}
 
 	#back() {
@@ -45,12 +41,12 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 		const formData = new FormData(form);
 
 		// create the new item before routing to it
-		this.observe(this.#detailStore.create(this._entity.key, formData.get('name') as string), (newDictionaryItem) => {	
-			// use detail from new item to construct edit URL
-			history.pushState(null, '', `/section/translation/dictionary/edit/${newDictionaryItem.key}`);
+		// this.observe(this.#detailRepo.create(this._entity.key, formData.get('name') as string), (newDictionaryItem) => {	
+		// 	// use detail from new item to construct edit URL
+		// 	history.pushState(null, '', `/section/translation/dictionary/edit/${newDictionaryItem.key}`);
 
-			this._treeContextMenuService?.close();
-		});
+		// 	this._treeContextMenuService?.close();
+		// });
 	}
 
 	render() {
