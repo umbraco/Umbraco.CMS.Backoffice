@@ -21,17 +21,11 @@ const importResponse: DictionaryDetails = {
 	isContainer: false,
 	icon: 'umb:book-alt',
 	translations: [{
-		displayName: 'English (United States)',
 		isoCode: 'en',
-		key: '37e7d0ab-53ba-425d-b8bd-12537f9925ca',
-		languageId: 1,
 		translation: 'I am an imported US value'
 	},
 	{
-		displayName: 'French',
 		isoCode: 'fr',
-		key: 'b4e7d0ab-53ba-485d-b8bd-12537f9925cd',
-		languageId: 2,
 		translation: 'I am an imported French value',
 	}],
 };
@@ -92,17 +86,11 @@ export const handlers = [
 		data.type = 'dictionary';
 		data.translations = [
 			{
-				displayName: 'English (United States)',
 				isoCode: 'en-US',
-				key: uuidv4(),
-				languageId: 1,
 				translation: '',
 			},
 			{
-				displayName: 'French',
 				isoCode: 'fr',
-				key: uuidv4(),
-				languageId: 2,
 				translation: '',
 			},
 		];
