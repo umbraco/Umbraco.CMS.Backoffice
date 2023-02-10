@@ -62,7 +62,7 @@ export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<D
 	 * @return {*}
 	 * @memberof UmbDocumentServerDataSource
 	 */
-	async insert(document: Document) {
+	async insert(document: DocumentModel) {
 		if (!document.key) {
 			//const error: ProblemDetails = { title: 'Document key is missing' };
 			return Promise.reject();
