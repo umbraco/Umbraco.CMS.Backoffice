@@ -1,6 +1,6 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
-import { customElement, state } from 'lit/decorators';
+import { customElement, state } from 'lit/decorators.js';
 import { UmbWorkspaceDataTypeContext } from '../../data-type-workspace.context';
 
 import { UmbLitElement } from '@umbraco-cms/element';
