@@ -1,6 +1,11 @@
 import { UmbEntityData } from './entity.data';
 import { createDocumentTypeTreeItem } from './utils';
-import { DocumentTypeTreeItem, EntityTreeItem, DocumentType } from '@umbraco-cms/backend-api';
+import {
+	DocumentTypeTreeItem,
+	EntityTreeItem,
+	DocumentType,
+	ContentTypeCompositionType,
+} from '@umbraco-cms/backend-api';
 
 export const data: Array<DocumentType> = [
 	{
@@ -683,11 +688,11 @@ export const data: Array<DocumentType> = [
 		compositions: [
 			{
 				key: '5035d7d9-0a63-415c-9e75-ee2cf931db92',
-				compositionType: 'Inheritance',
+				compositionType: ContentTypeCompositionType.INHERITANCE,
 			},
 			{
 				key: '8f68ba66-6fb2-4778-83b8-6ab4ca3a7c5d',
-				compositionType: 'Composition',
+				compositionType: ContentTypeCompositionType.COMPOSITION,
 			},
 		],
 		cleanup: {
