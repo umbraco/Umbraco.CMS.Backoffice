@@ -112,7 +112,6 @@ export class UmbWorkspacePropertyElement extends UmbLitElement {
 	 */
 	@property({ attribute: false })
 	public set value(value: unknown) {
-		console.log('got value', value);
 		this._propertyContext.setValue(value);
 	}
 
@@ -125,7 +124,6 @@ export class UmbWorkspacePropertyElement extends UmbLitElement {
 	 */
 	@property({ type: Object, attribute: false })
 	public set config(value: DataTypePropertyModel[]) {
-		console.log('got config', value);
 		this._propertyContext.setConfig(value);
 	}
 

@@ -50,7 +50,6 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 			this._workspaceContext.propertiesOf(null, null),
 			(properties) => {
 				this._propertyData = properties || [];
-				console.log('_propertyData', this._propertyData);
 				//this._data = content?.data || [];
 
 				/*
@@ -64,7 +63,6 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 			this._workspaceContext.propertyStructure(),
 			(propertyStructure) => {
 				this._propertyStructures = propertyStructure || [];
-				console.log('_propertyStructures', this._propertyStructures);
 			},
 			'observeWorkspaceContextData'
 		);
