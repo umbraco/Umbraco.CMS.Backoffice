@@ -4,7 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { UmbDocumentWorkspaceContext } from '../document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DocumentProperty, DocumentTypePropertyType } from '@umbraco-cms/backend-api';
+import { DocumentPropertyModel, DocumentTypePropertyTypeModel } from '@umbraco-cms/backend-api';
 
 @customElement('umb-workspace-view-document-edit')
 export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
@@ -19,10 +19,10 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 	];
 
 	@state()
-	_propertyData: DocumentProperty[] = [];
+	_propertyData: DocumentPropertyModel[] = [];
 
 	@state()
-	_propertyStructures: DocumentTypePropertyType[] = [];
+	_propertyStructures: DocumentTypePropertyTypeModel[] = [];
 
 	private _workspaceContext?: UmbDocumentWorkspaceContext;
 
