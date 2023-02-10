@@ -29,7 +29,7 @@ export class UmbWorkspaceViewDataTypeInfoElement extends UmbLitElement {
 	private _observeDataType() {
 		if (!this._workspaceContext) return;
 
-		this.observe(this._workspaceContext.data.pipe(distinctUntilChanged()), (dataType) => {
+		this.observe(this._workspaceContext.data, (dataType) => {
 			if (!dataType) return;
 			this._dataType = dataType;
 		});

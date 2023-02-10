@@ -220,6 +220,29 @@ export const data: Array<Document> = [
 			},
 		],
 		templateKey: null,
+		key: 'all-property-editors-document-key',
+		contentTypeKey: 'all-property-editors-document-type-key',
+		properties: [],
+		variants: [
+			{
+				state: ContentState.PUBLISHED,
+				publishDate: '2023-02-06T15:31:51.354764',
+				culture: 'en-us',
+				segment: null,
+				name: 'Blog post A',
+				createDate: '2023-02-06T15:31:46.876902',
+				updateDate: '2023-02-06T15:31:51.354764',
+			},
+		],
+	},
+	{
+		urls: [
+			{
+				culture: 'en-US',
+				url: '/',
+			},
+		],
+		templateKey: null,
 		key: 'c05da24d-7740-447b-9cdc-bd8ce2172e38',
 		contentTypeKey: '29643452-cff9-47f2-98cd-7de4b6807681',
 		properties: [
@@ -337,6 +360,20 @@ export const treeData: Array<DocumentTreeItem> = [
 		isEdited: false,
 		noAccess: false,
 		isTrashed: false,
+		key: 'all-property-editors-document-key',
+		isContainer: false,
+		parentKey: null,
+		name: 'All property editors',
+		type: 'document',
+		icon: 'icon-item-arrangement',
+		hasChildren: true,
+	},
+	{
+		isProtected: false,
+		isPublished: true,
+		isEdited: false,
+		noAccess: false,
+		isTrashed: false,
 		key: 'c05da24d-7740-447b-9cdc-bd8ce2172e38',
 		isContainer: false,
 		parentKey: null,
@@ -372,9 +409,6 @@ export const treeData: Array<DocumentTreeItem> = [
 		isPublished: false,
 		isEdited: false,
 		isTrashed: false,
-		properties: [],
-		data: [],
-		variants: [],
 	},
 ];
 

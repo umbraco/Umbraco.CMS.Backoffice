@@ -60,7 +60,7 @@ export class UmbDocumentTypeWorkspaceElement extends UmbLitElement implements Um
 			this._modalService = instance;
 		});
 
-		this.observe(this._workspaceContext.data.pipe(distinctUntilChanged()), (data) => {
+		this.observe(this._workspaceContext.data, (data) => {
 			// TODO: make method to identify if data is of type DocumentType
 			this._documentType = data as DocumentType;
 		});
