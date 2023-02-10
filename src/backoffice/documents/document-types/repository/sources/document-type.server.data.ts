@@ -1,5 +1,5 @@
 import { RepositoryDetailDataSource } from '@umbraco-cms/repository';
-import { DocumentTypeResource, ProblemDetails, DocumentType } from '@umbraco-cms/backend-api';
+import { DocumentTypeResource, ProblemDetailsModel, DocumentTypeModel } from '@umbraco-cms/backend-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 
@@ -9,7 +9,7 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
  * @class UmbDocumentTypeServerDataSource
  * @implements {RepositoryDetailDataSource}
  */
-export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSource<DocumentType> {
+export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSource<DocumentTypeModel> {
 	#host: UmbControllerHostInterface;
 
 	/**
@@ -29,7 +29,7 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	 */
 	async get(key: string) {
 		if (!key) {
-			const error: ProblemDetails = { title: 'Key is missing' };
+			const error: ProblemDetailsModel = { title: 'Key is missing' };
 			return { error };
 		}
 
@@ -48,7 +48,7 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
 	async createScaffold(parentKey: string | null) {
-		const data: DocumentType = {
+		const data: DocumentTypeModel = {
 			properties: [],
 		};
 
@@ -61,7 +61,7 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	 * @return {*}
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
-	async insert(document: DocumentType) {
+	async insert(document: DocumentTypeModel) {
 		if (!document.key) {
 			//const error: ProblemDetails = { title: 'Document key is missing' };
 			return Promise.reject();
@@ -78,7 +78,7 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 		}
 		//return tryExecuteAndNotify(this.#host, DocumentTypeResource.postDocument(payload));
 		// TODO: use resources when end point is ready:
-		return tryExecuteAndNotify<DocumentType>(
+		return tryExecuteAndNotify<DocumentTypeModel>(
 			this.#host,
 			fetch('/umbraco/management/api/v1/document/save', {
 				method: 'POST',
@@ -97,9 +97,9 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
 	// TODO: Error mistake in this:
-	async update(document: DocumentType) {
+	async update(document: DocumentTypeModel) {
 		if (!document.key) {
-			const error: ProblemDetails = { title: 'Document key is missing' };
+			const error: ProblemDetailsModel = { title: 'Document key is missing' };
 			return { error };
 		}
 		//const payload = { key: document.key, requestBody: document };
@@ -109,12 +109,12 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 		try {
 			body = JSON.stringify(document);
 		} catch (error) {
-			const myError: ProblemDetails = { title: 'JSON could not parse' };
+			const myError: ProblemDetailsModel = { title: 'JSON could not parse' };
 			return { error: myError };
 		}
 
 		// TODO: use resources when end point is ready:
-		return tryExecuteAndNotify<DocumentType>(
+		return tryExecuteAndNotify<DocumentTypeModel>(
 			this.#host,
 			fetch('/umbraco/management/api/v1/document-type/save', {
 				method: 'POST',
@@ -134,12 +134,12 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	 */
 	async trash(key: string) {
 		if (!key) {
-			const error: ProblemDetails = { title: 'Key is missing' };
+			const error: ProblemDetailsModel = { title: 'Key is missing' };
 			return { error };
 		}
 
 		// TODO: use resources when end point is ready:
-		return tryExecuteAndNotify<DocumentType>(
+		return tryExecuteAndNotify<DocumentTypeModel>(
 			this.#host,
 			fetch('/umbraco/management/api/v1/document-type/trash', {
 				method: 'POST',
@@ -160,7 +160,7 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	// TODO: Error mistake in this:
 	async delete(key: string) {
 		if (!key) {
-			const error: ProblemDetails = { title: 'Key is missing' };
+			const error: ProblemDetailsModel = { title: 'Key is missing' };
 			return { error };
 		}
 

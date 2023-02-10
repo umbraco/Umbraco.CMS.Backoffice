@@ -9,7 +9,7 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
  * @class UmbDocumentServerDataSource
  * @implements {RepositoryDetailDataSource}
  */
-export class UmbDocumentDetailServerDataSource implements RepositoryDetailDataSource<DocumentModel> {
+export class UmbDocumentServerDataSource implements RepositoryDetailDataSource<DocumentModel> {
 	#host: UmbControllerHostInterface;
 
 	/**

@@ -1,4 +1,4 @@
-import { DocumentType } from '@umbraco-cms/backend-api';
+import { DocumentTypeModel } from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
 import { ArrayState } from '@umbraco-cms/observable-api';
 import { UmbStoreBase } from '@umbraco-cms/store';
@@ -11,7 +11,7 @@ import { UmbControllerHostInterface } from '@umbraco-cms/controller';
  * @description - Data Store for Document Types
  */
 export class UmbDocumentTypeStore extends UmbStoreBase {
-	#data = new ArrayState<DocumentType>([], (x) => x.key);
+	#data = new ArrayState<DocumentTypeModel>([], (x) => x.key);
 
 	/**
 	 * Creates an instance of UmbDocumentTypeStore.
@@ -24,19 +24,19 @@ export class UmbDocumentTypeStore extends UmbStoreBase {
 
 	/**
 	 * Append a document-type to the store
-	 * @param {DocumentType} document
+	 * @param {DocumentTypeModel} document
 	 * @memberof UmbDocumentTypeStore
 	 */
-	append(document: DocumentType) {
+	append(document: DocumentTypeModel) {
 		this.#data.append([document]);
 	}
 
 	/**
 	 * Append a document-type to the store
-	 * @param {DocumentType} document
+	 * @param {DocumentTypeModel} document
 	 * @memberof UmbDocumentTypeStore
 	 */
-	byKey(key: DocumentType['key']) {
+	byKey(key: DocumentTypeModel['key']) {
 		return this.#data.getObservablePart((x) => x.find((y) => y.key === key));
 	}
 
@@ -45,7 +45,7 @@ export class UmbDocumentTypeStore extends UmbStoreBase {
 	 * @param {string[]} uniques
 	 * @memberof UmbDocumentTypeStore
 	 */
-	remove(uniques: Array<DocumentType['key']>) {
+	remove(uniques: Array<DocumentTypeModel['key']>) {
 		this.#data.remove(uniques);
 	}
 }

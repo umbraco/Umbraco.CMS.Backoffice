@@ -1,4 +1,4 @@
-import { Document } from '@umbraco-cms/backend-api';
+import { DocumentModel } from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
 import { ArrayState } from '@umbraco-cms/observable-api';
 import { UmbStoreBase } from '@umbraco-cms/store';
@@ -11,7 +11,7 @@ import { UmbControllerHostInterface } from '@umbraco-cms/controller';
  * @description - Data Store for Template Details
  */
 export class UmbDocumentStore extends UmbStoreBase {
-	#data = new ArrayState<Document>([], (x) => x.key);
+	#data = new ArrayState<DocumentModel>([], (x) => x.key);
 
 	/**
 	 * Creates an instance of UmbDocumentDetailStore.
@@ -27,16 +27,16 @@ export class UmbDocumentStore extends UmbStoreBase {
 	 * @param {DocumentDetails} document
 	 * @memberof UmbDocumentDetailStore
 	 */
-	append(document: Document) {
+	append(document: DocumentModel) {
 		this.#data.append([document]);
 	}
 
 	/**
 	 * Append a document to the store
-	 * @param {Document} document
+	 * @param {DocumentModel} document
 	 * @memberof UmbDocumentStore
 	 */
-	byKey(key: Document['key']) {
+	byKey(key: DocumentModel['key']) {
 		return this.#data.getObservablePart((x) => x.find((y) => y.key === key));
 	}
 
@@ -45,7 +45,7 @@ export class UmbDocumentStore extends UmbStoreBase {
 	 * @param {string[]} uniques
 	 * @memberof UmbDocumentDetailStore
 	 */
-	remove(uniques: Array<Document['key']>) {
+	remove(uniques: Array<DocumentModel['key']>) {
 		this.#data.remove(uniques);
 	}
 }
