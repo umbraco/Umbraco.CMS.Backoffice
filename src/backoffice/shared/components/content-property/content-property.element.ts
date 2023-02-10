@@ -52,6 +52,7 @@ export class UmbContentPropertyElement extends UmbLitElement {
 			// We do not need to have await here, this is only to ensure that the data is loaded before we try to observe it, and thereby update the DOM with it.
 			await this._dataTypeRepository.requestByKey(dataTypeKey);
 			this._dataTypeObserver = this.observe(await this._dataTypeRepository.byKey(dataTypeKey), (dataType) => {
+				console.log('got data type', dataType);
 				this._dataTypeData = dataType?.data || [];
 				this._propertyEditorUiAlias = dataType?.propertyEditorUiAlias || undefined;
 			});

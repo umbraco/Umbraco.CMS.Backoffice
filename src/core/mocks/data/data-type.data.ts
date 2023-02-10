@@ -8,7 +8,7 @@ export const data: Array<DataType> = [
 		parentKey: null,
 		name: 'Textstring',
 		propertyEditorAlias: 'Umbraco.TextBox',
-		propertyEditorUiAlias: null,
+		propertyEditorUiAlias: 'Umb.PropertyEditorUI.TextBox',
 		data: [],
 	},
 	{

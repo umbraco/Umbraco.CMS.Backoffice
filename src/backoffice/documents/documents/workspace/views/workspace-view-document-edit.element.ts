@@ -32,7 +32,6 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 		// TODO: Figure out how to get the magic string for the workspace context.
 		this.consumeContext<UmbDocumentWorkspaceContext>('umbWorkspaceContext', (workspaceContext) => {
 			this._workspaceContext = workspaceContext;
-			console.log('document workspaceContext', workspaceContext);
 			this._observeContent();
 		});
 	}
@@ -51,6 +50,7 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 			this._workspaceContext.propertiesOf(null, null),
 			(properties) => {
 				this._propertyData = properties || [];
+				console.log('_propertyData', this._propertyData);
 				//this._data = content?.data || [];
 
 				/*
@@ -64,6 +64,7 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 			this._workspaceContext.propertyStructure(),
 			(propertyStructure) => {
 				this._propertyStructures = propertyStructure || [];
+				console.log('_propertyStructures', this._propertyStructures);
 			},
 			'observeWorkspaceContextData'
 		);
@@ -78,8 +79,7 @@ export class UmbWorkspaceViewDocumentEditElement extends UmbLitElement {
 					(property) =>
 						html`<umb-content-property
 							.property=${property}
-							.value=${this._propertyData.filter((x) => x.alias === property.alias)?.[0]
-								?.value}></umb-content-property> `
+							.value=${this._propertyData.find((x) => x.alias === property.alias)?.value}></umb-content-property> `
 				)}
 			</uui-box>
 		`;
