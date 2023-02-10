@@ -5,12 +5,12 @@ import { UmbDocumentTypeTreeStore, UMB_DOCUMENT_TYPE_TREE_STORE_CONTEXT_TOKEN } 
 import { UmbDocumentTypeStore, UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from './document-type.store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
-import { ProblemDetails, DocumentType } from '@umbraco-cms/backend-api';
+import { ProblemDetailsModel, DocumentTypeModel } from '@umbraco-cms/backend-api';
 import type { UmbTreeRepository } from 'libs/repository/tree-repository.interface';
 import { UmbDetailRepository } from '@umbraco-cms/repository';
 import { UmbNotificationService, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/notification';
 
-type ItemType = DocumentType;
+type ItemType = DocumentTypeModel;
 
 // Move to documentation / JSdoc
 /* We need to create a new instance of the repository from within the element context. We want the notifications to be displayed in the right context. */
@@ -70,7 +70,7 @@ export class UmbDocumentTypeRepository implements UmbTreeRepository, UmbDetailRe
 		await this.#init;
 
 		if (!parentKey) {
-			const error: ProblemDetails = { title: 'Parent key is missing' };
+			const error: ProblemDetailsModel = { title: 'Parent key is missing' };
 			return { data: undefined, error };
 		}
 
@@ -87,7 +87,7 @@ export class UmbDocumentTypeRepository implements UmbTreeRepository, UmbDetailRe
 		await this.#init;
 
 		if (!keys) {
-			const error: ProblemDetails = { title: 'Keys are missing' };
+			const error: ProblemDetailsModel = { title: 'Keys are missing' };
 			return { data: undefined, error };
 		}
 
@@ -129,7 +129,7 @@ export class UmbDocumentTypeRepository implements UmbTreeRepository, UmbDetailRe
 		// TODO: should we show a notification if the key is missing?
 		// Investigate what is best for Acceptance testing, cause in that perspective a thrown error might be the best choice?
 		if (!key) {
-			const error: ProblemDetails = { title: 'Key is missing' };
+			const error: ProblemDetailsModel = { title: 'Key is missing' };
 			return { error };
 		}
 		const { data, error } = await this.#detailDataSource.get(key);

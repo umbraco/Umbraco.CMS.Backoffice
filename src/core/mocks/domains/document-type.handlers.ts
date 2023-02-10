@@ -1,11 +1,11 @@
 import { rest } from 'msw';
 import { umbDocumentTypeData } from '../data/document-type.data';
-import type { DocumentType } from '@umbraco-cms/backend-api';
+import type { DocumentTypeModel } from '@umbraco-cms/backend-api';
 import { umbracoPath } from '@umbraco-cms/utils';
 
 // TODO: add schema
 export const handlers = [
-	rest.post<DocumentType[]>('/umbraco/backoffice/document-type/save', (req, res, ctx) => {
+	rest.post<DocumentTypeModel[]>('/umbraco/backoffice/document-type/save', (req, res, ctx) => {
 		const data = req.body;
 		if (!data) return;
 

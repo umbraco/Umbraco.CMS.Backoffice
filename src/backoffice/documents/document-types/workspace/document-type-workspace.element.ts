@@ -2,10 +2,9 @@ import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { distinctUntilChanged } from 'rxjs';
 import type { UmbWorkspaceEntityElement } from '../../../shared/components/workspace/workspace-entity-element.interface';
 import { UmbWorkspaceDocumentTypeContext } from './document-type-workspace.context';
-import type { DocumentType } from '@umbraco-cms/backend-api';
+import type { DocumentTypeModel } from '@umbraco-cms/backend-api';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 
@@ -49,7 +48,7 @@ export class UmbDocumentTypeWorkspaceElement extends UmbLitElement implements Um
 	private _workspaceContext: UmbWorkspaceDocumentTypeContext = new UmbWorkspaceDocumentTypeContext(this);
 
 	@state()
-	private _documentType?: DocumentType;
+	private _documentType?: DocumentTypeModel;
 
 	private _modalService?: UmbModalService;
 
