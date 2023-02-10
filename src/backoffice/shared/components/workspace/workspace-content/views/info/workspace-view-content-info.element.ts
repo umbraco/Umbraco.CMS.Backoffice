@@ -35,9 +35,12 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 	private _observeContent() {
 		if (!this._workspaceContext) return;
 
+		this._nodeName = 'TBD, with variants this is not as simple.';
+		/*
 		this.observe(this._workspaceContext.name, (name) => {
 			this._nodeName = name || '';
 		});
+		*/
 	}
 
 	render() {
