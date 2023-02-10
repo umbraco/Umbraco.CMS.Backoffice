@@ -98,7 +98,7 @@ export class UmbDictionaryDetailRepository {
 		const { error } = await this.#dataSource.update(dictionary);
 
 		if (!error) {
-			const notification = { data: { message: `Dictionary saved` } };
+			const notification = { data: { message: `Dictionary '${dictionary.name}' saved` } };
 			this.#notificationService?.peek('positive', notification);
 		}
 

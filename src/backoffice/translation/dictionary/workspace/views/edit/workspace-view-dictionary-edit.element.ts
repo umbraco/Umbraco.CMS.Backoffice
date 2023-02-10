@@ -5,7 +5,9 @@ import { repeat } from 'lit/directives/repeat.js';
 import { UmbWorkspaceDictionaryContext } from '../../dictionary-workspace.context';
 import { UmbDictionaryDetailRepository } from '../../data/dictionary.detail.repository';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DictionaryItem, Language } from '@umbraco-cms/backend-api';
+import { DictionaryItem, DictionaryItemTranslationModel, Language } from '@umbraco-cms/backend-api';
+import { ifDefined } from 'lit-html/directives/if-defined.js';
+import { UUITextareaElement, UUITextareaEvent } from '@umbraco-ui/uui';
 
 @customElement('umb-workspace-view-dictionary-edit')
 export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
@@ -29,6 +31,8 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 
 	#workspaceContext!: UmbWorkspaceDictionaryContext;
 
+	#translations: Array<DictionaryItemTranslationModel> = [];
+
 	async connectedCallback() {
 		super.connectedCallback();
 
@@ -44,30 +48,40 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 	#observeDictionary() {
 		this.observe(this.#workspaceContext.dictionary, (dictionary) => {
 			this._dictionary = dictionary;
+			this.#translations = [...(dictionary?.translations ?? [])];
 		});
 	}
 
 	#renderTranslation(language: Language) {
-		const translation = this._dictionary?.translations?.find(x => x.isoCode === language.isoCode);
+		if (!language.isoCode) return;
 
-		return html`
-			<umb-workspace-property
-				label="${language.name ?? ''}"
-				alias="${language.isoCode ?? ''}"
-				property-editor-ui-alias="Umb.PropertyEditorUI.TextArea"
+		const translation = this.#translations?.find((x) => x.isoCode === language.isoCode);
+
+		return html` <umb-workspace-property-layout label=${language.name ?? language.isoCode}>
+			<uui-textarea
+				slot="editor"
+				name=${language.isoCode}
+				label="translation"
 				@change=${this.#onTextareaChange}
-				.value="${translation?.translation ?? ''}"></umb-workspace-property>`;
+				value=${ifDefined(translation?.translation)}></uui-textarea>
+		</umb-workspace-property-layout>`;
 	}
 
-	#onTextareaChange() {
-		this.#workspaceContext.setValue(this._dictionary!);
+	#onTextareaChange(e: Event) {
+		if (e instanceof UUITextareaEvent) {
+			const target = e.composedPath()[0] as UUITextareaElement;
+			const translation = target.value.toString();
+			const isoCode = target.getAttribute('name')!;			
+
+			this.#workspaceContext.setTranslation(isoCode, translation);
+		}
 	}
 
 	render() {
 		return html`
 			<uui-box>
 				<p>Edit the different language versions for the dictionary item '<em>${this._dictionary?.name}</em>' below.</p>
-				
+
 				${repeat(
 					this._languages,
 					(item) => item.isoCode,

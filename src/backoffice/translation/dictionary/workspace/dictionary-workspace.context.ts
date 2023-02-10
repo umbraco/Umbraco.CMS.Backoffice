@@ -1,5 +1,5 @@
 import { UmbDictionaryDetailRepository } from './data/dictionary.detail.repository';
-import { DictionaryItem } from '@umbraco-cms/backend-api';
+import { DictionaryItem, DictionaryItemTranslationModel } from '@umbraco-cms/backend-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { createObservablePart, DeepState } from '@umbraco-cms/observable-api';
 
@@ -21,8 +21,27 @@ export class UmbWorkspaceDictionaryContext {
 		this.#data.next({ ...this.#data.value, name: value });
 	}
 
-	setValue(dictionary: DictionaryItem) {
-		this.#data.next({ ...this.#data.value, translations: dictionary.translations });
+	setTranslations(value: Array<DictionaryItemTranslationModel>) {
+		this.#data.next({ ...this.#data.value, translations: value });
+	}
+
+	setTranslation(isoCode: string, translation: string) {
+		if (!this.#data.value) return;
+
+		// update if the code already exists
+		const value = this.#data.value.translations?.map((translationItem) => {
+			if (translationItem.isoCode === isoCode) {
+				return { ...translationItem, translation };
+			}
+			return translationItem;
+		}) ?? [];
+
+		// if code doesn't exist, add it to the new value set
+		if (!value?.find((x) => x.isoCode === isoCode)) {
+			value?.push({ isoCode, translation });
+		}
+
+		this.#data.next({ ...this.#data.value, translations: value });
 	}
 
 	async load(entityKey: string) {
@@ -30,7 +49,7 @@ export class UmbWorkspaceDictionaryContext {
 		if (data) {
 			this.#data.next(data);
 		}
-	}	
+	}
 
 	async createScaffold(parentKey: string | null) {
 		const { data } = await this.#detailRepo.createScaffold(parentKey);
