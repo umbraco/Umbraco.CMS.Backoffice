@@ -1,8 +1,6 @@
 import {
 	ContentTreeItemModel,
 	DictionaryItemTranslationModel,
-	DocumentTreeItemModel,
-	DocumentTypeTreeItemModel,
 	EntityTreeItemModel,
 	FolderTreeItemModel,
 	ProblemDetailsModel,
