@@ -1,15 +1,16 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { DataType } from '../models/DataType';
 import type { DataTypeCreateModel } from '../models/DataTypeCreateModel';
-import type { DataTypeReference } from '../models/DataTypeReference';
+import type { DataTypeModel } from '../models/DataTypeModel';
+import type { DataTypeReferenceModel } from '../models/DataTypeReferenceModel';
 import type { DataTypeUpdateModel } from '../models/DataTypeUpdateModel';
-import type { Folder } from '../models/Folder';
+import type { DocumentTypeTreeItemModel } from '../models/DocumentTypeTreeItemModel';
 import type { FolderCreateModel } from '../models/FolderCreateModel';
-import type { FolderTreeItem } from '../models/FolderTreeItem';
+import type { FolderModel } from '../models/FolderModel';
+import type { FolderTreeItemModel } from '../models/FolderTreeItemModel';
 import type { FolderUpdateModel } from '../models/FolderUpdateModel';
-import type { PagedFolderTreeItem } from '../models/PagedFolderTreeItem';
+import type { PagedFolderTreeItemModel } from '../models/PagedFolderTreeItemModel';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -32,20 +33,21 @@ requestBody?: DataTypeCreateModel,
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
     }
 
     /**
-     * @returns DataType Success
+     * @returns any Success
      * @throws ApiError
      */
     public static getDataTypeByKey({
-key,
-}: {
-key: string,
-}): CancelablePromise<DataType> {
+        key,
+    }: {
+        key: string,
+    }): CancelablePromise<DataTypeModel> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/data-type/{key}',
@@ -74,6 +76,7 @@ key: string,
                 'key': key,
             },
             errors: {
+                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -99,20 +102,21 @@ requestBody?: DataTypeUpdateModel,
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
     }
 
     /**
-     * @returns DataTypeReference Success
+     * @returns any Success
      * @throws ApiError
      */
     public static getDataTypeByKeyReferences({
-key,
-}: {
-key: string,
-}): CancelablePromise<Array<DataTypeReference>> {
+        key,
+    }: {
+        key: string,
+    }): CancelablePromise<Array<DataTypeReferenceModel>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/data-type/{key}/references',
@@ -143,14 +147,14 @@ requestBody?: FolderCreateModel,
     }
 
     /**
-     * @returns Folder Success
+     * @returns any Success
      * @throws ApiError
      */
     public static getDataTypeFolderByKey({
-key,
-}: {
-key: string,
-}): CancelablePromise<Folder> {
+        key,
+    }: {
+        key: string,
+    }): CancelablePromise<FolderModel> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/data-type/folder/{key}',
@@ -210,20 +214,20 @@ requestBody?: FolderUpdateModel,
     }
 
     /**
-     * @returns PagedFolderTreeItem Success
+     * @returns PagedFolderTreeItemModel Success
      * @throws ApiError
      */
     public static getTreeDataTypeChildren({
-parentKey,
-skip,
-take = 100,
-foldersOnly = false,
-}: {
-parentKey?: string,
-skip?: number,
-take?: number,
-foldersOnly?: boolean,
-}): CancelablePromise<PagedFolderTreeItem> {
+        parentKey,
+        skip,
+        take = 100,
+        foldersOnly = false,
+    }: {
+        parentKey?: string,
+        skip?: number,
+        take?: number,
+        foldersOnly?: boolean,
+    }): CancelablePromise<PagedFolderTreeItemModel> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/data-type/children',
@@ -237,14 +241,14 @@ foldersOnly?: boolean,
     }
 
     /**
-     * @returns FolderTreeItem Success
+     * @returns any Success
      * @throws ApiError
      */
     public static getTreeDataTypeItem({
-key,
-}: {
-key?: Array<string>,
-}): CancelablePromise<Array<FolderTreeItem>> {
+        key,
+    }: {
+        key?: Array<string>,
+    }): CancelablePromise<Array<(FolderTreeItemModel | DocumentTypeTreeItemModel)>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/data-type/item',
@@ -255,18 +259,18 @@ key?: Array<string>,
     }
 
     /**
-     * @returns PagedFolderTreeItem Success
+     * @returns PagedFolderTreeItemModel Success
      * @throws ApiError
      */
     public static getTreeDataTypeRoot({
-skip,
-take = 100,
-foldersOnly = false,
-}: {
-skip?: number,
-take?: number,
-foldersOnly?: boolean,
-}): CancelablePromise<PagedFolderTreeItem> {
+        skip,
+        take = 100,
+        foldersOnly = false,
+    }: {
+        skip?: number,
+        take?: number,
+        foldersOnly?: boolean,
+    }): CancelablePromise<PagedFolderTreeItemModel> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/data-type/root',

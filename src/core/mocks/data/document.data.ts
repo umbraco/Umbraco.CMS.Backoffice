@@ -1,6 +1,6 @@
 import { UmbEntityData } from './entity.data';
 import { createDocumentTreeItem } from './utils';
-import { DocumentTreeItem, PagedDocumentTreeItem } from '@umbraco-cms/backend-api';
+import { DocumentTreeItemModel, PagedDocumentTreeItemModel } from '@umbraco-cms/backend-api';
 import type { DocumentDetails } from '@umbraco-cms/models';
 
 export const data: Array<DocumentDetails> = [
@@ -421,6 +421,23 @@ export const data: Array<DocumentDetails> = [
 		data: [],
 		variants: [],
 	},
+	{
+		name: 'Document 5',
+		type: 'document',
+		icon: 'document',
+		hasChildren: false,
+		key: 'f6n7a5b2-e7c1-463a-956bc-6ck5b9bdf447',
+		isContainer: false,
+		parentKey: 'cdd30288-2d1c-41b4-89a9-61647b4a10d5',
+		noAccess: false,
+		isProtected: false,
+		isPublished: false,
+		isEdited: false,
+		isTrashed: false,
+		properties: [],
+		data: [],
+		variants: [],
+	},
 ];
 
 // Temp mocked database
@@ -432,21 +449,21 @@ class UmbDocumentData extends UmbEntityData<DocumentDetails> {
 		super(data);
 	}
 
-	getTreeRoot(): PagedDocumentTreeItem {
+	getTreeRoot(): PagedDocumentTreeItemModel {
 		const items = this.data.filter((item) => item.parentKey === null);
 		const treeItems = items.map((item) => createDocumentTreeItem(item));
 		const total = items.length;
 		return { items: treeItems, total };
 	}
 
-	getTreeItemChildren(key: string): PagedDocumentTreeItem {
+	getTreeItemChildren(key: string): PagedDocumentTreeItemModel {
 		const items = this.data.filter((item) => item.parentKey === key);
 		const treeItems = items.map((item) => createDocumentTreeItem(item));
 		const total = items.length;
 		return { items: treeItems, total };
 	}
 
-	getTreeItem(keys: Array<string>): Array<DocumentTreeItem> {
+	getTreeItem(keys: Array<string>): Array<DocumentTreeItemModel> {
 		const items = this.data.filter((item) => keys.includes(item.key ?? ''));
 		return items.map((item) => createDocumentTreeItem(item));
 	}
