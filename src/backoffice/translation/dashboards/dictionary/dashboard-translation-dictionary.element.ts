@@ -99,6 +99,8 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 				alias: l.isoCode ?? '',
 			});
 		});
+
+		console.log(this.#tableColumns)
 	}
 
 	#setTableItems() {

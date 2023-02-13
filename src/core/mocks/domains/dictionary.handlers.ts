@@ -187,7 +187,7 @@ export const handlers = [
 
 		path.push(importResponse.key);
 
-		const contentResult: ContentResult = {
+		const contentResult = {
 			content: path.join(','),
 			statusCode: 200,
 		};

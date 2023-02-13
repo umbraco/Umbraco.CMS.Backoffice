@@ -221,8 +221,8 @@ export class UmbTableElement extends LitElement {
 
 	private _renderHeaderCell(column: UmbTableColumn) {
 		return html`
-			<uui-table-head-cell style="--uui-table-cell-padding: 0">
-				${column.allowSorting ? html`${this._renderSortingUI(column)}` : nothing}
+			<uui-table-head-cell style="--uui-table-cell-padding: 0 var(--uui-size-5)">
+				${column.allowSorting ? html`${this._renderSortingUI(column)}` : column.name}
 			</uui-table-head-cell>
 		`;
 	}
