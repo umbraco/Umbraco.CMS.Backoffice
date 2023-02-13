@@ -4,10 +4,9 @@ import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
 import { UmbTableConfig, UmbTableColumn, UmbTableItem } from '../../../../backoffice/shared/components/table';
 import { UmbTreeContextMenuService } from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
-import { UmbDictionaryDetailRepository } from '../../dictionary/workspace/data/dictionary.detail.repository';
+import { UmbDictionaryRepository } from '../../dictionary/repository/dictionary.repository';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DictionaryOverview, Language, LanguageResource } from '@umbraco-cms/backend-api';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+import { DictionaryOverviewModel, LanguageModel } from '@umbraco-cms/backend-api';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
@@ -46,9 +45,9 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	@state()
 	private _tableItemsFiltered: Array<UmbTableItem> = [];
 
-	#dictionaryItems: DictionaryOverview[] = [];
+	#dictionaryItems: DictionaryOverviewModel[] = [];
 
-	#detailRepo!: UmbDictionaryDetailRepository;
+	#repo!: UmbDictionaryRepository;
 
 	#contextMenuService?: UmbTreeContextMenuService;
 
@@ -56,7 +55,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	#tableColumns: Array<UmbTableColumn> = [];
 
-	#languages: Array<Language> = [];
+	#languages: Array<LanguageModel> = [];
 
 	constructor() {
 		super();
@@ -65,15 +64,15 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 	async connectedCallback() {
 		super.connectedCallback();
 
-		this.#detailRepo = new UmbDictionaryDetailRepository(this);
-		this.#languages = await this.#detailRepo.getLanguages();
+		this.#repo = new UmbDictionaryRepository(this);
+		this.#languages = await this.#repo.getLanguages();
 		await this.#getDictionaryItems();
 	}	
 
 	async #getDictionaryItems() {
-		if (!this.#detailRepo) return;
+		if (!this.#repo) return;
 
-		const { data } = await this.#detailRepo.get(0, 1000);
+		const { data } = await this.#repo.list(0, 1000);
 		this.#dictionaryItems = data?.items ?? [];
 		this.#setTableColumns();
 		this.#setTableItems();
@@ -112,7 +111,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 					{
 						columnAlias: 'name',
 						value: html`<a
-							style="font-weight:bold; padding-left:${(dictionary.level ?? 0) * 10}px"
+							style="font-weight:bold"
 							href="/section/translation/dictionary-item/edit/${dictionary.key}">
 							${dictionary.name}</a
 						> `,

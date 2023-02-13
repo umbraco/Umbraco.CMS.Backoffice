@@ -29,5 +29,4 @@ import './input-media-picker/input-media-picker.element';
 import './input-document-picker/input-document-picker.element';
 
 import './empty-state/empty-state.element';
-import './context-menu-layout/context-menu-layout.element';
 import './color-picker/color-picker.element';

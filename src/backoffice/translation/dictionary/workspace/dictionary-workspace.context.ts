@@ -1,40 +1,62 @@
-import { UmbDictionaryDetailRepository } from './data/dictionary.detail.repository';
-import { DictionaryItem, DictionaryItemTranslationModel } from '@umbraco-cms/backend-api';
+import { UmbDictionaryRepository } from '../repository/dictionary.repository';
+import { UmbWorkspaceContext } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-context';
+import { UmbWorkspaceEntityContextInterface } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-entity-context.interface';
+import { DictionaryItemTranslationModel } from '@umbraco-cms/backend-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { createObservablePart, DeepState } from '@umbraco-cms/observable-api';
+import { ObjectState } from '@umbraco-cms/observable-api';
+import type { DictionaryDetails } from '@umbraco-cms/models';
 
-export class UmbWorkspaceDictionaryContext {
+type EntityType = DictionaryDetails;
+export class UmbWorkspaceDictionaryContext
+	extends UmbWorkspaceContext
+	implements UmbWorkspaceEntityContextInterface<EntityType | undefined>
+{
+	#isNew = false;
 	#host: UmbControllerHostInterface;
-	#detailRepo: UmbDictionaryDetailRepository;
+	#repo: UmbDictionaryRepository;
 
-	#data = new DeepState<DictionaryItem | undefined>(undefined);
+	#data = new ObjectState<DictionaryDetails | undefined>(undefined);
 	data = this.#data.asObservable();
-	name = createObservablePart(this.#data, (data) => data?.name);
-	dictionary = createObservablePart(this.#data, (data) => data);
+	name = this.#data.getObservablePart((data) => data?.name);
+	dictionary = this.#data.getObservablePart((data) => data);
 
 	constructor(host: UmbControllerHostInterface) {
+		super(host);
 		this.#host = host;
-		this.#detailRepo = new UmbDictionaryDetailRepository(this.#host);
+		this.#repo = new UmbDictionaryRepository(this.#host);
 	}
 
-	setName(value: string) {
-		this.#data.next({ ...this.#data.value, name: value });
+	getData() {
+		return this.#data.getValue();
+	}
+
+	getEntityKey() {
+		return this.getData()?.key || '';
+	}
+
+	getEntityType() {
+		return 'dictionary';
+	}
+
+	setName(name: string) {
+		this.#data.update({ name });
 	}
 
 	setTranslations(value: Array<DictionaryItemTranslationModel>) {
-		this.#data.next({ ...this.#data.value, translations: value });
+		this.#data.update({ translations: value });
 	}
 
 	setTranslation(isoCode: string, translation: string) {
 		if (!this.#data.value) return;
 
 		// update if the code already exists
-		const value = this.#data.value.translations?.map((translationItem) => {
-			if (translationItem.isoCode === isoCode) {
-				return { ...translationItem, translation };
-			}
-			return translationItem;
-		}) ?? [];
+		const value =
+			this.#data.value.translations?.map((translationItem) => {
+				if (translationItem.isoCode === isoCode) {
+					return { ...translationItem, translation };
+				}
+				return translationItem;
+			}) ?? [];
 
 		// if code doesn't exist, add it to the new value set
 		if (!value?.find((x) => x.isoCode === isoCode)) {
@@ -44,21 +66,31 @@ export class UmbWorkspaceDictionaryContext {
 		this.#data.next({ ...this.#data.value, translations: value });
 	}
 
+	setPropertyValue(alias: string, value: unknown) {
+		// Not required in this workspace
+	}
+
 	async load(entityKey: string) {
-		const { data } = await this.#detailRepo.getByKey(entityKey);
+		const { data } = await this.#repo.requestDetails(entityKey);
 		if (data) {
+			this.#isNew = false;
 			this.#data.next(data);
 		}
 	}
 
 	async createScaffold(parentKey: string | null) {
-		const { data } = await this.#detailRepo.createScaffold(parentKey);
+		const { data } = await this.#repo.createDetailsScaffold(parentKey);
 		if (!data) return;
+		this.#isNew = true;
 		this.#data.next(data);
 	}
 
 	async save() {
 		if (!this.#data.value) return;
-		this.#detailRepo.update(this.#data.value);
+		this.#repo.saveDetail(this.#data.value);
+	}
+	
+	public destroy(): void {
+		this.#data.complete();
 	}
 }

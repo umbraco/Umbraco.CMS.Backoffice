@@ -1,6 +1,6 @@
-import { DictionaryTreeDataSource } from '.';
-import { DictionaryResource, ProblemDetails } from '@umbraco-cms/backend-api';
+import { DictionaryResource, ProblemDetailsModel } from '@umbraco-cms/backend-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
+import { RepositoryTreeDataSource } from '@umbraco-cms/repository';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 
 /**
@@ -9,7 +9,7 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
  * @class DictionaryTreeServerDataSource
  * @implements {DictionaryTreeDataSource}
  */
-export class DictionaryTreeServerDataSource implements DictionaryTreeDataSource {
+export class DictionaryTreeServerDataSource implements RepositoryTreeDataSource {
 	#host: UmbControllerHostInterface;
 
 	/**
@@ -38,7 +38,7 @@ export class DictionaryTreeServerDataSource implements DictionaryTreeDataSource 
 	 */
 	async getChildrenOf(parentKey: string | null) {
 		if (!parentKey) {
-			const error: ProblemDetails = { title: 'Parent key is missing' };
+			const error: ProblemDetailsModel = { title: 'Parent key is missing' };
 			return { error };
 		}
 
@@ -57,8 +57,8 @@ export class DictionaryTreeServerDataSource implements DictionaryTreeDataSource 
 	 * @memberof DictionaryTreeServerDataSource
 	 */
 	async getItems(keys: Array<string>) {
-		if (keys) {
-			const error: ProblemDetails = { title: 'Keys are missing' };
+		if (!keys || keys.length === 0) {
+			const error: ProblemDetailsModel = { title: 'Keys are missing' };
 			return { error };
 		}
 

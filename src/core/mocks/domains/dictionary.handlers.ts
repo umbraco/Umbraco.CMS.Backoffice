@@ -1,14 +1,12 @@
 import { rest } from 'msw';
 import { v4 as uuidv4 } from 'uuid';
 import { umbDictionaryData } from '../data/dictionary.data';
-import { ContentResult, CreatedResult, DictionaryImport, DictionaryOverview } from '@umbraco-cms/backend-api';
+import { CreatedResultModel, DictionaryImportModel, DictionaryOverviewModel } from '@umbraco-cms/backend-api';
 import type { DictionaryDetails } from '@umbraco-cms/models';
 
-const uploadResponse: DictionaryImport = {
-	tempFileName: 'c:/path/to/tempfilename.udt',
-	dictionaryItems: [{
-		name: 'Uploaded dictionary',
-	}]
+const uploadResponse: DictionaryImportModel = {
+	fileName: 'c:/path/to/tempfilename.udt',
+	parentKey: 'b7e7d0ab-53ba-485d-dddd-12537f9925aa',
 };
 
 ///
@@ -32,17 +30,15 @@ const importResponse: DictionaryDetails = {
 
 
 // alternate data for dashboard view
-const overviewData: Array<DictionaryOverview> = [
+const overviewData: Array<DictionaryOverviewModel> = [
 	{
 		name: 'Hello',
 		key: 'aae7d0ab-53ba-485d-b8bd-12537f9925cb',
-		level: 1,
 		translatedIsoCodes: ['en'],
 	},
 	{
 		name: 'Hello again',
 		key: 'bbe7d0ab-53bb-485d-b8bd-12537f9925cb',
-		level: 2,
 		translatedIsoCodes: ['en', 'fr'],
 	},
 ];
@@ -83,7 +79,7 @@ export const handlers = [
 		data.parentKey = data.parentId;
 		data.icon = 'umb:book-alt';
 		data.hasChildren = false;
-		data.type = 'dictionary';
+		data.type = 'dictionary-item';
 		data.translations = [
 			{
 				isoCode: 'en-US',
@@ -97,7 +93,7 @@ export const handlers = [
 
 		const value = umbDictionaryData.save([data])[0];
 
-		const createdResult: CreatedResult = {
+		const createdResult: CreatedResultModel = {
 			value,
 			statusCode: 200,
 		};

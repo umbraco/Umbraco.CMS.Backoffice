@@ -1,8 +1,8 @@
-import { DocumentTreeItem, EntityTreeItem } from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
 import { ArrayState } from '@umbraco-cms/observable-api';
 import { UmbStoreBase } from '@umbraco-cms/store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
+import { EntityTreeItemModel } from '@umbraco-cms/backend-api';
 
 /**
  * @export
@@ -11,7 +11,7 @@ import { UmbControllerHostInterface } from '@umbraco-cms/controller';
  * @description - Tree Data Store for Data Types
  */
 export class UmbDictionaryTreeStore extends UmbStoreBase {
-	#data = new ArrayState<DocumentTreeItem>([], (x) => x.key);
+	#data = new ArrayState<EntityTreeItemModel>([], (x) => x.key);
 
 	
 	/**
@@ -25,20 +25,20 @@ export class UmbDictionaryTreeStore extends UmbStoreBase {
 
 	/**
 	 * Appends items to the store
-	 * @param {Array<EntityTreeItem>} items
+	 * @param {Array<EntityTreeItemModel>} items
 	 * @memberof UmbDictionaryTreeStore
 	 */
-	appendItems(items: Array<EntityTreeItem>) {
+	appendItems(items: Array<EntityTreeItemModel>) {
 		this.#data.append(items);
 	}
 
 	/**
 	 * Updates an item in the store
 	 * @param {string} key
-	 * @param {Partial<EntityTreeItem>} data
+	 * @param {Partial<EntityTreeItemModel>} data
 	 * @memberof UmbDictionaryTreeStore
 	 */
-	updateItem(key: string, data: Partial<EntityTreeItem>) {
+	updateItem(key: string, data: Partial<EntityTreeItemModel>) {
 		const entries = this.#data.getValue();
 		const entry = entries.find((entry) => entry.key === key);
 
@@ -62,13 +62,10 @@ export class UmbDictionaryTreeStore extends UmbStoreBase {
 	}
 
 	/**
-	 * Returns an observable to observe the root items
-	 * @return {*}
-	 * @memberof UmbDictionaryTreeStore
+	 * An observable to observe the root items
+	 * @memberof UmbDictionarTreeStore
 	 */
-	rootItems() {
-		return this.#data.getObservablePart((items) => items.filter((item) => item.parentKey === null));
-	}
+	rootItems = this.#data.getObservablePart((items) => items.filter((item) => item.parentKey === null));
 
 	/**
 	 * Returns an observable to observe the children of a given parent

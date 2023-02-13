@@ -3,10 +3,10 @@ import { css, html } from 'lit';
 import { when } from 'lit-html/directives/when.js';
 import { customElement, query, state } from 'lit/decorators.js';
 import { repeat } from 'lit-html/directives/repeat.js';
-import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { UmbTreeElement } from '../../../../../backoffice/shared/components/tree/tree.element';
-import { UmbDictionaryDetailRepository } from '../../workspace/data/dictionary.detail.repository';
-import { DictionaryImport } from '@umbraco-cms/backend-api';
+import UmbTreeItemActionElement from '../../../shared/components/tree/action/tree-item-action.element';
+import { UmbTreeElement } from '../../../shared/components/tree/tree.element';
+import { UmbDictionaryRepository } from '../repository/dictionary.repository';
+import { DictionaryUploadModel } from '@umbraco-cms/backend-api';
 
 @customElement('umb-tree-action-dictionary-import-page')
 export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionElement {
@@ -23,7 +23,7 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	private _form!: HTMLFormElement;
 
 	@state()
-	private _uploadedDictionary?: DictionaryImport;
+	private _uploadedDictionary?: DictionaryUploadModel;
 
 	@state()
 	private _showUploadView = true;
@@ -37,7 +37,7 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	@state()
 	private _selection: Array<string> = [];
 
-	#detailRepo = new UmbDictionaryDetailRepository(this);
+	#detailRepo = new UmbDictionaryRepository(this);
 
 	connectedCallback() {
 		super.connectedCallback();
@@ -48,14 +48,13 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	}
 
 	async #importDictionary() {
-		if (!this._uploadedDictionary?.tempFileName) return;
+		if (!this._uploadedDictionary?.fileName) return;
 
-		// TODO => fix when backend expects parent guid not parent id
-		const { data } = await this.#detailRepo.import(this._uploadedDictionary.tempFileName, parseInt(this._selection[0]));
+		const { data } = await this.#detailRepo.import(this._uploadedDictionary.fileName, this._selection[0]);
 
 		const path = data?.content?.split(',');
 		if (path?.length) {
-			this.#detailRepo.getByKey(path[path.length - 1]);
+			this.#detailRepo.requestDetails(path[path.length - 1]);
 		}
 
 		this._treeContextMenuService?.close();

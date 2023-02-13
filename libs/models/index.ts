@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import {
 	ContentTreeItemModel,
+	DictionaryItemTranslationModel,
 	DocumentTreeItemModel,
 	DocumentTypeTreeItemModel,
 	EntityTreeItemModel,

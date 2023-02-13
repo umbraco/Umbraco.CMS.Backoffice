@@ -5,9 +5,9 @@ import { repeat } from 'lit/directives/repeat.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { UUITextareaElement, UUITextareaEvent } from '@umbraco-ui/uui';
 import { UmbWorkspaceDictionaryContext } from '../../dictionary-workspace.context';
-import { UmbDictionaryDetailRepository } from '../../data/dictionary.detail.repository';
+import { UmbDictionaryRepository } from '../../../repository/dictionary.repository';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DictionaryItem, Language } from '@umbraco-cms/backend-api';
+import { DictionaryItemModel, LanguageModel } from '@umbraco-cms/backend-api';
 
 @customElement('umb-workspace-view-dictionary-edit')
 export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
@@ -22,20 +22,20 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 	];
 
 	@state()
-	private _dictionary?: DictionaryItem;
+	private _dictionary?: DictionaryItemModel;
 
-	#detailRepo!: UmbDictionaryDetailRepository;
+	#repo!: UmbDictionaryRepository;
 
 	@state()
-	private _languages: Array<Language> = [];
+	private _languages: Array<LanguageModel> = [];
 
 	#workspaceContext!: UmbWorkspaceDictionaryContext;
 
 	async connectedCallback() {
 		super.connectedCallback();
 
-		this.#detailRepo = new UmbDictionaryDetailRepository(this);
-		this._languages = await this.#detailRepo.getLanguages();
+		this.#repo = new UmbDictionaryRepository(this);
+		this._languages = await this.#repo.getLanguages();
 
 		this.consumeContext<UmbWorkspaceDictionaryContext>('umbWorkspaceContext', (_instance) => {
 			this.#workspaceContext = _instance;
@@ -49,7 +49,7 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 		});
 	}
 
-	#renderTranslation(language: Language) {
+	#renderTranslation(language: LanguageModel) {
 		if (!language.isoCode) return;
 
 		const translation = this._dictionary?.translations?.find((x) => x.isoCode === language.isoCode);

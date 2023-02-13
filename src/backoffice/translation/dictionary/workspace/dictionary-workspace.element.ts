@@ -2,33 +2,36 @@ import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { UmbWorkspaceEntityElement } from '../../../../backoffice/shared/components/workspace/workspace-entity-element.interface';
 import { UmbWorkspaceDictionaryContext } from './dictionary-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 @customElement('umb-dictionary-workspace')
-export class UmbWorkspaceDictionaryElement extends UmbLitElement {
+export class UmbWorkspaceDictionaryElement extends UmbLitElement implements UmbWorkspaceEntityElement {
 	static styles = [
 		UUITextStyles,
 		css`
-			:host {
-				display: block;
-				width: 100%;
-				height: 100%;
-			}
-
 			#header {
-				margin: 0 var(--uui-size-layout-1);
-				flex: 1 1 auto;
+				display: flex;
+				padding: 0 var(--uui-size-space-6);
+				gap: var(--uui-size-space-4);
+				width: 100%;
+			}
+			uui-input {
+				width: 100%;
 			}
 		`,
 	];
 
-	load(entityKey: string) {
+	@state()
+	_unique?: string;
+
+	public load(entityKey: string) {
 		this.#workspaceContext.load(entityKey);
+		this._unique = entityKey;
 	}
 
-	create(parentKey: string | null) {
-		this.#isNew = true;
+	public create(parentKey: string | null) {
 		this.#workspaceContext.createScaffold(parentKey);
 	}
 
@@ -36,18 +39,14 @@ export class UmbWorkspaceDictionaryElement extends UmbLitElement {
 	private _name?: string | null = '';
 
 	#workspaceContext = new UmbWorkspaceDictionaryContext(this);
-	#isNew = false;
 
 	async connectedCallback() {
 		super.connectedCallback();
-
-		this.provideContext('umbWorkspaceContext', this.#workspaceContext);
 
 		this.observe(this.#workspaceContext.name, (name) => {
 			this._name = name;
 		});
 	}
-
 
 	// TODO. find a way where we don't have to do this for all workspaces.
 	#handleInput(event: UUIInputEvent) {
@@ -63,8 +62,12 @@ export class UmbWorkspaceDictionaryElement extends UmbLitElement {
 	render() {
 		return html`
 			<umb-workspace-layout alias="Umb.Workspace.Dictionary">
-				<uui-input id="header" slot="header" .value=${this._name} @input="${this.#handleInput}">
-				</uui-input>
+				<div id="header" slot="header">
+					<uui-button href="/section/translation/dashboard" compact>
+						<uui-icon name="umb:arrow-left"></uui-icon>
+					</uui-button>
+					<uui-input .value=${this._name} @input="${this.#handleInput}"></uui-input>
+				</div>
 			</umb-workspace-layout>
 		`;
 	}

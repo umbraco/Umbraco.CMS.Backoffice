@@ -1,10 +1,8 @@
-import * as backendApi from '@umbraco-cms/backend-api';
 import { UmbContextToken } from '@umbraco-cms/context-api';
 import { UmbStoreBase } from '@umbraco-cms/store';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { ArrayState } from '@umbraco-cms/observable-api';
-
-export type UmbDictionaryDetailStoreItemType = backendApi.DictionaryItem | backendApi.DictionaryOverview;
+import type { DictionaryDetails } from '@umbraco-cms/models';
 
 /**
  * @export
@@ -15,13 +13,13 @@ export type UmbDictionaryDetailStoreItemType = backendApi.DictionaryItem | backe
 export class UmbDictionaryDetailStore
 	extends UmbStoreBase
 {
-	#data = new ArrayState<UmbDictionaryDetailStoreItemType>([], (x) => x.key);
+	#data = new ArrayState<DictionaryDetails>([], (x) => x.key);
 
 	constructor(host: UmbControllerHostInterface) {
 		super(host, UmbDictionaryDetailStore.name);
 	}
 
-	append(dictionary: backendApi.DictionaryItem) {
+	append(dictionary: DictionaryDetails) {
 		this.#data.append([dictionary]);
 	}
 

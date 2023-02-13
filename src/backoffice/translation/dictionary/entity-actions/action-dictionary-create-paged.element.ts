@@ -1,8 +1,8 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, query } from 'lit/decorators.js';
-import UmbTreeItemActionElement from '../../../../shared/components/tree/action/tree-item-action.element';
-import { UmbDictionaryDetailRepository } from '../../workspace/data/dictionary.detail.repository';
+import UmbTreeItemActionElement from '../../../shared/components/tree/action/tree-item-action.element';
+import { UmbDictionaryRepository } from '../repository/dictionary.repository';
 
 @customElement('umb-tree-action-dictionary-create-page')
 export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionElement {
@@ -18,7 +18,7 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 	@query('#form')
 	private _form!: HTMLFormElement;
 
-	#detailRepo = new UmbDictionaryDetailRepository(this);
+	#repo = new UmbDictionaryRepository(this);
 
 	connectedCallback() {
 		super.connectedCallback();
@@ -41,13 +41,18 @@ export class UmbTreeActionDictionaryCreatePageElement extends UmbTreeItemActionE
 		const formData = new FormData(form);
 
 		// create the new item before routing to it
-		const { data } = await this.#detailRepo.insert(this._entity.key, formData.get('name') as string);
+		await this.#repo.saveDetail({
+			parentKey: this._entity.key,
+			name: formData.get('name') as string,
+			key: '',
+			translations: [],
+		});
 
 		// TODO => investigate how to route to the new item - location header or provide key for new item
 		// use detail from new item to construct edit URL
 		// history.pushState(null, '', `/section/translation/dictionary/edit/${newDictionaryItem.key}`);
 
-		// this._treeContextMenuService?.close();		
+		// this._treeContextMenuService?.close();
 	}
 
 	render() {

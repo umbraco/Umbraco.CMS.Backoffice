@@ -1,7 +1,13 @@
-import { DictionaryDetailDataSource } from '.';
+import { DictionaryDetailDataSource } from './dictionary.details.server.data.interface';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
-import { DictionaryItem, DictionaryResource, LanguageResource, ProblemDetails } from '@umbraco-cms/backend-api';
+import {
+	DictionaryItemCreateModel,
+	DictionaryResource,
+	LanguageResource,
+	ProblemDetailsModel,
+} from '@umbraco-cms/backend-api';
+import type { DictionaryDetails } from '@umbraco-cms/models';
 
 /**
  * @description - A data source for the Dictionary detail that fetches data from the server
@@ -23,40 +29,43 @@ export class UmbDictionaryDetailServerDataSource implements DictionaryDetailData
 	 * @memberof UmbDictionaryDetailServerDataSource
 	 */
 	async createScaffold(parentKey: string) {
-		const data: DictionaryItem = {
+		const data: DictionaryDetails = {
 			name: '',
-		};
+			parentKey,
+		} as DictionaryDetails;
+
 		return { data };
 	}
+
 	/**
 	 * @description - Fetches a Dictionary with the given key from the server
 	 * @param {string} key
 	 * @return {*}
 	 * @memberof UmbDictionaryDetailServerDataSource
 	 */
-	getByKey(key: string) {
-		return tryExecuteAndNotify(this.#host, DictionaryResource.getDictionaryByKey({ key }));
+	get(key: string) {
+		return tryExecuteAndNotify(this.#host, DictionaryResource.getDictionaryByKey({ key })) as any;
 	}
 
-    /**
-     * @description - Get the dictionary overview
-     * @param {number?} skip 
-     * @param {number?} take 
-     * @returns {*}
-     */
-	get(skip = 0, take = 1000) {
+	/**
+	 * @description - Get the dictionary overview
+	 * @param {number?} skip
+	 * @param {number?} take
+	 * @returns {*}
+	 */
+	list(skip = 0, take = 1000) {
 		return tryExecuteAndNotify(this.#host, DictionaryResource.getDictionary({ skip, take }));
 	}
 
 	/**
 	 * @description - Updates a Dictionary on the server
-	 * @param {DictionaryItem} dictionary
+	 * @param {DictionaryDetails} dictionary
 	 * @return {*}
 	 * @memberof UmbDictionaryDetailServerDataSource
 	 */
-	async update(dictionary: DictionaryItem) {
+	async update(dictionary: DictionaryDetails) {
 		if (!dictionary.key) {
-			const error: ProblemDetails = { title: 'Dictionary key is missing' };
+			const error: ProblemDetailsModel = { title: 'Dictionary key is missing' };
 			return { error };
 		}
 
@@ -66,14 +75,17 @@ export class UmbDictionaryDetailServerDataSource implements DictionaryDetailData
 
 	/**
 	 * @description - Inserts a new Dictionary on the server
-	 * @param {string} parentKey
-	 * @param {string} name
+	 * @param {DictionaryDetails} data
 	 * @return {*}
 	 * @memberof UmbDictionaryDetailServerDataSource
 	 */
-	async insert(parentKey: string, name: string) {
-		const payload = { requestBody: { parentKey, name } };
-		return tryExecuteAndNotify(this.#host, DictionaryResource.postDictionary(payload));
+	async insert(data: DictionaryDetails) {
+		const requestBody: DictionaryItemCreateModel = {
+			parentKey: data.parentKey,
+			name: data.name,
+		};
+
+		return tryExecuteAndNotify(this.#host, DictionaryResource.postDictionary({ requestBody }));
 	}
 
 	/**
@@ -84,7 +96,7 @@ export class UmbDictionaryDetailServerDataSource implements DictionaryDetailData
 	 */
 	async delete(key: string) {
 		if (!key) {
-			const error: ProblemDetails = { title: 'Key is missing' };
+			const error: ProblemDetailsModel = { title: 'Key is missing' };
 			return { error };
 		}
 
@@ -93,14 +105,17 @@ export class UmbDictionaryDetailServerDataSource implements DictionaryDetailData
 
 	/**
 	 * @description - Import a dictionary
-	 * @param {string} file
-	 * @param {number?} parentId
+	 * @param {string} fileName
+	 * @param {string?} parentKey
 	 * @returns {*}
 	 * @memberof UmbDictionaryDetailServerDataSource
 	 */
-	async import(file: string, parentId?: number) {
+	async import(fileName: string, parentKey?: string) {
 		// TODO => parentKey will be a guid param once #13786 is merged and API regenerated
-		return await tryExecuteAndNotify(this.#host, DictionaryResource.postDictionaryImport({ file, parentId }));
+		return await tryExecuteAndNotify(
+			this.#host,
+			DictionaryResource.postDictionaryImport({ requestBody: { fileName, parentKey } })
+		);
 	}
 
 	/**
@@ -126,10 +141,9 @@ export class UmbDictionaryDetailServerDataSource implements DictionaryDetailData
 	 * @memberof UmbDictionaryDetailServerDataSource
 	 */
 	async export(key: string, includeChildren: boolean) {
-		return await tryExecuteAndNotify(this.#host, DictionaryResource.getDictionaryExportByKey({ key, includeChildren }));
+		return await tryExecuteAndNotify(this.#host, DictionaryResource.getDictionaryByKeyExport({ key, includeChildren }));
 	}
 
-    
 	async getLanguages() {
 		// TODO => temp until language service exists. Need languages as the dictionary response
 		// includes the translated iso codes only, no friendly names and no way to tell if a dictionary
