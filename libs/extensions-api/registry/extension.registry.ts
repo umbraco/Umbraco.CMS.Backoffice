@@ -1,5 +1,5 @@
 import { BehaviorSubject, map, Observable } from 'rxjs';
-import type { ManifestTypes, ManifestTypeMap, ManifestBase, ManifestWithLoader, ManifestEntrypoint } from '../../models';
+import type { ManifestTypes, ManifestTypeMap, ManifestBase, ManifestWithLoader, ManifestEntrypoint, HTMLElementConstructor } from '../../models';
 import { hasDefaultExport } from '../has-default-export.function';
 import { loadExtension } from '../load-extension.function';
 
@@ -27,7 +27,7 @@ export class UmbExtensionRegistry {
 		// If entrypoint extension, we should load and run it immediately
 		if (manifest.type === 'entrypoint') {
 			loadExtension(manifest as ManifestEntrypoint).then((js) => {
-				if (hasDefaultExport(js)) {
+				if (hasDefaultExport<HTMLElementConstructor>(js)) {
 					new js.default();
 				} else {
 					console.error(
@@ -78,6 +78,21 @@ export class UmbExtensionRegistry {
 			map((exts) =>
 				exts.filter((ext) => types.indexOf(ext.type) !== -1).sort((a, b) => (b.weight || 0) - (a.weight || 0))
 			)
+		) as Observable<Array<ExtensionType>>;
+	}
+
+	extensionsSortedByTypeAndWeight<ExtensionType = ManifestBase>(): Observable<Array<ExtensionType>> {
+		return this.extensions.pipe(
+			map((exts) => exts
+				.sort((a, b) => {
+					// If type is the same, sort by weight
+					if (a.type === b.type) {
+						return (a.weight || 0) - (b.weight || 0);
+					}
+
+					// Otherwise sort by type
+					return a.type.localeCompare(b.type);
+				}))
 		) as Observable<Array<ExtensionType>>;
 	}
 }
