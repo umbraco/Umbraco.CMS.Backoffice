@@ -227,7 +227,15 @@ export const data: Array<DocumentModel> = [
 		templateKey: null,
 		key: 'all-property-editors-document-key',
 		contentTypeKey: 'all-property-editors-document-type-key',
-		properties: [],
+		properties: [
+			// TODO: is 'properties' the correct name for this? The property comes from the doc type, and this only holds the values.
+			{
+				culture: null,
+				segment: null,
+				alias: 'email',
+				value: 'mail@umbraco.com',
+			},
+		],
 		variants: [
 			{
 				state: ContentStateModel.PUBLISHED,
