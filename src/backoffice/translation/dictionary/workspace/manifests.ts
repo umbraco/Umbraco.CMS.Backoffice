@@ -1,3 +1,5 @@
+import { DICTIONARY_REPOSITORY_ALIAS } from '../repository/manifests';
+import { UmbSaveWorkspaceAction } from '../../../../backoffice/shared/workspace-actions/save.action';
 import type { ManifestWorkspace, ManifestWorkspaceAction, ManifestWorkspaceView } from '@umbraco-cms/models';
 
 const workspaceAlias = 'Umb.Workspace.Dictionary';
@@ -33,11 +35,14 @@ const workspaceActions: Array<ManifestWorkspaceAction> = [
 		type: 'workspaceAction',
 		alias: 'Umb.WorkspaceAction.Dictionary.Save',
 		name: 'Save Dictionary Workspace Action',
-		loader: () => import('../../../../backoffice/shared/components/workspace/workspace-action/save/workspace-action-node-save.element'),
+		weight: 90,
 		meta: {
-			workspaces: [workspaceAlias],
+			workspaces: ['Umb.Workspace.Dictionary'],
+			label: 'Save',
 			look: 'primary',
 			color: 'positive',
+			repositoryAlias: DICTIONARY_REPOSITORY_ALIAS,
+			api: UmbSaveWorkspaceAction,
 		},
 	},
 ];
