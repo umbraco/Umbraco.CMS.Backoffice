@@ -39,11 +39,10 @@ export class UmbRouterSlotElement extends LitElement {
 
 	constructor() {
 		super();
-		this.#router = document.createElement('router-slot');
+		this.#router = new RouterSlot();
 		// Note: I decided not to use the local changestate event, because it is not fired when the route is changed from any router-slot. And for now I wanted to keep it local.
 		//this.#router.addEventListener('changestate', this._onNavigationChanged);
 	}
-
 
 	connectedCallback() {
 		super.connectedCallback();
@@ -58,7 +57,6 @@ export class UmbRouterSlotElement extends LitElement {
 		window.removeEventListener('navigationsuccess', this._onNavigationChanged);
 		this.#listening = false;
 	}
-
 
 	protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
 		super.firstUpdated(_changedProperties);
