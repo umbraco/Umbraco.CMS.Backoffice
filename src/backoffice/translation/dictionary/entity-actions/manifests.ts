@@ -1,9 +1,9 @@
 import { UmbDeleteEntityAction } from '../../../../backoffice/shared/entity-actions/delete/delete.action';
 import { UmbMoveEntityAction } from '../../../../backoffice/shared/entity-actions/move/move.action';
 import UmbReloadDictionaryEntityAction from './reload.action';
-import UmbImportDictionaryEntityAction from './import.action';
-import UmbExportDictionaryEntityAction from './export.action';
-import UmbCreateDictionaryEntityAction from './create.action';
+import UmbImportDictionaryEntityAction from './import/import.action';
+import UmbExportDictionaryEntityAction from './export/export.action';
+import UmbCreateDictionaryEntityAction from './create/create.action';
 import type { ManifestEntityAction } from '@umbraco-cms/models';
 
 const entityType = 'dictionary-item';

@@ -3,10 +3,12 @@ import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
 import { UmbTableConfig, UmbTableColumn, UmbTableItem } from '../../../../backoffice/shared/components/table';
-import { UmbTreeContextMenuService } from '../../../../backoffice/shared/components/tree/context-menu/tree-context-menu.service';
 import { UmbDictionaryRepository } from '../../dictionary/repository/dictionary.repository';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { DictionaryOverviewModel, LanguageModel } from '@umbraco-cms/backend-api';
+import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UmbContextConsumerController } from '@umbraco-cms/context-api';
+import { UmbCreateDictionaryModalResultData } from '../../dictionary/entity-actions/create/create-dictionary-modal-layout.element';
 
 @customElement('umb-dashboard-translation-dictionary')
 export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
@@ -49,7 +51,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	#repo!: UmbDictionaryRepository;
 
-	#contextMenuService?: UmbTreeContextMenuService;
+	#modalService!: UmbModalService;
 
 	#tableItems: Array<UmbTableItem> = [];
 
@@ -59,6 +61,10 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	constructor() {
 		super();
+
+		new UmbContextConsumerController(this, UMB_MODAL_SERVICE_CONTEXT_TOKEN, (instance) => {
+			this.#modalService = instance;
+		});
 	}
 
 	async connectedCallback() {
@@ -67,7 +73,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 		this.#repo = new UmbDictionaryRepository(this);
 		this.#languages = await this.#repo.getLanguages();
 		await this.#getDictionaryItems();
-	}	
+	}
 
 	async #getDictionaryItems() {
 		if (!this.#repo) return;
@@ -99,8 +105,6 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 				alias: l.isoCode ?? '',
 			});
 		});
-
-		console.log(this.#tableColumns)
 	}
 
 	#setTableItems() {
@@ -112,9 +116,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 				data: [
 					{
 						columnAlias: 'name',
-						value: html`<a
-							style="font-weight:bold"
-							href="/section/translation/dictionary-item/edit/${dictionary.key}">
+						value: html`<a style="font-weight:bold" href="/section/translation/dictionary-item/edit/${dictionary.key}">
 							${dictionary.name}</a
 						> `,
 					},
@@ -150,15 +152,23 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 			: this.#tableItems;
 	}
 
-	#create() {
-		if (!this.#contextMenuService) return;
+	async #create() {
+		// TODO: what to do if modal service is not available?
+		if (!this.#modalService) return;
 
-		// TODO => from where can we get a contextMenuService instance? Or do we want to reconsider the creation steps for new dictionary items?
-		// TODO => key should be null for root items
-		this.#contextMenuService.open({
-			key: '',
-			name: 'Create',
+		const modalHandler = this.#modalService?.open('umb-create-dictionary-modal-layout', {
+			type: 'sidebar',
+			data: { unique: null },
 		});
+
+		// TODO: get type from modal result
+		const { name }: UmbCreateDictionaryModalResultData = await modalHandler.onClose();
+		if (!name) return;
+
+		const result = await this.#repo?.createDetail({ name, parentKey: null, translations: [], key: '' });
+
+		// TODO => get location header to route to new item
+		console.log(result);
 	}
 
 	render() {

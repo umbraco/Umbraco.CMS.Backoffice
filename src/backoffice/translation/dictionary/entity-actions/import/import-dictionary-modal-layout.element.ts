@@ -1,15 +1,24 @@
-import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
-import { when } from 'lit-html/directives/when.js';
+import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, query, state } from 'lit/decorators.js';
-import { repeat } from 'lit-html/directives/repeat.js';
-import UmbTreeItemActionElement from '../../../shared/components/tree/action/tree-item-action.element';
-import { UmbTreeElement } from '../../../shared/components/tree/tree.element';
-import { UmbDictionaryRepository } from '../repository/dictionary.repository';
+import { when } from 'lit-html/directives/when.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { UmbTreeElement } from '../../../../shared/components/tree/tree.element';
+import { UmbDictionaryRepository } from '../../repository/dictionary.repository';
 import { DictionaryUploadModel } from '@umbraco-cms/backend-api';
+import { UmbModalLayoutElement } from '@umbraco-cms/modal';
 
-@customElement('umb-tree-action-dictionary-import-page')
-export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionElement {
+export interface UmbImportDictionaryModalData {
+	unique: string | null;
+}
+
+export interface UmbImportDictionaryModalResultData {
+	fileName?: string;
+	parentKey?: string;
+}
+
+@customElement('umb-import-dictionary-modal-layout')
+export class UmbImportDictionaryModalLayoutElement extends UmbModalLayoutElement<UmbImportDictionaryModalData> {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -39,25 +48,17 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 
 	#detailRepo = new UmbDictionaryRepository(this);
 
-	connectedCallback() {
-		super.connectedCallback();
-	}
-
-	#back() {
-		this._actionPageService?.closeTopPage();
-	}
-
 	async #importDictionary() {
 		if (!this._uploadedDictionary?.fileName) return;
 
-		const { data } = await this.#detailRepo.import(this._uploadedDictionary.fileName, this._selection[0]);
+		this.modalHandler?.close({
+			fileName: this._uploadedDictionary.fileName,
+			parentKey: this._selection[0],
+		});
+	}
 
-		const path = data?.content?.split(',');
-		if (path?.length) {
-			this.#detailRepo.requestDetails(path[path.length - 1]);
-		}
-
-		this._treeContextMenuService?.close();
+	#handleClose() {
+		this.modalHandler?.close({});
 	}
 
 	#submitForm() {
@@ -67,7 +68,6 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	async #handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
-		if (!this._treeContextMenuService) return;
 		if (!this._form.checkValidity()) return;
 
 		const formData = new FormData(this._form);
@@ -78,7 +78,6 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 		if (!this._uploadedDictionary) {
 			this._showErrorView = true;
 			this._showImportView = false;
-			this._treeContextMenuService?.close();
 			return;
 		}
 
@@ -113,7 +112,7 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 					</uui-form-layout-item>
 				</form>
 			</uui-form>
-			<uui-button slot="actions" type="button" label="Cancel" @click=${this.#back}></uui-button>
+			<uui-button slot="actions" type="button" label="Cancel" @click=${this.#handleClose}></uui-button>
 			<uui-button slot="actions" type="button" label="Import" look="primary" @click=${this.#submitForm}></uui-button>`;
 	}
 
@@ -138,7 +137,7 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 				.selection=${this._selection}
 				selectable></umb-tree>
 
-			<uui-button slot="actions" type="button" label="Cancel" @click=${this.#back}></uui-button>
+			<uui-button slot="actions" type="button" label="Cancel" @click=${this.#handleClose}></uui-button>
 			<uui-button slot="actions" type="button" label="Import" look="primary" @click=${this.#importDictionary}></uui-button>
 		`;
 	}
@@ -149,16 +148,16 @@ export class UmbTreeActionDictionaryImportPageElement extends UmbTreeItemActionE
 	}
 
 	render() {
-		return html` <umb-context-menu-layout headline="Import">
+		return html` <umb-body-layout headline="Import">
 			${when(this._showUploadView, () => this.#renderUploadView())}
 			${when(this._showImportView, () => this.#renderImportView())}
 			${when(this._showErrorView, () => this.#renderErrorView())}
-		</umb-context-menu-layout>`;
+		</umb-body-layout>`;
 	}
 }
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-tree-action-dictionary-import-page': UmbTreeActionDictionaryImportPageElement;
+		'umb-import-dictionary-modal-layout': UmbImportDictionaryModalLayoutElement;
 	}
 }

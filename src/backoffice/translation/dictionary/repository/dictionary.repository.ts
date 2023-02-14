@@ -44,9 +44,6 @@ export class UmbDictionaryRepository implements UmbTreeRepository {
 		]);
 	}
 
-	// TODO: Trash
-	// TODO: Move
-
 	async requestRootTreeItems() {
 		await this.#init;
 
@@ -174,23 +171,15 @@ export class UmbDictionaryRepository implements UmbTreeRepository {
 	async createDetail(detail: DictionaryDetails) {
 		await this.#init;
 
-		// TODO: should we show a notification if the template is missing?
-		// Investigate what is best for Acceptance testing, cause in that perspective a thrown error might be the best choice?
-		if (!detail.parentKey) {
-			const error: ProblemDetailsModel = { title: 'Parent key is missing' };
-			return { error };
-		}
-
 		if (!detail.name) {
 			const error: ProblemDetailsModel = { title: 'Name is missing' };
 			return { error };
 		}
 
-		// TODO => if passing a key from the client, this is where we do it
-		const { data, error } = await this.#detailSource.insert({ parentKey: detail.parentKey, name: detail.name, translations: [], key: '' });
+		const { data, error } = await this.#detailSource.insert(detail);
 
 		if (!error) {
-			const notification = { data: { message: `Dictionary '${name}' created` } };
+			const notification = { data: { message: `Dictionary '${detail.name}' created` } };
 			this.#notificationService?.peek('positive', notification);
 		}
 
