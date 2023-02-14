@@ -1,7 +1,6 @@
 import { UmbDictionaryRepository } from '../repository/dictionary.repository';
 import { UmbWorkspaceContext } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-context';
 import { UmbWorkspaceEntityContextInterface } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-entity-context.interface';
-import { DictionaryItemTranslationModel } from '@umbraco-cms/backend-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { ObjectState } from '@umbraco-cms/observable-api';
 import type { DictionaryDetails } from '@umbraco-cms/models';
@@ -11,7 +10,6 @@ export class UmbWorkspaceDictionaryContext
 	extends UmbWorkspaceContext
 	implements UmbWorkspaceEntityContextInterface<EntityType | undefined>
 {
-	#isNew = false;
 	#host: UmbControllerHostInterface;
 	#repo: UmbDictionaryRepository;
 
@@ -35,45 +33,36 @@ export class UmbWorkspaceDictionaryContext
 	}
 
 	getEntityType() {
-		return 'dictionary';
+		return 'dictionary-item';
 	}
 
 	setName(name: string) {
 		this.#data.update({ name });
 	}
 
-	setTranslations(value: Array<DictionaryItemTranslationModel>) {
-		this.#data.update({ translations: value });
-	}
-
-	setTranslation(isoCode: string, translation: string) {
+	setPropertyValue(isoCode: string, translation: string) {
 		if (!this.#data.value) return;
 
 		// update if the code already exists
-		const value =
+		const updatedValue =
 			this.#data.value.translations?.map((translationItem) => {
 				if (translationItem.isoCode === isoCode) {
-					return { ...translationItem, translation };
+					return { ...translationItem, translation};
 				}
 				return translationItem;
 			}) ?? [];
 
 		// if code doesn't exist, add it to the new value set
-		if (!value?.find((x) => x.isoCode === isoCode)) {
-			value?.push({ isoCode, translation });
+		if (!updatedValue?.find((x) => x.isoCode === isoCode)) {
+			updatedValue?.push({ isoCode, translation });
 		}
 
-		this.#data.next({ ...this.#data.value, translations: value });
-	}
-
-	setPropertyValue(alias: string, value: unknown) {
-		// Not required in this workspace
+		this.#data.next({ ...this.#data.value, translations: updatedValue });	
 	}
 
 	async load(entityKey: string) {
 		const { data } = await this.#repo.requestDetails(entityKey);
 		if (data) {
-			this.#isNew = false;
 			this.#data.next(data);
 		}
 	}
@@ -81,7 +70,6 @@ export class UmbWorkspaceDictionaryContext
 	async createScaffold(parentKey: string | null) {
 		const { data } = await this.#repo.createDetailsScaffold(parentKey);
 		if (!data) return;
-		this.#isNew = true;
 		this.#data.next(data);
 	}
 

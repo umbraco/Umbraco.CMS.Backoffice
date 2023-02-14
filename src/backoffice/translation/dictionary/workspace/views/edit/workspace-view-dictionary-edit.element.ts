@@ -70,7 +70,7 @@ export class UmbWorkspaceViewDictionaryEditElement extends UmbLitElement {
 			const translation = target.value.toString();
 			const isoCode = target.getAttribute('name')!;			
 
-			this.#workspaceContext.setTranslation(isoCode, translation);
+			this.#workspaceContext.setPropertyValue(isoCode, translation);
 		}
 	}
 
