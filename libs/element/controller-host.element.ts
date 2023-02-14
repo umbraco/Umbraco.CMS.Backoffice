@@ -23,3 +23,9 @@ export class UmbControllerHostTestElement extends UmbLitElement {
 		return html`<slot></slot>`;
 	}
 }
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'umb-controller-host-test': UmbControllerHostTestElement;
+	}
+}
