@@ -18,9 +18,9 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const nodeFetch = require('node-fetch')
+            const fetch = require('node-fetch')
 
-            const response = await nodeFetch('https://collaboratorsv2.euwest01.umbraco.io/umbraco/api/comments/PostComment', {
+            const response = await fetch('https://collaboratorsv2.euwest01.umbraco.io/umbraco/api/comments/PostComment', {
               method: 'post',
               body: JSON.stringify({
                 repo: '${{ github.repository }}',
