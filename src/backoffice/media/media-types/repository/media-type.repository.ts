@@ -178,4 +178,8 @@ export class UmbMediaTypeRepository implements UmbTreeRepository {
 	async move() {
 		alert('move me!');
 	}
+
+	async copy() {
+		alert('copy me');
+	}
 }
