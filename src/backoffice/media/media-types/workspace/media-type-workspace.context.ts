@@ -1,26 +1,26 @@
-import { UmbWorkspaceEntityContextInterface } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-entity-context.interface';
-import { UmbWorkspaceContext } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-context';
-import { UmbMemberGroupRepository } from '../repository/member-group.repository';
-import type { MemberGroupDetails } from '@umbraco-cms/models';
+import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
+import { UmbWorkspaceEntityContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-entity-context.interface';
+import { UmbMediaTypeRepository } from '../repository/media-type.repository';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { ObjectState } from '@umbraco-cms/observable-api';
+import type { MediaTypeDetails } from '@umbraco-cms/models';
 
-type EntityType = MemberGroupDetails;
-export class UmbWorkspaceMemberGroupContext
+type EntityType = MediaTypeDetails;
+export class UmbWorkspaceMediaTypeContext
 	extends UmbWorkspaceContext
 	implements UmbWorkspaceEntityContextInterface<EntityType | undefined>
 {
 	#host: UmbControllerHostInterface;
-	#repo: UmbMemberGroupRepository;
+	#repo: UmbMediaTypeRepository;
 
-	#data = new ObjectState<EntityType | undefined>(undefined);
+	#data = new ObjectState<MediaTypeDetails | undefined>(undefined);
 	data = this.#data.asObservable();
 	name = this.#data.getObservablePart((data) => data?.name);
 
 	constructor(host: UmbControllerHostInterface) {
 		super(host);
 		this.#host = host;
-		this.#repo = new UmbMemberGroupRepository(this.#host);
+		this.#repo = new UmbMediaTypeRepository(this.#host);
 	}
 
 	getData() {
@@ -32,7 +32,7 @@ export class UmbWorkspaceMemberGroupContext
 	}
 
 	getEntityType() {
-		return 'member-group';
+		return 'media-type';
 	}
 
 	setName(name: string) {
@@ -40,12 +40,11 @@ export class UmbWorkspaceMemberGroupContext
 	}
 
 	setPropertyValue(alias: string, value: string) {
-		// Not implemented for this context - member groups have no properties
-		return;
+		// TODO => Implement setPropertyValue
 	}
 
 	async load(entityKey: string) {
-		const { data } = await this.#repo.requestByKey(entityKey);
+		const { data } = await this.#repo.requestDetails(entityKey);
 		if (data) {
 			this.#data.next(data);
 		}
