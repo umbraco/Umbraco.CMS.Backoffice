@@ -66,7 +66,7 @@ export class UmbDataTypeWorkspaceElement extends UmbLitElement {
 	render() {
 		return html`
 			<umb-workspace-layout alias="Umb.Workspace.DataType">
-				<uui-input id="header" slot="header" .value=${this._} @input="${this._handleInput}"></uui-input>
+				<uui-input id="header" slot="header" .value=${this._dataTypeName} @input="${this._handleInput}"></uui-input>
 			</umb-workspace-layout>
 		`;
 	}
