@@ -19,6 +19,8 @@ import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
 // TODO: should this context be called DocumentDraft instead of workspace? or should the draft be part of this?
 
+// TODO: Should we have a DocumentStructureContext and maybe even a DocumentDraftContext?
+
 type EntityType = DocumentModel;
 export class UmbDocumentWorkspaceContext
 	extends UmbWorkspaceContext
