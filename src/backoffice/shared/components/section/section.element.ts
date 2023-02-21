@@ -76,7 +76,7 @@ export class UmbSectionElement extends UmbLitElement {
 			this.observe(
 				umbExtensionsRegistry
 					?.extensionsOfType('sidebarMenuItem')
-					.pipe(map((manifests) => manifests.filter((manifest) => manifest.meta.sections.includes(sectionAlias)))),
+					.pipe(map((manifests) => manifests.filter((manifest) => manifest.meta.sidebarMenus.includes(sectionAlias)))),
 				(manifests) => {
 					this._menuItems = manifests;
 					this._createMenuRoutes();
