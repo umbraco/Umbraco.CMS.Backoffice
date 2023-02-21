@@ -44,6 +44,9 @@ export class UmbPackagesInstalledOverviewElement extends LitElement {
 			name: 'A created package',
 			plans: [],
 			version: '1.0.0',
+			hasMigrations: true,
+			hasPendingMigrations: true,
+			packageView: true,
 		},
 		{
 			alias: 'my.package2',
@@ -51,6 +54,9 @@ export class UmbPackagesInstalledOverviewElement extends LitElement {
 			name: 'A second created package',
 			plans: [],
 			version: '1.0.1',
+			hasMigrations: true,
+			hasPendingMigrations: false,
+			packageView: true,
 		},
 	];
 

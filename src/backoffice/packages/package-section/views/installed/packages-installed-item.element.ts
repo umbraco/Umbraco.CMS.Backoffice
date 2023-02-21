@@ -1,6 +1,7 @@
 import { html, css, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { firstValueFrom, map } from 'rxjs';
+import { customElement, property, query, state } from 'lit/decorators.js';
+import { delay, firstValueFrom, map } from 'rxjs';
+import { UUIButtonElement } from '@umbraco-ui/uui';
 
 import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../core/modal';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
@@ -14,16 +15,15 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 		:host {
 			display: flex;
 		}
-
-		.migrate {
-			padding: calc(var(--uui-size-2, 6px) + 1px);
-			margin-right: calc(var(--uui-size-2, 6px) + 1px);
-			width: 500px;
-			text-align: right;
+		#migration {
+			margin: var(--uui-size-space-3);
 		}
 	`;
 	@property({ type: Object })
 	package!: any; // TODO: Use real type
+
+	@query('#migration')
+	private _migrationButton?: UUIButtonElement;
 
 	@state()
 	private _packageView?: ManifestPackageView;
@@ -44,6 +44,7 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 	}
 
 	private async findPackageView(alias: string) {
+		this._packageView = { type: 'packageView', name: 'Cake', alias: alias, meta: { packageAlias: alias } };
 		const observable = umbExtensionsRegistry
 			?.extensionsOfType('packageView')
 			.pipe(map((e) => e.filter((m) => m.meta.packageAlias === alias)));
@@ -60,9 +61,24 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 		this._packageView = views[0];
 	}
 
+	async _onMigration() {
+		if (!this._migrationButton) return;
+		this._migrationButton.state = 'waiting';
+	}
+
 	render() {
 		return html`
-			<uui-ref-node-package name=${this.package.name} version=${this.package.version} @open=${this._onClick}>
+			<uui-ref-node-package
+				name=${this.package.name}
+				version="${this.package.version}"
+				author="${this.package.author}"
+				description="hi"
+				@open=${this._onClick}>
+				${this.package.hasPendingMigrations
+					? html`<uui-button @click="${this._onMigration}" slot="tag" color="warning" look="primary" id="migration">
+							Run pending package migrations
+					  </uui-button>`
+					: nothing}
 				<uui-action-bar style="display: block" slot="actions">
 					${this._packageView
 						? html`<uui-button
@@ -73,18 +89,7 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 						: nothing}
 				</uui-action-bar>
 			</uui-ref-node-package>
-			${this._renderMigrateButton()}
 		`;
-	}
-
-	private _renderMigrateButton() {
-		//TODO: Check for migrations
-		if (!this.package.hasMigration) return nothing;
-		return html`<div class="migrate">
-			<uui-button look="primary" color="warning" label="Run pending package migrations">
-				Run pending package migrations
-			</uui-button>
-		</div>`;
 	}
 
 	private async _onConfigure() {
@@ -104,7 +109,7 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 	}
 
 	private _onClick() {
-		window.history.pushState({}, '', `/section/packages/view/installed/package/${this.package.id}`);
+		window.history.pushState({}, '', `/section/packages/view/installed/package/${this.package.key}`);
 	}
 }
 
