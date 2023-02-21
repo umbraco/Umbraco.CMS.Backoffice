@@ -10,7 +10,7 @@ const sidebarMenuItem: ManifestSidebarMenuItem = {
 		label: 'Templates',
 		icon: 'umb:folder',
 		entityType: 'template',
-		sidebarMenus: ['Umb.SidebarMenu.Settings'],
+		sidebarMenus: ['Umb.SidebarMenu.Templating'],
 	},
 };
 
