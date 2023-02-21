@@ -89,7 +89,6 @@ export class UmbSectionElement extends UmbLitElement {
 	}
 
 	private _createMenuRoutes() {
-
 		// TODO: find a way to make this reuseable across:
 		const workspaceRoutes = this._workspaces?.map((workspace: ManifestWorkspace) => {
 			return [
@@ -140,35 +139,30 @@ export class UmbSectionElement extends UmbLitElement {
 		];
 	}
 
-
-
 	private _observeSection() {
 		if (!this._sectionContext) return;
 
-		this.observe(
-			this._sectionContext.alias, (alias) => {
-				this._sectionAlias = alias;
-				this._observeViews();
-			}
-		);
+		this.observe(this._sectionContext.alias, (alias) => {
+			this._sectionAlias = alias;
+			this._observeViews();
+		});
 	}
 
 	private _observeViews() {
-
 		this.observe(umbExtensionsRegistry?.extensionsOfType('sectionView'), (views) => {
-				const sectionViews = views.filter((view) => {
-					return this._sectionAlias ? view.meta.sections.includes(this._sectionAlias) : false
-				}).sort((a, b) => b.meta.weight - a.meta.weight);
-				if(sectionViews.length > 0) {
-					this._views = sectionViews;
-					this._createViewRoutes();
-				}
+			const sectionViews = views
+				.filter((view) => {
+					return this._sectionAlias ? view.meta.sections.includes(this._sectionAlias) : false;
+				})
+				.sort((a, b) => b.meta.weight - a.meta.weight);
+			if (sectionViews.length > 0) {
+				this._views = sectionViews;
+				this._createViewRoutes();
 			}
-		);
+		});
 	}
 
 	private _createViewRoutes() {
-
 		this._routes =
 			this._views?.map((view) => {
 				return {
@@ -190,7 +184,7 @@ export class UmbSectionElement extends UmbLitElement {
 		const view = this._views?.find((view) => 'view/' + view.meta.pathname === currentPath);
 		if (!view) return;
 		this._sectionContext?.setActiveView(view);
-	}
+	};
 
 	render() {
 		return html`
@@ -204,7 +198,10 @@ export class UmbSectionElement extends UmbLitElement {
 			<umb-section-main>
 				${this._views && this._views.length > 0 ? html`<umb-section-views></umb-section-views>` : nothing}
 				${this._routes && this._routes.length > 0
-					? html`<umb-router-slot id="router-slot" .routes="${this._routes}" @change=${this._onRouteChange}></umb-router-slot>`
+					? html`<umb-router-slot
+							id="router-slot"
+							.routes="${this._routes}"
+							@change=${this._onRouteChange}></umb-router-slot>`
 					: nothing}
 				<slot></slot>
 			</umb-section-main>
