@@ -14,9 +14,13 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 	static styles = css`
 		:host {
 			display: flex;
+			align-items: center;
 		}
-		#migration {
+		#actions {
+			min-width: 150px;
 			margin: var(--uui-size-space-3);
+			display: flex;
+			flex-direction: row-reverse;
 		}
 	`;
 	@property({ type: Object })
@@ -75,19 +79,24 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 				description="hi"
 				@open=${this._onClick}>
 				${this.package.hasPendingMigrations
-					? html`<uui-button @click="${this._onMigration}" slot="tag" color="warning" look="primary" id="migration">
-							Run pending package migrations
-					  </uui-button>`
+					? html`<uui-tag @click="${this._onMigration}" slot="tag" color="warning" look="primary">
+							Migration available
+					  </uui-tag>`
 					: nothing}
-				<uui-action-bar style="display: block" slot="actions">
-					${this._packageView
-						? html`<uui-button
-								look="primary"
-								color="positive"
-								@click=${this._onConfigure}
-								label="Configure"></uui-button>`
-						: nothing}
-				</uui-action-bar>
+				<div id="actions" slot="actions">
+					<uui-action-bar>
+						${this.package.hasPendingMigrations
+							? html`<uui-button id="migration" look="primary" color="warning" @click="${this._onMigration}">
+									<uui-icon name="umb:sync"></uui-icon>
+							  </uui-button>`
+							: nothing}
+						${this.package.packageView
+							? html`<uui-button color="positive" look="primary" @click="${this._onConfigure}">
+									Configuration
+							  </uui-button>`
+							: nothing}
+					</uui-action-bar>
+				</div>
 			</uui-ref-node-package>
 		`;
 	}

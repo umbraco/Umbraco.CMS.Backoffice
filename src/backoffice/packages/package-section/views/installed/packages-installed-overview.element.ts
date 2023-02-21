@@ -46,7 +46,7 @@ export class UmbPackagesInstalledOverviewElement extends LitElement {
 			version: '1.0.0',
 			hasMigrations: true,
 			hasPendingMigrations: true,
-			packageView: true,
+			packageView: false,
 		},
 		{
 			alias: 'my.package2',
@@ -56,6 +56,16 @@ export class UmbPackagesInstalledOverviewElement extends LitElement {
 			version: '1.0.1',
 			hasMigrations: true,
 			hasPendingMigrations: false,
+			packageView: true,
+		},
+		{
+			alias: 'my.package3',
+			key: '2a0181ec-244b-4068-a1d7-2f95ed7e6da8',
+			name: 'A third created package',
+			plans: [],
+			version: '1.0.2',
+			hasMigrations: true,
+			hasPendingMigrations: true,
 			packageView: true,
 		},
 	];

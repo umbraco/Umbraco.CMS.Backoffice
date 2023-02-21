@@ -49,7 +49,7 @@ export class UmbCreatedPackagesSectionViewElement extends UmbLitElement {
 
 		routes.push({
 			path: '**',
-			redirectTo: 'overview', //TODO: this should be dynamic
+			redirectTo: 'overview',
 		});
 		this._routes = routes;
 	}
