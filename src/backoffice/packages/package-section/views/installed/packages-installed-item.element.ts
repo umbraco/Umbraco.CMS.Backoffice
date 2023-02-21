@@ -14,13 +14,6 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 	static styles = css`
 		:host {
 			display: flex;
-			align-items: center;
-		}
-		#actions {
-			min-width: 150px;
-			margin: var(--uui-size-space-3);
-			display: flex;
-			flex-direction: row-reverse;
 		}
 	`;
 	@property({ type: Object })
@@ -29,6 +22,7 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 	@query('#migration')
 	private _migrationButton?: UUIButtonElement;
 
+	/*
 	@state()
 	private _packageView?: ManifestPackageView;
 
@@ -48,7 +42,6 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 	}
 
 	private async findPackageView(alias: string) {
-		this._packageView = { type: 'packageView', name: 'Cake', alias: alias, meta: { packageAlias: alias } };
 		const observable = umbExtensionsRegistry
 			?.extensionsOfType('packageView')
 			.pipe(map((e) => e.filter((m) => m.meta.packageAlias === alias)));
@@ -63,7 +56,7 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 		}
 
 		this._packageView = views[0];
-	}
+	}*/
 
 	async _onMigration() {
 		if (!this._migrationButton) return;
@@ -76,31 +69,24 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 				name=${this.package.name}
 				version="${this.package.version}"
 				author="${this.package.author}"
-				description="hi"
-				@open=${this._onClick}>
-				${this.package.hasPendingMigrations
-					? html`<uui-tag @click="${this._onMigration}" slot="tag" color="warning" look="primary">
-							Migration available
-					  </uui-tag>`
-					: nothing}
-				<div id="actions" slot="actions">
-					<uui-action-bar>
-						${this.package.hasPendingMigrations
-							? html`<uui-button id="migration" look="primary" color="warning" @click="${this._onMigration}">
-									<uui-icon name="umb:sync"></uui-icon>
-							  </uui-button>`
-							: nothing}
-						${this.package.packageView
-							? html`<uui-button color="positive" look="primary" @click="${this._onConfigure}">
-									Configuration
-							  </uui-button>`
-							: nothing}
-					</uui-action-bar>
+				@open=${this._onClick}
+				?disabled="${!this.package.packageView}">
+				<div slot="tag">
+					${this.package.hasPendingMigrations
+						? html`<uui-button
+								@click="${this._onMigration}"
+								color="warning"
+								look="primary"
+								label="Run pending package migrations">
+								Run pending package migrations
+						  </uui-button>`
+						: nothing}
 				</div>
 			</uui-ref-node-package>
 		`;
 	}
 
+	/*
 	private async _onConfigure() {
 		if (!this._packageView) {
 			console.warn('Tried to configure package without view');
@@ -115,9 +101,9 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 		}
 
 		this._umbModalService?.open(element, { data: this.package, size: 'small', type: 'sidebar' });
-	}
+	}*/
 
-	private _onClick() {
+	private async _onClick() {
 		window.history.pushState({}, '', `/section/packages/view/installed/package/${this.package.key}`);
 	}
 }
