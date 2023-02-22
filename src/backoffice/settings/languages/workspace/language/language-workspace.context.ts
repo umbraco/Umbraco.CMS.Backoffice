@@ -66,7 +66,8 @@ export class UmbLanguageWorkspaceContext extends UmbWorkspaceContext {
 
 	// TODO: this is a temp solution to bubble validation errors to the UI
 	setValidationErrors(errorMap: any) {
-		this.#validationErrors.update(errorMap);
+		// TODO: I can't use the update method to set the value to undefined
+		this.#validationErrors.next(errorMap);
 	}
 
 	destroy(): void {

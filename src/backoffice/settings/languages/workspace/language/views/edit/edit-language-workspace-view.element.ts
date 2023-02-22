@@ -84,6 +84,7 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 
 			this.observe(this.#languageWorkspaceContext.validationErrors, (value) => {
 				this._validationErrors = value;
+				this.requestUpdate('_validationErrors');
 			});
 		});
 	}

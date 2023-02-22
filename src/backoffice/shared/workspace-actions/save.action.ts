@@ -28,9 +28,8 @@ export class UmbSaveWorkspaceAction extends UmbWorkspaceAction<any, UmbWorkspace
 			if (error.type === 'validation') {
 				this.workspaceContext.setValidationErrors?.(error.errors);
 			}
-		}
-
-		if (!error) {
+		} else {
+			this.workspaceContext.setValidationErrors?.(undefined);
 			this.workspaceContext.setIsNew(false);
 		}
 	}
