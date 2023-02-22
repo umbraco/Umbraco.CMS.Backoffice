@@ -8,8 +8,9 @@ const sidebarMenuItem: ManifestSidebarMenuItem = {
 	loader: () => import('./dictionary-sidebar-menu-item.element'),
 	meta: {
 		label: 'Dictionary',
-		icon: 'umb:folder',
-		sections: ['Umb.Section.Translation'],
+		icon: 'umb:book-alt',
+		entityType: 'dictionary-item',
+		sidebarMenus: ['Umb.SidebarMenu.Translation'],
 	},
 };
 

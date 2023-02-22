@@ -1,5 +1,4 @@
-import { UMB_MEDIA_TREE_STORE_CONTEXT_TOKEN } from './media/media.tree.store';
-import type { ManifestDashboardCollection, ManifestSection } from '@umbraco-cms/models';
+import type { ManifestDashboardCollection, ManifestSection, ManifestSidebarMenu } from '@umbraco-cms/models';
 
 const sectionAlias = 'Umb.Section.Media';
 
@@ -25,9 +24,20 @@ const dashboards: Array<ManifestDashboardCollection> = [
 			sections: [sectionAlias],
 			pathname: 'media-management',
 			entityType: 'media',
-			storeAlias: UMB_MEDIA_TREE_STORE_CONTEXT_TOKEN.toString(),
+			repositoryAlias: 'Umb.Repository.Media',
 		},
 	},
 ];
 
-export const manifests = [section, ...dashboards];
+const sidebarMenu: ManifestSidebarMenu = {
+	type: 'sidebarMenu',
+	alias: 'Umb.SidebarMenu.Media',
+	name: 'Media Sidebar Menu',
+	weight: 100,
+	meta: {
+		label: 'Media',
+		sections: [sectionAlias],
+	},
+};
+
+export const manifests = [section, sidebarMenu, ...dashboards];
