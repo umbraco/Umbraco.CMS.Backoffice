@@ -32,9 +32,8 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 			#default-language-warning {
 				background-color: var(--uui-color-warning);
 				color: var(--uui-color-warning-contrast);
-				border-color: var(--uui-color-warning-standalone);
 				padding: var(--uui-size-space-4) var(--uui-size-space-5);
-				border: 1px solid;
+				border: 1px solid var(--uui-color-warning-standalone);
 				margin-top: var(--uui-size-space-4);
 				border-radius: var(--uui-border-radius);
 			}
