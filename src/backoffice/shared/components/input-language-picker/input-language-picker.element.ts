@@ -56,6 +56,9 @@ export class UmbInputLanguagePickerElement extends FormControlMixin(UmbLitElemen
 	@property({ type: String, attribute: 'min-message' })
 	maxMessage = 'This field exceeds the allowed amount of items';
 
+	@property({ type: Object, attribute: false })
+	public filter: (language: LanguageModel) => boolean = () => true;
+
 	private _selectedIsoCodes: Array<string> = [];
 	public get selectedIsoCodes(): Array<string> {
 		return this._selectedIsoCodes;
@@ -119,6 +122,7 @@ export class UmbInputLanguagePickerElement extends FormControlMixin(UmbLitElemen
 		const modalHandler = this._modalService?.languagePicker({
 			multiple: this.max === 1 ? false : true,
 			selection: [...this._selectedIsoCodes],
+			filter: this.filter,
 		});
 
 		modalHandler?.onClose().then(({ selection }: any) => {

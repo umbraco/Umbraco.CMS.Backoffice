@@ -182,7 +182,9 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 						value=${ifDefined(this._language.fallbackIsoCode === null ? undefined : this._language.fallbackIsoCode)}
 						slot="editor"
 						max="1"
-						@change=${this.#handleFallbackChange}></umb-input-language-picker>
+						@change=${this.#handleFallbackChange}
+						.filter=${(language: LanguageModel) =>
+							language.isoCode !== this._language?.isoCode}></umb-input-language-picker>
 				</umb-workspace-property-layout>
 			</uui-box>
 		`;

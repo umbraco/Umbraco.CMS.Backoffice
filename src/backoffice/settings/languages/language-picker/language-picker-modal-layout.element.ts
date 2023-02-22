@@ -8,13 +8,8 @@ import { UmbModalLayoutPickerBase } from '../../../../core/modal/layouts/modal-l
 import { UmbLanguageRepository } from '../repository/language.repository';
 import { LanguageModel } from '@umbraco-cms/backend-api';
 
-export interface UmbLanguagePickerModalData {
-	multiple: boolean;
-	selection: string[];
-}
-
 @customElement('umb-language-picker-modal-layout')
-export class UmbLanguagePickerModalLayoutElement extends UmbModalLayoutPickerBase {
+export class UmbLanguagePickerModalLayoutElement extends UmbModalLayoutPickerBase<LanguageModel> {
 	static styles = [UUITextStyles, css``];
 
 	@state()
@@ -35,11 +30,19 @@ export class UmbLanguagePickerModalLayoutElement extends UmbModalLayoutPickerBas
 		this.handleSelection(isoCode);
 	}
 
+	get #filteredLanguages() {
+		if (this.data?.filter) {
+			return this._languages.filter(this.data.filter);
+		} else {
+			return this._languages;
+		}
+	}
+
 	render() {
 		return html`<umb-body-layout headline="Select languages">
 			<uui-box>
 				${repeat(
-					this._languages,
+					this.#filteredLanguages,
 					(item) => item.isoCode,
 					(item) => html`
 						<uui-menu-item
