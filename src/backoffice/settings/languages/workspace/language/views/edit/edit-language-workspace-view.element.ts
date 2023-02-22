@@ -110,8 +110,8 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 
 			this.#languageWorkspaceContext?.setCulture(isoCode);
 
-			// If the language name is not set, we set it to the name of the selected language.
-			if (!this._language?.name && cultureName) {
+			// to improve UX, we set the name to the culture name if it's a new language
+			if (this._isNew && cultureName) {
 				this.#languageWorkspaceContext?.setName(cultureName);
 			}
 		}
