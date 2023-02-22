@@ -21,7 +21,7 @@ import type { UmbModalLinkPickerData } from './layouts/link-picker/modal-layout-
 import { UmbModalHandler } from './modal-handler';
 import type { UmbBasicModalData } from './layouts/basic/modal-layout-basic.element';
 import { UmbContextToken } from '@umbraco-cms/context-api';
-import { UmbPickerData } from './layouts/modal-layout-picker-base';
+import { UmbPickerModalData } from './layouts/modal-layout-picker-base';
 import { LanguageModel } from '@umbraco-cms/backend-api';
 
 export type UmbModalType = 'dialog' | 'sidebar';
@@ -136,7 +136,7 @@ export class UmbModalService {
 	 * @return {*}  {UmbModalHandler}
 	 * @memberof UmbModalService
 	 */
-	public languagePicker(data: UmbPickerData<LanguageModel>): UmbModalHandler {
+	public languagePicker(data: UmbPickerModalData<LanguageModel>): UmbModalHandler {
 		return this.open('umb-language-picker-modal-layout', { data, type: 'sidebar' });
 	}
 
