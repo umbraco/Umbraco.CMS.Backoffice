@@ -15,11 +15,27 @@ export class UmbSaveWorkspaceAction extends UmbWorkspaceAction<any, UmbWorkspace
 		// TODO: handle errors
 		if (!data) return;
 
-		if (this.workspaceContext.getIsNew()) {
-			await this.repository?.create(data);
-			this.workspaceContext.setIsNew(false);
-		} else {
-			await this.repository?.save(data);
+		this.workspaceContext.getIsNew() ? this.#create(data) : this.#update(data);
+	}
+
+	async #create(data: any) {
+		if (!this.workspaceContext) return;
+
+		const { error } = await this.repository.create(data);
+
+		// TODO: this is temp solution to bubble validation errors to the UI
+		if (error) {
+			if (error.type === 'validation') {
+				this.workspaceContext.setValidationErrors?.(error.errors);
+			}
 		}
+
+		if (!error) {
+			this.workspaceContext.setIsNew(false);
+		}
+	}
+
+	#update(data: any) {
+		this.repository?.save(data);
 	}
 }

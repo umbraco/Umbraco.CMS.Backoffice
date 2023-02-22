@@ -38,6 +38,10 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 				margin-top: var(--uui-size-space-4);
 				border-radius: var(--uui-border-radius);
 			}
+
+			.validation-message {
+				color: var(--uui-color-danger);
+			}
 		`,
 	];
 
@@ -49,6 +53,9 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 
 	@state()
 	_isNew = false;
+
+	@state()
+	_validationErrors?: { [key: string]: Array<any> };
 
 	#languageWorkspaceContext?: UmbLanguageWorkspaceContext;
 
@@ -74,6 +81,10 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 
 			this.observe(this.#languageWorkspaceContext.isNew, (value) => {
 				this._isNew = value;
+			});
+
+			this.observe(this.#languageWorkspaceContext.validationErrors, (value) => {
+				this._validationErrors = value;
 			});
 		});
 	}
@@ -139,6 +150,11 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 							value=${ifDefined(this._language.isoCode)}
 							@change=${this.#handleCultureChange}
 							?readonly=${this._isNew === false}></umb-input-culture-select>
+
+						<!-- TEMP VALIDATION ERROR -->
+						${this._validationErrors?.isoCode.map(
+							(isoCodeError) => html`<div class="validation-message">${isoCodeError}</div>`
+						)}
 					</div>
 				</umb-workspace-property-layout>
 
@@ -157,7 +173,6 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 								<div>An Umbraco site can only have one default language set.</div>
 							</div>
 						</uui-toggle>
-
 						<!-- 	TODO: we need a UUI component for this -->
 						${this._language.isDefault !== this._isDefaultLanguage
 							? html`<div id="default-language-warning">
