@@ -146,6 +146,7 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 			<uui-box>
 				<umb-workspace-property-layout label="Language">
 					<div slot="editor">
+						<!-- TODO: disable already created cultures in the select -->
 						<umb-input-culture-select
 							value=${ifDefined(this._language.isoCode)}
 							@change=${this.#handleCultureChange}
