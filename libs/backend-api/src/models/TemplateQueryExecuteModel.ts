@@ -9,7 +9,6 @@ export type TemplateQueryExecuteModel = {
     rootContentKey?: string | null;
     contentTypeAlias?: string | null;
     filters?: Array<TemplateQueryExecuteFilterModel> | null;
-    sort?: TemplateQueryExecuteSortModel;
+    sort?: TemplateQueryExecuteSortModel | null;
     take?: number;
 };
-
