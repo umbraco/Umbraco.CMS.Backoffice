@@ -115,9 +115,9 @@
 		"rollup-plugin-url": "^3.0.1",
 		"tiny-glob": "^0.2.9",
 		"typescript": "^4.9.5",
-		"vite": "^4.0.4",
+		"vite": "^4.1.4",
 		"vite-plugin-static-copy": "^0.13.0",
-		"vite-tsconfig-paths": "^4.0.3",
+		"vite-tsconfig-paths": "^4.0.5",
 		"web-component-analyzer": "^2.0.0-next.4"
 	},
 	"msw": {
