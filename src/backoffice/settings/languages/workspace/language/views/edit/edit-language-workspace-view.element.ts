@@ -61,6 +61,8 @@ export class UmbEditLanguageWorkspaceViewElement extends UmbLitElement {
 	constructor() {
 		super();
 
+		/* TODO: we will need some system to notify about an action has been executed.
+		 In the language workspace we want to clear a default language change warning and reset the initial state after a save action has been executed. */
 		let initialStateSet = false;
 
 		this.consumeContext<UmbLanguageWorkspaceContext>('umbWorkspaceContext', (instance) => {

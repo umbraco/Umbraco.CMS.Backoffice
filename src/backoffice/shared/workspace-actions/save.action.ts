@@ -8,6 +8,10 @@ export class UmbSaveWorkspaceAction extends UmbWorkspaceAction<any, UmbWorkspace
 		super(host, repositoryAlias);
 	}
 
+	/* TODO: we need a solution for all actions to notify the system that is has been executed.
+		There might be cases where we need to do something after the action has been executed.
+		Ex. "reset" a workspace after a save action has been executed.
+	*/
 	async execute() {
 		if (!this.workspaceContext) return;
 		// TODO: it doesn't get the updated value
