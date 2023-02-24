@@ -4,7 +4,6 @@ import { customElement, state } from 'lit/decorators.js';
 import { UmbWorkspaceEntityContextInterface } from '../../../workspace-context/workspace-entity-context.interface';
 import type { DocumentModel } from '@umbraco-cms/backend-api';
 import { UmbLitElement } from '@umbraco-cms/element';
-import '../../../../history-ui-maker/history-ui-maker.element';
 
 @customElement('umb-workspace-view-content-info')
 export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
@@ -74,7 +73,20 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 						<h2>History</h2>
 						<uui-button label="Rollback" look="outline">Rollback...</uui-button>
 					</div>
-					<umb-history-ui-maker></umb-history-ui-maker>
+					<umb-history-ui-list>
+						<umb-history-ui-node name="Lone Iversen" detail="December 5, 2022 2:59 PM">
+							<span><uui-tag look="secondary" label="Cleanup">Save</uui-tag>Content saved</span>
+							<uui-button slot="actions">Hi</uui-button>
+						</umb-history-ui-node>
+						<umb-history-ui-node name="Umbraco HQ" detail="December 5, 2022 2:59 PM">
+							<span><uui-tag look="secondary" label="Cleanup">Save</uui-tag>Content saved</span>
+							<uui-button slot="actions">Hi</uui-button>
+						</umb-history-ui-node>
+						<umb-history-ui-node name="Umbraco HQ" detail="December 5, 2022 2:59 PM">
+							<span><uui-tag look="secondary" label="Cleanup">Save</uui-tag>Content saved</span>
+							<uui-button slot="actions">Hi</uui-button>
+						</umb-history-ui-node>
+					</umb-history-ui-list>
 				</uui-box>
 			</div>
 			<div class="container">

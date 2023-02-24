@@ -12,11 +12,12 @@ export interface logItem {
 
 export type logType = 'Save' | 'Publish' | 'ContentVersionPreventCleanup' | 'ContentVersionEnableCleanup';
 
-@customElement('umb-history-ui-maker')
-export class UmbHistoryUIMaker extends UmbLitElement {
+@customElement('umb-history-ui-list')
+export class UmbHistoryUIListElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
+			/*
 			:host {
 				display: block;
 				position: relative;
@@ -68,10 +69,32 @@ export class UmbHistoryUIMaker extends UmbLitElement {
 				display: flex;
 				align-items: center;
 				gap: var(--uui-size-space-4);
+			}*/
+
+			:host {
+				display: block;
+			}
+
+			::slotted(*) {
+				position: relative;
+				padding: calc(var(--uui-size-2) + 1px);
+			}
+
+			::slotted(*:not(:first-child)) {
+				margin-top: 1px;
+			}
+			::slotted(*:not(:first-child))::before {
+				content: '';
+				position: absolute;
+				top: -1px;
+				width: 100%;
+				left: 0;
+				right: 0;
+				border-top: 1px solid var(--uui-color-border);
 			}
 		`,
 	];
-
+	/*
 	// TODO: Make properties to insert into UI
 	@state()
 	private _logData?: logItem[] = [
@@ -94,8 +117,15 @@ export class UmbHistoryUIMaker extends UmbLitElement {
 		},
 		{ userName: 'Test User', timestamp: 'December 5, 2022 2:59 PM', logType: 'Save' },
 		{ userName: 'Test User', timestamp: 'December 5, 2022 2:59 PM', logType: 'Save' },
-	].reverse() as logItem[];
+	].reverse() as logItem[];*/
 
+	render() {
+		return html`<div>
+			<slot></slot>
+		</div>`;
+	}
+
+	/*
 	render() {
 		return html`<div id="wrapper">
 			${this._logData?.map((logItem) => {
@@ -148,13 +178,13 @@ export class UmbHistoryUIMaker extends UmbLitElement {
 			default:
 				return nothing;
 		}
-	}
+	}*/
 }
 
-export default UmbHistoryUIMaker;
+export default UmbHistoryUIListElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-history-ui-maker': UmbHistoryUIMaker;
+		'umb-history-ui-list': UmbHistoryUIListElement;
 	}
 }
