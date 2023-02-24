@@ -102,7 +102,7 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 								<div slot="append">
 									<uui-button id="variant-selector-toggle" @click=${this._toggleVariantSelector}>
 										English (United States)
-										<uui-caret></uui-caret>
+										<uui-symbol-expand></uui-symbol-expand>
 									</uui-button>
 								</div>
 						  `
