@@ -40,5 +40,5 @@ import './empty-state/empty-state.element';
 
 import './debug/debug.element';
 
-import './history-ui-list/history-ui-list.element';
-import './history-ui-node/history-ui-node.element';
+import './history-ui/history-ui-list.element';
+import './history-ui/history-ui-node.element';
