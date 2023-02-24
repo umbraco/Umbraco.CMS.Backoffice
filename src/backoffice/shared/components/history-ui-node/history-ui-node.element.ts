@@ -37,7 +37,7 @@ export class UmbHistoryUINodeElement extends UmbLitElement {
 
 			.user-info {
 				display: flex;
-				align-items: center;
+				align-items: flex-end;
 				gap: var(--uui-size-space-5);
 			}
 			.user-info div {
