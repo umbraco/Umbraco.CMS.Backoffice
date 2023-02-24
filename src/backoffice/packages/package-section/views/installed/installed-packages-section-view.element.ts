@@ -18,40 +18,30 @@ export class UmbInstalledPackagesSectionViewElement extends UmbLitElement {
 	@state()
 	private _routes: IRoute[] = [];
 
-	private _workspaces: Array<ManifestWorkspace> = [];
+@customElement('umb-installed-packages-section-view')
+export class UmbInstalledPackagesSectionView extends UmbLitElement {
+	@state()
+	private _installedPackages: UmbPackage[] = [];
+
+	private repository: UmbPackageRepository;
 
 	constructor() {
 		super();
 
-		this.observe(umbExtensionsRegistry?.extensionsOfType('workspace'), (workspaceExtensions) => {
-			this._workspaces = workspaceExtensions;
-			this._createRoutes();
-		});
+		this.repository = new UmbPackageRepository(this);
 	}
 
-	private _createRoutes() {
-		const routes: any[] = [
-			{
-				path: 'overview',
-				component: () => import('./packages-installed-overview.element'),
-			},
-		];
+	firstUpdated() {
+		this._loadInstalledPackages();
+	}
 
-		// TODO: find a way to make this reuseable across:
-		this._workspaces?.map((workspace: ManifestWorkspace) => {
-			routes.push({
-				path: `${workspace.meta.entityType}/:key`,
-				component: () => createExtensionElement(workspace),
-				setup: (component: Promise<HTMLElement>, info: IRoutingInfo) => {
-					component.then((el: HTMLElement) => {
-						(el as any).entityKey = info.match.params.key;
-					});
-				},
-			});
-			routes.push({
-				path: workspace.meta.entityType,
-				component: () => createExtensionElement(workspace),
-			});
+	/**
+	 * Fetch the installed packages from the server
+	 */
+	private async _loadInstalledPackages() {
+		const package$ = await this.repository.rootItems();
+		package$.subscribe((packages) => {
+			this._installedPackages = packages.filter((p) => !!p.name);
 		});
 
 		routes.push({
@@ -62,14 +52,23 @@ export class UmbInstalledPackagesSectionViewElement extends UmbLitElement {
 	}
 
 	render() {
-		return html`<umb-router-slot .routes=${this._routes}></umb-router-slot>`;
+		return html`<uui-box headline="Installed packages">
+			<uui-ref-list>
+				${repeat(
+					this._installedPackages,
+					(item) => item.name,
+					(item) =>
+						html`<umb-installed-packages-section-view-item .package=${item}></umb-installed-packages-section-view-item>`
+				)}
+			</uui-ref-list>
+		</uui-box>`;
 	}
 }
 
-export default UmbInstalledPackagesSectionViewElement;
+export default UmbInstalledPackagesSectionView;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-section-view-packages-installed': UmbInstalledPackagesSectionViewElement;
+		'umb-installed-packages-section-view': UmbInstalledPackagesSectionView;
 	}
 }
