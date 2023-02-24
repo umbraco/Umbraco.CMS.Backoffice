@@ -1,46 +1,53 @@
 import { html, css, nothing } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
-import { delay, firstValueFrom, map } from 'rxjs';
-import { UUIButtonElement } from '@umbraco-ui/uui';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import { firstValueFrom, map } from 'rxjs';
+import { UUIButtonState } from '@umbraco-ui/uui';
 
 import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../core/modal';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 
-import type { ManifestPackageView, UmbPackage } from '@umbraco-cms/models';
+import type { ManifestPackageView } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
 
-@customElement('umb-packages-installed-item')
-export class UmbPackagesInstalledItem extends UmbLitElement {
+@customElement('umb-installed-packages-section-view-item')
+export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 	static styles = css`
 		:host {
 			display: flex;
 		}
 	`;
-	@property({ type: Object })
-	package!: UmbPackage;
 
-	@query('#migration')
-	private _migrationButton?: UUIButtonElement;
+	@property()
+	name?: string;
 
-	/*
+	@property()
+	version?: string;
+
+	@property()
+	hasPendingMigrations = false;
+
+	@state()
+	private _migrationButtonState?: UUIButtonState;
+
 	@state()
 	private _packageView?: ManifestPackageView;
 
-	private _umbModalService?: UmbModalService;
+	private _modalService?: UmbModalService;
 
 	constructor() {
 		super();
 
-		this.consumeContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, (modalService) => {
-			this._umbModalService = modalService;
+		this.consumeContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, (modalService: UmbModalService) => {
+			this._modalService = modalService;
 		});
 	}
 
 	connectedCallback(): void {
 		super.connectedCallback();
 
-		if (this.package.name?.length) {
-			this.findPackageView(this.package.name);
+		if (this.name?.length) {
+			this.findPackageView(this.name);
 		}
 	}
 
@@ -59,25 +66,26 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 		}
 
 		this._packageView = views[0];
-	}*/
+	}
 
 	async _onMigration() {
-		if (!this._migrationButton) return;
-		this._migrationButton.state = 'waiting';
+		this._migrationButtonState = 'waiting';
+		alert('Running migrations for ' + this.name);
+		this._migrationButtonState = 'success';
 	}
 
 	render() {
 		return html`
 			<uui-ref-node-package
-				name=${this.package.name}
-				version="${this.package.version}"
-				author="${this.package.author}"
-				@open=${this._onClick}
-				?disabled="${!this.package.packageView}">
+				name=${ifDefined(this.name)}
+				version="${ifDefined(this.version)}"
+				@open=${this._onConfigure}
+				?disabled="${!this._packageView}">
 				<div slot="tag">
-					${this.package.hasPendingMigrations
+					${this.hasPendingMigrations
 						? html`<uui-button
 								@click="${this._onMigration}"
+								.state=${this._migrationButtonState}
 								color="warning"
 								look="primary"
 								label="Run pending package migrations">
@@ -89,7 +97,6 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 		`;
 	}
 
-	/*
 	private async _onConfigure() {
 		if (!this._packageView) {
 			console.warn('Tried to configure package without view');
@@ -103,16 +110,16 @@ export class UmbPackagesInstalledItem extends UmbLitElement {
 			return;
 		}
 
-		this._umbModalService?.open(element, { data: this.package, size: 'small', type: 'sidebar' });
-	}*/
-
-	private async _onClick() {
-		window.history.pushState({}, '', `/section/packages/view/installed/package/${this.package.key}`);
+		this._modalService?.open(element, {
+			data: { name: this.name, version: this.version },
+			size: 'full',
+			type: 'sidebar',
+		});
 	}
 }
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-installed-packages-section-view-item': UmbInstalledPackagesSectionViewItemElement;
+		'umb-installed-packages-section-view-item': UmbInstalledPackagesSectionViewItem;
 	}
 }
