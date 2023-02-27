@@ -8,10 +8,11 @@ import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from './section.context'
 import type { ManifestSectionView, ManifestWorkspace, ManifestSidebarMenu } from '@umbraco-cms/models';
 import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { UmbRouterSlotChangeEvent } from '@umbraco-cms/router';
 
 import './section-sidebar-menu/section-sidebar-menu.element.ts';
 import './section-views/section-views.element.ts';
+import '../../../settings/languages/app-language-select.element.ts';
+import { UmbRouterSlotChangeEvent } from '@umbraco-cms/router';
 
 @customElement('umb-section')
 export class UmbSectionElement extends UmbLitElement {
@@ -28,6 +29,10 @@ export class UmbSectionElement extends UmbLitElement {
 				overflow: auto;
 				height: 100%;
 			}
+
+			h3 {
+				padding: var(--uui-size-4) var(--uui-size-8);
+			}
 		`,
 	];
 
@@ -37,11 +42,16 @@ export class UmbSectionElement extends UmbLitElement {
 	@state()
 	private _menus?: Array<ManifestSidebarMenu>;
 
-	private _workspaces?: Array<ManifestWorkspace>;
-
 	@state()
 	private _views?: Array<ManifestSectionView>;
 
+	@state()
+	private _sectionLabel = '';
+
+	@state()
+	private _sectionPathname = '';
+
+	private _workspaces?: Array<ManifestWorkspace>;
 	private _sectionContext?: UmbSectionContext;
 	private _sectionAlias?: string;
 
@@ -190,6 +200,8 @@ export class UmbSectionElement extends UmbLitElement {
 			${this._menus && this._menus.length > 0
 				? html`
 						<umb-section-sidebar>
+							<!-- TODO: this should be an extension point and only shown in the content section sidebar -->
+							<umb-app-language-select></umb-app-language-select>
 							<umb-extension-slot
 								type="sidebarMenu"
 								.filter=${(items: ManifestSidebarMenu) => items.meta.sections.includes(this._sectionAlias || '')}

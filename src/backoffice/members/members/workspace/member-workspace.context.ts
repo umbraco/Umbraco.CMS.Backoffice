@@ -18,14 +18,14 @@ export class UmbWorkspaceMemberContext
 	}
 
 	setName(name: string) {
-		this.#manager.state.update({name});
+		this.#manager.state.update({ name });
 	}
 
 	getEntityType = this.#manager.getEntityType;
 	getUnique = this.#manager.getEntityKey;
 	getEntityKey = this.#manager.getEntityKey;
 	getStore = this.#manager.getStore;
-	getData = this.#manager.getData;
+	getData = this.#manager.getData as any; // TODO: fix this type mismatch, but this will be done when we move to repositories.
 	load = this.#manager.load;
 	create = this.#manager.create;
 	save = this.#manager.save;
