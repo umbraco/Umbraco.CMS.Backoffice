@@ -1,7 +1,7 @@
 import { Subject, takeUntil } from 'rxjs';
 import { UmbPackageRepository } from './package.repository';
 import { UmbController, UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { isManifestJSType, UmbExtensionRegistry } from '@umbraco-cms/extensions-api';
+import { UmbExtensionRegistry } from '@umbraco-cms/extensions-api';
 
 export class UmbServerExtensionController extends UmbController {
 	#unobserve = new Subject<void>();
@@ -32,13 +32,7 @@ export class UmbServerExtensionController extends UmbController {
 			)
 			.subscribe((extensions) => {
 				extensions.forEach((extension) => {
-					/**
-					 * Crude check to see if extension is of type "js" since it is safe to assume we do not
-					 * need to load any other types of extensions in the backoffice (we need a js file to load)
-					 */
-					if (isManifestJSType(extension)) {
-						this.extensionRegistry.register(extension);
-					}
+					this.extensionRegistry.register(extension);
 				});
 			});
 	}
