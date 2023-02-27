@@ -11,7 +11,6 @@ export default meta;
 type Story = StoryObj<UmbInputCheckboxListElement>;
   
 export const Overview: Story = {
-    decorators: [],
     args: {
         list: [
             {

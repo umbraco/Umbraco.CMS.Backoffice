@@ -11,7 +11,6 @@ export default meta;
 type Story = StoryObj<UmbInputColorPickerElement>;
   
 export const Overview: Story = {
-    decorators: [],
     args: {
         showLabels: true,
         swatches: [
@@ -28,7 +27,6 @@ export const Overview: Story = {
 };
 
 export const WithoutLabels: Story = {
-    decorators: [],
     args: {
         showLabels: false,
         swatches: [
@@ -47,7 +45,6 @@ export const WithoutLabels: Story = {
 // TODO: This doesn't check the correct swatch when the value is set
 // Perhaps a BUG ?
 export const WithValueLabels: Story = {
-    decorators: [],
     args: {
         showLabels: true,
         swatches: [
