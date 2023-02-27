@@ -27,12 +27,9 @@ export class UmbExtensionRegistry {
 		// If entrypoint extension, we should load and run it immediately
 		if (manifest.type === 'entrypoint') {
 			loadExtension(manifest as ManifestEntrypoint).then((js) => {
+				// If the extension has a default export, be sure to run that or else let the module handle itself
 				if (hasDefaultExport<HTMLElementConstructor>(js)) {
 					new js.default();
-				} else {
-					console.error(
-						`Extension with alias '${manifest.alias}' of type 'entrypoint' must have a default export of its JavaScript module.`
-					);
 				}
 			});
 		}
