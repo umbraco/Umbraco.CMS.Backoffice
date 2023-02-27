@@ -23,11 +23,11 @@ export class UmbInstalledPackagesSectionView extends UmbLitElement {
 				padding-bottom: var(--uui-size-space-1);
 			}
 
-			umb-packages-installed-item {
+			umb-installed-packages-section-view-item {
 				padding: var(--uui-size-space-3) 0 var(--uui-size-space-2);
 			}
 
-			umb-packages-installed-item:not(:first-child) {
+			umb-installed-packages-section-view-item:not(:first-child) {
 				border-top: 1px solid var(--uui-color-border, #d8d7d9);
 			}
 

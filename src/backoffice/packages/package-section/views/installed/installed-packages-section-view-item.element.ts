@@ -15,6 +15,7 @@ export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 	static styles = css`
 		:host {
 			display: flex;
+			min-height: 47px;
 		}
 	`;
 

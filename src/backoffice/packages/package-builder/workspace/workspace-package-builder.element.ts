@@ -1,31 +1,13 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
-import { css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UUIBooleanInputEvent, UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
+import { css, html, nothing } from 'lit';
+import { customElement, property, query, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit-html/directives/if-defined.js';
+import { UmbInputDocumentPickerElement } from '../../../shared/components/input-document-picker/input-document-picker.element';
+import { UmbInputMediaPickerElement } from '../../../shared/components/input-media-picker/input-media-picker.element';
 import { UmbLitElement } from '@umbraco-cms/element';
-import '../../../shared/components/input-document-picker/input-document-picker.element';
-import '../../../shared/property-editors/uis/media-picker/property-editor-ui-media-picker.element';
-import '../../../shared/property-editors/uis/checkbox-list/property-editor-ui-checkbox-list.element';
-
-//temp
-interface Package {
-	key?: string;
-	name?: string;
-	packageGuid?: string;
-	contentLoadChildNodes?: boolean;
-	contentNodeId?: string;
-	dataTypes?: string[];
-	dictionaryItems?: string[];
-	documentTypes?: string[];
-	languages?: string[];
-	macros?: string[];
-	mediaLoadChildNodes?: boolean;
-	mediaTypes?: string[];
-	mediaUdis?: string[];
-	scripts?: string[];
-	stylesheet?: string[];
-	templates?: string[];
-}
+import { PackageDefinitionModel, PackageResource } from '@umbraco-cms/backend-api';
+import { tryExecuteAndNotify } from '@umbraco-cms/resources';
 
 @customElement('umb-workspace-package-builder')
 export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
@@ -46,10 +28,7 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 			}
 
 			uui-checkbox {
-				display: block; //temp
-			}
-			uui-box uui-button {
-				width: 100%; //temp
+				margin-top: var(--uui-size-space-4);
 			}
 		`,
 	];
@@ -58,117 +37,245 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 	entityKey?: string;
 
 	@state()
-	private _package?: Package;
+	private _package: PackageDefinitionModel = {};
 
-	private _modalService?: UmbModalService;
+	@query('#package-name-input')
+	private _packageNameInput!: UUIInputElement;
 
 	constructor() {
 		super();
-		this.consumeContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, (_instance) => {
-			this._modalService = _instance;
-		});
 	}
 
 	connectedCallback(): void {
 		super.connectedCallback();
-		if (this.entityKey) this._getPackageData();
+		if (this.entityKey) this.#getPackageCreated();
 	}
 
-	private _getPackageData() {
-		//TODO
-		this._package = {
-			key: '2a0181ec-244b-4068-a1d7-2f95ed7e6da6',
-			name: 'A created package',
-		};
+	async #getPackageCreated() {
+		if (!this.entityKey) return;
+		const { data } = await tryExecuteAndNotify(this, PackageResource.getPackageCreatedByKey({ key: this.entityKey }));
+		if (!data) return;
+		this._package = data as PackageDefinitionModel;
 	}
 
-	private _navigateBack() {
+	async #download() {
+		if (!this._package?.key) return;
+		const response = await tryExecuteAndNotify(
+			this,
+			PackageResource.getPackageCreatedByKeyDownload({ key: this._package.key })
+		);
+	}
+
+	#nameDefined() {
+		const valid = this._packageNameInput.checkValidity();
+		valid ? (this._packageNameInput.error = false) : (this._packageNameInput.error = true);
+		return valid;
+	}
+
+	async #save() {
+		if (!this.#nameDefined()) return;
+		const response = await tryExecuteAndNotify(
+			this,
+			PackageResource.postPackageCreated({ requestBody: this._package })
+		);
+		if (!response.data || response.error) return;
+		this._package = response.data as PackageDefinitionModel;
+		this.#navigateBack();
+	}
+
+	async #update() {
+		if (!this.#nameDefined()) return;
+		if (!this._package?.key) return;
+		const response = await tryExecuteAndNotify(
+			this,
+			PackageResource.putPackageCreatedByKey({ key: this._package.key, requestBody: this._package })
+		);
+
+		if (response.error) return;
+		this.#navigateBack();
+	}
+
+	#navigateBack() {
 		window.history.pushState({}, '', '/section/packages/view/created');
 	}
 
 	render() {
 		return html`
 			<umb-workspace-layout alias="Umb.Workspace.PackageBuilder">
-				${this._renderHeader()}
-				<uui-box class="wrapper" headline="Package Content"> ${this._renderEditors()} </uui-box>
-				${this._renderActions()}
+				${this.#renderHeader()}
+				<uui-box class="wrapper" headline="Package Content"> ${this.#renderEditors()} </uui-box>
+				${this.#renderActions()}
 			</umb-workspace-layout>
 		`;
 	}
 
-	private _renderEditors() {
-		return html`<umb-workspace-property-layout label="Content" description="">
-				<div slot="editor">
-					<umb-input-document-picker max="1"></umb-input-document-picker>
-				</div>
-			</umb-workspace-property-layout>
-			<umb-workspace-property-layout label="Media" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-media-picker></umb-property-editor-ui-media-picker>
-				</div>
-			</umb-workspace-property-layout>
-			<umb-workspace-property-layout label="Document Types" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
-				</div>
-			</umb-workspace-property-layout>
-			<umb-workspace-property-layout label="Media Types" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
-				</div>
-			</umb-workspace-property-layout>
-			<umb-workspace-property-layout label="Languages" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
-				</div>
-			</umb-workspace-property-layout>
-			<umb-workspace-property-layout label="Dictionary" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
-				</div> </umb-workspace-property-layout
-			><umb-workspace-property-layout label="Data Types" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
-				</div>
-			</umb-workspace-property-layout>
-			<umb-workspace-property-layout label="Templates" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
-				</div>
-			</umb-workspace-property-layout>
-			<umb-workspace-property-layout label="Stylesheets" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
-				</div>
-			</umb-workspace-property-layout>
-			<umb-workspace-property-layout label="Scripts" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
-				</div>
-			</umb-workspace-property-layout>
-			<umb-workspace-property-layout label="Partial Views" description="">
-				<div slot="editor">
-					<umb-property-editor-ui-checkbox-list></umb-property-editor-ui-checkbox-list>
-				</div>
-			</umb-workspace-property-layout>`;
-	}
-
-	private _renderHeader() {
+	#renderHeader() {
 		return html`<div class="header" slot="header">
-			<uui-button compact @click="${this._navigateBack}">
+			<uui-button compact @click="${this.#navigateBack}" label="Back to created package overview">
 				<uui-icon name="umb:arrow-left"></uui-icon>
 			</uui-button>
 			<uui-input
+				required
+				id="package-name-input"
 				label="Name of the package"
 				placeholder="Enter a name"
-				.value="${this._package?.name || ''}"></uui-input>
+				value="${ifDefined(this._package?.name)}"
+				@change="${(e: UUIInputEvent) => (this._package.name = e.target.value as string)}"></uui-input>
 		</div>`;
 	}
 
-	private _renderActions() {
+	#renderActions() {
 		return html`<div slot="actions">
-			<uui-button color="" look="secondary" label="Download package">Download</uui-button>
-			<uui-button color="positive" look="primary" label="Save changes to package">Save</uui-button>
+			${this._package?.key
+				? html`<uui-button @click="${this.#download}" color="" look="secondary" label="Download package">
+						Download
+				  </uui-button>`
+				: nothing}
+			<uui-button
+				@click="${this._package.key ? this.#update : this.#save}"
+				color="positive"
+				look="primary"
+				label="Save changes to package">
+				Save
+			</uui-button>
+		</div>`;
+	}
+
+	#renderEditors() {
+		return html`<umb-workspace-property-layout label="Content" description="">
+				${this.#renderContentSection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Media" description=""
+				>${this.#renderMediaSection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Document Types" description="">
+				${this.#renderDocumentTypeSection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Media Types" description="">
+				${this.#renderMediaTypeSection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Languages" description="">
+				${this.#renderLanguageSection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Dictionary" description="">
+				${this.#renderDictionarySection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Data Types" description="">
+				${this.#renderDataTypeSection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Templates" description="">
+				${this.#renderTemplateSection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Stylesheets" description="">
+				${this.#renderStylesheetsSection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Scripts" description="">
+				${this.#renderScriptsSection()}
+			</umb-workspace-property-layout>
+
+			<umb-workspace-property-layout label="Partial Views" description="">
+				${this.#renderPartialViewSection()}
+			</umb-workspace-property-layout>`;
+	}
+
+	#renderContentSection() {
+		return html`
+			<div slot="editor">
+				<umb-input-document-picker
+					.value=${this._package.contentNodeId ?? ''}
+					max="1"
+					@change="${(e: CustomEvent) =>
+						(this._package.contentNodeId = (e.target as UmbInputDocumentPickerElement).selectedKeys[0])}">
+				</umb-input-document-picker>
+				<uui-checkbox
+					label="Include child nodes"
+					.checked="${this._package.contentLoadChildNodes ?? false}"
+					@change="${(e: UUIBooleanInputEvent) => (this._package.contentLoadChildNodes = e.target.checked)}">
+					Include child nodes
+				</uui-checkbox>
+			</div>
+		`;
+	}
+
+	#renderMediaSection() {
+		return html`
+			<div slot="editor">
+				<umb-input-media-picker
+					.selectedKeys=${this._package.mediaKeys ?? []}
+					@change="${(e: CustomEvent) =>
+						(this._package.mediaKeys = (
+							e.target as UmbInputMediaPickerElement
+						).selectedKeys)}"></umb-input-media-picker>
+				<uui-checkbox
+					label="Include child nodes"
+					.checked="${this._package.mediaLoadChildNodes ?? false}"
+					@change="${(e: UUIBooleanInputEvent) => (this._package.mediaLoadChildNodes = e.target.checked)}">
+					Include child nodes
+				</uui-checkbox>
+			</div>
+		`;
+	}
+
+	#renderDocumentTypeSection() {
+		return html`<div slot="editor">
+			<umb-input-checkbox-list></umb-input-checkbox-list>
+		</div>`;
+	}
+
+	#renderMediaTypeSection() {
+		return html`<div slot="editor">
+			<umb-input-checkbox-list></umb-input-checkbox-list>
+		</div>`;
+	}
+
+	#renderLanguageSection() {
+		return html`<div slot="editor">
+			<umb-input-checkbox-list></umb-input-checkbox-list>
+		</div>`;
+	}
+
+	#renderDictionarySection() {
+		return html`<div slot="editor">
+			<umb-input-checkbox-list></umb-input-checkbox-list>
+		</div>`;
+	}
+
+	#renderDataTypeSection() {
+		return html`<div slot="editor">
+			<umb-input-checkbox-list></umb-input-checkbox-list>
+		</div>`;
+	}
+
+	#renderTemplateSection() {
+		return html`<div slot="editor">
+			<umb-input-checkbox-list></umb-input-checkbox-list>
+		</div>`;
+	}
+
+	#renderStylesheetsSection() {
+		return html`<div slot="editor">
+			<umb-input-checkbox-list></umb-input-checkbox-list>
+		</div>`;
+	}
+
+	#renderScriptsSection() {
+		return html`<div slot="editor">
+			<umb-input-checkbox-list></umb-input-checkbox-list>
+		</div>`;
+	}
+
+	#renderPartialViewSection() {
+		return html`<div slot="editor">
+			<umb-input-checkbox-list></umb-input-checkbox-list>
 		</div>`;
 	}
 }
