@@ -3,7 +3,7 @@ import './input-checkbox-list.element';
 import type { UmbInputCheckboxListElement } from './input-checkbox-list.element';
 
 const meta: Meta<UmbInputCheckboxListElement> = {
-    title: 'Components/Checkbox List',
+    title: 'Components/Inputs/Checkbox List',
     component: 'umb-input-checkbox-list'
 };
   

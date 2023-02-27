@@ -3,7 +3,7 @@ import './input-color-picker.element';
 import type { UmbInputColorPickerElement } from './input-color-picker.element';
 
 const meta: Meta<UmbInputColorPickerElement> = {
-    title: 'Components/Color Picker',
+    title: 'Components/Inputs/Color Picker',
     component: 'umb-input-color-picker'
 };
   
