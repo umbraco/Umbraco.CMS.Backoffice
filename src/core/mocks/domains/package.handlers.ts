@@ -34,6 +34,12 @@ export const handlers = [
 		);
 	}),
 
+	rest.post(umbracoPath('/package/:name/run-migration'), async (_req, res, ctx) => {
+		const name = _req.params.name as string;
+		if (!name) return res(ctx.status(404));
+		return res(ctx.status(200));
+	}),
+
 	rest.get(umbracoPath('/package/created'), async (_req, res, ctx) => {
 		// read all
 		return res(

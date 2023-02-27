@@ -9,6 +9,9 @@ import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/exte
 
 import type { ManifestPackageView } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
+import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+import { PackageResource } from '@umbraco-cms/backend-api';
+import { UmbNotificationService, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/notification';
 
 @customElement('umb-installed-packages-section-view-item')
 export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
@@ -35,12 +38,16 @@ export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 	private _packageView?: ManifestPackageView;
 
 	private _modalService?: UmbModalService;
+	private _notificationService?: UmbNotificationService;
 
 	constructor() {
 		super();
 
 		this.consumeContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, (modalService: UmbModalService) => {
 			this._modalService = modalService;
+		});
+		this.consumeContext(UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN, (notificationService) => {
+			this._notificationService = notificationService;
 		});
 	}
 
@@ -70,9 +77,29 @@ export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 	}
 
 	async _onMigration() {
+		if (!this.name) return;
+		const modalHandler = this._modalService?.confirm({
+			color: 'positive',
+			headline: `Run migrations for ${this.name}?`,
+			content: `Do you want to start run migrations for ${this.name}`,
+			confirmLabel: 'Run migrations',
+		});
+
+		const migrationConfirmed = await modalHandler?.onClose().then(({ confirmed }: any) => {
+			return confirmed;
+		});
+
+		if (!migrationConfirmed == true) return;
 		this._migrationButtonState = 'waiting';
-		alert('Running migrations for ' + this.name);
+		const { error } = await tryExecuteAndNotify(
+			this,
+			PackageResource.postPackageByNameRunMigration({ name: this.name })
+		);
+		if (error) return;
+		this._notificationService?.peek('positive', { data: { message: 'Migrations completed' } });
 		this._migrationButtonState = 'success';
+		await new Promise((resolve) => setTimeout(resolve, 2000));
+		this.hasPendingMigrations = false;
 	}
 
 	render() {

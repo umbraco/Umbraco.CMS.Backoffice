@@ -5,9 +5,11 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { UmbInputDocumentPickerElement } from '../../../shared/components/input-document-picker/input-document-picker.element';
 import { UmbInputMediaPickerElement } from '../../../shared/components/input-media-picker/input-media-picker.element';
+import { UmbInputLanguagePickerElement } from '../../../shared/components/input-language-picker/input-language-picker.element';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { PackageDefinitionModel, PackageResource } from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+import { UmbNotificationService, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/notification';
 
 @customElement('umb-workspace-package-builder')
 export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
@@ -21,6 +23,8 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 
 			.header {
 				margin: 0 var(--uui-size-layout-1);
+				display: flex;
+				gap: var(--uui-size-space-4);
 			}
 
 			uui-box {
@@ -42,8 +46,13 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 	@query('#package-name-input')
 	private _packageNameInput!: UUIInputElement;
 
+	private _notificationService?: UmbNotificationService;
+
 	constructor() {
 		super();
+		this.consumeContext(UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN, (notificationService) => {
+			this._notificationService = notificationService;
+		});
 	}
 
 	connectedCallback(): void {
@@ -68,7 +77,7 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 
 	#nameDefined() {
 		const valid = this._packageNameInput.checkValidity();
-		valid ? (this._packageNameInput.error = false) : (this._packageNameInput.error = true);
+		if (!valid) this._notificationService?.peek('danger', { data: { message: 'Package missing a name' } });
 		return valid;
 	}
 
@@ -239,7 +248,11 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 
 	#renderLanguageSection() {
 		return html`<div slot="editor">
-			<umb-input-checkbox-list></umb-input-checkbox-list>
+			<umb-input-language-picker
+				.value="${this._package.languages?.join(',') ?? ''}"
+				@change="${(e: CustomEvent) => {
+					this._package.languages = (e.target as UmbInputLanguagePickerElement).selectedIsoCodes;
+				}}"></umb-input-language-picker>
 		</div>`;
 	}
 
