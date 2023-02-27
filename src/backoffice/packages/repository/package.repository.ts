@@ -4,6 +4,8 @@ import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
 import { ManifestBase } from '@umbraco-cms/extensions-registry';
 
+// TODO: Figure out if we should base stores like this on something more generic for "collections" rather than trees.
+
 /**
  * A repository for Packages which mimicks a tree store.
  * @export
@@ -18,8 +20,8 @@ export class UmbPackageRepository {
 		this.#init = new Promise((res) => {
 			new UmbContextConsumerController(host, UMB_PACKAGE_STORE_TOKEN, (instance) => {
 				this.#packageStore = instance;
-				this.#requestRootItems(instance);
-				this.#requestPackageMigrations(instance);
+				this.requestRootItems(instance);
+				this.requestPackageMigrations(instance);
 				res();
 			});
 		});
@@ -28,9 +30,8 @@ export class UmbPackageRepository {
 	/**
 	 * Request the root items from the Data Source
 	 * @memberOf UmbPackageRepository
-	 * @private
 	 */
-	async #requestRootItems(store: UmbPackageStore) {
+	async requestRootItems(store: UmbPackageStore) {
 		if (store.isPackagesLoaded) {
 			return;
 		}
@@ -55,7 +56,11 @@ export class UmbPackageRepository {
 		}
 	}
 
-	async #requestPackageMigrations(store: UmbPackageStore) {
+	/**
+	 * Request the package migrations from the Data Source
+	 * @memberOf UmbPackageRepository
+	 */
+	async requestPackageMigrations(store: UmbPackageStore) {
 		const { data: migrations } = await this.#packageSource.getPackageMigrations();
 
 		if (migrations) {
