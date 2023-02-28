@@ -23,18 +23,8 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 				gap: var(--uui-size-layout-1);
 			}
 
-			/*TODO: Do we want to set up a layout element for this setup? (css styles of :host and div.container) */
-
-			div.headline {
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}
-
-			div.headline h2 {
-				font-size: var(--uui-type-h5-size);
-				font-weight: bold;
-				margin: 0;
+			uui-tag uui-icon {
+				margin-right: var(--uui-size-space-1);
 			}
 		`,
 	];
@@ -68,23 +58,19 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 	render() {
 		return html`<div class="container">
 				<uui-box headline="Links"> Info Workspace View for ${this._nodeName} </uui-box>
-				<uui-box>
-					<div class="headline" slot="headline">
-						<h2>History</h2>
-						<uui-button label="Rollback" look="outline">Rollback...</uui-button>
-					</div>
+				<uui-box headline="History">
 					<umb-history-ui-list>
 						<umb-history-ui-node name="Lone Iversen" detail="December 5, 2022 2:59 PM">
 							<span><uui-tag look="secondary" label="Cleanup">Save</uui-tag>Content saved</span>
-							<uui-tag look="secondary" slot="actions">Hi</uui-tag>
+							<uui-tag look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-tag>
 						</umb-history-ui-node>
 						<umb-history-ui-node name="Umbraco HQ" detail="December 5, 2022 2:59 PM">
 							<span><uui-tag look="secondary" label="Cleanup">Save</uui-tag>Content saved</span>
-							<uui-tag look="secondary" slot="actions">Hi</uui-tag>
+							<uui-tag look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-tag>
 						</umb-history-ui-node>
 						<umb-history-ui-node name="Umbraco HQ" detail="December 5, 2022 2:59 PM">
 							<span><uui-tag look="secondary" label="Cleanup">Save</uui-tag>Content saved</span>
-							<uui-tag look="secondary" slot="actions">Hi</uui-tag>
+							<uui-tag look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-tag>
 						</umb-history-ui-node>
 					</umb-history-ui-list>
 				</uui-box>
