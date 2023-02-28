@@ -101,7 +101,6 @@ export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 		if (error) return;
 		this._notificationService?.peek('positive', { data: { message: 'Migrations completed' } });
 		this._migrationButtonState = 'success';
-		await new Promise((resolve) => setTimeout(resolve, 2000));
 		this.hasPendingMigrations = false;
 	}
 

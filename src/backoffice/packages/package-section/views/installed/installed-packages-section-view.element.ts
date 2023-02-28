@@ -79,18 +79,24 @@ export class UmbInstalledPackagesSectionView extends UmbLitElement {
 				};
 			});
 
-			this._installedPackages = [
-				...this._installedPackages,
+			this._migrationPackages = [
 				...migrations.map((m) => ({
 					name: m.packageName,
 					hasPendingMigrations: m.hasPendingMigrations ?? false,
 				})),
 			];
+			/*this._installedPackages = [
+				...this._installedPackages,
+				...migrations.map((m) => ({
+					name: m.packageName,
+					hasPendingMigrations: m.hasPendingMigrations ?? false,
+				})),
+			];*/
 		});
 	}
 
 	render() {
-		if (this._installedPackages.length) return html`${this._renderInstalled()} ${this._renderCustomMigrations()}`;
+		if (this._installedPackages.length) return html`${this._renderCustomMigrations()} ${this._renderInstalled()} `;
 		return html`<div class="no-packages">
 			<h2><strong>No packages have been installed</strong></h2>
 			<p>
@@ -115,11 +121,11 @@ export class UmbInstalledPackagesSectionView extends UmbLitElement {
 	}
 
 	private _renderCustomMigrations() {
-		if (!this._installedPackages) return;
-		return html`<uui-box headline="Custom Migrations" style="--uui-box-default-padding:0">
+		if (!this._migrationPackages) return;
+		return html`<uui-box headline="Migrations" style="--uui-box-default-padding:0">
 			<uui-ref-list>
 				${repeat(
-					this._installedPackages,
+					this._migrationPackages,
 					(item) => item.name,
 					(item) => html`<umb-installed-packages-section-view-item
 						.name=${item.name}
