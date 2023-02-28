@@ -95,4 +95,4 @@ export class UmbExtensionRegistry {
 	}
 }
 
-export const UMB_EXTENSION_REGISTRY_TOKEN = new UmbContextToken(UmbExtensionRegistry.name);
+export const UMB_EXTENSION_REGISTRY_TOKEN = new UmbContextToken<UmbExtensionRegistry>('UmbExtensionRegistry');
