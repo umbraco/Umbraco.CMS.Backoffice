@@ -26,11 +26,21 @@ export class UmbHistoryUINodeElement extends UmbLitElement {
 				flex: 1;
 			}
 
+			slot[name='actions'] {
+				--uui-button-border-radius: 50px 50px 50px 50px;
+				display: flex;
+				align-items: center;
+				--uui-button-height: calc(var(--uui-size-2) * 4);
+				margin-right: var(--uui-size-2);
+			}
 			#actions-container {
-				display: block;
 				opacity: 0;
 				transition: opacity 120ms;
 			}
+			:host(:hover) #actions-container {
+				opacity: 1;
+			}
+
 			:host(:hover) #actions-container {
 				opacity: 1;
 			}

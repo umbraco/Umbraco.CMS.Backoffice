@@ -62,15 +62,15 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 					<umb-history-ui-list>
 						<umb-history-ui-node name="Lone Iversen" detail="December 5, 2022 2:59 PM">
 							<span><uui-tag look="secondary" label="Cleanup">Save</uui-tag>Content saved</span>
-							<uui-tag look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-tag>
+							<uui-button look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-button>
 						</umb-history-ui-node>
 						<umb-history-ui-node name="Umbraco HQ" detail="December 5, 2022 2:59 PM">
 							<span><uui-tag look="secondary" label="Cleanup">Save</uui-tag>Content saved</span>
-							<uui-tag look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-tag>
+							<uui-button look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-button>
 						</umb-history-ui-node>
 						<umb-history-ui-node name="Umbraco HQ" detail="December 5, 2022 2:59 PM">
 							<span><uui-tag look="secondary" label="Cleanup">Save</uui-tag>Content saved</span>
-							<uui-tag look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-tag>
+							<uui-button look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-button>
 						</umb-history-ui-node>
 					</umb-history-ui-list>
 				</uui-box>
