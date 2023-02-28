@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/web-components';
 import './input-culture-select.element';
 import type { UmbInputCultureSelectElement } from './input-culture-select.element';
 
-const meta: Meta<UmbInputCheckboxListElement> = {
+const meta: Meta<UmbInputCultureSelectElement> = {
     title: 'Components/Inputs/Culture Select',
     component: 'umb-input-culture-select'
 };
