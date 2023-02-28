@@ -1,4 +1,5 @@
 import esbuild from 'rollup-plugin-esbuild';
+import pluginJson from '@rollup/plugin-json';
 //import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 /** @type {import('rollup').RollupOptions} */
@@ -10,5 +11,5 @@ export default {
 		format: 'es',
 		sourcemap: true,
 	},
-	plugins: [esbuild({ sourceMap: true })],
+	plugins: [pluginJson(), esbuild({ sourceMap: true })],
 };
