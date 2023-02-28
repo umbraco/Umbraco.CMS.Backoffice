@@ -34,12 +34,17 @@ export class UmbInstalledPackagesSectionView extends UmbLitElement {
 			.no-packages {
 				display: flex;
 				justify-content: space-around;
+				flex-direction: column;
+				align-items: center;
 			}
 		`,
 	];
 
 	@state()
 	private _installedPackages: UmbPackageWithMigrationStatus[] = [];
+
+	@state()
+	private _migrationPackages: UmbPackageWithMigrationStatus[] = [];
 
 	#packageRepository: UmbPackageRepository;
 
@@ -67,6 +72,7 @@ export class UmbInstalledPackagesSectionView extends UmbLitElement {
 					// Remove that migration from the list
 					migrations = migrations.filter((m) => m.packageName !== p.name);
 				}
+
 				return {
 					...p,
 					hasPendingMigrations: migration?.hasPendingMigrations ?? false,
@@ -84,7 +90,7 @@ export class UmbInstalledPackagesSectionView extends UmbLitElement {
 	}
 
 	render() {
-		if (this._installedPackages.length) return html`${this._renderInstalled()}`;
+		if (this._installedPackages.length) return html`${this._renderInstalled()} ${this._renderCustomMigrations()}`;
 		return html`<div class="no-packages">
 			<h2><strong>No packages have been installed</strong></h2>
 			<p>
@@ -96,12 +102,30 @@ export class UmbInstalledPackagesSectionView extends UmbLitElement {
 	private _renderInstalled() {
 		return html`<uui-box headline="Installed packages" style="--uui-box-default-padding:0">
 			<uui-ref-list>
-				${this._installedPackages.map(
-					(item) =>
-						html`<umb-installed-packages-section-view-item
-							.name=${item.name}
-							.version=${item.version}
-							.hasPendingMigrations=${item.hasPendingMigrations}></umb-installed-packages-section-view-item>`
+				${repeat(
+					this._installedPackages,
+					(item) => item.name,
+					(item) => html`<umb-installed-packages-section-view-item
+						.name=${item.name}
+						.version=${item.version}
+						.hasPendingMigrations=${item.hasPendingMigrations}></umb-installed-packages-section-view-item>`
+				)}
+			</uui-ref-list>
+		</uui-box>`;
+	}
+
+	private _renderCustomMigrations() {
+		if (!this._installedPackages) return;
+		return html`<uui-box headline="Custom Migrations" style="--uui-box-default-padding:0">
+			<uui-ref-list>
+				${repeat(
+					this._installedPackages,
+					(item) => item.name,
+					(item) => html`<umb-installed-packages-section-view-item
+						.name=${item.name}
+						.version=${item.version}
+						.customIcon="${'umb:sync'}"
+						.hasPendingMigrations=${item.hasPendingMigrations}></umb-installed-packages-section-view-item>`
 				)}
 			</uui-ref-list>
 		</uui-box>`;

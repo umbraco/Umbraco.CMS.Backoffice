@@ -15,7 +15,7 @@ export const handlers = [
 			// Respond with a 200 status code
 			ctx.status(200),
 			ctx.json<PagedPackageMigrationStatusModel>({
-				total: 1,
+				total: 3,
 				items: [
 					{
 						hasPendingMigrations: true,

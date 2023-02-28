@@ -31,6 +31,9 @@ export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 	@property()
 	hasPendingMigrations = false;
 
+	@property()
+	customIcon?: string;
+
 	@state()
 	private _migrationButtonState?: UUIButtonState;
 
@@ -109,6 +112,7 @@ export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 				version="${ifDefined(this.version)}"
 				@open=${this._onConfigure}
 				?disabled="${!this._packageView}">
+				${this.customIcon ? html`<uui-icon slot="icon" name="${this.customIcon}"></uui-icon>` : nothing}
 				<div slot="tag">
 					${this.hasPendingMigrations
 						? html`<uui-button
@@ -117,7 +121,7 @@ export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 								color="warning"
 								look="primary"
 								label="Run pending package migrations">
-								Run pending package migrations
+								Run pending migrations
 						  </uui-button>`
 						: nothing}
 				</div>
