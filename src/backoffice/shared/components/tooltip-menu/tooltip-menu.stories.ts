@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import './tooltip-menu.element';
-import type { UmbTooltipMenuElement } from './tooltip-menu.element'
+import type { UmbTooltipMenuElement, TooltipMenuItem } from './tooltip-menu.element'
 
 const meta: Meta<UmbTooltipMenuElement> = {
     title: 'Components/Tooltip Menu',
@@ -10,7 +10,7 @@ const meta: Meta<UmbTooltipMenuElement> = {
 export default meta;
 type Story = StoryObj<UmbTooltipMenuElement>;
 
-const items: Array<UmbTooltipMenuItem> = [
+const items: Array<TooltipMenuItem> = [
     {
         label: 'Item 1',
         icon: 'umb:document',
