@@ -44,7 +44,7 @@ import { UmbPackageStore } from './packages/repository/package.store';
 import { UmbServerExtensionController } from './packages/repository/server-extension.controller';
 import { UmbNotificationService, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/notification';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
+import { UMB_EXTENSION_REGISTRY_TOKEN, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 
 import '@umbraco-cms/router';
 
@@ -80,6 +80,7 @@ export class UmbBackofficeElement extends UmbLitElement {
 	constructor() {
 		super();
 
+		this.provideContext(UMB_EXTENSION_REGISTRY_TOKEN, umbExtensionsRegistry);
 		this.provideContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, new UmbModalService());
 		this.provideContext(UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN, new UmbNotificationService());
 

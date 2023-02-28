@@ -1,5 +1,6 @@
 import { BehaviorSubject, map, Observable } from 'rxjs';
-import type { ManifestTypes, ManifestTypeMap, ManifestBase, ManifestWithLoader, ManifestEntrypoint, HTMLElementConstructor } from '../../models';
+import { UmbContextToken } from "@umbraco-cms/context-api";
+import type { ManifestTypes, ManifestTypeMap, ManifestBase, ManifestEntrypoint, HTMLElementConstructor } from '../../models';
 import { hasDefaultExport } from '../has-default-export.function';
 import { loadExtension } from '../load-extension.function';
 
@@ -93,3 +94,5 @@ export class UmbExtensionRegistry {
 		) as Observable<Array<ExtensionType>>;
 	}
 }
+
+export const UMB_EXTENSION_REGISTRY_TOKEN = new UmbContextToken(UmbExtensionRegistry.name);
