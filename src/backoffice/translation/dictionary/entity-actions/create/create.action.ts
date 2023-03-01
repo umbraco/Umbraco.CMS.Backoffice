@@ -16,7 +16,7 @@ import './create-dictionary-modal-layout.element';
 export default class UmbCreateDictionaryEntityAction extends UmbEntityActionBase<UmbDictionaryRepository> {
 	static styles = [UUITextStyles];
 
-	#modalService?: UmbModalContext;
+	#modalContext?: UmbModalContext;
 
 	#sectionSidebarContext!: UmbSectionSidebarContext;
 
@@ -24,7 +24,7 @@ export default class UmbCreateDictionaryEntityAction extends UmbEntityActionBase
 		super(host, repositoryAlias, unique);
 
 		new UmbContextConsumerController(this.host, UMB_MODAL_CONTEXT_TOKEN, (instance) => {
-			this.#modalService = instance;
+			this.#modalContext = instance;
 		});
 
 		new UmbContextConsumerController(this.host, UMB_SECTION_SIDEBAR_CONTEXT_TOKEN, (instance) => {
@@ -34,11 +34,11 @@ export default class UmbCreateDictionaryEntityAction extends UmbEntityActionBase
 
 	async execute() {
 		// TODO: what to do if modal service is not available?
-		if (!this.#modalService) return;
+		if (!this.#modalContext) return;
 
 		// TODO: how can we get the current entity detail in the modal? Passing the observable
 		// feels a bit hacky. Works, but hacky.
-		const modalHandler = this.#modalService?.open('umb-create-dictionary-modal-layout', {
+		const modalHandler = this.#modalContext?.open('umb-create-dictionary-modal-layout', {
 			type: 'sidebar',
 			data: { unique: this.unique, parentName: this.#sectionSidebarContext.headline },
 		});

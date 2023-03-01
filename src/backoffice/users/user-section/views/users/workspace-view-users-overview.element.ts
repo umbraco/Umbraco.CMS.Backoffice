@@ -102,7 +102,7 @@ export class UmbWorkspaceViewUsersOverviewElement extends UmbLitElement {
 	];
 
 	private _usersContext?: UmbSectionViewUsersElement;
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 	private _inputTimer?: NodeJS.Timeout;
 	private _inputTimerAmount = 500;
 
@@ -114,8 +114,8 @@ export class UmbWorkspaceViewUsersOverviewElement extends UmbLitElement {
 			this._observeSelection();
 		});
 
-		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
-			this._modalService = modalService;
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this._modalContext = instance;
 		});
 	}
 
@@ -166,7 +166,7 @@ export class UmbWorkspaceViewUsersOverviewElement extends UmbLitElement {
 		} else {
 			modal = document.createElement('umb-workspace-view-users-create');
 		}
-		this._modalService?.open(modal, { type: 'dialog' });
+		this._modalContext?.open(modal, { type: 'dialog' });
 	}
 
 	render() {

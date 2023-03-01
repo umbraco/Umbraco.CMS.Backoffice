@@ -25,19 +25,19 @@ export class UmbInputListBase extends UmbLitElement {
 	public modalSize: UUIModalSidebarSize = 'small';
 
 	protected pickerLayout?: string;
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	constructor() {
 		super();
-		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
-			this._modalService = modalService;
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this._modalContext = instance;
 		});
 	}
 
 	private _openPicker() {
 		if (!this.pickerLayout) return;
 
-		const modalHandler = this._modalService?.open(this.pickerLayout, {
+		const modalHandler = this._modalContext?.open(this.pickerLayout, {
 			type: this.modalType,
 			size: this.modalSize,
 			data: {

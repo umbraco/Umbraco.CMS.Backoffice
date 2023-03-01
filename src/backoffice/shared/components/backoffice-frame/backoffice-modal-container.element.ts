@@ -19,21 +19,21 @@ export class UmbBackofficeModalContainer extends UmbLitElement {
 	@state()
 	private _modals?: UmbModalHandler[];
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	constructor() {
 		super();
 
-		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
-			this._modalService = modalService;
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this._modalContext = instance;
 			this._observeModals();
 		});
 	}
 
 	private _observeModals() {
-		if (!this._modalService) return;
+		if (!this._modalContext) return;
 
-		this.observe(this._modalService.modals, (modals) => {
+		this.observe(this._modalContext.modals, (modals) => {
 			this._modals = modals;
 		});
 	}

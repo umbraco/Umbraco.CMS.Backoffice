@@ -12,7 +12,7 @@ export default {
 	id: 'umb-property-editor-ui-document-picker',
 	decorators: [
 		(story) =>
-			html`<umb-context-provider key="umbModalService" .value=${new UmbModalContext()}>
+			html`<umb-context-provider key="UmbModalContext" .value=${new UmbModalContext()}>
 				${story()}
 				<umb-backoffice-modal-container></umb-backoffice-modal-container>
 			</umb-context-provider>`,

@@ -84,7 +84,7 @@ export class UmbUserWorkspaceElement extends UmbLitElement implements UmbWorkspa
 	private _currentUser?: UserDetails;
 
 	private _currentUserStore?: UmbCurrentUserStore;
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	private _languages = []; //TODO Add languages
 
@@ -191,7 +191,7 @@ export class UmbUserWorkspaceElement extends UmbLitElement implements UmbWorkspa
 	}
 
 	private _changePassword() {
-		this._modalService?.changePassword({ requireOldPassword: this._currentUserStore?.isAdmin === false });
+		this._modalContext?.changePassword({ requireOldPassword: this._currentUserStore?.isAdmin === false });
 	}
 
 	private _renderActionButtons() {

@@ -88,7 +88,7 @@ export class UmbInputMediaPickerElement extends FormControlMixin(UmbLitElement) 
 	@state()
 	private _items?: Array<EntityTreeItemModel>;
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 	private _pickedItemsObserver?: UmbObserverController<FolderTreeItemModel>;
 	private _repository = new UmbMediaRepository(this);
 
@@ -107,7 +107,7 @@ export class UmbInputMediaPickerElement extends FormControlMixin(UmbLitElement) 
 		);
 
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
-			this._modalService = instance;
+			this._modalContext = instance;
 		});
 	}
 
@@ -135,7 +135,7 @@ export class UmbInputMediaPickerElement extends FormControlMixin(UmbLitElement) 
 
 	private _openPicker() {
 		// We send a shallow copy(good enough as its just an array of keys) of our this._selectedKeys, as we don't want the modal to manipulate our data:
-		const modalHandler = this._modalService?.mediaPicker({
+		const modalHandler = this._modalContext?.mediaPicker({
 			multiple: this.max === 1 ? false : true,
 			selection: [...this._selectedKeys],
 		});
@@ -145,7 +145,7 @@ export class UmbInputMediaPickerElement extends FormControlMixin(UmbLitElement) 
 	}
 
 	private _removeItem(item: FolderTreeItemModel) {
-		const modalHandler = this._modalService?.confirm({
+		const modalHandler = this._modalContext?.confirm({
 			color: 'danger',
 			headline: `Remove ${item.name}?`,
 			content: 'Are you sure you want to remove this item',

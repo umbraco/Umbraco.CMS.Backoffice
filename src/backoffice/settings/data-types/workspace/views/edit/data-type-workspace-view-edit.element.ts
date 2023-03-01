@@ -41,13 +41,13 @@ export class UmbDataTypeWorkspaceViewEditElement extends UmbLitElement {
 	private _data: Array<any> = [];
 
 	private _workspaceContext?: UmbDataTypeWorkspaceContext;
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	constructor() {
 		super();
 
-		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (_instance) => {
-			this._modalService = _instance;
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this._modalContext = instance;
 		});
 
 		// TODO: Figure out if this is the best way to consume a context or if it could be strongly typed using UmbContextToken
@@ -100,7 +100,7 @@ export class UmbDataTypeWorkspaceViewEditElement extends UmbLitElement {
 	private _openPropertyEditorUIPicker() {
 		if (!this._dataType) return;
 
-		const modalHandler = this._modalService?.propertyEditorUIPicker({
+		const modalHandler = this._modalContext?.propertyEditorUIPicker({
 			selection: this._propertyEditorUiAlias ? [this._propertyEditorUiAlias] : [],
 		});
 

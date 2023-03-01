@@ -17,17 +17,17 @@ export class UmbPropertyEditorUIIconPickerElement extends UmbLitElement {
 	@property({ type: Array, attribute: false })
 	public config = [];
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	constructor() {
 		super();
-		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
-			this._modalService = modalService;
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this._modalContext = instance;
 		});
 	}
 
 	private _openModal() {
-		this._modalService?.iconPicker();
+		this._modalContext?.iconPicker();
 	}
 
 	render() {

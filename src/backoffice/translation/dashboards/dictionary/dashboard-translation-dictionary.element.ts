@@ -51,7 +51,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	#repo!: UmbDictionaryRepository;
 
-	#modalService!: UmbModalContext;
+	#modalContext!: UmbModalContext;
 
 	#tableItems: Array<UmbTableItem> = [];
 
@@ -63,7 +63,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 		super();
 
 		new UmbContextConsumerController(this, UMB_MODAL_CONTEXT_TOKEN, (instance) => {
-			this.#modalService = instance;
+			this.#modalContext = instance;
 		});
 	}
 
@@ -154,9 +154,9 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	async #create() {
 		// TODO: what to do if modal service is not available?
-		if (!this.#modalService) return;
+		if (!this.#modalContext) return;
 
-		const modalHandler = this.#modalService?.open('umb-create-dictionary-modal-layout', {
+		const modalHandler = this.#modalContext?.open('umb-create-dictionary-modal-layout', {
 			type: 'sidebar',
 			data: { unique: null },
 		});

@@ -8,19 +8,19 @@ import UmbTreeItemActionElement from '../../../../../shared/components/tree/acti
 export default class UmbTreeActionDataTypeDeleteElement extends UmbTreeItemActionElement {
 	static styles = [UUITextStyles, css``];
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 	//private _dataTypeStore?: UmbDataTypeStore;
 
 	connectedCallback(): void {
 		super.connectedCallback();
 
-		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
-			this._modalService = modalService;
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this._modalContext = instance;
 		});
 	}
 
 	private _handleLabelClick() {
-		const modalHandler = this._modalService?.confirm({
+		const modalHandler = this._modalContext?.confirm({
 			headline: `Delete ${this._activeTreeItem?.name ?? 'item'}`,
 			content: 'Are you sure you want to delete this item?',
 			color: 'danger',

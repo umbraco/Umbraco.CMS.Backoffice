@@ -79,7 +79,7 @@ export class UmbInputLanguagePickerElement extends FormControlMixin(UmbLitElemen
 	@state()
 	private _items?: Array<LanguageModel>;
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 	private _repository = new UmbLanguageRepository(this);
 	private _pickedItemsObserver?: UmbObserverController<LanguageModel>;
 
@@ -99,7 +99,7 @@ export class UmbInputLanguagePickerElement extends FormControlMixin(UmbLitElemen
 		);
 
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
-			this._modalService = instance;
+			this._modalContext = instance;
 		});
 	}
 
@@ -119,7 +119,7 @@ export class UmbInputLanguagePickerElement extends FormControlMixin(UmbLitElemen
 	}
 
 	private _openPicker() {
-		const modalHandler = this._modalService?.languagePicker({
+		const modalHandler = this._modalContext?.languagePicker({
 			multiple: this.max === 1 ? false : true,
 			selection: [...this._selectedIsoCodes],
 			filter: this.filter,
@@ -131,7 +131,7 @@ export class UmbInputLanguagePickerElement extends FormControlMixin(UmbLitElemen
 	}
 
 	private _removeItem(item: LanguageModel) {
-		const modalHandler = this._modalService?.confirm({
+		const modalHandler = this._modalContext?.confirm({
 			color: 'danger',
 			headline: `Remove ${item.name}?`,
 			content: 'Are you sure you want to remove this item',

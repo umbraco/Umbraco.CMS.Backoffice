@@ -9,14 +9,14 @@ import { UmbMemberTreeStore, UMB_MEMBER_TREE_STORE_CONTEXT_TOKEN } from '../../r
 export default class UmbTreeActionMemberDeleteElement extends UmbTreeItemActionElement {
 	static styles = [UUITextStyles, css``];
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 	private _memberTreeStore?: UmbMemberTreeStore;
 
 	connectedCallback(): void {
 		super.connectedCallback();
 
-		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
-			this._modalService = modalService;
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this._modalContext = instance;
 		});
 
 		this.consumeContext(UMB_MEMBER_TREE_STORE_CONTEXT_TOKEN, (memberTreeStore) => {
@@ -25,7 +25,7 @@ export default class UmbTreeActionMemberDeleteElement extends UmbTreeItemActionE
 	}
 
 	private _handleLabelClick() {
-		const modalHandler = this._modalService?.confirm({
+		const modalHandler = this._modalContext?.confirm({
 			headline: `Delete ${this._activeTreeItem?.name ?? 'item'}`,
 			content: 'Are you sure you want to delete this item?',
 			color: 'danger',

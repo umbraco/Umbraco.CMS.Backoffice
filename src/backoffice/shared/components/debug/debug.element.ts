@@ -64,12 +64,12 @@ export class UmbDebug extends UmbLitElement {
 	@state()
 	private _debugPaneOpen = false;
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	constructor() {
 		super();
-		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
-			this._modalService = modalService;
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this._modalContext = instance;
 		});
 	}
 
@@ -102,7 +102,7 @@ export class UmbDebug extends UmbLitElement {
 	}
 
 	private _openDialog() {
-		this._modalService?.openBasic({
+		this._modalContext?.openBasic({
 			header: html`<uui-icon name="umb:bug"></uui-icon> Debug: Contexts`,
 			content: this._htmlContent(),
 			overlaySize: 'small',

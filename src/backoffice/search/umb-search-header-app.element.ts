@@ -16,18 +16,18 @@ export class UmbSearchHeaderApp extends UmbLitElement {
 		`,
 	];
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	constructor() {
 		super();
 
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (_instance) => {
-			this._modalService = _instance;
+			this._modalContext = _instance;
 		});
 	}
 
 	#onSearchClick() {
-		this._modalService?.search();
+		this._modalContext?.search();
 	}
 
 	render() {

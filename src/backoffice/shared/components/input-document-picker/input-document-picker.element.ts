@@ -77,7 +77,7 @@ export class UmbInputDocumentPickerElement extends FormControlMixin(UmbLitElemen
 	@state()
 	private _items?: Array<DocumentTreeItemModel>;
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 	private _documentStore?: UmbDocumentTreeStore;
 	private _pickedItemsObserver?: UmbObserverController<FolderTreeItemModel>;
 
@@ -100,7 +100,7 @@ export class UmbInputDocumentPickerElement extends FormControlMixin(UmbLitElemen
 			this._observePickedDocuments();
 		});
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
-			this._modalService = instance;
+			this._modalContext = instance;
 		});
 	}
 
@@ -121,7 +121,7 @@ export class UmbInputDocumentPickerElement extends FormControlMixin(UmbLitElemen
 
 	private _openPicker() {
 		// We send a shallow copy(good enough as its just an array of keys) of our this._selectedKeys, as we don't want the modal to manipulate our data:
-		const modalHandler = this._modalService?.contentPicker({
+		const modalHandler = this._modalContext?.contentPicker({
 			multiple: this.max === 1 ? false : true,
 			selection: [...this._selectedKeys],
 		});
@@ -131,7 +131,7 @@ export class UmbInputDocumentPickerElement extends FormControlMixin(UmbLitElemen
 	}
 
 	private _removeItem(item: FolderTreeItemModel) {
-		const modalHandler = this._modalService?.confirm({
+		const modalHandler = this._modalContext?.confirm({
 			color: 'danger',
 			headline: `Remove ${item.name}?`,
 			content: 'Are you sure you want to remove this item',

@@ -106,7 +106,7 @@ export class UmbInputMultiUrlPickerElement extends FormControlMixin(UmbLitElemen
 	}
 
 	private _urls: Array<MultiUrlData> = [];
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	constructor() {
 		super();
@@ -122,7 +122,7 @@ export class UmbInputMultiUrlPickerElement extends FormControlMixin(UmbLitElemen
 		);
 
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
-			this._modalService = instance;
+			this._modalContext = instance;
 		});
 	}
 
@@ -144,7 +144,7 @@ export class UmbInputMultiUrlPickerElement extends FormControlMixin(UmbLitElemen
 	}
 
 	private _openPicker(data?: MultiUrlData, index?: number) {
-		const modalHandler = this._modalService?.linkPicker({
+		const modalHandler = this._modalContext?.linkPicker({
 			link: {
 				name: data?.name,
 				published: data?.published,

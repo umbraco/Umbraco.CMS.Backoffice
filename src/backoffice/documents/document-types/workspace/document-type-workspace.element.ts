@@ -51,13 +51,13 @@ export class UmbDocumentTypeWorkspaceElement extends UmbLitElement implements Um
 	@state()
 	private _documentType?: DocumentTypeModel;
 
-	private _modalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	constructor() {
 		super();
 
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
-			this._modalService = instance;
+			this._modalContext = instance;
 		});
 
 		this.observe(this._workspaceContext.data, (data) => {
@@ -86,7 +86,7 @@ export class UmbDocumentTypeWorkspaceElement extends UmbLitElement implements Um
 	}
 
 	private async _handleIconClick() {
-		const modalHandler = this._modalService?.iconPicker();
+		const modalHandler = this._modalContext?.iconPicker();
 
 		modalHandler?.onClose().then((saved) => {
 			if (saved) this._workspaceContext?.setIcon(saved.icon);

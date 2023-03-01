@@ -17,13 +17,13 @@ export class UmbInstalledPackagesSectionViewItemElement extends UmbLitElement {
 	@state()
 	private _packageView?: ManifestPackageView;
 
-	private _umbModalService?: UmbModalContext;
+	private _modalContext?: UmbModalContext;
 
 	constructor() {
 		super();
 
-		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
-			this._umbModalService = modalService;
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this._modalContext = instance;
 		});
 	}
 
@@ -81,7 +81,7 @@ export class UmbInstalledPackagesSectionViewItemElement extends UmbLitElement {
 			return;
 		}
 
-		this._umbModalService?.open(element, { data: this.package, size: 'small', type: 'sidebar' });
+		this._modalContext?.open(element, { data: this.package, size: 'small', type: 'sidebar' });
 	}
 }
 
