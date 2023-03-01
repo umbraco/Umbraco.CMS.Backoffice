@@ -3,7 +3,7 @@ import { css, html, nothing, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbContextDebugRequest } from '@umbraco-cms/context-api';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 
 @customElement('umb-debug')
 export class UmbDebug extends UmbLitElement {
@@ -68,7 +68,7 @@ export class UmbDebug extends UmbLitElement {
 
 	constructor() {
 		super();
-		this.consumeContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, (modalService) => {
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
 			this._modalService = modalService;
 		});
 	}

@@ -230,4 +230,4 @@ export class UmbModalContext {
 	}
 }
 
-export const UMB_MODAL_SERVICE_CONTEXT_TOKEN = new UmbContextToken<UmbModalContext>(UmbModalContext.name);
+export const UMB_MODAL_CONTEXT_TOKEN = new UmbContextToken<UmbModalContext>(UmbModalContext.name);

@@ -8,7 +8,7 @@ import type { UmbCreateDictionaryModalResultData } from './create-dictionary-mod
 import { UmbEntityActionBase } from '@umbraco-cms/entity-action';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
-import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 
 // TODO: temp import
 import './create-dictionary-modal-layout.element';
@@ -23,7 +23,7 @@ export default class UmbCreateDictionaryEntityAction extends UmbEntityActionBase
 	constructor(host: UmbControllerHostInterface, repositoryAlias: string, unique: string) {
 		super(host, repositoryAlias, unique);
 
-		new UmbContextConsumerController(this.host, UMB_MODAL_SERVICE_CONTEXT_TOKEN, (instance) => {
+		new UmbContextConsumerController(this.host, UMB_MODAL_CONTEXT_TOKEN, (instance) => {
 			this.#modalService = instance;
 		});
 

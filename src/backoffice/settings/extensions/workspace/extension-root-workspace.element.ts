@@ -3,7 +3,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { isManifestElementNameType, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 import type { ManifestBase } from '@umbraco-cms/models';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 
 @customElement('umb-extension-root-workspace')
 export class UmbExtensionRootWorkspaceElement extends UmbLitElement {
@@ -16,7 +16,7 @@ export class UmbExtensionRootWorkspaceElement extends UmbLitElement {
 		super.connectedCallback();
 		this._observeExtensions();
 
-		this.consumeContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, (modalService) => {
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (modalService) => {
 			this._modalService = modalService;
 		});
 	}

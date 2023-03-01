@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 import { UUIButtonState } from '@umbraco-ui/uui-button';
 
-import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../core/modal';
+import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '../../../../../core/modal';
 
 import './section-view-examine-searchers';
 
@@ -97,7 +97,7 @@ export class UmbDashboardExamineIndexElement extends UmbLitElement {
 	constructor() {
 		super();
 
-		this.consumeContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, (_instance) => {
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (_instance) => {
 			this._modalService = _instance;
 		});
 

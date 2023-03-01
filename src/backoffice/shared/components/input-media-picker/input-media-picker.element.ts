@@ -3,7 +3,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { FormControlMixin } from '@umbraco-ui/uui-base/lib/mixins';
-import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../core/modal';
+import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '../../../../core/modal';
 import { UmbMediaRepository } from '../../../media/media/repository/media.repository';
 import { UmbLitElement } from '@umbraco-cms/element';
 import type { EntityTreeItemModel, FolderTreeItemModel } from '@umbraco-cms/backend-api';
@@ -106,7 +106,7 @@ export class UmbInputMediaPickerElement extends FormControlMixin(UmbLitElement) 
 			() => !!this.max && this._selectedKeys.length > this.max
 		);
 
-		this.consumeContext(UMB_MODAL_SERVICE_CONTEXT_TOKEN, (instance) => {
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
 			this._modalService = instance;
 		});
 	}
