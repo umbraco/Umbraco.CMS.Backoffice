@@ -2,6 +2,7 @@ import { css, html, nothing } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { repeat } from 'lit/directives/repeat.js';
 import { customElement, state } from 'lit/decorators.js';
+import { UUIPaginationEvent } from '@umbraco-ui/uui';
 import { UmbWorkspaceEntityContextInterface } from '../../../workspace-context/workspace-entity-context.interface';
 import type { DocumentModel } from '@umbraco-cms/backend-api';
 import { UmbLitElement } from '@umbraco-cms/element';
@@ -38,6 +39,62 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 				gap: var(--uui-size-layout-1);
 			}
 
+			//General section
+
+			#general-section {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.general-item {
+				display: flex;
+				flex-direction: column;
+				gap: var(--uui-size-space-1);
+			}
+
+			.general-item:not(:last-child) {
+				margin-bottom: var(--uui-size-space-6);
+			}
+
+			// Link section
+
+			#link-section {
+				display: flex;
+				flex-direction: column;
+				text-align: left;
+			}
+
+			.link-item {
+				padding: var(--uui-size-space-4) var(--uui-size-space-6);
+				display: grid;
+				grid-template-columns: 75px 1fr;
+				color: inherit;
+				text-decoration: none;
+			}
+
+			.link-language {
+				color: var(--uui-color-divider-emphasis);
+			}
+
+			.link-content.italic {
+				font-style: italic;
+			}
+
+			.link-item uui-icon {
+				margin-right: var(--uui-size-space-2);
+				vertical-align: middle;
+			}
+
+			.link-item.with-href {
+				cursor: pointer;
+			}
+
+			.link-item.with-href:hover {
+				background: var(--uui-color-divider);
+			}
+
+			//History section
+
 			uui-tag uui-icon {
 				margin-right: var(--uui-size-space-1);
 			}
@@ -46,13 +103,16 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 				display: flex;
 				gap: var(--uui-size-space-2);
 			}
+			uui-pagination {
+				display: inline-block;
+			}
+			.pagination {
+				display: flex;
+				justify-content: center;
+				margin-top: var(--uui-size-space-4);
+			}
 		`,
 	];
-
-	@state()
-	private _nodeName = '';
-
-	private _workspaceContext?: UmbWorkspaceEntityContextInterface<DocumentModel>;
 
 	@state()
 	private _historyList: HistoryNode[] = [
@@ -115,6 +175,18 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 		},
 	];
 
+	@state()
+	private _total?: number;
+
+	@state()
+	private _currentPage = 1;
+
+	@state()
+	private _nodeName = '';
+
+	private _workspaceContext?: UmbWorkspaceEntityContextInterface<DocumentModel>;
+	private itemsPerPage = 10;
+
 	constructor() {
 		super();
 
@@ -129,6 +201,7 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 		if (!this._workspaceContext) return;
 
 		this._nodeName = 'TBD, with variants this is not as simple.';
+
 		/*
 		this.observe(this._workspaceContext.name, (name) => {
 			this._nodeName = name || '';
@@ -136,31 +209,92 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 		*/
 	}
 
+	#onPageChange(event: UUIPaginationEvent) {
+		if (this._currentPage === event.target.current) return;
+		this._currentPage = event.target.current;
+		//TODO: Run endpoint to get next history parts
+	}
+
 	render() {
 		return html`<div class="container">
-				<uui-box headline="Links"> Info Workspace View for ${this._nodeName} </uui-box>
+				<uui-box headline="Links" style="--uui-box-default-padding: 0;"> ${this.#renderLinksSection()} </uui-box>
 				<uui-box headline="History">
 					<umb-history-ui-list>
 						${repeat(
 							this._historyList,
 							(item) => item.timestamp,
-							(item) => this.renderHistory(item)
+							(item) => this.#renderHistory(item)
 						)}
 					</umb-history-ui-list>
+					${this.#renderHistoryPagination()}
 				</uui-box>
 			</div>
 			<div class="container">
-				<uui-box headline="General"></uui-box>
+				<uui-box headline="General" id="general-section">${this.#renderGeneralSection()}</uui-box>
 			</div>`;
 	}
-	renderHistory(history: HistoryNode) {
+
+	#renderLinksSection() {
+		//repeat
+		return html`<div id="link-section">
+			<a href="http://google.com" target="_blank" class="link-item with-href">
+				<span class="link-language">da-DK</span>
+				<span class="link-content"> <uui-icon name="umb:out"></uui-icon>google.com </span>
+			</a>
+			<div class="link-item">
+				<span class="link-language">en-EN</span>
+				<span class="link-content italic"> This document is published but is not in the cache</span>
+			</div>
+		</div>`;
+	}
+
+	#renderGeneralSection() {
+		return html`
+			<div class="general-item">
+				<strong>Status</strong>
+				<span><uui-tag color="positive" look="primary" label="Published">Published</uui-tag></span>
+			</div>
+			<div class="general-item">
+				<strong>Created Date</strong>
+				<span>...</span>
+			</div>
+			<div class="general-item">
+				<strong>Document Type</strong>
+				<span>document type picker?</span>
+			</div>
+			<div class="general-item">
+				<strong>Template</strong>
+				<span>template picker?</span>
+			</div>
+			<div class="general-item">
+				<strong>Id</strong>
+				<span>...</span>
+			</div>
+		`;
+	}
+
+	#renderHistory(history: HistoryNode) {
 		return html` <umb-history-ui-node .name="${history.userName}" .detail="${history.timestamp}">
-			<span class="log-type">${this.renderTag(history.logType)} ${this.renderTagDescription(history.logType)}</span>
-			<uui-button look="secondary" slot="actions"><uui-icon name="umb:undo"></uui-icon> Rollback</uui-button>
+			<span class="log-type">${this.#renderTag(history.logType)} ${this.#renderTagDescription(history.logType)}</span>
+			<uui-button label="Rollback" look="secondary" slot="actions">
+				<uui-icon name="umb:undo"></uui-icon> Rollback
+			</uui-button>
 		</umb-history-ui-node>`;
 	}
 
-	renderTag(type?: HistoryLogType) {
+	#renderHistoryPagination() {
+		if (!this._total) return nothing;
+
+		const totalPages = Math.ceil(this._total / this.itemsPerPage);
+
+		if (totalPages <= 1) return nothing;
+
+		return html`<div class="pagination">
+			<uui-pagination .total=${totalPages} @change="${this.#onPageChange}"></uui-pagination>
+		</div>`;
+	}
+
+	#renderTag(type?: HistoryLogType) {
 		switch (type) {
 			case 'Publish':
 				return html`<uui-tag look="primary" color="positive" label="Publish">Publish</uui-tag>`;
@@ -177,7 +311,7 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 		}
 	}
 
-	renderTagDescription(type?: HistoryLogType, params?: string) {
+	#renderTagDescription(type?: HistoryLogType, params?: string) {
 		switch (type) {
 			case 'Publish':
 				return html`Content published`;
