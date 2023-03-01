@@ -1,14 +1,14 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../../core/modal';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../../core/modal';
 import UmbTreeItemActionElement from '../../../../../shared/components/tree/action/tree-item-action.element';
 
 @customElement('umb-tree-action-data-type-delete')
 export default class UmbTreeActionDataTypeDeleteElement extends UmbTreeItemActionElement {
 	static styles = [UUITextStyles, css``];
 
-	private _modalService?: UmbModalService;
+	private _modalService?: UmbModalContext;
 	//private _dataTypeStore?: UmbDataTypeStore;
 
 	connectedCallback(): void {

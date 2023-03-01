@@ -2,7 +2,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html, nothing } from 'lit';
 import { customElement, state, query, property } from 'lit/decorators.js';
 import { UUIButtonState, UUIPaginationElement, UUIPaginationEvent } from '@umbraco-ui/uui';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../core/modal';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../core/modal';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { RedirectManagementResource, RedirectStatusModel, RedirectUrlModel } from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
@@ -105,7 +105,7 @@ export class UmbDashboardRedirectManagementElement extends UmbLitElement {
 	@query('uui-pagination')
 	private _pagination?: UUIPaginationElement;
 
-	private _modalService?: UmbModalService;
+	private _modalService?: UmbModalContext;
 
 	constructor() {
 		super();

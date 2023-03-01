@@ -1,7 +1,7 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, CSSResultGroup, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { UmbModalHandler, UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '..';
+import { UmbModalHandler, UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '..';
 import {
 	UmbCurrentUserHistoryStore,
 	UmbCurrentUserHistoryItem,
@@ -88,7 +88,7 @@ export class UmbModalLayoutCurrentUserElement extends UmbLitElement {
 	@state()
 	private _history: Array<UmbCurrentUserHistoryItem> = [];
 
-	private _modalService?: UmbModalService;
+	private _modalService?: UmbModalContext;
 	private _currentUserStore?: UmbCurrentUserStore;
 	private _currentUserHistoryStore?: UmbCurrentUserHistoryStore;
 

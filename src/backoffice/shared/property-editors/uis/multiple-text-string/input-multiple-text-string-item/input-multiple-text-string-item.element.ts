@@ -4,7 +4,7 @@ import { customElement, property, query } from 'lit/decorators.js';
 import { FormControlMixin } from '@umbraco-ui/uui-base/lib/mixins';
 import { UUIInputEvent } from '@umbraco-ui/uui-input';
 import { UUIInputElement } from '@umbraco-ui/uui';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../../core/modal';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../../../core/modal';
 import { UmbChangeEvent, UmbInputEvent, UmbDeleteEvent } from '@umbraco-cms/events';
 import { UmbLitElement } from '@umbraco-cms/element';
 
@@ -54,7 +54,7 @@ export class UmbInputMultipleTextStringItemElement extends FormControlMixin(UmbL
 	@query('#input')
 	protected _input?: UUIInputElement;
 
-	private _modalService?: UmbModalService;
+	private _modalService?: UmbModalContext;
 
 	constructor() {
 		super();

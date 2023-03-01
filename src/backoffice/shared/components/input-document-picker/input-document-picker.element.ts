@@ -3,7 +3,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { FormControlMixin } from '@umbraco-ui/uui-base/lib/mixins';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../core/modal';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '../../../../core/modal';
 import { UMB_DOCUMENT_TREE_STORE_CONTEXT_TOKEN } from '../../../documents/documents/repository/document.tree.store';
 import type { UmbDocumentTreeStore } from '../../../documents/documents/repository/document.tree.store';
 import { UmbLitElement } from '@umbraco-cms/element';
@@ -77,7 +77,7 @@ export class UmbInputDocumentPickerElement extends FormControlMixin(UmbLitElemen
 	@state()
 	private _items?: Array<DocumentTreeItemModel>;
 
-	private _modalService?: UmbModalService;
+	private _modalService?: UmbModalContext;
 	private _documentStore?: UmbDocumentTreeStore;
 	private _pickedItemsObserver?: UmbObserverController<FolderTreeItemModel>;
 

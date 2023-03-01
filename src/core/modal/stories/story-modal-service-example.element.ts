@@ -1,8 +1,7 @@
 import { html } from 'lit-html';
 import { customElement, property, state } from 'lit/decorators.js';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '..';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '..';
 import { UmbLitElement } from '@umbraco-cms/element';
-
 
 @customElement('story-modal-service-example')
 export class StoryModalServiceExampleElement extends UmbLitElement {
@@ -12,7 +11,7 @@ export class StoryModalServiceExampleElement extends UmbLitElement {
 	@state()
 	value = '';
 
-	private _modalService?: UmbModalService;
+	private _modalService?: UmbModalContext;
 
 	constructor() {
 		super();

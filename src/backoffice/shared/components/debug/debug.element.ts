@@ -3,7 +3,7 @@ import { css, html, nothing, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbContextDebugRequest } from '@umbraco-cms/context-api';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 
 @customElement('umb-debug')
 export class UmbDebug extends UmbLitElement {
@@ -64,7 +64,7 @@ export class UmbDebug extends UmbLitElement {
 	@state()
 	private _debugPaneOpen = false;
 
-	private _modalService?: UmbModalService;
+	private _modalService?: UmbModalContext;
 
 	constructor() {
 		super();
@@ -105,7 +105,7 @@ export class UmbDebug extends UmbLitElement {
 		this._modalService?.openBasic({
 			header: html`<uui-icon name="umb:bug"></uui-icon> Debug: Contexts`,
 			content: this._htmlContent(),
-			overlaySize: 'small'
+			overlaySize: 'small',
 		});
 	}
 
@@ -125,15 +125,13 @@ export class UmbDebug extends UmbLitElement {
 			</uui-button>
 
 			<div class="events ${this._debugPaneOpen ? 'open' : ''}">
-				<div>
-					${this._htmlContent()}
-				</div>
+				<div>${this._htmlContent()}</div>
 			</div>
 		</div>`;
 	}
 
 	private _htmlContent() {
-		return html `
+		return html`
 			<ul>
 				${this._renderContextAliases()}
 			</ul>

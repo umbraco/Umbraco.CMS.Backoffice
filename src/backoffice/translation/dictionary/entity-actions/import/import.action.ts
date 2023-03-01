@@ -4,14 +4,14 @@ import type { UmbImportDictionaryModalResultData } from './import-dictionary-mod
 import { UmbEntityActionBase } from '@umbraco-cms/entity-action';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 
 import './import-dictionary-modal-layout.element';
 
 export default class UmbImportDictionaryEntityAction extends UmbEntityActionBase<UmbDictionaryRepository> {
 	static styles = [UUITextStyles];
 
-	#modalService?: UmbModalService;
+	#modalService?: UmbModalContext;
 
 	constructor(host: UmbControllerHostInterface, repositoryAlias: string, unique: string) {
 		super(host, repositoryAlias, unique);

@@ -1,12 +1,12 @@
 import { UmbEntityActionBase } from '@umbraco-cms/entity-action';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 
 export class UmbDeleteEntityAction<
 	T extends { delete(unique: string): Promise<void>; requestItems(uniques: Array<string>): any }
 > extends UmbEntityActionBase<T> {
-	#modalService?: UmbModalService;
+	#modalService?: UmbModalContext;
 
 	constructor(host: UmbControllerHostInterface, repositoryAlias: string, unique: string) {
 		super(host, repositoryAlias, unique);

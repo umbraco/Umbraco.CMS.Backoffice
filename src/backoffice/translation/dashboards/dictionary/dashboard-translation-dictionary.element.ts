@@ -7,7 +7,7 @@ import { UmbDictionaryRepository } from '../../dictionary/repository/dictionary.
 import { UmbCreateDictionaryModalResultData } from '../../dictionary/entity-actions/create/create-dictionary-modal-layout.element';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { DictionaryOverviewModel, LanguageModel } from '@umbraco-cms/backend-api';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 import { UmbContextConsumerController } from '@umbraco-cms/context-api';
 
 @customElement('umb-dashboard-translation-dictionary')
@@ -51,7 +51,7 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	#repo!: UmbDictionaryRepository;
 
-	#modalService!: UmbModalService;
+	#modalService!: UmbModalContext;
 
 	#tableItems: Array<UmbTableItem> = [];
 
@@ -173,7 +173,9 @@ export class UmbDashboardTranslationDictionaryElement extends UmbLitElement {
 
 	render() {
 		return html` <div id="dictionary-top-bar">
-				<uui-button type="button" look="outline" label="Create dictionary item" @click=${this.#create}>Create dictionary item</uui-button>
+				<uui-button type="button" look="outline" label="Create dictionary item" @click=${this.#create}
+					>Create dictionary item</uui-button
+				>
 				<uui-input
 					@keyup="${this.#filter}"
 					placeholder="Type to filter..."

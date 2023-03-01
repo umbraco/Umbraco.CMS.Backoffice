@@ -3,7 +3,7 @@ import { css, CSSResultGroup, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbCurrentUserStore, UMB_CURRENT_USER_STORE_CONTEXT_TOKEN } from './current-user.store';
 import type { UserDetails } from '@umbraco-cms/models';
-import { UmbModalService, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
+import { UmbModalContext, UMB_MODAL_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/modal';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 @customElement('umb-current-user-header-app')
@@ -22,7 +22,7 @@ export class UmbCurrentUserHeaderApp extends UmbLitElement {
 	private _currentUser?: UserDetails;
 
 	private _currentUserStore?: UmbCurrentUserStore;
-	private _modalService?: UmbModalService;
+	private _modalService?: UmbModalContext;
 
 	constructor() {
 		super();
