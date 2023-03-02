@@ -3,6 +3,8 @@ import { manifests as dictionaryManifests } from './dictionary/manifests';
 import type { ManifestTypes } from '@umbraco-cms/models';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 
+export const manifests = [...translationSectionManifests, ...dictionaryManifests];
+
 const registerExtensions = (manifests: Array<ManifestTypes>) => {
 	manifests.forEach((manifest) => {
 		if (umbExtensionsRegistry.isRegistered(manifest.alias)) return;
@@ -10,4 +12,4 @@ const registerExtensions = (manifests: Array<ManifestTypes>) => {
 	});
 };
 
-registerExtensions([...translationSectionManifests, ...dictionaryManifests]);
+registerExtensions(manifests);

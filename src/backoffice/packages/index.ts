@@ -5,6 +5,8 @@ import { manifests as packageSectionManifests } from './package-section/manifest
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 import { ManifestTypes } from '@umbraco-cms/extensions-registry';
 
+export const manifests = [...packageBuilderManifests, ...packageRepoManifests, ...packageSectionManifests];
+
 const registerExtensions = (manifests: Array<ManifestTypes>) => {
 	manifests.forEach((manifest) => {
 		if (umbExtensionsRegistry.isRegistered(manifest.alias)) return;
@@ -12,4 +14,4 @@ const registerExtensions = (manifests: Array<ManifestTypes>) => {
 	});
 };
 
-registerExtensions([...packageBuilderManifests, ...packageRepoManifests, ...packageSectionManifests]);
+registerExtensions(manifests);

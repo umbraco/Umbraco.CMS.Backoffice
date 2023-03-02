@@ -8,6 +8,15 @@ import { manifests as documentManifests } from './documents/manifests';
 import { umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 import { ManifestTypes } from '@umbraco-cms/extensions-registry';
 
+export const manifests = [
+	...dashboardManifests,
+	...contentSectionManifests,
+	...contentMenuManifest,
+	...documentBlueprintManifests,
+	...documentTypeManifests,
+	...documentManifests,
+];
+
 const registerExtensions = (manifests: Array<ManifestTypes>) => {
 	manifests.forEach((manifest) => {
 		if (umbExtensionsRegistry.isRegistered(manifest.alias)) return;
@@ -15,11 +24,4 @@ const registerExtensions = (manifests: Array<ManifestTypes>) => {
 	});
 };
 
-registerExtensions([
-	...dashboardManifests,
-	...contentSectionManifests,
-	...contentMenuManifest,
-	...documentBlueprintManifests,
-	...documentTypeManifests,
-	...documentManifests,
-]);
+registerExtensions(manifests);
