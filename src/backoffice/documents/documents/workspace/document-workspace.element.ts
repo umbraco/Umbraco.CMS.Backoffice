@@ -74,9 +74,38 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		return culture + (segment ? '_' + segment : '');
 	}
 
+	private _handleVariantFolderPart(index: number, folderPart: string) {
+		const variantSplit = folderPart.split('_');
+		const culture = variantSplit[0];
+		const segment = variantSplit[1];
+		this._workspaceContext.setActiveVariant(index, culture, segment);
+	}
+
 	private _generateRoutes() {
 		// Generate split view routes for all available routes
 		const routes: Array<IRoute> = [];
+
+		// Split view routes:
+		this._availableVariants.forEach((variantA) => {
+			this._availableVariants.forEach((variantB) => {
+				routes.push({
+					path:
+						this._generateVariantURL(variantA.culture, variantA.segment) +
+						'_split_' +
+						this._generateVariantURL(variantB.culture, variantB.segment),
+					component: () => import('./document-workspace-split-view.element'),
+					setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
+						console.log('split info', info.match.fragments.consumed);
+						// Set split view/active info..
+						const variantSplit = info.match.fragments.consumed.split('_split_');
+						variantSplit.forEach((part, index) => {
+							console.log('split info - do', index, part);
+							this._handleVariantFolderPart(index, part);
+						});
+					},
+				});
+			});
+		});
 
 		// Single view:
 		this._availableVariants.forEach((variant) => {
@@ -85,16 +114,10 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 				component: () => import('./document-workspace-split-view.element'),
 				setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 					console.log('info', info.match.fragments.consumed);
-					// Set split view/active info..
-					const variantSplit = info.match.fragments.consumed.split('_');
-					const culture = variantSplit[0];
-					const segment = variantSplit[1];
-					this._workspaceContext.setActiveVariant(0, culture, segment);
+					this._handleVariantFolderPart(0, info.match.fragments.consumed);
 				},
 			});
 		});
-
-		// TODO: write a comment..
 
 		if (routes.length !== 0) {
 			routes.push({

@@ -119,7 +119,7 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 		if (this._workspaceViews.length > 0) {
 			this._routes = this._workspaceViews.map((view) => {
 				return {
-					path: `${this.postfixUrls ? this.postfixUrls + '/' : ''}view/${view.meta.pathname}`,
+					path: `${this.postfixUrls ? ':key/' : ''}view/${view.meta.pathname}`,
 					component: () => {
 						if (view.type === 'workspaceViewCollection') {
 							return import(
@@ -140,8 +140,8 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 			});
 
 			this._routes.push({
-				path: `${this.postfixUrls ? this.postfixUrls + '/' : ''}**`,
-				redirectTo: `${this.postfixUrls ? this.postfixUrls + '/' : ''}view/${this._workspaceViews[0].meta.pathname}`,
+				path: `${this.postfixUrls ? +'0/' : ''}**`,
+				redirectTo: `${this.postfixUrls ? '0/' : ''}view/${this._workspaceViews[0].meta.pathname}`,
 			});
 		}
 	}
@@ -172,8 +172,10 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 								(view) => html`
 									<uui-tab
 										.label="${view.meta.label || view.name}"
-										href="${this._routerPath}/view/${view.meta.pathname}"
-										?active="${'view/' + view.meta.pathname === this._activePath}">
+										href="${this._routerPath + '/'}${this.postfixUrls ? this.postfixUrls + '/' : ''}view/${view.meta
+											.pathname}"
+										?active="${(this.postfixUrls ? this.postfixUrls + '/' : '') + 'view/' + view.meta.pathname ===
+										this._activePath}">
 										<uui-icon slot="icon" name="${view.meta.icon}"></uui-icon>
 										${view.meta.label || view.name}
 									</uui-tab>

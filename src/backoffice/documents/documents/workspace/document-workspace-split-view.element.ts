@@ -1,6 +1,7 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
-import { css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { css, html, nothing } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
 import { ActiveVariant, UmbDocumentWorkspaceContext } from './document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 import '../../../shared/components/workspace/workspace-variant/workspace-variant.element';
@@ -18,20 +19,10 @@ export class UmbDocumentWorkspaceSplitViewElement extends UmbLitElement {
 		`,
 	];
 
-	@property()
-	public get index(): number {
-		return this._index;
-	}
-	public set index(value: number) {
-		this._index = value;
-		this._observeActiveVariantInfo();
-	}
-	private _index = 0;
-
 	private _workspaceContext?: UmbDocumentWorkspaceContext;
 
 	@state()
-	_variant?: ActiveVariant;
+	_variants?: Array<ActiveVariant>;
 
 	constructor() {
 		super();
@@ -44,20 +35,32 @@ export class UmbDocumentWorkspaceSplitViewElement extends UmbLitElement {
 
 	private _observeActiveVariantInfo() {
 		if (!this._workspaceContext) return;
-		if (this._index) {
-			this.observe(
-				this._workspaceContext.activeVariantsInfoByIndex(this._index),
-				(variant) => {
-					this._variant = variant;
-				},
-				'_observeActiveVariantsInfo'
-			);
-		} else {
-			//this.removeControllerByAlias('_observeActiveVariantsInfo');
-		}
+		this.observe(
+			this._workspaceContext.activeVariantsInfo,
+			(variants) => {
+				this._variants = variants;
+			},
+			'_observeActiveVariantsInfo'
+		);
 	}
 
 	render() {
+		return this._variants
+			? repeat(
+					this._variants,
+					(view) => view.index,
+					(view) => html`
+						<umb-workspace-variant alias="Umb.Workspace.Document" .splitViewIndex=${view.index}>
+							<!--<umb-workspace-action-menu
+								slot="action-menu"
+								entity-type="document"
+								unique="${this._unique!}"></umb-workspace-action-menu>-->
+						</umb-workspace-variant>
+					`
+			  )
+			: nothing;
+
+		/*
 		return html`
 			<umb-workspace-variant alias="Umb.Workspace.Document" .splitViewIndex=${this._index}>
 				<!--<umb-workspace-action-menu
@@ -66,6 +69,7 @@ export class UmbDocumentWorkspaceSplitViewElement extends UmbLitElement {
 					unique="${this.unique}"></umb-workspace-action-menu>-->
 			</umb-workspace-variant>
 		`;
+		*/
 	}
 }
 
