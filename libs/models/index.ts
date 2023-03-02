@@ -2,7 +2,7 @@ import {
 	ContentTreeItemModel,
 	DictionaryItemTranslationModel,
 	EntityTreeItemModel,
-	FolderTreeItemModel, PackageManifestModel,
+	FolderTreeItemModel,
 	ProblemDetailsModel,
 } from '@umbraco-cms/backend-api';
 
@@ -152,6 +152,14 @@ export interface SwatchDetails {
 	value: string;
 }
 
-export type UmbPackage = PackageManifestModel;
+export type UmbPackage = {
+	name?: string;
+	version?: string;
+	extensions?: unknown[];
+};
 
-export type PackageManifestResponse = Array<UmbPackage>;
+export type PagedManifestsResponse = UmbPackage[];
+
+export type UmbPackageWithMigrationStatus = UmbPackage & {
+	hasPendingMigrations: boolean;
+};
