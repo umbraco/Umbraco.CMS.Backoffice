@@ -9,7 +9,7 @@ import { UmbInputLanguagePickerElement } from '../../../shared/components/input-
 import { UmbLitElement } from '@umbraco-cms/element';
 import { PackageDefinitionModel, PackageResource } from '@umbraco-cms/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/resources';
-import { UmbNotificationService, UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN } from '@umbraco-cms/notification';
+import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/notification';
 
 @customElement('umb-workspace-package-builder')
 export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
@@ -46,12 +46,12 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 	@query('#package-name-input')
 	private _packageNameInput!: UUIInputElement;
 
-	private _notificationService?: UmbNotificationService;
+	private _notificationContext?: UmbNotificationContext;
 
 	constructor() {
 		super();
-		this.consumeContext(UMB_NOTIFICATION_SERVICE_CONTEXT_TOKEN, (notificationService) => {
-			this._notificationService = notificationService;
+		this.consumeContext(UMB_NOTIFICATION_CONTEXT_TOKEN, (instance) => {
+			this._notificationContext = instance;
 		});
 	}
 
@@ -77,7 +77,7 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 
 	#nameDefined() {
 		const valid = this._packageNameInput.checkValidity();
-		if (!valid) this._notificationService?.peek('danger', { data: { message: 'Package missing a name' } });
+		if (!valid) this._notificationContext?.peek('danger', { data: { message: 'Package missing a name' } });
 		return valid;
 	}
 
