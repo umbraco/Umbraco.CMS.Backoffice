@@ -29,7 +29,7 @@ export class UmbExtensionRegistry {
 		// If entrypoint extension, we should load and run it immediately
 		if (manifest.type === 'entrypoint') {
 			loadExtension(manifest as ManifestEntrypoint).then((js) => {
-				// If the extension has a default export, be sure to run that or else let the module handle itself
+				// If the extension has an onInit export, be sure to run that or else let the module handle itself
 				if (hasInitExport(js)) {
 					js.onInit(rootHost!, this);
 				}
