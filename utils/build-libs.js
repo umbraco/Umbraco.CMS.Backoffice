@@ -22,7 +22,6 @@ for (let i = 0; i < libs.length; i++) {
 				console.log('Installed ' + lib + '.');
 
 				copyDistFromLib(lib, `${libFolder}/dist`);
-				findAndCopyTypesForLib(lib);
 			}
 		});
 	}
@@ -38,6 +37,7 @@ function copyDistFromLib(libName, distPath) {
 			console.error(err);
 		} else {
 			console.log(`Copied ${libName}`);
+			findAndCopyTypesForLib(libName);
 		}
 	});
 }
@@ -48,17 +48,20 @@ function copyDistFromLib(libName, distPath) {
  * Wrap the types from the index.d.ts file as a new module called "@umbraco-cms/{libName}".
  */
 function findAndCopyTypesForLib(libName) {
+	console.log('Installing types for', libName);
 	const typesFolder = './types/libs';
 	const libTypesFolder = `${typesFolder}/${libName}`;
 	if (fs.existsSync(libTypesFolder)) {
 		const libTypesTargetFolder = `${libsDistFolder}/${libName}`;
 		fs.cpSync(libTypesFolder, `${libTypesTargetFolder}/types`, { recursive: true });
-		fs.writeFileSync(`${libTypesTargetFolder}/index.d.ts`, wrapLibTypeContent(libName));
+		fs.writeFileSync(`${libTypesTargetFolder}/index.d.ts`, wrapLibTypeContent(libName), {});
 	}
 }
 
 function wrapLibTypeContent(libName) {
-	return `declare module "@umbraco-cms/${libName}" {
-		export * from './types';
+	return `
+	import * as lib from './types';
+	declare module "@umbraco-cms/${libName}" {
+		export = lib;
 	}`;
 }
