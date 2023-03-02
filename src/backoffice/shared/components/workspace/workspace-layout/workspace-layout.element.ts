@@ -140,7 +140,7 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 			});
 
 			this._routes.push({
-				path: `**`,
+				path: `${this.postfixUrls ? this.postfixUrls + '/' : ''}**`,
 				redirectTo: `${this.postfixUrls ? this.postfixUrls + '/' : ''}view/${this._workspaceViews[0].meta.pathname}`,
 			});
 		}
