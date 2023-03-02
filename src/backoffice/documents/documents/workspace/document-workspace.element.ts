@@ -1,12 +1,13 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { repeat } from 'lit/directives/repeat.js';
+import { IRoute, IRoutingInfo } from 'router-slot';
 import type { UmbWorkspaceEntityElement } from '../../../shared/components/workspace/workspace-entity-element.interface';
 import { ActiveVariant, UmbDocumentWorkspaceContext } from './document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 import '../../../shared/components/workspace/workspace-variant/workspace-variant.element';
-import { DocumentModel } from '@umbraco-cms/backend-api';
+import { DocumentModel, VariantViewModelBaseModel } from '@umbraco-cms/backend-api';
+import { UmbRouterSlotInitEvent } from '@umbraco-cms/router';
 
 @customElement('umb-document-workspace')
 export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWorkspaceEntityElement {
@@ -14,7 +15,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		UUITextStyles,
 		css`
 			:host {
-				display: flex;
+				display: block;
 				width: 100%;
 				height: 100%;
 			}
@@ -22,15 +23,27 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 	];
 
 	private _workspaceContext: UmbDocumentWorkspaceContext = new UmbDocumentWorkspaceContext(this);
+	//private _defaultVariant?: VariantViewModelBaseModel;
 
 	@state()
 	_unique?: string;
+
+	@state()
+	_routes?: Array<IRoute>;
+
+	@state()
+	_availableVariants: Array<VariantViewModelBaseModel> = [];
 
 	@state()
 	_workspaceSplitViews: Array<ActiveVariant> = [];
 
 	constructor() {
 		super();
+
+		this.observe(this._workspaceContext.variants, (variants) => {
+			this._availableVariants = variants;
+			this._generateRoutes();
+		});
 		this.observe(this._workspaceContext.activeVariantsInfo, (variants) => {
 			this._workspaceSplitViews = variants;
 		});
@@ -48,28 +61,68 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 
 	private _gotDocumentData(data: DocumentModel | undefined) {
 		if (data && data.variants && data.variants.length > 0) {
-			this._workspaceContext.setActiveVariant(0, data.variants[0].culture || null, data.variants[0].segment || null);
+			//this._defaultVariant = data.variants[0];
 			this._unique = data.key;
+			// Maybe we need to re-generate routes here?
 		} else {
 			// Fail beautifully?
 		}
 	}
 
+	private _generateVariantURL(culture: string | null = 'invariant', segment?: string | null) {
+		// TODO: make serialize and deserialize variant-string methods
+		return culture + (segment ? '_' + segment : '');
+	}
+
+	private _generateRoutes() {
+		// Generate split view routes for all available routes
+		const routes: Array<IRoute> = [];
+
+		// Single view:
+		this._availableVariants.forEach((variant) => {
+			routes.push({
+				path: this._generateVariantURL(variant.culture, variant.segment),
+				component: () => import('./document-workspace-split-view.element'),
+				setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
+					console.log('info', info.match.fragments.consumed);
+					// Set split view/active info..
+					const variantSplit = info.match.fragments.consumed.split('_');
+					const culture = variantSplit[0];
+					const segment = variantSplit[1];
+					this._workspaceContext.setActiveVariant(0, culture, segment);
+				},
+			});
+		});
+
+		// TODO: write a comment..
+
+		if (routes.length !== 0) {
+			routes.push({
+				path: '**',
+				redirectTo: routes[0]?.path,
+			});
+		}
+
+		this._routes = routes;
+	}
+
+	private _gotWorkspaceRoute = (e: UmbRouterSlotInitEvent) => {
+		this._workspaceContext.setWorkspaceRoute(e.target.absoluteRouterPath);
+	};
+
 	render() {
 		return this._unique
-			? repeat(
-					this._workspaceSplitViews,
-					(view) => view.index,
-					(view) => html`
+			? html`<umb-router-slot .routes=${this._routes} @init=${this._gotWorkspaceRoute}></umb-router-slot>`
+			: nothing;
+
+		/*
 						<umb-workspace-variant alias="Umb.Workspace.Document" .splitViewIndex=${view.index}>
 							<umb-workspace-action-menu
 								slot="action-menu"
 								entity-type="document"
 								unique="${this._unique!}"></umb-workspace-action-menu>
 						</umb-workspace-variant>
-					`
-			  )
-			: nothing;
+						*/
 	}
 }
 

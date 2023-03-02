@@ -52,6 +52,14 @@ export class UmbDocumentWorkspaceContext
 		new UmbObserverController(this.host, this.documentTypeKey, (key) => this.structure.loadType(key));
 	}
 
+	private _routeBase?: string;
+	public getWorkspaceRoute(): string | undefined {
+		return this._routeBase;
+	}
+	public setWorkspaceRoute(route: string | undefined) {
+		this._routeBase = route;
+	}
+
 	async load(entityKey: string) {
 		const { data } = await this.repository.requestByKey(entityKey);
 		if (!data) return undefined;
@@ -98,6 +106,10 @@ export class UmbDocumentWorkspaceContext
 			activeVariants.push({ index, culture, segment });
 		}
 		this.#activeVariantsInfo.next(activeVariants);
+	}
+
+	activeVariantsInfoByIndex(index: number) {
+		return this.#activeVariantsInfo.getObservablePart((data) => data[index] || undefined);
 	}
 
 	openSplitView(culture: string | null, segment: string | null) {

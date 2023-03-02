@@ -150,8 +150,15 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 
 	private _switchVariant(variant: DocumentVariantModel) {
 		if (variant.culture === undefined || variant.segment === undefined) return;
-		this._variantContext?.changeVariant(variant.culture, variant.segment);
-		this._close();
+		//this._variantContext?.changeVariant(variant.culture, variant.segment);
+		// TODO: remember current path and extend url with it.
+		// TODO: construct URl with all active routes:
+		// TODO: use method for generating variant url:
+		const workspaceRoute = this._workspaceContext?.getWorkspaceRoute();
+		if (workspaceRoute) {
+			window.location.assign(workspaceRoute + '/' + variant.culture);
+			this._close();
+		}
 	}
 
 	private _openSplitView(variant: DocumentVariantModel) {

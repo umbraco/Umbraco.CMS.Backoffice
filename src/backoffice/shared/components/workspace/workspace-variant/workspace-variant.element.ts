@@ -1,6 +1,6 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 
 import '../workspace-layout/workspace-layout.element';
 
@@ -44,14 +44,18 @@ export class UmbWorkspaceVariantContentElement extends UmbLitElement {
 	// Use this for any sub url routing, or maybe we should use the culture + segment for this.
 	@property({ type: Number })
 	public set splitViewIndex(index: number) {
+		this._splitViewIndex = index;
 		this.variantContext.setSplitViewIndex(index);
 	}
+
+	@state()
+	private _splitViewIndex = 0;
 
 	variantContext = new UmbWorkspaceVariantContext(this);
 
 	render() {
 		return html`
-			<umb-workspace-layout alias=${this.alias}>
+			<umb-workspace-layout .postfixUrls=${this._splitViewIndex.toString()} alias=${this.alias}>
 				<div id="header" slot="header">
 					<umb-variant-selector></umb-variant-selector>
 				</div>

@@ -4,6 +4,8 @@ import type { UmbWorkspaceEntityContextInterface } from './workspace-entity-cont
 import type { ValueViewModelBaseModel } from '@umbraco-cms/backend-api';
 
 export interface UmbWorkspaceVariableEntityContextInterface<T = unknown> extends UmbWorkspaceEntityContextInterface<T> {
+	getWorkspaceRoute(): string | undefined;
+
 	getName(variantId?: UmbVariantId): void;
 	setName(name: string, variantId?: UmbVariantId): void;
 

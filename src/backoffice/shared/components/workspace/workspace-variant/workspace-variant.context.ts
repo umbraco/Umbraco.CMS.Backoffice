@@ -65,6 +65,7 @@ export class UmbWorkspaceVariantContext {
 			this.#workspaceContext.activeVariantInfoByIndex(index),
 			async (activeVariantInfo) => {
 				if (!activeVariantInfo) return;
+				console.log('Found a activeVariantInfo', activeVariantInfo);
 				const variantId = this._setVariantId(activeVariantInfo.culture, activeVariantInfo.segment);
 				const currentVariant = await this.#workspaceContext?.getVariant(variantId);
 				this.#currentVariant.next(currentVariant);

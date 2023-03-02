@@ -29,6 +29,7 @@ import { UmbLitElement } from '@umbraco-cms/element';
  * @class UmbWorkspaceLayout
  * @extends {UmbLitElement}
  */
+// TODO: stop naming this something with layout. as its not just an layout. it hooks up with extensions.
 @customElement('umb-workspace-layout')
 export class UmbWorkspaceLayout extends UmbLitElement {
 	static styles = [
@@ -60,6 +61,9 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 			}
 		`,
 	];
+
+	@property()
+	public postfixUrls?: string;
 
 	@property()
 	public headline = '';
@@ -115,7 +119,7 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 		if (this._workspaceViews.length > 0) {
 			this._routes = this._workspaceViews.map((view) => {
 				return {
-					path: `view/${view.meta.pathname}`,
+					path: `${this.postfixUrls ? this.postfixUrls + '/' : ''}view/${view.meta.pathname}`,
 					component: () => {
 						if (view.type === 'workspaceViewCollection') {
 							return import(
@@ -136,8 +140,8 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 			});
 
 			this._routes.push({
-				path: '**',
-				redirectTo: `view/${this._workspaceViews[0].meta.pathname}`,
+				path: `**`,
+				redirectTo: `${this.postfixUrls ? this.postfixUrls + '/' : ''}view/${this._workspaceViews[0].meta.pathname}`,
 			});
 		}
 	}
