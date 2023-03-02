@@ -16,7 +16,7 @@ export class UmbContextToken<T = unknown> {
 	 *                used only for debugging purposes,
 	 *                it should but does not need to be unique
 	 */
-	constructor(public readonly alias: string, protected _desc?: string) {}
+	constructor(protected alias: string, protected _desc?: string) {}
 
 	/**
 	 * This method must always return the unique alias of the token since that
