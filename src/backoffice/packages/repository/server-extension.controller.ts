@@ -4,12 +4,13 @@ import { UmbController, UmbControllerHostInterface } from '@umbraco-cms/controll
 import { UmbExtensionRegistry } from '@umbraco-cms/extensions-api';
 
 export class UmbServerExtensionController extends UmbController {
+	#host: UmbControllerHostInterface;
 	#unobserve = new Subject<void>();
 	#repository: UmbPackageRepository;
 
 	constructor(host: UmbControllerHostInterface, private readonly extensionRegistry: UmbExtensionRegistry) {
 		super(host, UmbServerExtensionController.name);
-
+		this.#host = host;
 		this.#repository = new UmbPackageRepository(host);
 	}
 
@@ -32,7 +33,7 @@ export class UmbServerExtensionController extends UmbController {
 			)
 			.subscribe((extensions) => {
 				extensions.forEach((extension) => {
-					this.extensionRegistry.register(extension);
+					this.extensionRegistry.register(extension, this.#host);
 				});
 			});
 	}

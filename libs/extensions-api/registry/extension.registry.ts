@@ -14,7 +14,7 @@ export class UmbExtensionRegistry {
 	private _extensions = new BehaviorSubject<Array<ManifestBase>>([]);
 	public readonly extensions = this._extensions.asObservable();
 
-	register(manifest: ManifestTypes): void {
+	register(manifest: ManifestTypes, rootHost?: UmbControllerHostInterface): void {
 		const extensionsValues = this._extensions.getValue();
 		const extension = extensionsValues.find((extension) => extension.alias === manifest.alias);
 
@@ -29,8 +29,8 @@ export class UmbExtensionRegistry {
 		if (manifest.type === 'entrypoint') {
 			loadExtension(manifest as ManifestEntrypoint).then((js) => {
 				// If the extension has a default export, be sure to run that or else let the module handle itself
-				if (hasDefaultExport<HTMLElementConstructor>(js)) {
-					new js.default();
+				if (hasInitExport(js)) {
+					js.onInit(rootHost!, this);
 				}
 			});
 		}
