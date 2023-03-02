@@ -1,8 +1,9 @@
 import * as fs from 'fs';
-import path from 'path';
 import { exec } from 'child_process';
 
+const libsDistFolder = '../Umbraco.Cms.StaticAssets/wwwroot/umbraco/backoffice/libs';
 const libs = fs.readdirSync('./libs');
+
 for (let i = 0; i < libs.length; i++) {
 	const lib = libs[i];
 	const libFolder = './libs/' + lib;
@@ -13,7 +14,7 @@ for (let i = 0; i < libs.length; i++) {
 		}
 
 		console.log('Installing ' + lib + '...');
-		exec('npx rollup -c rollup.config.js', { cwd: libFolder }, function (error, stdout, stderr) {
+		exec('npx rollup -c rollup.config.js', { cwd: libFolder }, function (error) {
 			if (error) {
 				console.error('Error installing ' + lib + '!');
 				console.error(error);
@@ -21,6 +22,7 @@ for (let i = 0; i < libs.length; i++) {
 				console.log('Installed ' + lib + '.');
 
 				copyDistFromLib(lib, `${libFolder}/dist`);
+				findAndCopyTypesForLib(lib);
 			}
 		});
 	}
@@ -28,7 +30,7 @@ for (let i = 0; i < libs.length; i++) {
 
 function copyDistFromLib(libName, distPath) {
 	console.log(`Copying ${libName} to StaticAssets`);
-	const targetFolder = `../Umbraco.Cms.StaticAssets/wwwroot/umbraco/backoffice/libs/${libName}`;
+	const targetFolder = `${libsDistFolder}/${libName}`;
 
 	fs.cp(distPath, targetFolder, { recursive: true }, function (err) {
 		if (err) {
@@ -38,4 +40,25 @@ function copyDistFromLib(libName, distPath) {
 			console.log(`Copied ${libName}`);
 		}
 	});
+}
+
+/**
+ * Look in the ./types/libs folder for a folder with the same name as the {libName} parameter
+ * and copy those types into the `${libsDistFolder}/${libName}` folder.
+ * Wrap the types from the index.d.ts file as a new module called "@umbraco-cms/{libName}".
+ */
+function findAndCopyTypesForLib(libName) {
+	const typesFolder = './types/libs';
+	const libTypesFolder = `${typesFolder}/${libName}`;
+	if (fs.existsSync(libTypesFolder)) {
+		const libTypesTargetFolder = `${libsDistFolder}/${libName}`;
+		fs.cpSync(libTypesFolder, `${libTypesTargetFolder}/types`, { recursive: true });
+		fs.writeFileSync(`${libTypesTargetFolder}/index.d.ts`, wrapLibTypeContent(libName));
+	}
+}
+
+function wrapLibTypeContent(libName) {
+	return `declare module "@umbraco-cms/${libName}" {
+		export * from './types';
+	}`;
 }
