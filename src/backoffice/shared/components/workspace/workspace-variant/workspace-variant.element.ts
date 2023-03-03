@@ -41,7 +41,6 @@ export class UmbWorkspaceVariantContentElement extends UmbLitElement {
 	@property()
 	alias!: string;
 
-	// Use this for any sub url routing, or maybe we should use the culture + segment for this.
 	@property({ type: Number })
 	public set splitViewIndex(index: number) {
 		this._splitViewIndex = index;
