@@ -99,13 +99,7 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	setActiveVariant(index: number, culture: string | null, segment: string | null) {
-		const activeVariants = [...this.#activeVariantsInfo.getValue()];
-		if (index < activeVariants.length) {
-			activeVariants[index] = { index, culture, segment };
-		} else {
-			activeVariants.push({ index, culture, segment });
-		}
-		this.#activeVariantsInfo.next(activeVariants);
+		this.#activeVariantsInfo.appendOne({ index, culture, segment });
 	}
 
 	activeVariantsInfoByIndex(index: number) {
@@ -113,7 +107,12 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	openSplitView(culture: string | null, segment: string | null) {
-		this.setActiveVariant(1, culture, segment);
+		throw new Error('No, not yet openSplitView');
+		//this.setActiveVariant(1, culture, segment);
+	}
+	closeSplitView() {
+		// cause we currently only support two variants open, then we can just close index 1.
+		this.#activeVariantsInfo.removeOne(1);
 	}
 
 	getVariant(variantId: UmbVariantId) {

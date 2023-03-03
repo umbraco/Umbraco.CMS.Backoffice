@@ -54,7 +54,7 @@ export class UmbWorkspaceVariantContentElement extends UmbLitElement {
 
 	render() {
 		return html`
-			<umb-workspace-layout .postfixUrls=${this._splitViewIndex.toString()} alias=${this.alias}>
+			<umb-workspace-layout .splitViewIndex=${this._splitViewIndex.toString()} alias=${this.alias}>
 				<div id="header" slot="header">
 					<umb-variant-selector></umb-variant-selector>
 				</div>

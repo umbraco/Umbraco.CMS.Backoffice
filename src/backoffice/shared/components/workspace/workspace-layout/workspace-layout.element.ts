@@ -63,7 +63,7 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 	];
 
 	@property()
-	public postfixUrls?: string;
+	public splitViewIndex?: string;
 
 	@property()
 	public headline = '';
@@ -113,13 +113,37 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 		);
 	}
 
+	private _createViewRoute(path, view: ManifestWorkspaceView | ManifestWorkspaceViewCollection) {
+		return {
+			path: path,
+			component: () => {
+				if (view.type === 'workspaceViewCollection') {
+					return import(
+						'../../../../shared/components/workspace/workspace-content/views/collection/workspace-view-collection.element'
+					);
+				}
+				return createExtensionElement(view);
+			},
+			setup: (component: Promise<HTMLElement> | HTMLElement, info: IRoutingInfo) => {
+				// When its using import, we get an element, when using createExtensionElement we get a Promise.
+				if ((component as any).then) {
+					(component as any).then((el: any) => (el.manifest = view));
+				} else {
+					(component as any).manifest = view;
+				}
+			},
+		};
+	}
+
 	private _createRoutes() {
 		this._routes = [];
 
 		if (this._workspaceViews.length > 0) {
 			this._routes = this._workspaceViews.map((view) => {
-				return {
-					path: `${this.postfixUrls ? ':key/' : ''}view/${view.meta.pathname}`,
+				return this._createViewRoute(`${this.splitViewIndex ? ':key/' : ''}view/${view.meta.pathname}`, view);
+
+				/*{
+					path: `${this.splitViewIndex ? ':key/' : ''}view/${view.meta.pathname}`,
 					component: () => {
 						if (view.type === 'workspaceViewCollection') {
 							return import(
@@ -136,13 +160,64 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 							(component as any).manifest = view;
 						}
 					},
-				};
+				};*/
 			});
 
-			this._routes.push({
-				path: `${this.postfixUrls ? +'0/' : ''}**`,
-				redirectTo: `${this.postfixUrls ? '0/' : ''}view/${this._workspaceViews[0].meta.pathname}`,
-			});
+			// If we have a post fix then we need to add a direct from the empty url of the split-view-index:
+			const firstView = this._workspaceViews[0];
+			if (firstView) {
+				// Add the first view with the specific split view index in its path, to provide something for the redirect code below:
+				this._createViewRoute(
+					`${this.splitViewIndex ? this.splitViewIndex + '/' : ''}view/${firstView.meta.pathname}`,
+					firstView
+				);
+
+				if (this.splitViewIndex) {
+					this._routes.push(this._createViewRoute(`:key`, firstView));
+					this._routes.push(this._createViewRoute(`:key/`, firstView));
+
+					if (this.splitViewIndex === '0') {
+						//this._routes.push(this._createViewRoute('', firstView));
+						this._routes.push({
+							path: ``,
+							redirectTo: `${this.splitViewIndex ? this.splitViewIndex + '/' : ''}view/${firstView.meta.pathname}`,
+						});
+					}
+				}
+				/*
+				this._routes.push({
+					path: `${this.splitViewIndex}`,
+					redirectTo: `${this.splitViewIndex ? this.splitViewIndex + '/' : ''}view/${
+						this._workspaceViews[0].meta.pathname
+					}`,
+				});
+
+				// If we have a our index is 0, we also want to cover the situation of no index:
+
+					this._routes.push({
+						path: ``,
+						redirectTo: `${this.splitViewIndex ? this.splitViewIndex + '/' : ''}view/${
+							this._workspaceViews[0].meta.pathname
+						}`,
+					});
+
+				}
+				*/
+
+				/*
+				this._routes.push(
+					this._createViewRoute(`${this.splitViewIndex ? this.splitViewIndex + '/' : ''}**`, firstView)
+				);
+				*/
+				/*
+				this._routes.push({
+					path: `${this.splitViewIndex ? this.splitViewIndex + '/' : ''}**`,
+					redirectTo: `${this.splitViewIndex ? this.splitViewIndex + '/' : ''}view/${
+						this._workspaceViews[0].meta.pathname
+					}`,
+				});
+				*/
+			}
 		}
 	}
 
@@ -172,9 +247,9 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 								(view) => html`
 									<uui-tab
 										.label="${view.meta.label || view.name}"
-										href="${this._routerPath + '/'}${this.postfixUrls ? this.postfixUrls + '/' : ''}view/${view.meta
-											.pathname}"
-										?active="${(this.postfixUrls ? this.postfixUrls + '/' : '') + 'view/' + view.meta.pathname ===
+										href="${this._routerPath + '/'}${this.splitViewIndex ? this.splitViewIndex + '/' : ''}view/${view
+											.meta.pathname}"
+										?active="${(this.splitViewIndex ? this.splitViewIndex + '/' : '') + 'view/' + view.meta.pathname ===
 										this._activePath}">
 										<uui-icon slot="icon" name="${view.meta.icon}"></uui-icon>
 										${view.meta.label || view.name}

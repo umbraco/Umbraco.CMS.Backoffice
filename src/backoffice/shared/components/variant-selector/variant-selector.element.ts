@@ -4,7 +4,6 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { UmbWorkspaceVariantContext } from '../workspace/workspace-variant/workspace-variant.context';
-import { UmbDocumentWorkspaceContext } from '../../../documents/documents/workspace/document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 import type { DocumentVariantModel } from '@umbraco-cms/backend-api';
 
@@ -45,7 +44,6 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 	@state()
 	_variants: Array<DocumentVariantModel> = [];
 
-	private _workspaceContext?: UmbDocumentWorkspaceContext;
 	private _variantContext?: UmbWorkspaceVariantContext;
 
 	@state()
@@ -66,26 +64,24 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 	constructor() {
 		super();
 
-		// TODO: Figure out how to get the magic string for the workspace context.
-		this.consumeContext<UmbDocumentWorkspaceContext>('umbWorkspaceContext', (instance) => {
-			this._workspaceContext = instance;
-			this._observeVariants();
-		});
-
 		this.consumeContext<UmbWorkspaceVariantContext>('umbWorkspaceVariantContext', (instance) => {
 			this._variantContext = instance;
+			this._observeVariants();
 			this._observeVariantContext();
 		});
 	}
 
 	private async _observeVariants() {
-		if (!this._workspaceContext) return;
+		if (!this._variantContext) return;
 
-		this.observe(this._workspaceContext.variants, (variants) => {
-			if (variants) {
-				this._variants = variants;
-			}
-		});
+		const workspaceContext = this._variantContext.getWorkspaceContext();
+		if (workspaceContext) {
+			this.observe(workspaceContext.variants, (variants) => {
+				if (variants) {
+					this._variants = variants;
+				}
+			});
+		}
 	}
 
 	private async _observeVariantContext() {
@@ -149,22 +145,15 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 	}
 
 	private _switchVariant(variant: DocumentVariantModel) {
-		if (variant.culture === undefined || variant.segment === undefined) return;
-		//this._variantContext?.changeVariant(variant.culture, variant.segment);
-		// TODO: remember current path and extend url with it.
-		// TODO: construct URl with all active routes:
-		// TODO: use method for generating variant url:
-		const workspaceRoute = this._workspaceContext?.getWorkspaceRoute();
-		if (workspaceRoute) {
-			window.location.assign(workspaceRoute + '/' + variant.culture);
+		if (this._variantContext?.switchVariant(variant)) {
 			this._close();
 		}
 	}
 
 	private _openSplitView(variant: DocumentVariantModel) {
-		if (variant.culture === undefined || variant.segment === undefined) return;
-		this._workspaceContext?.openSplitView(variant.culture, variant.segment);
-		this._close();
+		if (this._variantContext?.openSplitView(variant)) {
+			this._close();
+		}
 	}
 
 	render() {

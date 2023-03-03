@@ -14,6 +14,9 @@ export class UmbWorkspaceVariantContext {
 	#host: UmbControllerHostInterface;
 
 	#workspaceContext?: UmbDocumentWorkspaceContext;
+	public getWorkspaceContext() {
+		return this.#workspaceContext;
+	}
 
 	#index = new NumberState(undefined);
 	index = this.#index.asObservable();
@@ -47,6 +50,51 @@ export class UmbWorkspaceVariantContext {
 		});
 	}
 
+	// TODO: Make into a util:
+	private _generateVariantURL(culture: string | null = 'invariant', segment?: string | null) {
+		// TODO: make serialize and deserialize variant-string methods
+		return culture + (segment ? '_' + segment : '');
+	}
+
+	public switchVariant(variant: DocumentVariantModel) {
+		if (variant.culture === undefined || variant.segment === undefined) return;
+		// TODO: remember current path and extend url with it.
+		// TODO: construct URl with all active routes:
+		// TODO: use method for generating variant url:
+		const workspaceRoute = this.#workspaceContext?.getWorkspaceRoute();
+		if (workspaceRoute) {
+			history.pushState(
+				null,
+				'',
+				`${workspaceRoute}/${this._generateVariantURL(variant.culture, variant.segment)}/${this.getSplitViewIndex()}`
+			);
+			return true;
+		}
+		return false;
+	}
+
+	public openSplitView(variant: DocumentVariantModel) {
+		if (variant.culture === undefined || variant.segment === undefined) return;
+		// TODO: remember current path and extend url with it.
+		// TODO: construct URl with all active routes:
+		// TODO: use method for generating variant url:
+
+		const myVariant = this.#currentVariant.getValue();
+		const workspaceRoute = this.#workspaceContext?.getWorkspaceRoute();
+		if (myVariant && workspaceRoute) {
+			history.pushState(
+				null,
+				'',
+				`${workspaceRoute}/${this._generateVariantURL(
+					myVariant.culture,
+					myVariant.segment
+				)}_split_${this._generateVariantURL(variant.culture, variant.segment)}/${this.getSplitViewIndex()}`
+			);
+			return true;
+		}
+		return false;
+	}
+
 	private _setVariantId(culture: string | null, segment: string | null) {
 		const variantId = UmbVariantId.Create(culture, segment);
 		this.#variantId.next(variantId);
@@ -65,7 +113,6 @@ export class UmbWorkspaceVariantContext {
 			this.#workspaceContext.activeVariantInfoByIndex(index),
 			async (activeVariantInfo) => {
 				if (!activeVariantInfo) return;
-				console.log('Found a activeVariantInfo', activeVariantInfo);
 				const variantId = this._setVariantId(activeVariantInfo.culture, activeVariantInfo.segment);
 				const currentVariant = await this.#workspaceContext?.getVariant(variantId);
 				this.#currentVariant.next(currentVariant);
@@ -80,11 +127,9 @@ export class UmbWorkspaceVariantContext {
 		this.#workspaceContext?.setActiveVariant(index, culture, segment);
 	}
 
-	/*
 	public getSplitViewIndex() {
 		return this.#index.getValue();
 	}
-	*/
 	public setSplitViewIndex(index: number) {
 		this.#index.next(index);
 	}

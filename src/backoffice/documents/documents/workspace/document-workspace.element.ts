@@ -95,11 +95,9 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 						this._generateVariantURL(variantB.culture, variantB.segment),
 					component: () => import('./document-workspace-split-view.element'),
 					setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
-						console.log('split info', info.match.fragments.consumed);
 						// Set split view/active info..
 						const variantSplit = info.match.fragments.consumed.split('_split_');
 						variantSplit.forEach((part, index) => {
-							console.log('split info - do', index, part);
 							this._handleVariantFolderPart(index, part);
 						});
 					},
@@ -113,16 +111,18 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 				path: this._generateVariantURL(variant.culture, variant.segment),
 				component: () => import('./document-workspace-split-view.element'),
 				setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
-					console.log('info', info.match.fragments.consumed);
+					// cause we might come from a split-view, we need to reset index 1.
+					this._workspaceContext.closeSplitView();
 					this._handleVariantFolderPart(0, info.match.fragments.consumed);
 				},
 			});
 		});
 
 		if (routes.length !== 0) {
+			// Using first single view as the default route for now (hence the math below):
 			routes.push({
 				path: '**',
-				redirectTo: routes[0]?.path,
+				redirectTo: routes[this._availableVariants.length * this._availableVariants.length + 1]?.path,
 			});
 		}
 
