@@ -50,7 +50,7 @@ export class UmbDocumentWorkspaceSplitViewElement extends UmbLitElement {
 					this._variants,
 					(view) => view.index,
 					(view) => html`
-						<umb-workspace-variant alias="Umb.Workspace.Document">
+						<umb-workspace-variant alias="Umb.Workspace.Document" .splitViewIndex=${view.index}>
 							<!--<umb-workspace-action-menu
 								slot="action-menu"
 								entity-type="document"
