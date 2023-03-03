@@ -122,11 +122,13 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 			// Using first single view as the default route for now (hence the math below):
 			routes.push({
 				path: '**',
-				redirectTo: routes[this._availableVariants.length * this._availableVariants.length + 1]?.path,
+				redirectTo: routes[this._availableVariants.length * this._availableVariants.length]?.path,
 			});
 		}
 
 		this._routes = routes;
+
+		console.log(this._routes);
 	}
 
 	private _gotWorkspaceRoute = (e: UmbRouterSlotInitEvent) => {
@@ -137,15 +139,6 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		return this._unique
 			? html`<umb-router-slot .routes=${this._routes} @init=${this._gotWorkspaceRoute}></umb-router-slot>`
 			: nothing;
-
-		/*
-						<umb-workspace-variant alias="Umb.Workspace.Document" .splitViewIndex=${view.index}>
-							<umb-workspace-action-menu
-								slot="action-menu"
-								entity-type="document"
-								unique="${this._unique!}"></umb-workspace-action-menu>
-						</umb-workspace-variant>
-						*/
 	}
 }
 
