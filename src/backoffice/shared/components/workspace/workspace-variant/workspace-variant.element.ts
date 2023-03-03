@@ -41,20 +41,11 @@ export class UmbWorkspaceVariantContentElement extends UmbLitElement {
 	@property()
 	alias!: string;
 
-	@property({ type: Number })
-	public set splitViewIndex(index: number) {
-		this._splitViewIndex = index;
-		this.variantContext.setSplitViewIndex(index);
-	}
-
-	@state()
-	private _splitViewIndex = 0;
-
 	variantContext = new UmbWorkspaceVariantContext(this);
 
 	render() {
 		return html`
-			<umb-workspace-layout .splitViewIndex=${this._splitViewIndex.toString()} alias=${this.alias}>
+			<umb-workspace-layout alias=${this.alias}>
 				<div id="header" slot="header">
 					<umb-variant-selector></umb-variant-selector>
 				</div>

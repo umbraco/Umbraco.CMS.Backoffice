@@ -127,8 +127,6 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		}
 
 		this._routes = routes;
-
-		console.log(this._routes);
 	}
 
 	private _gotWorkspaceRoute = (e: UmbRouterSlotInitEvent) => {
