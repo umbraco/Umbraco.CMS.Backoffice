@@ -7,11 +7,7 @@ import { repeat } from 'lit/directives/repeat.js';
 
 import type { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent } from '@umbraco-cms/router';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
-import type {
-	ManifestWorkspaceAction,
-	ManifestWorkspaceView,
-	ManifestWorkspaceViewCollection,
-} from '@umbraco-cms/models';
+import type { ManifestWorkspaceView, ManifestWorkspaceViewCollection } from '@umbraco-cms/models';
 
 import '../../body-layout/body-layout.element';
 import '../../extension-slot/extension-slot.element';
@@ -20,10 +16,10 @@ import { UmbLitElement } from '@umbraco-cms/element';
 /**
  * @element umb-workspace-layout
  * @description
- * @slot icon - Slot for rendering the icon
- * @slot name - Slot for rendering the name
- * @slot footer - Slot for rendering the workspace footer
- * @slot actions - Slot for rendering the workspace actions
+ * @slot icon - Slot for icon
+ * @slot name - Slot for name
+ * @slot footer - Slot for workspace footer
+ * @slot actions - Slot for workspace footer actions
  * @slot default - slot for main content
  * @export
  * @class UmbWorkspaceLayout
@@ -64,6 +60,9 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 
 	@property()
 	public headline = '';
+
+	@property()
+	public enforceNoFooter = false;
 
 	private _alias = '';
 	/**
@@ -155,9 +154,14 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 				<slot name="action-menu" slot="action-menu"></slot>
 				${this.#renderRoutes()}
 				<slot></slot>
-				<slot name="footer" slot="footer"></slot>
-				${this.#renderWorkspaceActions()}
-				<slot name="actions" slot="actions"></slot>
+				${this.enforceNoFooter
+					? ''
+					: html`
+							<umb-workspace-footer-layout alias=${this.alias}>
+								<slot name="footer"></slot>
+								<slot name="actions" slot="actions"></slot>
+							</umb-workspace-footer-layout>
+					  `}
 			</umb-body-layout>
 		`;
 	}
@@ -201,16 +205,6 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 							}}></umb-router-slot>
 				  `
 				: nothing}
-		`;
-	}
-
-	#renderWorkspaceActions() {
-		return html`
-			<umb-extension-slot
-				slot="actions"
-				type="workspaceAction"
-				.filter=${(extension: ManifestWorkspaceAction) => extension.meta.workspaces.includes(this.alias)}
-				default-element="umb-workspace-action"></umb-extension-slot>
 		`;
 	}
 }

@@ -33,6 +33,7 @@ export class UmbDocumentWorkspaceContext
 	 * The document is the current state/draft version of the document.
 	 */
 	#draft = new ObjectState<EntityType | undefined>(undefined);
+	unique = this.#draft.getObservablePart((data) => data?.key);
 	documentTypeKey = this.#draft.getObservablePart((data) => data?.contentTypeKey);
 
 	variants = this.#draft.getObservablePart((data) => data?.variants || []);
@@ -106,10 +107,6 @@ export class UmbDocumentWorkspaceContext
 		return this.#activeVariantsInfo.getObservablePart((data) => data[index] || undefined);
 	}
 
-	openSplitView(culture: string | null, segment: string | null) {
-		throw new Error('No, not yet openSplitView');
-		//this.setActiveVariant(1, culture, segment);
-	}
 	closeSplitView() {
 		// cause we currently only support two variants open, then we can just close index 1.
 		this.#activeVariantsInfo.removeOne(1);

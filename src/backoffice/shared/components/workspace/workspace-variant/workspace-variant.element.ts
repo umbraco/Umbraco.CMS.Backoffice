@@ -30,10 +30,6 @@ export class UmbWorkspaceVariantContentElement extends UmbLitElement {
 				margin: 0 var(--uui-size-layout-1);
 				flex: 1 1 auto;
 			}
-
-			#footer {
-				margin: 0 var(--uui-size-layout-1);
-			}
 		`,
 	];
 
@@ -54,14 +50,15 @@ export class UmbWorkspaceVariantContentElement extends UmbLitElement {
 
 	render() {
 		return html`
-			<umb-workspace-layout .splitViewIndex=${this._splitViewIndex.toString()} alias=${this.alias}>
+			<umb-workspace-layout
+				.splitViewIndex=${this._splitViewIndex.toString()}
+				alias=${this.alias}
+				.enforceNoFooter=${true}>
 				<div id="header" slot="header">
 					<umb-variant-selector></umb-variant-selector>
 				</div>
 
-				<slot name="action-menu" slot="action-menu"></slot>
-
-				<div id="footer" slot="footer">Breadcrumbs</div>
+				<umb-workspace-action-menu slot="action-menu"></umb-workspace-action-menu>
 			</umb-workspace-layout>
 		`;
 	}

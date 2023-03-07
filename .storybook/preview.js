@@ -118,7 +118,7 @@ export const parameters = {
 			{
 				name: 'White',
 				value: '#ffffff',
-			},		  
+			},
 		],
 	  },
 };

@@ -12,14 +12,30 @@ export class UmbDocumentWorkspaceSplitViewElement extends UmbLitElement {
 		UUITextStyles,
 		css`
 			:host {
+				width: 100%;
+				height: 100%;
+
+				display: flex;
+				flex: 1;
+				flex-direction: column;
+			}
+
+			#splitViews {
 				display: flex;
 				width: 100%;
 				height: 100%;
+			}
+
+			#breadcrumbs {
+				margin: 0 var(--uui-size-layout-1);
 			}
 		`,
 	];
 
 	private _workspaceContext?: UmbDocumentWorkspaceContext;
+
+	@state()
+	_unique?: string;
 
 	@state()
 	_variants?: Array<ActiveVariant>;
@@ -46,18 +62,21 @@ export class UmbDocumentWorkspaceSplitViewElement extends UmbLitElement {
 
 	render() {
 		return this._variants
-			? repeat(
-					this._variants,
-					(view) => view.index,
-					(view) => html`
-						<umb-workspace-variant alias="Umb.Workspace.Document" .splitViewIndex=${view.index}>
-							<!--<umb-workspace-action-menu
-								slot="action-menu"
-								entity-type="document"
-								unique="${this._unique!}"></umb-workspace-action-menu>-->
-						</umb-workspace-variant>
-					`
-			  )
+			? html`<div id="splitViews">
+						${repeat(
+							this._variants,
+							(view) => view.index,
+							(view) => html`
+								<umb-workspace-variant
+									alias="Umb.Workspace.Document"
+									.splitViewIndex=${view.index}></umb-workspace-variant>
+							`
+						)}
+					</div>
+
+					<umb-workspace-footer-layout alias="Umb.Workspace.Document">
+						<div id="breadcrumbs">Breadcrumbs</div>
+					</umb-workspace-footer-layout> `
 			: nothing;
 	}
 }
