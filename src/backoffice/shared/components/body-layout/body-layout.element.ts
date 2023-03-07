@@ -74,6 +74,12 @@ export class UmbBodyLayout extends LitElement {
 	@state()
 	private _actionsMenuSlotHasChildren = false;
 
+	@state()
+	private _footerSlotHasChildren = false;
+
+	@state()
+	private _actionsSlotHasChildren = false;
+
 	#hasNodes = (e: Event) => {
 		return (e.target as HTMLSlotElement).assignedNodes({ flatten: true }).length > 0;
 	};
@@ -111,9 +117,18 @@ export class UmbBodyLayout extends LitElement {
 			<uui-scroll-container id="main">
 				<slot></slot>
 			</uui-scroll-container>
-			<umb-footer-layout>
-				<slot name="footer"></slot>
-				<slot name="actions" slot="actions"></slot>
+			<umb-footer-layout style="display:${this._footerSlotHasChildren || this._actionsSlotHasChildren ? '' : 'none'}">
+				<slot
+					name="footer"
+					@slotchange=${(e: Event) => {
+						this._footerSlotHasChildren = this.#hasNodes(e);
+					}}></slot>
+				<slot
+					name="actions"
+					slot="actions"
+					@slotchange=${(e: Event) => {
+						this._actionsSlotHasChildren = this.#hasNodes(e);
+					}}></slot>
 			</umb-footer-layout>
 		`;
 	}

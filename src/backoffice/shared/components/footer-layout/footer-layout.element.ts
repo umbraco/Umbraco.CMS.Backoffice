@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, PropertyValueMap } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 
@@ -36,35 +36,10 @@ export class UmbFooterLayout extends LitElement {
 		`,
 	];
 
-	@state()
-	private _footerSlotHasChildren = false;
-
-	@state()
-	private _actionsSlotHasChildren = false;
-
-	#hasNodes = (e: Event) => {
-		return (e.target as HTMLSlotElement).assignedNodes({ flatten: true }).length > 0;
-	};
-
-	#updateDisplay() {
-		this.style.display = this._footerSlotHasChildren || this._actionsSlotHasChildren ? '' : 'none';
-	}
-
 	render() {
 		return html`
-			<slot
-				@slotchange=${(e: Event) => {
-					this._footerSlotHasChildren = this.#hasNodes(e);
-					this.#updateDisplay();
-				}}></slot>
-			<slot
-				id="actions"
-				name="actions"
-				style="display:${this._actionsSlotHasChildren ? '' : 'none'}"
-				@slotchange=${(e: Event) => {
-					this._actionsSlotHasChildren = this.#hasNodes(e);
-					this.#updateDisplay();
-				}}></slot>
+			<slot></slot>
+			<slot id="actions" name="actions"></slot>
 		`;
 	}
 }
