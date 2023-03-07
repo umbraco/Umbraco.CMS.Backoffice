@@ -62,6 +62,9 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 	public headline = '';
 
 	@property()
+	public hideNavigation = false;
+
+	@property()
 	public enforceNoFooter = false;
 
 	private _alias = '';
@@ -168,7 +171,7 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 
 	#renderViews() {
 		return html`
-			${this._workspaceViews.length > 1
+			${!this.hideNavigation && this._workspaceViews.length > 1
 				? html`
 						<uui-tab-group slot="tabs">
 							${repeat(

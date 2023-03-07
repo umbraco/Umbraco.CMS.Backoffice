@@ -26,6 +26,10 @@ export class UmbWorkspaceVariantContentElement extends UmbLitElement {
 				height: 100%;
 			}
 
+			:host(:not(:last-child)) {
+				border-right: 1px solid var(--uui-color-border);
+			}
+
 			#header {
 				margin: 0 var(--uui-size-layout-1);
 				flex: 1 1 auto;
@@ -36,6 +40,9 @@ export class UmbWorkspaceVariantContentElement extends UmbLitElement {
 	// TODO: stop prop drilling this alias. Instead use the workspace context.
 	@property()
 	alias!: string;
+
+	@property({ type: Boolean })
+	displayNavigation = false;
 
 	@property({ type: Number })
 	public set splitViewIndex(index: number) {
@@ -53,12 +60,15 @@ export class UmbWorkspaceVariantContentElement extends UmbLitElement {
 			<umb-workspace-layout
 				.splitViewIndex=${this._splitViewIndex.toString()}
 				alias=${this.alias}
+				.hideNavigation=${!this.displayNavigation}
 				.enforceNoFooter=${true}>
 				<div id="header" slot="header">
 					<umb-variant-selector></umb-variant-selector>
 				</div>
-
-				<umb-workspace-action-menu slot="action-menu"></umb-workspace-action-menu>
+				${this.displayNavigation
+					? html`<umb-workspace-action-menu slot="action-menu"></umb-workspace-action-menu>`
+					: ''}
+				<slot name="action-menu" slot="action-menu"></slot>
 			</umb-workspace-layout>
 		`;
 	}

@@ -69,14 +69,15 @@ export class UmbDocumentWorkspaceSplitViewElement extends UmbLitElement {
 							(view) => html`
 								<umb-workspace-variant
 									alias="Umb.Workspace.Document"
-									.splitViewIndex=${view.index}></umb-workspace-variant>
+									.splitViewIndex=${view.index}
+									.displayNavigation=${view.index === this._variants!.length - 1}></umb-workspace-variant>
 							`
 						)}
 					</div>
 
 					<umb-workspace-footer-layout alias="Umb.Workspace.Document">
 						<div id="breadcrumbs">Breadcrumbs</div>
-					</umb-workspace-footer-layout> `
+					</umb-workspace-footer-layout>`
 			: nothing;
 	}
 }
