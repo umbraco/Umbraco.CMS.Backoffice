@@ -15,6 +15,7 @@ export class UmbDocumentWorkspaceViewEditElement extends UmbLitElement {
 		css`
 			:host {
 				display: block;
+				--uui-tab-background: var(--uui-color-surface);
 			}
 		`,
 	];

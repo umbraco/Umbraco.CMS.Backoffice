@@ -47,10 +47,6 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 				border-right: 1px solid var(--uui-color-border);
 			}
 
-			#router-slot {
-				height: 100%;
-			}
-
 			umb-extension-slot[slot='actions'] {
 				display: flex;
 				gap: var(--uui-size-space-2);
