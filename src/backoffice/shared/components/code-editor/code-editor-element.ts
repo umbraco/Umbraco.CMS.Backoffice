@@ -14,6 +14,8 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 //eslint-disable-next-line
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
+import styles from "monaco-editor/min/vs/editor/editor.main.css?inline";
+
 
 //eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -43,22 +45,26 @@ export class UmbCodeEditorElement extends LitElement {
 	theme: 'vs-light' | 'vs-dark' | 'hc-black' = 'vs-light';
 
 	@property()
-	language: 'razor' | 'javascript' | 'css' = 'razor';
+	language: 'razor' | 'javascript' | 'css' = 'javascript';
 
 	@property()
-	code?: string;
+	code = `console.log('Hello World');`;
 
-	static styles = css`
-		:host {
-			display: block;
-			--editor-width: 100%;
-			--editor-height: 100vh;
-		}
-		#editor-container {
-			width: var(--editor-width);
-			height: var(--editor-height);
-		}
-	`;
+	static styles = [
+		
+		css`
+			:host {
+				display: block;
+				--editor-width: 100%;
+				--editor-height: 600px;
+			}
+			#editor-container {
+				width: var(--editor-width);
+				height: var(--editor-height);
+			}
+		`,
+		
+	];
 
 	private getFile() {
 		if (this.children.length > 0) return this.children[0];
@@ -97,14 +103,14 @@ export class UmbCodeEditorElement extends LitElement {
 			theme: this.getTheme(),
 			automaticLayout: true,
 		});
-
+		debugger;
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
 			monaco.editor.setTheme(this.getTheme());
 		});
 	}
 
 	render() {
-		return html` <div id="editor-container" ${ref(this.container)}></div> `;
+		return html`<style>${styles}</style> <main id="editor-container" ${ref(this.container)}></main> `;
 	}
 }
 
