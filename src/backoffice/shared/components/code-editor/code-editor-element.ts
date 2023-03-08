@@ -38,20 +38,6 @@ self.MonacoEnvironment = {
 
 @customElement('umb-code-editor')
 export class UmbCodeEditorElement extends LitElement {
-	private container: Ref<HTMLElement> = createRef();
-	editor?: monaco.editor.IStandaloneCodeEditor;
-	@property()
-	theme: 'vs-light' | 'vs-dark' | 'hc-black' = 'vs-light';
-
-	@property()
-	language: 'razor' | 'javascript' | 'css' = 'javascript';
-
-	@property()
-	code = `console.log('Hello World');`;
-
-	@property({ type: Boolean, attribute: 'readonly' })
-	readOnly = false;
-
 	static styles = [
 		monacoEditorStyles,
 		css`
@@ -66,6 +52,33 @@ export class UmbCodeEditorElement extends LitElement {
 			}
 		`,
 	];
+
+	private container: Ref<HTMLElement> = createRef();
+	editor?: monaco.editor.IStandaloneCodeEditor;
+	@property()
+	theme: 'vs-light' | 'vs-dark' | 'hc-black' = 'vs-light';
+
+	@property()
+	language: 'razor' | 'javascript' | 'css' = 'javascript';
+
+	#code = '';
+	@property()
+	get code() {
+		return this.#code;
+	}
+
+	set code(value: string) {
+		const oldValue = this.#code;
+
+		this.#code = value;
+		if (this.editor && this.#code !== oldValue) {
+			this.editor!.setValue(this.#code);
+		}
+		this.requestUpdate('code', oldValue);
+	}
+
+	@property({ type: Boolean, attribute: 'readonly' })
+	readOnly = false;
 
 	private getFile() {
 		if (this.children.length > 0) return this.children[0];
@@ -117,24 +130,19 @@ export class UmbCodeEditorElement extends LitElement {
 
 	firstUpdated() {
 		this.editor = monaco.editor.create(this.container.value!, {
-			value: this.getCode(),
+			value: this.#code,
 			language: this.getLang(),
 			theme: this.getTheme(),
 			automaticLayout: true,
 		});
+		this.editor.focus();
 		this.editor.onDidChangeModelContent(() => {
-			this.code = this.getValue();
+			this.#code = this.getValue();
 			this.dispatchEvent(new CustomEvent('input', { bubbles: true, composed: true, detail: {} }));
 		});
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
 			monaco.editor.setTheme(this.getTheme());
 		});
-	}
-
-	protected willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-		if (_changedProperties.has('code') && this.editor) {
-			this.editor!.setValue(this.code);
-		}
 	}
 
 	render() {

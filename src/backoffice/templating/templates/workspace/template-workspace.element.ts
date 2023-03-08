@@ -60,7 +60,8 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 		this.#templateWorkspaceContext.setName(value);
 	}
 
-	#onTextareaInput(event: Event) {
+	//TODO - debounce that
+	#onCodeEditorInput(event: Event) {
 		const target = event.target as UmbCodeEditorElement;
 		const value = target.code as string;
 		this.#templateWorkspaceContext.setContent(value);
@@ -74,7 +75,7 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 				language="razor"
 				id="content"
 				.code=${this._content ?? ''}
-				@input=${this.#onTextareaInput}></umb-code-editor>
+				@input=${this.#onCodeEditorInput}></umb-code-editor>
 		</umb-workspace-layout>`;
 	}
 }
