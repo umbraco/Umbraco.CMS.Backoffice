@@ -85,10 +85,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		this._availableVariants.forEach((variantA) => {
 			this._availableVariants.forEach((variantB) => {
 				routes.push({
-					path:
-						new UmbVariantId(variantA.culture || null, variantA.segment || null).toString() +
-						'_split_' +
-						new UmbVariantId(variantB.culture || null, variantB.segment || null).toString(),
+					path: new UmbVariantId(variantA).toString() + '_split_' + new UmbVariantId(variantB).toString(),
 					component: () => import('./document-workspace-split-view.element'),
 					setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 						// Set split view/active info..
@@ -104,7 +101,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		// Single view:
 		this._availableVariants.forEach((variant) => {
 			routes.push({
-				path: new UmbVariantId(variant.culture || null, variant.segment || null).toString(),
+				path: new UmbVariantId(variant).toString(),
 				component: () => import('./document-workspace-split-view.element'),
 				setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 					// cause we might come from a split-view, we need to reset index 1.

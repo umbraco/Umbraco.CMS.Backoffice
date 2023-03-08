@@ -53,7 +53,7 @@ export class UmbWorkspaceVariantContext {
 	public switchVariant(variant: DocumentVariantModel) {
 		const index = this.#index.value;
 		if (!index) return;
-		this.#workspaceContext?.switchVariant(index, new UmbVariantId(variant.culture || null, variant.segment || null));
+		this.#workspaceContext?.switchVariant(index, new UmbVariantId(variant));
 	}
 
 	public closeSplitView() {
@@ -63,11 +63,10 @@ export class UmbWorkspaceVariantContext {
 	}
 
 	public openSplitView(variant: DocumentVariantModel) {
-		this.#workspaceContext?.openSplitView(new UmbVariantId(variant.culture || null, variant.segment || null));
+		this.#workspaceContext?.openSplitView(new UmbVariantId(variant));
 	}
 
-	private _setVariantId(culture: string | null, segment: string | null) {
-		const variantId = UmbVariantId.Create(culture, segment);
+	private _setVariantId(variantId: UmbVariantId) {
 		this.#variantId.next(variantId);
 		return variantId;
 	}
@@ -84,7 +83,7 @@ export class UmbWorkspaceVariantContext {
 			this.#workspaceContext.activeVariantInfoByIndex(index),
 			async (activeVariantInfo) => {
 				if (!activeVariantInfo) return;
-				const variantId = this._setVariantId(activeVariantInfo.culture, activeVariantInfo.segment);
+				const variantId = this._setVariantId(UmbVariantId.Create(activeVariantInfo));
 				const currentVariant = await this.#workspaceContext?.getVariant(variantId);
 				this.#currentVariant.next(currentVariant);
 			},

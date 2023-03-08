@@ -130,9 +130,7 @@ export class UmbDocumentWorkspaceContext
 				const newVariants = [...activeVariants];
 				newVariants[index] = { index, culture: variantId.culture, segment: variantId.segment };
 
-				const variantPart: string = newVariants
-					.map((v) => new UmbVariantId(v.culture, v.segment).toString())
-					.join('_split_');
+				const variantPart: string = newVariants.map((v) => new UmbVariantId(v).toString()).join('_split_');
 
 				history.pushState(null, '', `${workspaceRoute}/${variantPart}`);
 				return true;
@@ -152,10 +150,7 @@ export class UmbDocumentWorkspaceContext
 			history.pushState(
 				null,
 				'',
-				`${workspaceRoute}/${new UmbVariantId(
-					currentVariant.culture,
-					currentVariant.segment
-				)}_split_${newVariant.toString()}`
+				`${workspaceRoute}/${new UmbVariantId(currentVariant)}_split_${newVariant.toString()}`
 			);
 			return true;
 		}
