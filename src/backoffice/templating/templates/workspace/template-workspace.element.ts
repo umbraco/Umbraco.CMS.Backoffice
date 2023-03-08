@@ -18,7 +18,7 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 			}
 
 			#content {
-				height: 200px;
+				height: 100%;
 			}
 		`,
 	];
@@ -49,7 +49,6 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 		});
 
 		this.observe(this.#templateWorkspaceContext.content, (content) => {
-			debugger;
 			this._content = content;
 		});
 	}
@@ -58,7 +57,6 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 	#onNameInput(event: Event) {
 		const target = event.target as UUIInputElement;
 		const value = target.value as string;
-		debugger;
 		this.#templateWorkspaceContext.setName(value);
 	}
 
@@ -76,7 +74,7 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 				language="razor"
 				id="content"
 				.code=${this._content ?? ''}
-				@change="${this.#onTextareaInput}"></umb-code-editor>
+				@input=${this.#onTextareaInput}></umb-code-editor>
 		</umb-workspace-layout>`;
 	}
 }

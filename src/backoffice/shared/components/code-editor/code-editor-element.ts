@@ -14,7 +14,7 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 //eslint-disable-next-line
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
-import styles from 'monaco-editor/min/vs/editor/editor.main.css?inline';
+import { monacoEditorStyles } from './styles';
 
 //eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -53,6 +53,7 @@ export class UmbCodeEditorElement extends LitElement {
 	readOnly = false;
 
 	static styles = [
+		monacoEditorStyles,
 		css`
 			:host {
 				display: block;
@@ -121,9 +122,9 @@ export class UmbCodeEditorElement extends LitElement {
 			theme: this.getTheme(),
 			automaticLayout: true,
 		});
-		this.editor.getModel()!.onDidChangeContent(() => {
+		this.editor.onDidChangeModelContent(() => {
 			this.code = this.getValue();
-			this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: {} }));
+			this.dispatchEvent(new CustomEvent('input', { bubbles: true, composed: true, detail: {} }));
 		});
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
 			monaco.editor.setTheme(this.getTheme());
@@ -137,10 +138,7 @@ export class UmbCodeEditorElement extends LitElement {
 	}
 
 	render() {
-		return html`<style>
-				${styles}
-			</style>
-			<main id="editor-container" ${ref(this.container)}></main> `;
+		return html` <div id="editor-container" ${ref(this.container)}></div> `;
 	}
 }
 
