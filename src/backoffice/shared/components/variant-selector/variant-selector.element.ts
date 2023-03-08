@@ -6,6 +6,7 @@ import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { UmbWorkspaceVariantContext } from '../workspace/workspace-variant/workspace-variant.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 import type { DocumentVariantModel } from '@umbraco-cms/backend-api';
+import { ActiveVariant } from '../../../documents/documents/workspace/document-workspace.context';
 
 @customElement('umb-variant-selector')
 export class UmbVariantSelectorElement extends UmbLitElement {
@@ -34,6 +35,10 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 				box-sizing: border-box;
 				box-shadow: var(--uui-shadow-depth-3);
 			}
+
+			#variant-close {
+				white-space: nowrap;
+			}
 		`,
 	];
 
@@ -43,6 +48,10 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 
 	@state()
 	_variants: Array<DocumentVariantModel> = [];
+
+	// TODO: Stop using document context specific ActiveVariant type.
+	@state()
+	_activeVariants: Array<ActiveVariant> = [];
 
 	private _variantContext?: UmbWorkspaceVariantContext;
 
@@ -67,6 +76,7 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 		this.consumeContext<UmbWorkspaceVariantContext>('umbWorkspaceVariantContext', (instance) => {
 			this._variantContext = instance;
 			this._observeVariants();
+			this._observeActiveVariants();
 			this._observeVariantContext();
 		});
 	}
@@ -76,11 +86,32 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 
 		const workspaceContext = this._variantContext.getWorkspaceContext();
 		if (workspaceContext) {
-			this.observe(workspaceContext.variants, (variants) => {
-				if (variants) {
-					this._variants = variants;
-				}
-			});
+			this.observe(
+				workspaceContext.variants,
+				(variants) => {
+					if (variants) {
+						this._variants = variants;
+					}
+				},
+				'_observeVariants'
+			);
+		}
+	}
+
+	private async _observeActiveVariants() {
+		if (!this._variantContext) return;
+
+		const workspaceContext = this._variantContext.getWorkspaceContext();
+		if (workspaceContext) {
+			this.observe(
+				workspaceContext.activeVariantsInfo,
+				(activeVariants) => {
+					if (activeVariants) {
+						this._activeVariants = activeVariants;
+					}
+				},
+				'_observeActiveVariants'
+			);
 		}
 	}
 
@@ -151,9 +182,11 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 	}
 
 	private _openSplitView(variant: DocumentVariantModel) {
-		if (this._variantContext?.openSplitView(variant)) {
-			this._close();
-		}
+		this._variantContext?.openSplitView(variant);
+		this._close();
+	}
+	private _closeSplitView() {
+		this._variantContext?.closeSplitView();
 	}
 
 	render() {
@@ -162,15 +195,21 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 				${
 					this._variants && this._variants.length > 0
 						? html`
-								<div slot="append">
-									<uui-button
-										id="variant-selector-toggle"
-										@click=${this._toggleVariantSelector}
-										title=${ifDefined(this._variantTitleName)}>
-										${this._variantDisplayName}
-										<uui-symbol-expand></uui-symbol-expand>
-									</uui-button>
-								</div>
+								<uui-button
+									slot="append"
+									id="variant-selector-toggle"
+									@click=${this._toggleVariantSelector}
+									title=${ifDefined(this._variantTitleName)}>
+									${this._variantDisplayName}
+									<uui-symbol-expand></uui-symbol-expand>
+								</uui-button>
+								${this._activeVariants.length > 1
+									? html`
+											<uui-button slot="append" compact id="variant-close" @click=${this._closeSplitView}>
+												<uui-icon name="remove"></uui-icon>
+											</uui-button>
+									  `
+									: ''}
 						  `
 						: nothing
 				}
@@ -190,6 +229,7 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 															${variant.name} ${variant.culture} ${variant.segment}
 														</uui-button>
 
+														<!-- only make this available if not already open -->
 														<uui-button @click=${() => this._openSplitView(variant)}> Split view </uui-button>
 													</li>
 												</ul>`

@@ -56,6 +56,12 @@ export class UmbWorkspaceVariantContext {
 		this.#workspaceContext?.switchVariant(index, new UmbVariantId(variant.culture || null, variant.segment || null));
 	}
 
+	public closeSplitView() {
+		const index = this.#index.value;
+		if (index === undefined) return;
+		this.#workspaceContext?.closeSplitView(index);
+	}
+
 	public openSplitView(variant: DocumentVariantModel) {
 		this.#workspaceContext?.openSplitView(new UmbVariantId(variant.culture || null, variant.segment || null));
 	}

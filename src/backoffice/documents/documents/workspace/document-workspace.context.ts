@@ -111,11 +111,6 @@ export class UmbDocumentWorkspaceContext
 		return this.#activeVariantsInfo.getValue();
 	}
 
-	closeSplitView() {
-		// cause we currently only support two variants open, then we can just close index 1.
-		this.#activeVariantsInfo.removeOne(1);
-	}
-
 	getVariant(variantId: UmbVariantId) {
 		return this.#draft.getValue()?.variants?.find((x) => variantId.compare(x));
 	}
@@ -165,6 +160,14 @@ export class UmbDocumentWorkspaceContext
 			return true;
 		}
 		return false;
+	}
+
+	public closeSplitView(index: number) {
+		console.log('remove by index', index);
+		if (this.getActiveVariantsInfo().length > 1) {
+			console.log('remove by index', index);
+			this.#activeVariantsInfo.removeOne(index);
+		}
 	}
 
 	getName(variantId?: UmbVariantId) {
