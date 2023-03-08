@@ -9,10 +9,9 @@ export type ActiveVariant = {
 };
 
 /**
- * This class is responsible for managing the split view state for a workspace context.
- *
  * @export
  * @class UmbWorkspaceSplitViewManager
+ * @description - Class managing the split view state for a workspace context.
  */
 export class UmbWorkspaceSplitViewManager {
 	#host: UmbControllerHostInterface;
