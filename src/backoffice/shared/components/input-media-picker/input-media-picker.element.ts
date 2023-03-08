@@ -21,7 +21,7 @@ export class UmbInputMediaPickerElement extends FormControlMixin(UmbLitElement) 
 			}
 			#add-button {
 				text-align: center;
-				height: 202px;
+				height: 160px;
 			}
 
 			uui-icon {

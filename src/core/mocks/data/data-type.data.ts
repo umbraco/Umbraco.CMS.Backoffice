@@ -405,7 +405,12 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.UploadField',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.UploadField',
-		data: [],
+		data: [
+			{
+				alias: 'fileExtensions',
+				value: ['jpg', 'jpeg', 'png'],
+			},
+		],
 	},
 	{
 		$type: 'data-type',
