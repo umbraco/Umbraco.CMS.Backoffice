@@ -4,6 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { UUIInputElement, UUITextareaElement } from '@umbraco-ui/uui';
 import { UmbTemplateWorkspaceContext } from './template-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbCodeEditorElement } from 'src/backoffice/shared/components/code-editor/code-editor-element';
 
 @customElement('umb-template-workspace')
 export class UmbTemplateWorkspaceElement extends UmbLitElement {
@@ -48,6 +49,7 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 		});
 
 		this.observe(this.#templateWorkspaceContext.content, (content) => {
+			debugger;
 			this._content = content;
 		});
 	}
@@ -56,12 +58,13 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 	#onNameInput(event: Event) {
 		const target = event.target as UUIInputElement;
 		const value = target.value as string;
+		debugger;
 		this.#templateWorkspaceContext.setName(value);
 	}
 
 	#onTextareaInput(event: Event) {
-		const target = event.target as UUITextareaElement;
-		const value = target.value as string;
+		const target = event.target as UmbCodeEditorElement;
+		const value = target.code as string;
 		this.#templateWorkspaceContext.setContent(value);
 	}
 
@@ -69,7 +72,11 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 		// TODO: add correct UI elements
 		return html`<umb-workspace-layout alias="Umb.Workspace.Template">
 			<uui-input .value=${this._name} @input=${this.#onNameInput}></uui-input>
-			<uui-textarea id="content" .value=${this._content} @input="${this.#onTextareaInput}"></uui-textarea>
+			<umb-code-editor
+				language="razor"
+				id="content"
+				.code=${this._content ?? ''}
+				@change="${this.#onTextareaInput}"></umb-code-editor>
 		</umb-workspace-layout>`;
 	}
 }

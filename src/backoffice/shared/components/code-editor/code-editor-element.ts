@@ -1,4 +1,4 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, PropertyValueMap } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
@@ -14,8 +14,7 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 //eslint-disable-next-line
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
-import styles from "monaco-editor/min/vs/editor/editor.main.css?inline";
-
+import styles from 'monaco-editor/min/vs/editor/editor.main.css?inline';
 
 //eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -50,20 +49,21 @@ export class UmbCodeEditorElement extends LitElement {
 	@property()
 	code = `console.log('Hello World');`;
 
+	@property({ type: Boolean, attribute: 'readonly' })
+	readOnly = false;
+
 	static styles = [
-		
 		css`
 			:host {
 				display: block;
 				--editor-width: 100%;
-				--editor-height: 600px;
+				--editor-height: 100%;
 			}
 			#editor-container {
 				width: var(--editor-width);
 				height: var(--editor-height);
 			}
 		`,
-		
 	];
 
 	private getFile() {
@@ -96,6 +96,24 @@ export class UmbCodeEditorElement extends LitElement {
 		return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 	}
 
+	setValue(value: string) {
+		this.editor!.setValue(value);
+	}
+
+	getValue() {
+		const value = this.editor!.getValue();
+		return value;
+	}
+
+	setReadOnly(value: boolean) {
+		this.readOnly = value;
+		this.setOptions({ readOnly: value });
+	}
+
+	setOptions(value: monaco.editor.IStandaloneEditorConstructionOptions) {
+		this.editor!.updateOptions(value);
+	}
+
 	firstUpdated() {
 		this.editor = monaco.editor.create(this.container.value!, {
 			value: this.getCode(),
@@ -103,14 +121,26 @@ export class UmbCodeEditorElement extends LitElement {
 			theme: this.getTheme(),
 			automaticLayout: true,
 		});
-		debugger;
+		this.editor.getModel()!.onDidChangeContent(() => {
+			this.code = this.getValue();
+			this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: {} }));
+		});
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
 			monaco.editor.setTheme(this.getTheme());
 		});
 	}
 
+	protected willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+		if (_changedProperties.has('code') && this.editor) {
+			this.editor!.setValue(this.code);
+		}
+	}
+
 	render() {
-		return html`<style>${styles}</style> <main id="editor-container" ${ref(this.container)}></main> `;
+		return html`<style>
+				${styles}
+			</style>
+			<main id="editor-container" ${ref(this.container)}></main> `;
 	}
 }
 
