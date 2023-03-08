@@ -3,10 +3,13 @@ import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
-import { UmbWorkspaceVariantContext } from '../workspace/workspace-variant/workspace-variant.context';
+import {
+	UmbWorkspaceVariantContext,
+	UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN,
+} from '../workspace/workspace-variant/workspace-variant.context';
+import { ActiveVariant } from '../../../documents/documents/workspace/document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 import type { DocumentVariantModel } from '@umbraco-cms/backend-api';
-import { ActiveVariant } from '../../../documents/documents/workspace/document-workspace.context';
 
 @customElement('umb-variant-selector')
 export class UmbVariantSelectorElement extends UmbLitElement {
@@ -73,7 +76,7 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 	constructor() {
 		super();
 
-		this.consumeContext<UmbWorkspaceVariantContext>('umbWorkspaceVariantContext', (instance) => {
+		this.consumeContext<UmbWorkspaceVariantContext>(UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN, (instance) => {
 			this._variantContext = instance;
 			this._observeVariants();
 			this._observeActiveVariants();
