@@ -107,6 +107,10 @@ export class UmbDocumentWorkspaceContext
 		return this.#activeVariantsInfo.getObservablePart((data) => data[index] || undefined);
 	}
 
+	getActiveVariantsInfo() {
+		return this.#activeVariantsInfo.getValue();
+	}
+
 	closeSplitView() {
 		// cause we currently only support two variants open, then we can just close index 1.
 		this.#activeVariantsInfo.removeOne(1);

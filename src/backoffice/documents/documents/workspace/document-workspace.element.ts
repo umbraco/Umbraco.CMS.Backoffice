@@ -3,6 +3,7 @@ import { css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { IRoute, IRoutingInfo } from 'router-slot';
 import type { UmbWorkspaceEntityElement } from '../../../shared/components/workspace/workspace-entity-element.interface';
+import { UmbVariantId } from '../../../shared/variants/variant-id.class';
 import { ActiveVariant, UmbDocumentWorkspaceContext } from './document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 import '../../../shared/components/workspace/workspace-variant/workspace-variant.element';
@@ -69,11 +70,6 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		}
 	}
 
-	private _generateVariantURL(culture: string | null = 'invariant', segment?: string | null) {
-		// TODO: make serialize and deserialize variant-string methods
-		return culture + (segment ? '_' + segment : '');
-	}
-
 	private _handleVariantFolderPart(index: number, folderPart: string) {
 		const variantSplit = folderPart.split('_');
 		const culture = variantSplit[0];
@@ -90,9 +86,9 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 			this._availableVariants.forEach((variantB) => {
 				routes.push({
 					path:
-						this._generateVariantURL(variantA.culture, variantA.segment) +
+						new UmbVariantId(variantA.culture || null, variantA.segment || null).toString() +
 						'_split_' +
-						this._generateVariantURL(variantB.culture, variantB.segment),
+						new UmbVariantId(variantB.culture || null, variantB.segment || null).toString(),
 					component: () => import('./document-workspace-split-view.element'),
 					setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 						// Set split view/active info..
@@ -108,7 +104,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		// Single view:
 		this._availableVariants.forEach((variant) => {
 			routes.push({
-				path: this._generateVariantURL(variant.culture, variant.segment),
+				path: new UmbVariantId(variant.culture || null, variant.segment || null).toString(),
 				component: () => import('./document-workspace-split-view.element'),
 				setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 					// cause we might come from a split-view, we need to reset index 1.

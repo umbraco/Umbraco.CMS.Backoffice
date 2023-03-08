@@ -53,7 +53,7 @@ export class UmbPropertyEditorUIBlockGridElement extends UmbLitElement {
 		if (this._variantId !== undefined) {
 			this._routes = [
 				{
-					path: this._variantId.toString() + '/block-grid-1',
+					path: this._variantId.toString() + '/modal-1',
 					component: () => {
 						return import('./property-editor-ui-block-grid-inner-test.element');
 					},
@@ -65,7 +65,7 @@ export class UmbPropertyEditorUIBlockGridElement extends UmbLitElement {
 					},
 				},
 				{
-					path: this._variantId.toString() + '/block-grid-2',
+					path: this._variantId.toString() + '/modal-2',
 					//pathMatch: 'full',
 					component: () => {
 						return import('./property-editor-ui-block-grid-inner-test.element');
@@ -89,13 +89,13 @@ export class UmbPropertyEditorUIBlockGridElement extends UmbLitElement {
 					<uui-tab-group slot="tabs">
 						<uui-tab
 							label="TAB 1"
-							href="${this._routerPath + '/' + this._variantId.toString()}/block-grid-1"
-							.active=${this._routerPath + '/' + this._variantId.toString() + '/block-grid-1' ===
+							href="${this._routerPath + '/' + this._variantId.toString()}/modal-1"
+							.active=${this._routerPath + '/' + this._variantId.toString() + '/modal-1' ===
 							this._activePath}></uui-tab>
 						<uui-tab
 							label="TAB 2"
-							href="${this._routerPath + '/' + this._variantId.toString()}/block-grid-2"
-							.active=${this._routerPath + '/' + this._variantId.toString() + '/block-grid-2' ===
+							href="${this._routerPath + '/' + this._variantId.toString()}/modal-2"
+							.active=${this._routerPath + '/' + this._variantId.toString() + '/modal-2' ===
 							this._activePath}></uui-tab>
 					</uui-tab-group>
 
