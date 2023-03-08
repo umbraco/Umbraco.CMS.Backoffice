@@ -124,6 +124,49 @@ export class UmbDocumentWorkspaceContext
 		return this.#activeVariantsInfo.getObservablePart((data) => data[index] || undefined);
 	}
 
+	public switchVariant(index: number, variantId: UmbVariantId) {
+		// TODO: remember current path and extend url with it.
+		// TODO: construct URl with all active routes:
+		// TODO: use method for generating variant url:
+		const workspaceRoute = this.getWorkspaceRoute();
+		if (workspaceRoute) {
+			const activeVariants = this.getActiveVariantsInfo();
+			if (activeVariants && index < activeVariants.length) {
+				const newVariants = [...activeVariants];
+				newVariants[index] = { index, culture: variantId.culture, segment: variantId.segment };
+
+				const variantPart: string = newVariants
+					.map((v) => new UmbVariantId(v.culture, v.segment).toString())
+					.join('_split_');
+
+				history.pushState(null, '', `${workspaceRoute}/${variantPart}`);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public openSplitView(newVariant: UmbVariantId) {
+		// TODO: remember current path and extend url with it.
+		// TODO: construct URl with all active routes:
+		// TODO: use method for generating variant url:
+
+		const currentVariant = this.getActiveVariantsInfo()[0];
+		const workspaceRoute = this.getWorkspaceRoute();
+		if (currentVariant && workspaceRoute) {
+			history.pushState(
+				null,
+				'',
+				`${workspaceRoute}/${new UmbVariantId(
+					currentVariant.culture,
+					currentVariant.segment
+				)}_split_${newVariant.toString()}`
+			);
+			return true;
+		}
+		return false;
+	}
+
 	getName(variantId?: UmbVariantId) {
 		const variants = this.#draft.getValue()?.variants;
 		if (!variants) return;
