@@ -8,7 +8,12 @@ export type ActiveVariant = {
 	segment: string | null;
 };
 
-// TODO: make general interface for NodeTypeRepository, to replace UmbDocumentTypeRepository:
+/**
+ * This class is responsible for managing the split view state for a workspace context.
+ *
+ * @export
+ * @class UmbWorkspaceSplitViewManager
+ */
 export class UmbWorkspaceSplitViewManager {
 	#host: UmbControllerHostInterface;
 
