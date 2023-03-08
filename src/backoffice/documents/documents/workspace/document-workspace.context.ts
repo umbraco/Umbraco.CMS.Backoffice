@@ -28,12 +28,12 @@ export class UmbDocumentWorkspaceContext
 	 * The document is the current state/draft version of the document.
 	 */
 	#draft = new ObjectState<EntityType | undefined>(undefined);
-	unique = this.#draft.getObservablePart((data) => data?.key);
-	documentTypeKey = this.#draft.getObservablePart((data) => data?.contentTypeKey);
+	readonly unique = this.#draft.getObservablePart((data) => data?.key);
+	readonly documentTypeKey = this.#draft.getObservablePart((data) => data?.contentTypeKey);
 
-	variants = this.#draft.getObservablePart((data) => data?.variants || []);
-	urls = this.#draft.getObservablePart((data) => data?.urls || []);
-	templateKey = this.#draft.getObservablePart((data) => data?.templateKey || null);
+	readonly variants = this.#draft.getObservablePart((data) => data?.variants || []);
+	readonly urls = this.#draft.getObservablePart((data) => data?.urls || []);
+	readonly templateKey = this.#draft.getObservablePart((data) => data?.templateKey || null);
 
 	readonly structure;
 	readonly splitView;
