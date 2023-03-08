@@ -103,6 +103,12 @@ export class UmbDocumentWorkspaceContext
 		this.#activeVariantsInfo.appendOne({ index, culture, segment });
 	}
 
+	public removeActiveVariant(index: number) {
+		if (this.getActiveVariantsInfo().length > 1) {
+			this.#activeVariantsInfo.removeOne(index);
+		}
+	}
+
 	activeVariantsInfoByIndex(index: number) {
 		return this.#activeVariantsInfo.getObservablePart((data) => data[index] || undefined);
 	}
@@ -158,11 +164,19 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	public closeSplitView(index: number) {
-		console.log('remove by index', index);
-		if (this.getActiveVariantsInfo().length > 1) {
-			console.log('remove by index', index);
-			this.#activeVariantsInfo.removeOne(index);
+		const workspaceRoute = this.getWorkspaceRoute();
+		if (workspaceRoute) {
+			const activeVariants = this.getActiveVariantsInfo();
+			if (activeVariants && index < activeVariants.length) {
+				const newVariants = activeVariants.filter((x) => x.index !== index);
+
+				const variantPart: string = newVariants.map((v) => new UmbVariantId(v).toString()).join('_split_');
+
+				history.pushState(null, '', `${workspaceRoute}/${variantPart}`);
+				return true;
+			}
 		}
+		return false;
 	}
 
 	getName(variantId?: UmbVariantId) {

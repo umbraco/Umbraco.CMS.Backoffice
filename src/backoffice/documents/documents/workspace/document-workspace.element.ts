@@ -105,7 +105,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 				component: () => import('./document-workspace-split-view.element'),
 				setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 					// cause we might come from a split-view, we need to reset index 1.
-					this._workspaceContext.closeSplitView(1);
+					this._workspaceContext.removeActiveVariant(1);
 					this._handleVariantFolderPart(0, info.match.fragments.consumed);
 				},
 			});
