@@ -225,11 +225,12 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 											(variant) =>
 												html`<ul>
 													<li>
+														<!-- TODO: style this better, most likely not use ul and li -->
 														<uui-button @click=${() => this._switchVariant(variant)}>
 															${variant.name} ${variant.culture} ${variant.segment}
 														</uui-button>
 
-														<!-- only make this available if not already open -->
+														<!-- TODO: only make this available if not already open -->
 														<uui-button @click=${() => this._openSplitView(variant)}> Split view </uui-button>
 													</li>
 												</ul>`
