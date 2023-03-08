@@ -55,10 +55,10 @@ export class UmbVariantablePropertyElement extends UmbLitElement {
 
 	private _updatePropertyVariantId() {
 		if (this._workspaceVariantId && this.property) {
-			const newVariantId = UmbVariantId.Create(
-				this.property.variesByCulture ? this._workspaceVariantId.culture : null,
-				this.property.variesBySegment ? this._workspaceVariantId.segment : null
-			);
+			const newVariantId = UmbVariantId.Create({
+				culture: this.property.variesByCulture ? this._workspaceVariantId.culture : null,
+				segment: this.property.variesBySegment ? this._workspaceVariantId.segment : null,
+			});
 			if (!this._propertyVariantId || !newVariantId.equal(this._propertyVariantId)) {
 				this._propertyVariantId = newVariantId;
 			}
