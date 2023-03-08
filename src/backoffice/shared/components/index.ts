@@ -34,3 +34,4 @@ import './workspace/workspace-action-menu/workspace-action-menu.element';
 import './workspace/workspace-action/workspace-action.element';
 import './workspace/workspace-content/workspace-content.element';
 import './workspace/workspace-layout/workspace-layout.element';
+import './code-editor/code-editor-element';
