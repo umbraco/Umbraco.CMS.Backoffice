@@ -3,7 +3,8 @@ import {
 	UmbDocumentWorkspaceContext,
 } from '../../../../documents/documents/workspace/document-workspace.context';
 import { UmbVariantId } from '../../../variants/variant-id.class';
-import { UmbContextConsumerController, UmbContextProviderController } from '@umbraco-cms/context-api';
+import { UmbWorkspaceVariableEntityContextInterface } from '../workspace-context/workspace-variable-entity-context.interface';
+import { UmbContextConsumerController, UmbContextProviderController, UmbContextToken } from '@umbraco-cms/context-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { ClassState, NumberState, ObjectState, UmbObserverController } from '@umbraco-cms/observable-api';
 import { DocumentVariantModel } from '@umbraco-cms/backend-api';
@@ -13,7 +14,7 @@ import { DocumentVariantModel } from '@umbraco-cms/backend-api';
 export class UmbWorkspaceVariantContext {
 	#host: UmbControllerHostInterface;
 
-	#workspaceContext?: UmbDocumentWorkspaceContext;
+	#workspaceContext?: UmbWorkspaceVariableEntityContextInterface;
 	public getWorkspaceContext() {
 		return this.#workspaceContext;
 	}
@@ -36,7 +37,7 @@ export class UmbWorkspaceVariantContext {
 	constructor(host: UmbControllerHostInterface) {
 		this.#host = host;
 
-		new UmbContextProviderController(host, 'umbWorkspaceVariantContext', this);
+		new UmbContextProviderController(host, UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN.toString(), this);
 
 		// How do we ensure this connects to a document workspace context? and not just any other context? (We could start providing workspace contexts twice, under the general name and under a specific name)
 		// TODO: Figure out if this is the best way to consume the context or if it can be strongly typed with an UmbContextToken
@@ -121,3 +122,7 @@ export class UmbWorkspaceVariantContext {
 	}
 	*/
 }
+
+export const UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN = new UmbContextToken<UmbWorkspaceVariantContext>(
+	'umbWorkspaceVariantContext'
+);

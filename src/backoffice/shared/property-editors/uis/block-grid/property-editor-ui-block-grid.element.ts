@@ -2,7 +2,7 @@ import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { IRoute, IRoutingInfo } from 'router-slot';
-import { UmbWorkspaceVariantContext } from '../../../../shared/components/workspace/workspace-variant/workspace-variant.context';
+import { UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN } from '../../../../shared/components/workspace/workspace-variant/workspace-variant.context';
 import { UmbVariantId } from '../../../../shared/variants/variant-id.class';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/router';
@@ -14,7 +14,7 @@ import { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/r
 export class UmbPropertyEditorUIBlockGridElement extends UmbLitElement {
 	static styles = [UUITextStyles];
 
-	private _variantContext?: UmbWorkspaceVariantContext;
+	private _variantContext?: typeof UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN.TYPE;
 
 	@property()
 	value = '';
@@ -37,11 +37,9 @@ export class UmbPropertyEditorUIBlockGridElement extends UmbLitElement {
 	constructor() {
 		super();
 
-		this.consumeContext<UmbWorkspaceVariantContext>('umbWorkspaceVariantContext', (context) => {
+		this.consumeContext(UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN, (context) => {
 			this._variantContext = context;
-			console.log('got variant context');
 			this.observe(this._variantContext?.variantId, (variantId) => {
-				console.log('my variantId', variantId);
 				this._variantId = variantId;
 				this.setupRoutes();
 			});

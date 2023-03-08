@@ -22,4 +22,18 @@ export class UmbVariantId {
 	public toString(): string {
 		return (this.culture || 'invariant') + (this.segment ? `_${this.segment}` : '');
 	}
+
+	public toDifferencesString(variantId: UmbVariantId): string {
+		let r = '';
+
+		if (variantId.culture !== this.culture) {
+			r = 'Invariant';
+		}
+
+		if (variantId.segment !== this.segment) {
+			r = (r !== '' ? ' ' : '') + 'Unsegmented';
+		}
+
+		return r;
+	}
 }
