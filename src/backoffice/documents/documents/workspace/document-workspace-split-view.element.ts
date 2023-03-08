@@ -52,7 +52,7 @@ export class UmbDocumentWorkspaceSplitViewElement extends UmbLitElement {
 	private _observeActiveVariantInfo() {
 		if (!this._workspaceContext) return;
 		this.observe(
-			this._workspaceContext.activeVariantsInfo,
+			this._workspaceContext.splitView.activeVariantsInfo,
 			(variants) => {
 				this._variants = variants;
 			},

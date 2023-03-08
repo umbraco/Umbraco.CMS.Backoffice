@@ -45,7 +45,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 			this._availableVariants = variants;
 			this._generateRoutes();
 		});
-		this.observe(this._workspaceContext.activeVariantsInfo, (variants) => {
+		this.observe(this._workspaceContext.splitView.activeVariantsInfo, (variants) => {
 			this._workspaceSplitViews = variants;
 		});
 	}
@@ -74,7 +74,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		const variantSplit = folderPart.split('_');
 		const culture = variantSplit[0];
 		const segment = variantSplit[1];
-		this._workspaceContext.setActiveVariant(index, culture, segment);
+		this._workspaceContext.splitView.setActiveVariant(index, culture, segment);
 	}
 
 	private _generateRoutes() {
@@ -85,11 +85,11 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		this._availableVariants.forEach((variantA) => {
 			this._availableVariants.forEach((variantB) => {
 				routes.push({
-					path: new UmbVariantId(variantA).toString() + '_split_' + new UmbVariantId(variantB).toString(),
+					path: new UmbVariantId(variantA).toString() + '_&_' + new UmbVariantId(variantB).toString(),
 					component: () => import('./document-workspace-split-view.element'),
 					setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 						// Set split view/active info..
-						const variantSplit = info.match.fragments.consumed.split('_split_');
+						const variantSplit = info.match.fragments.consumed.split('_&_');
 						variantSplit.forEach((part, index) => {
 							this._handleVariantFolderPart(index, part);
 						});
@@ -105,7 +105,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 				component: () => import('./document-workspace-split-view.element'),
 				setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 					// cause we might come from a split-view, we need to reset index 1.
-					this._workspaceContext.removeActiveVariant(1);
+					this._workspaceContext.splitView.removeActiveVariant(1);
 					this._handleVariantFolderPart(0, info.match.fragments.consumed);
 				},
 			});
@@ -123,7 +123,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 	}
 
 	private _gotWorkspaceRoute = (e: UmbRouterSlotInitEvent) => {
-		this._workspaceContext.setWorkspaceRoute(e.target.absoluteRouterPath);
+		this._workspaceContext.splitView.setWorkspaceRoute(e.target.absoluteRouterPath);
 	};
 
 	render() {

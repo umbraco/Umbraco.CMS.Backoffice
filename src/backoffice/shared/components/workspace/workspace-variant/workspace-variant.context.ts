@@ -1,9 +1,7 @@
-import {
-	ActiveVariant,
-	UmbDocumentWorkspaceContext,
-} from '../../../../documents/documents/workspace/document-workspace.context';
+import { UmbDocumentWorkspaceContext } from '../../../../documents/documents/workspace/document-workspace.context';
 import { UmbVariantId } from '../../../variants/variant-id.class';
 import { UmbWorkspaceVariableEntityContextInterface } from '../workspace-context/workspace-variable-entity-context.interface';
+import { ActiveVariant } from '../workspace-context/workspace-split-view-manager.class';
 import { UmbContextConsumerController, UmbContextProviderController, UmbContextToken } from '@umbraco-cms/context-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 import { ClassState, NumberState, ObjectState, UmbObserverController } from '@umbraco-cms/observable-api';
@@ -54,17 +52,17 @@ export class UmbWorkspaceVariantContext {
 	public switchVariant(variant: DocumentVariantModel) {
 		const index = this.#index.value;
 		if (!index) return;
-		this.#workspaceContext?.switchVariant(index, new UmbVariantId(variant));
+		this.#workspaceContext?.splitView.switchVariant(index, new UmbVariantId(variant));
 	}
 
 	public closeSplitView() {
 		const index = this.#index.value;
 		if (index === undefined) return;
-		this.#workspaceContext?.closeSplitView(index);
+		this.#workspaceContext?.splitView.closeSplitView(index);
 	}
 
 	public openSplitView(variant: DocumentVariantModel) {
-		this.#workspaceContext?.openSplitView(new UmbVariantId(variant));
+		this.#workspaceContext?.splitView.openSplitView(new UmbVariantId(variant));
 	}
 
 	private _setVariantId(variantId: UmbVariantId) {
@@ -81,7 +79,7 @@ export class UmbWorkspaceVariantContext {
 		this._currentVariantObserver?.destroy();
 		this._currentVariantObserver = new UmbObserverController(
 			this.#host,
-			this.#workspaceContext.activeVariantInfoByIndex(index),
+			this.#workspaceContext.splitView.activeVariantByIndex(index),
 			async (activeVariantInfo) => {
 				if (!activeVariantInfo) return;
 				const variantId = this._setVariantId(UmbVariantId.Create(activeVariantInfo));
@@ -95,7 +93,7 @@ export class UmbWorkspaceVariantContext {
 	public changeVariant(culture: string | null, segment: string | null) {
 		const index = this.#index.getValue();
 		if (index === undefined) return;
-		this.#workspaceContext?.setActiveVariant(index, culture, segment);
+		this.#workspaceContext?.splitView.setActiveVariant(index, culture, segment);
 	}
 
 	public getSplitViewIndex() {

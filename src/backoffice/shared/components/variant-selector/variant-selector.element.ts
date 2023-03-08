@@ -107,7 +107,7 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 		const workspaceContext = this._variantContext.getWorkspaceContext();
 		if (workspaceContext) {
 			this.observe(
-				workspaceContext.activeVariantsInfo,
+				workspaceContext.splitView.activeVariantsInfo,
 				(activeVariants) => {
 					if (activeVariants) {
 						this._activeVariants = activeVariants;

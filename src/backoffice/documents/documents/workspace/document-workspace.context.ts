@@ -4,17 +4,12 @@ import { UmbDocumentTypeRepository } from '../../document-types/repository/docum
 import { UmbWorkspaceVariableEntityContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-variable-entity-context.interface';
 import { UmbVariantId } from '../../../shared/variants/variant-id.class';
 import { UmbWorkspacePropertyStructureManager } from '../../../shared/components/workspace/workspace-context/workspace-property-structure-manager.class';
+import { UmbWorkspaceSplitViewManager } from '../../../shared/components/workspace/workspace-context/workspace-split-view-manager.class';
 import type { DocumentModel } from '@umbraco-cms/backend-api';
-import { partialUpdateFrozenArray, ObjectState, ArrayState, UmbObserverController } from '@umbraco-cms/observable-api';
+import { partialUpdateFrozenArray, ObjectState, UmbObserverController } from '@umbraco-cms/observable-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/controller';
 
 // TODO: should this context be called DocumentDraft instead of workspace? or should the draft be part of this?
-
-export type ActiveVariant = {
-	index: number;
-	culture: string | null;
-	segment: string | null;
-};
 // TODO: Should we have a DocumentStructureContext and maybe even a DocumentDraftContext?
 
 type EntityType = DocumentModel;
@@ -40,25 +35,16 @@ export class UmbDocumentWorkspaceContext
 	urls = this.#draft.getObservablePart((data) => data?.urls || []);
 	templateKey = this.#draft.getObservablePart((data) => data?.templateKey || null);
 
-	#activeVariantsInfo = new ArrayState<ActiveVariant>([], (x) => x.index);
-	activeVariantsInfo = this.#activeVariantsInfo.asObservable();
-
 	readonly structure;
+	readonly splitView;
 
 	constructor(host: UmbControllerHostInterface) {
 		super(host, new UmbDocumentRepository(host));
 
 		this.structure = new UmbWorkspacePropertyStructureManager(this.host, new UmbDocumentTypeRepository(this.host));
+		this.splitView = new UmbWorkspaceSplitViewManager(this.host);
 
 		new UmbObserverController(this.host, this.documentTypeKey, (key) => this.structure.loadType(key));
-	}
-
-	private _routeBase?: string;
-	public getWorkspaceRoute(): string | undefined {
-		return this._routeBase;
-	}
-	public setWorkspaceRoute(route: string | undefined) {
-		this._routeBase = route;
 	}
 
 	async load(entityKey: string) {
@@ -99,84 +85,8 @@ export class UmbDocumentWorkspaceContext
 		return 'document';
 	}
 
-	setActiveVariant(index: number, culture: string | null, segment: string | null) {
-		this.#activeVariantsInfo.appendOne({ index, culture, segment });
-	}
-
-	public removeActiveVariant(index: number) {
-		if (this.getActiveVariantsInfo().length > 1) {
-			this.#activeVariantsInfo.removeOne(index);
-		}
-	}
-
-	activeVariantsInfoByIndex(index: number) {
-		return this.#activeVariantsInfo.getObservablePart((data) => data[index] || undefined);
-	}
-
-	getActiveVariantsInfo() {
-		return this.#activeVariantsInfo.getValue();
-	}
-
 	getVariant(variantId: UmbVariantId) {
 		return this.#draft.getValue()?.variants?.find((x) => variantId.compare(x));
-	}
-
-	activeVariantInfoByIndex(index: number) {
-		return this.#activeVariantsInfo.getObservablePart((data) => data[index] || undefined);
-	}
-
-	public switchVariant(index: number, variantId: UmbVariantId) {
-		// TODO: remember current path and extend url with it.
-		// TODO: construct URl with all active routes:
-		// TODO: use method for generating variant url:
-		const workspaceRoute = this.getWorkspaceRoute();
-		if (workspaceRoute) {
-			const activeVariants = this.getActiveVariantsInfo();
-			if (activeVariants && index < activeVariants.length) {
-				const newVariants = [...activeVariants];
-				newVariants[index] = { index, culture: variantId.culture, segment: variantId.segment };
-
-				const variantPart: string = newVariants.map((v) => new UmbVariantId(v).toString()).join('_split_');
-
-				history.pushState(null, '', `${workspaceRoute}/${variantPart}`);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public openSplitView(newVariant: UmbVariantId) {
-		// TODO: remember current path and extend url with it.
-		// TODO: construct URl with all active routes:
-		// TODO: use method for generating variant url:
-
-		const currentVariant = this.getActiveVariantsInfo()[0];
-		const workspaceRoute = this.getWorkspaceRoute();
-		if (currentVariant && workspaceRoute) {
-			history.pushState(
-				null,
-				'',
-				`${workspaceRoute}/${new UmbVariantId(currentVariant)}_split_${newVariant.toString()}`
-			);
-			return true;
-		}
-		return false;
-	}
-
-	public closeSplitView(index: number) {
-		const workspaceRoute = this.getWorkspaceRoute();
-		if (workspaceRoute) {
-			const activeVariants = this.getActiveVariantsInfo();
-			if (activeVariants && index < activeVariants.length) {
-				const newVariants = activeVariants.filter((x) => x.index !== index);
-
-				const variantPart: string = newVariants.map((v) => new UmbVariantId(v).toString()).join('_split_');
-
-				history.pushState(null, '', `${workspaceRoute}/${variantPart}`);
-				return true;
-			}
-		}
-		return false;
 	}
 
 	getName(variantId?: UmbVariantId) {
