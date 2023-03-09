@@ -7,8 +7,10 @@ import './backoffice-frame/backoffice-header.element';
 import './backoffice-frame/backoffice-main.element';
 import './backoffice-frame/backoffice-modal-container.element';
 import './backoffice-frame/backoffice-notification-container.element';
+import './button-with-dropdown/button-with-dropdown.element';
 import './code-block/code-block.element';
 import './debug/debug.element';
+import './donut-chart';
 import './dropdown/dropdown.element';
 import './empty-state/empty-state.element';
 import './extension-slot/extension-slot.element';
@@ -32,6 +34,10 @@ import './table/table.element';
 import './tree/tree.element';
 import './variantable-property/variantable-property.element';
 import './workspace/workspace-action-menu/workspace-action-menu.element';
+
+import './history/history-list.element';
+import './history/history-item.element';
+
 import './workspace/workspace-action/workspace-action.element';
 import './workspace/workspace-content/workspace-content.element';
 import './workspace/workspace-layout/workspace-layout.element';
