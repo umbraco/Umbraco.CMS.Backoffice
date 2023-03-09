@@ -35,14 +35,14 @@ export class UmbInputUploadFieldElement extends FormControlMixin(UmbLitElement) 
 	/**
 	 * @description Keys to the files that belong to this upload field.
 	 * @type {Array<String>}
-	 * @default empty array
+	 * @default []
 	 */
 	@property({ type: Array<string> })
 	public set keys(fileKeys: Array<string>) {
 		this._keys = fileKeys;
 		super.value = this._keys.join(',');
 	}
-	public get key(): Array<string> {
+	public get keys(): Array<string> {
 		return this._keys;
 	}
 
@@ -60,7 +60,7 @@ export class UmbInputUploadFieldElement extends FormControlMixin(UmbLitElement) 
 	 * @default false
 	 */
 	@property({ type: Boolean })
-	multiple?: boolean;
+	multiple = false;
 
 	@state()
 	_currentFiles: Blob[] = [];

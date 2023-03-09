@@ -1,9 +1,9 @@
 import { html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
+import { UmbInputUploadFieldElement } from '../../../../shared/components/input-upload-field/input-upload-field.element';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { DataTypePropertyModel } from '@umbraco-cms/backend-api';
-import UmbInputUploadFieldElement from 'src/backoffice/shared/components/input-upload-field/input-upload-field.element';
 
 /**
  * @element umb-property-editor-ui-upload-field
