@@ -19,12 +19,9 @@ export type ActiveVariant = {
 
 type EntityType = DocumentModel;
 export class UmbDocumentWorkspaceContext
-	extends UmbWorkspaceContext
+	extends UmbWorkspaceContext<UmbDocumentRepository>
 	implements UmbWorkspaceVariableEntityContextInterface<EntityType | undefined>
 {
-	#host: UmbControllerHostInterface;
-	#documentRepository: UmbDocumentRepository;
-
 	/**
 	 * The document is the current stored version of the document.
 	 * For now lets not share this publicly as it can become confusing.
@@ -48,18 +45,15 @@ export class UmbDocumentWorkspaceContext
 	readonly structure;
 
 	constructor(host: UmbControllerHostInterface) {
-		super(host);
-		this.#host = host;
+		super(host, new UmbDocumentRepository(host));
 
-		this.#documentRepository = new UmbDocumentRepository(this.#host);
+		this.structure = new UmbWorkspacePropertyStructureManager(this.host, new UmbDocumentTypeRepository(this.host));
 
-		this.structure = new UmbWorkspacePropertyStructureManager(this.#host, new UmbDocumentTypeRepository(this.#host));
-
-		new UmbObserverController(this._host, this.documentTypeKey, (key) => this.structure.loadType(key));
+		new UmbObserverController(this.host, this.documentTypeKey, (key) => this.structure.loadType(key));
 	}
 
 	async load(entityKey: string) {
-		const { data } = await this.#documentRepository.requestByKey(entityKey);
+		const { data } = await this.repository.requestByKey(entityKey);
 		if (!data) return undefined;
 
 		this.setIsNew(false);
@@ -69,7 +63,7 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	async createScaffold(parentKey: string | null) {
-		const { data } = await this.#documentRepository.createScaffold(parentKey);
+		const { data } = await this.repository.createScaffold(parentKey);
 		if (!data) return undefined;
 
 		this.setIsNew(true);
@@ -104,6 +98,10 @@ export class UmbDocumentWorkspaceContext
 			activeVariants.push({ index, culture, segment });
 		}
 		this.#activeVariantsInfo.next(activeVariants);
+	}
+
+	openSplitView(culture: string | null, segment: string | null) {
+		this.setActiveVariant(1, culture, segment);
 	}
 
 	getVariant(variantId: UmbVariantId) {
@@ -177,16 +175,16 @@ export class UmbDocumentWorkspaceContext
 	async save() {
 		if (!this.#draft.value) return;
 		if (this.getIsNew()) {
-			await this.#documentRepository.create(this.#draft.value);
+			await this.repository.create(this.#draft.value);
 		} else {
-			await this.#documentRepository.save(this.#draft.value);
+			await this.repository.save(this.#draft.value);
 		}
 		// If it went well, then its not new anymore?.
 		this.setIsNew(false);
 	}
 
 	async delete(key: string) {
-		await this.#documentRepository.delete(key);
+		await this.repository.delete(key);
 	}
 
 	/*

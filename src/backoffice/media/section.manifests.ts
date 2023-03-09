@@ -1,4 +1,5 @@
-import type { ManifestDashboardCollection, ManifestSection, ManifestSidebarMenu } from '@umbraco-cms/models';
+import { MEDIA_REPOSITORY_ALIAS } from './media/repository/manifests';
+import type { ManifestDashboardCollection, ManifestSection, ManifestMenuSectionSidebarApp } from '@umbraco-cms/models';
 
 const sectionAlias = 'Umb.Section.Media';
 
@@ -24,20 +25,21 @@ const dashboards: Array<ManifestDashboardCollection> = [
 			sections: [sectionAlias],
 			pathname: 'media-management',
 			entityType: 'media',
-			repositoryAlias: 'Umb.Repository.Media',
+			repositoryAlias: MEDIA_REPOSITORY_ALIAS,
 		},
 	},
 ];
 
-const sidebarMenu: ManifestSidebarMenu = {
-	type: 'sidebarMenu',
-	alias: 'Umb.SidebarMenu.Media',
-	name: 'Media Sidebar Menu',
+const menuSectionSidebarApp: ManifestMenuSectionSidebarApp = {
+	type: 'menuSectionSidebarApp',
+	alias: 'Umb.SectionSidebarMenu.Media',
+	name: 'Media Section Sidebar Menu',
 	weight: 100,
 	meta: {
 		label: 'Media',
 		sections: [sectionAlias],
+		menu: 'Umb.Menu.Media',
 	},
 };
 
-export const manifests = [section, sidebarMenu, ...dashboards];
+export const manifests = [section, menuSectionSidebarApp, ...dashboards];

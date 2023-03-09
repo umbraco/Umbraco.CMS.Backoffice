@@ -5,13 +5,13 @@ import { map } from 'rxjs';
 import { IRoutingInfo } from 'router-slot';
 import type { UmbWorkspaceEntityElement } from '../workspace/workspace-entity-element.interface';
 import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from './section.context';
-import type { ManifestSectionView, ManifestWorkspace, ManifestSidebarMenu } from '@umbraco-cms/models';
+import type { ManifestSectionView, ManifestWorkspace, ManifestMenuSectionSidebarApp } from '@umbraco-cms/models';
 import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 import './section-sidebar-menu/section-sidebar-menu.element.ts';
 import './section-views/section-views.element.ts';
-import '../../../settings/languages/app-language-select.element.ts';
+import '../../../settings/languages/app-language-select/app-language-select.element.ts';
 import { UmbRouterSlotChangeEvent } from '@umbraco-cms/router';
 
 @customElement('umb-section')
@@ -37,19 +37,13 @@ export class UmbSectionElement extends UmbLitElement {
 	];
 
 	@state()
-	private _routes: Array<any> = [];
+	private _routes?: Array<any>;
 
 	@state()
-	private _menus?: Array<ManifestSidebarMenu>;
+	private _menus?: Array<ManifestMenuSectionSidebarApp>;
 
 	@state()
 	private _views?: Array<ManifestSectionView>;
-
-	@state()
-	private _sectionLabel = '';
-
-	@state()
-	private _sectionPathname = '';
 
 	private _workspaces?: Array<ManifestWorkspace>;
 	private _sectionContext?: UmbSectionContext;
@@ -76,7 +70,7 @@ export class UmbSectionElement extends UmbLitElement {
 
 		this.observe(umbExtensionsRegistry.extensionsOfType('workspace'), (workspaceExtensions) => {
 			this._workspaces = workspaceExtensions;
-			this._createMenuRoutes();
+			this._createWorkspaceRoutes();
 		});
 	}
 
@@ -84,20 +78,19 @@ export class UmbSectionElement extends UmbLitElement {
 		if (sectionAlias) {
 			this.observe(
 				umbExtensionsRegistry
-					?.extensionsOfType('sidebarMenu')
+					?.extensionsOfType('menuSectionSidebarApp')
 					.pipe(map((manifests) => manifests.filter((manifest) => manifest.meta.sections.includes(sectionAlias)))),
 				(manifests) => {
 					this._menus = manifests;
-					this._createMenuRoutes();
 				}
 			);
 		} else {
-			this._menus = undefined;
-			this._createMenuRoutes();
+			this._menus = [];
 		}
 	}
 
-	private _createMenuRoutes() {
+	private _createWorkspaceRoutes() {
+		if (!this._workspaces) return;
 		// TODO: find a way to make this reuseable across:
 		const workspaceRoutes = this._workspaces?.map((workspace: ManifestWorkspace) => {
 			return [
@@ -172,6 +165,7 @@ export class UmbSectionElement extends UmbLitElement {
 	}
 
 	private _createViewRoutes() {
+		this._routes = [];
 		this._routes =
 			this._views?.map((view) => {
 				return {
@@ -199,12 +193,17 @@ export class UmbSectionElement extends UmbLitElement {
 		return html`
 			${this._menus && this._menus.length > 0
 				? html`
+						<!-- TODO: these extensions should be combined into one type: sectionSidebarApp with a "subtype" -->
 						<umb-section-sidebar>
-							<!-- TODO: this should be an extension point and only shown in the content section sidebar -->
-							<umb-app-language-select></umb-app-language-select>
 							<umb-extension-slot
-								type="sidebarMenu"
-								.filter=${(items: ManifestSidebarMenu) => items.meta.sections.includes(this._sectionAlias || '')}
+								type="sectionSidebarApp"
+								.filter=${(items: ManifestMenuSectionSidebarApp) =>
+									items.meta.sections.includes(this._sectionAlias || '')}></umb-extension-slot>
+
+							<umb-extension-slot
+								type="menuSectionSidebarApp"
+								.filter=${(items: ManifestMenuSectionSidebarApp) =>
+									items.meta.sections.includes(this._sectionAlias || '')}
 								default-element="umb-section-sidebar-menu"></umb-extension-slot>
 						</umb-section-sidebar>
 				  `
