@@ -3,8 +3,8 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement } from 'lit/decorators.js';
 import { UmbLitElement } from '@umbraco-cms/element';
 
-@customElement('umb-history-ui-list')
-export class UmbHistoryUIListElement extends UmbLitElement {
+@customElement('umb-history-list')
+export class UmbHistoryListElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -40,10 +40,10 @@ export class UmbHistoryUIListElement extends UmbLitElement {
 	}
 }
 
-export default UmbHistoryUIListElement;
+export default UmbHistoryListElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-history-ui-list': UmbHistoryUIListElement;
+		'umb-history-list': UmbHistoryListElement;
 	}
 }

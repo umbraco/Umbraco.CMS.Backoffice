@@ -219,13 +219,13 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 		return html`<div class="container">
 				<uui-box headline="Links" style="--uui-box-default-padding: 0;"> ${this.#renderLinksSection()} </uui-box>
 				<uui-box headline="History">
-					<umb-history-ui-list>
+					<umb-history-list>
 						${repeat(
 							this._historyList,
 							(item) => item.timestamp,
 							(item) => this.#renderHistory(item)
 						)}
-					</umb-history-ui-list>
+					</umb-history-list>
 					${this.#renderHistoryPagination()}
 				</uui-box>
 			</div>
@@ -274,12 +274,12 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 	}
 
 	#renderHistory(history: HistoryNode) {
-		return html` <umb-history-ui-node .name="${history.userName}" .detail="${history.timestamp}">
+		return html` <umb-history-item .name="${history.userName}" .detail="${history.timestamp}">
 			<span class="log-type">${this.#renderTag(history.logType)} ${this.#renderTagDescription(history.logType)}</span>
 			<uui-button label="Rollback" look="secondary" slot="actions">
 				<uui-icon name="umb:undo"></uui-icon> Rollback
 			</uui-button>
-		</umb-history-ui-node>`;
+		</umb-history-item>`;
 	}
 
 	#renderHistoryPagination() {
