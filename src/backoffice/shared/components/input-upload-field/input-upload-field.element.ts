@@ -128,7 +128,9 @@ export class UmbInputUploadFieldElement extends FormControlMixin(UmbLitElement) 
 		const allowed = this.#validateExtension();
 
 		// Upload via endpoint?
-		allowed ? (this._currentFile = this._currentFileTemp) : undefined;
+		if (!allowed) return;
+		this._currentFile = this._currentFileTemp;
+		this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true }));
 	}
 
 	#handleBrowse() {
