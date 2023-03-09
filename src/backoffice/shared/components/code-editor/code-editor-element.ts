@@ -1,40 +1,14 @@
-import { css, html, LitElement, PropertyValueMap } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 // -- Monaco Editor Imports --
 import * as monaco from 'monaco-editor';
-//eslint-disable-next-line
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-//eslint-disable-next-line
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
-//eslint-disable-next-line
-import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
-//eslint-disable-next-line
-import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
-//eslint-disable-next-line
-import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
+
+
 import { monacoEditorStyles } from './styles';
 
-//eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-self.MonacoEnvironment = {
-	getWorker(_: any, label: string) {
-		if (label === 'json') {
-			return new jsonWorker();
-		}
-		if (label === 'css' || label === 'scss' || label === 'less') {
-			return new cssWorker();
-		}
-		if (label === 'html' || label === 'handlebars' || label === 'razor') {
-			return new htmlWorker();
-		}
-		if (label === 'typescript' || label === 'javascript') {
-			return new tsWorker();
-		}
-		return new editorWorker();
-	},
-};
+//!ISSUES: https://github.com/microsoft/monaco-editor/issues/1997 - razor templates do not get proper syntax highligh, like they do in vsCode
 
 @customElement('umb-code-editor')
 export class UmbCodeEditorElement extends LitElement {
@@ -72,7 +46,7 @@ export class UmbCodeEditorElement extends LitElement {
 
 		this.#code = value;
 		if (this.editor && this.#code !== oldValue) {
-			this.editor!.setValue(this.#code);
+			this.#setValue(this.#code);
 		}
 		this.requestUpdate('code', oldValue);
 	}
@@ -110,12 +84,14 @@ export class UmbCodeEditorElement extends LitElement {
 		return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 	}
 
-	setValue(value: string) {
-		this.editor!.setValue(value);
+	#setValue(value: string) {
+		if (!this.editor) return;
+		this.editor.setValue(value);
 	}
 
-	getValue() {
-		const value = this.editor!.getValue();
+	#getValue() {
+		if (!this.editor) return '';
+		const value = this.editor.getValue();
 		return value;
 	}
 
@@ -134,10 +110,11 @@ export class UmbCodeEditorElement extends LitElement {
 			language: this.getLang(),
 			theme: this.getTheme(),
 			automaticLayout: true,
+			readOnly: this.readOnly,
 		});
 		this.editor.focus();
 		this.editor.onDidChangeModelContent(() => {
-			this.#code = this.getValue();
+			this.#code = this.#getValue();
 			this.dispatchEvent(new CustomEvent('input', { bubbles: true, composed: true, detail: {} }));
 		});
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {

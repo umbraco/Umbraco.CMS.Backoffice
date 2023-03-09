@@ -1,7 +1,7 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { UUIInputElement, UUITextareaElement } from '@umbraco-ui/uui';
+import { UUIInputElement } from '@umbraco-ui/uui';
 import { UmbTemplateWorkspaceContext } from './template-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 import { UmbCodeEditorElement } from 'src/backoffice/shared/components/code-editor/code-editor-element';
