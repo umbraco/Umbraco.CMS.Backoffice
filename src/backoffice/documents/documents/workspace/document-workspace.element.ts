@@ -1,10 +1,12 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
-import { css, html, nothing } from 'lit';
+import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { IRoute, IRoutingInfo } from 'router-slot';
 import type { UmbWorkspaceEntityElement } from '../../../shared/components/workspace/workspace-entity-element.interface';
 import { UmbVariantId } from '../../../shared/variants/variant-id.class';
-import { ActiveVariant, UmbDocumentWorkspaceContext } from './document-workspace.context';
+import { ActiveVariant } from '../../../shared/components/workspace/workspace-context/workspace-split-view-manager.class';
+import { UmbDocumentWorkspaceContext } from './document-workspace.context';
+import { UmbDocumentWorkspaceSplitViewElement } from './document-workspace-split-view.element';
 import { UmbLitElement } from '@umbraco-cms/element';
 import '../../../shared/components/workspace/workspace-variant/workspace-variant.element';
 import { DocumentModel, VariantViewModelBaseModel } from '@umbraco-cms/backend-api';
@@ -25,6 +27,7 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 
 	private _workspaceContext: UmbDocumentWorkspaceContext = new UmbDocumentWorkspaceContext(this);
 	//private _defaultVariant?: VariantViewModelBaseModel;
+	private splitViewElement = new UmbDocumentWorkspaceSplitViewElement();
 
 	@state()
 	_unique?: string;
@@ -78,6 +81,8 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 	}
 
 	private _generateRoutes() {
+		if (!this._availableVariants || this._availableVariants.length === 0) return;
+
 		// Generate split view routes for all available routes
 		const routes: Array<IRoute> = [];
 
@@ -86,7 +91,8 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 			this._availableVariants.forEach((variantB) => {
 				routes.push({
 					path: new UmbVariantId(variantA).toString() + '_&_' + new UmbVariantId(variantB).toString(),
-					component: () => import('./document-workspace-split-view.element'),
+					//component: () => import('./document-workspace-split-view.element'),
+					component: this.splitViewElement,
 					setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 						// Set split view/active info..
 						const variantSplit = info.match.fragments.consumed.split('_&_');
@@ -102,7 +108,8 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 		this._availableVariants.forEach((variant) => {
 			routes.push({
 				path: new UmbVariantId(variant).toString(),
-				component: () => import('./document-workspace-split-view.element'),
+				//component: () => import('./document-workspace-split-view.element'),
+				component: this.splitViewElement,
 				setup: (component: HTMLElement | Promise<HTMLElement>, info: IRoutingInfo) => {
 					// cause we might come from a split-view, we need to reset index 1.
 					this._workspaceContext.splitView.removeActiveVariant(1);
@@ -127,9 +134,11 @@ export class UmbDocumentWorkspaceElement extends UmbLitElement implements UmbWor
 	};
 
 	render() {
-		return this._unique
-			? html`<umb-router-slot .routes=${this._routes} @init=${this._gotWorkspaceRoute}></umb-router-slot>`
-			: nothing;
+		return this._routes
+			? html`<umb-router-slot .routes=${this._routes} @init=${this._gotWorkspaceRoute}
+					>${this.splitViewElement}</umb-router-slot
+			  >`
+			: '';
 	}
 }
 

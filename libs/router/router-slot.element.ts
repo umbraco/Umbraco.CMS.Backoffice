@@ -7,8 +7,8 @@ import { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/r
  *  @element umb-router-slot-element
  *  @description - Component for wrapping Router Slot element, providing some local events for implementation.
  *  @extends UmbRouterSlotElement
- * @fires {UmbRouterSlotInitEvent} init - fires when the media card is selected
- * @fires {UmbRouterSlotChangeEvent} change - fires when the media card is unselected
+ * @fires {UmbRouterSlotInitEvent} init - fires when the router is connected
+ * @fires {UmbRouterSlotChangeEvent} change - fires when a path of this router is changed
  */
 @customElement('umb-router-slot')
 export class UmbRouterSlotElement extends LitElement {
@@ -61,6 +61,11 @@ export class UmbRouterSlotElement extends LitElement {
 		return this._routerPath + '/' + this._activeLocalPath;
 	}
 
+	constructor() {
+		super();
+		this.#router.appendChild(document.createElement('slot'));
+	}
+
 	connectedCallback() {
 		super.connectedCallback();
 		if (this.#listening === false) {
@@ -78,6 +83,15 @@ export class UmbRouterSlotElement extends LitElement {
 	protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
 		super.firstUpdated(_changedProperties);
 		this._routerPath = this.#router.constructAbsolutePath('') || '';
+
+
+		this.#router.addEventListener('changestate', () => {
+			const newAbsolutePath = this.#router.constructAbsolutePath('') || '';
+			if (this._routerPath !== newAbsolutePath) {
+				this._routerPath = newAbsolutePath;
+				this.dispatchEvent(new UmbRouterSlotInitEvent());
+			}
+		});
 		this.dispatchEvent(new UmbRouterSlotInitEvent());
 	}
 

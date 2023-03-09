@@ -2,7 +2,8 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { ActiveVariant, UmbDocumentWorkspaceContext } from './document-workspace.context';
+import { ActiveVariant } from '../../../shared/components/workspace/workspace-context/workspace-split-view-manager.class';
+import { UmbDocumentWorkspaceContext } from './document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
 import '../../../shared/components/workspace/workspace-variant/workspace-variant.element';
 

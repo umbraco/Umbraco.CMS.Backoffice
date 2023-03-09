@@ -125,14 +125,11 @@ export class UmbDocumentWorkspaceViewEditElement extends UmbLitElement {
 
 	render() {
 		return html`
-			${this._tabs.length > 1
+			${this._routerPath && this._tabs.length > 1
 				? html` <uui-tab-group>
 						${this._hasRootGroups && this._tabs.length > 1
 							? html`
-									<uui-tab
-										label="Content"
-										.active=${this._routerPath + '/' === this._activePath}
-										href=${this._routerPath + '/'}
+									<uui-tab label="Content" .active=${this._routerPath === this._activePath} href=${this._routerPath}
 										>Content</uui-tab
 									>
 							  `

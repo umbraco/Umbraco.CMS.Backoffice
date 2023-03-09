@@ -51,7 +51,7 @@ export class UmbWorkspaceVariantContext {
 
 	public switchVariant(variant: DocumentVariantModel) {
 		const index = this.#index.value;
-		if (!index) return;
+		if (index === undefined) return;
 		this.#workspaceContext?.splitView.switchVariant(index, new UmbVariantId(variant));
 	}
 

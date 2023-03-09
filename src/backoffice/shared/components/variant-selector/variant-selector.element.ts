@@ -179,9 +179,8 @@ export class UmbVariantSelectorElement extends UmbLitElement {
 	}
 
 	private _switchVariant(variant: DocumentVariantModel) {
-		if (this._variantContext?.switchVariant(variant)) {
-			this._close();
-		}
+		this._variantContext?.switchVariant(variant);
+		this._close();
 	}
 
 	private _openSplitView(variant: DocumentVariantModel) {
