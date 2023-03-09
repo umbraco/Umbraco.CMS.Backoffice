@@ -6,10 +6,7 @@ import { ManifestTypes } from '@umbraco-cms/extensions-registry';
 export const manifests = [...menuManifests, ...templateManifests];
 
 const registerExtensions = (manifests: Array<ManifestTypes>) => {
-	manifests.forEach((manifest) => {
-		if (umbExtensionsRegistry.isRegistered(manifest.alias)) return;
-		umbExtensionsRegistry.register(manifest);
-	});
+	manifests.forEach((manifest) => umbExtensionsRegistry.register(manifest));
 };
 
 registerExtensions(manifests);
