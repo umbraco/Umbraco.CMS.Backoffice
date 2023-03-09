@@ -1,4 +1,4 @@
-import { IRoute, RouterSlot } from 'router-slot';
+import { IRoute, RouterSlot, ensureSlash } from 'router-slot';
 import { LitElement, PropertyValueMap } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/router';
@@ -63,6 +63,7 @@ export class UmbRouterSlotElement extends LitElement {
 
 	constructor() {
 		super();
+		this.#router.addEventListener('changestate', this._onChangeState);
 		this.#router.appendChild(document.createElement('slot'));
 	}
 
@@ -83,17 +84,22 @@ export class UmbRouterSlotElement extends LitElement {
 	protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
 		super.firstUpdated(_changedProperties);
 		this._routerPath = this.#router.constructAbsolutePath('') || '';
-
-
-		this.#router.addEventListener('changestate', () => {
-			const newAbsolutePath = this.#router.constructAbsolutePath('') || '';
-			if (this._routerPath !== newAbsolutePath) {
-				this._routerPath = newAbsolutePath;
-				this.dispatchEvent(new UmbRouterSlotInitEvent());
-			}
-		});
 		this.dispatchEvent(new UmbRouterSlotInitEvent());
 	}
+
+	private _onChangeState = () => {
+		const newAbsolutePath = this.#router.constructAbsolutePath('') || '';
+		if (this._routerPath !== newAbsolutePath) {
+			this._routerPath = newAbsolutePath;
+			this.dispatchEvent(new UmbRouterSlotInitEvent());
+
+			const newActiveLocalPath = this.#router.match?.route.path;
+			if (this._activeLocalPath !== newActiveLocalPath) {
+				this._activeLocalPath = newActiveLocalPath;
+				this.dispatchEvent(new UmbRouterSlotChangeEvent());
+			}
+		}
+	};
 
 	private _onNavigationChanged = (event?: any) => {
 		if (event.detail.slot === this.#router) {
