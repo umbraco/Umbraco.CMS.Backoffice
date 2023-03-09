@@ -146,7 +146,7 @@ export class UmbInputUploadFieldElement extends FormControlMixin(UmbLitElement) 
 	}
 
 	#renderDropzone() {
-		if (!this.multiple && this._currentFiles) return nothing;
+		if (!this.multiple && this._currentFiles.length) return nothing;
 		return html`
 			<uui-file-dropzone
 				id="dropzone"
