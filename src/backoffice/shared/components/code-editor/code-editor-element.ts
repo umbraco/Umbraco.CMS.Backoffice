@@ -4,7 +4,7 @@ import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 // -- Monaco Editor Imports --
 import * as monaco from 'monaco-editor';
-
+import { EditorLanguage } from './code-editor';
 
 import { monacoEditorStyles } from './styles';
 
@@ -33,7 +33,7 @@ export class UmbCodeEditorElement extends LitElement {
 	theme: 'vs-light' | 'vs-dark' | 'hc-black' = 'vs-light';
 
 	@property()
-	language: 'razor' | 'javascript' | 'css' = 'javascript';
+	language: EditorLanguage = 'javascript';
 
 	#code = '';
 	@property()
