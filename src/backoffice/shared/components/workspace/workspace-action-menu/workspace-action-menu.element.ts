@@ -1,8 +1,8 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { UmbExecutedEvent } from '@umbraco-cms/events';
 import { UmbWorkspaceEntityContextInterface } from '../workspace-context/workspace-entity-context.interface';
+import { UmbExecutedEvent } from '@umbraco-cms/events';
 import { UmbLitElement } from '@umbraco-cms/element';
 
 @customElement('umb-workspace-action-menu')

@@ -7,7 +7,7 @@ import {
 	UmbWorkspaceVariantContext,
 	UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN,
 } from '../workspace/workspace-variant/workspace-variant.context';
-import { ActiveVariant } from '../../../documents/documents/workspace/document-workspace.context';
+import { ActiveVariant } from '../workspace/workspace-context/workspace-split-view-manager.class';
 import { UmbLitElement } from '@umbraco-cms/element';
 import type { DocumentVariantModel } from '@umbraco-cms/backend-api';
 
