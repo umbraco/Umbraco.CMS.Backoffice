@@ -1,6 +1,6 @@
 import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import { UmbModalLayoutElement } from '../modal-layout.element';
@@ -45,6 +45,7 @@ export class UmbModalLayoutEmbeddedMediaElement extends UmbModalLayoutElement<Um
 
 			uui-input {
 				width: 100%;
+				--uui-button-border-radius: 0;
 			}
 
 			.sr-only {
@@ -57,15 +58,25 @@ export class UmbModalLayoutEmbeddedMediaElement extends UmbModalLayoutElement<Um
 				position: absolute;
 				width: 1px;
 			}
+
+			umb-workspace-property-layout:first-child {
+				padding-top: 0;
+			}
+
+			umb-workspace-property-layout:last-child {
+				padding-bottom: 0;
+			}
+
+			p {
+				margin-bottom: 0;
+			}
 		`,
 	];
 
-	#originalWidth = 500;
-	#originalHeight = 300;
 	#loading = false;
 	#preview?: string;
 
-	@property()
+	@state()
 	private _embed: UmbModalEmbeddedMediaData = {
 		url: '',
 		width: 360,
@@ -89,12 +100,6 @@ export class UmbModalLayoutEmbeddedMediaElement extends UmbModalLayoutElement<Um
 	}
 
 	async #getPreview() {
-		if (!this._embed.url) {
-			this.#onPreviewFailed('Please enter a URL');
-			this.requestUpdate('_embed');
-			return;
-		}
-
 		this._embed.info = '';
 		this._embed.a11yInfo = '';
 		this._embed.success = false;
@@ -114,6 +119,7 @@ export class UmbModalLayoutEmbeddedMediaElement extends UmbModalLayoutElement<Um
 			);
 
 			const embedResponse: OEmbedResult = await result.json();
+
 			this._embed.preview = '';
 
 			switch (embedResponse.oEmbedStatus) {
@@ -150,6 +156,7 @@ export class UmbModalLayoutEmbeddedMediaElement extends UmbModalLayoutElement<Um
 
 	#onUrlChange(e: InputEvent) {
 		this._embed.url = (e.target as HTMLInputElement).value;
+		this.requestUpdate('_embed');
 	}
 
 	#onWidthChange(e: InputEvent) {
@@ -167,11 +174,9 @@ export class UmbModalLayoutEmbeddedMediaElement extends UmbModalLayoutElement<Um
 
 		if (this._embed.constrain) {
 			if (axis === 'width') {
-				this.#originalHeight = Math.round((this._embed.width / this.#originalWidth) * this._embed.height);
-				this._embed.height = this.#originalHeight;
+				this._embed.height = Math.round((this._embed.width / this._embed.originalWidth) * this._embed.height);
 			} else {
-				this.#originalWidth = Math.round((this._embed.height / this.#originalHeight) * this._embed.width);
-				this._embed.width = this.#originalWidth;
+				this._embed.width = Math.round((this._embed.height / this._embed.originalHeight) * this._embed.width);
 			}
 		}
 
@@ -201,52 +206,55 @@ export class UmbModalLayoutEmbeddedMediaElement extends UmbModalLayoutElement<Um
 				<uui-box>
 					<umb-workspace-property-layout label="URL" orientation="vertical">
 						<div slot="editor">
-							<uui-input .value=${this._embed.url} type="text" @change=${this.#onUrlChange}></uui-input>
-							<uui-button
-								style="margin-top: var(--uui-size-3)"
-								look="secondary"
-								color="default"
-								@click=${this.#getPreview}
-								label="Retrieve"></uui-button>
-
-							${when(this.#loading, () => html`<uui-loader-circle></uui-loader-circle>`)}
-							${when(
-								this.#preview,
-								() => html`<div style="margin-top:var(--uui-size-6)">${unsafeHTML(this.#preview)}</div>`
-							)}
-
-							<p aria-hidden="true">${this._embed.info}</p>
-							<p class="sr-only" role="alert">${this._embed.a11yInfo}</p>
+							<uui-input .value=${this._embed.url} type="text" @change=${this.#onUrlChange} required="true">
+								<uui-button
+									slot="append"
+									look="primary"
+									color="positive"
+									@click=${this.#getPreview}
+									?disabled=${!this._embed.url}
+									label="Retrieve"></uui-button>
+							</uui-input>
 						</div>
 					</umb-workspace-property-layout>
 
 					${when(
-						this._embed.supportsDimensions && this._embed.success,
-						() => html`
-							<umb-workspace-property-layout label="Width" orientation="vertical">
-								<uui-input
-									slot="editor"
-									.value=${this._embed.width}
-									type="number"
-									@change=${this.#onWidthChange}></uui-input>
-							</umb-workspace-property-layout>
-
-							<umb-workspace-property-layout label="Height" orientation="vertical">
-								<uui-input
-									slot="editor"
-									.value=${this._embed.height}
-									type="number"
-									@change=${this.#onHeightChange}></uui-input>
-							</umb-workspace-property-layout>
-
-							<umb-workspace-property-layout label="Constrain" orientation="vertical">
-								<uui-toggle
-									slot="editor"
-									@change=${this.#onConstrainChange}
-									.checked=${this._embed.constrain}></uui-toggle>
-							</umb-workspace-property-layout>
-						`
+						this._embed.preview || this._embed.a11yInfo,
+						() => html` <umb-workspace-property-layout label="Preview" orientation="vertical">
+							<div slot="editor">
+								${when(this.#loading, () => html`<uui-loader-circle></uui-loader-circle>`)}
+								${when(this.#preview, () => html`${unsafeHTML(this.#preview)}`)}
+								${when(this._embed.info, () => html` <p aria-hidden="true">${this._embed.info}</p>`)}
+								${when(this._embed.a11yInfo, () => html` <p class="sr-only" role="alert">${this._embed.a11yInfo}</p>`)}
+							</div>
+						</umb-workspace-property-layout>`
 					)}
+
+					<umb-workspace-property-layout label="Width" orientation="vertical">
+						<uui-input
+							slot="editor"
+							.value=${this._embed.width}
+							type="number"
+							?disabled=${!this._embed.supportsDimensions || !this._embed.success}
+							@change=${this.#onWidthChange}></uui-input>
+					</umb-workspace-property-layout>
+
+					<umb-workspace-property-layout label="Height" orientation="vertical">
+						<uui-input
+							slot="editor"
+							.value=${this._embed.height}
+							type="number"
+							?disabled=${!this._embed.supportsDimensions || !this._embed.success}
+							@change=${this.#onHeightChange}></uui-input>
+					</umb-workspace-property-layout>
+
+					<umb-workspace-property-layout label="Constrain" orientation="vertical">
+						<uui-toggle
+							slot="editor"
+							@change=${this.#onConstrainChange}
+							?disabled=${!this._embed.supportsDimensions || !this._embed.success}
+							.checked=${this._embed.constrain}></uui-toggle>
+					</umb-workspace-property-layout>
 				</uui-box>
 				<div slot="actions">
 					<uui-button label="Close" @click=${this.#close}></uui-button>
