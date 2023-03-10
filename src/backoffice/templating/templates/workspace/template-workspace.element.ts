@@ -20,6 +20,16 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 			umb-code-editor {
 				--editor-height: calc(100vh - 300px);
 			}
+
+			uui-box {
+				margin: 1em;
+				--uui-box-default-padding: 1em 0;
+			}
+
+			uui-input {
+				width: 100%;
+				margin: 1em;
+			}
 		`,
 	];
 

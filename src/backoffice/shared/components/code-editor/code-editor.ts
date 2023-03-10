@@ -68,6 +68,10 @@ export class UmbCodeEditor {
 			theme: this._host.theme,
 			automaticLayout: true,
 			readOnly: this._host.readonly,
+			scrollBeyondLastLine: false,
+			scrollbar: {
+				verticalScrollbarSize: 5,
+			},
 		});
 		this.#initiateEvents();
 	}

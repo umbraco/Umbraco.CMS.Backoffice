@@ -18,6 +18,11 @@ export class UmbCodeEditorElement extends LitElement implements UmbCodeEditorHos
 			#editor-container {
 				width: var(--editor-width);
 				height: var(--editor-height, 100%);
+
+				--vscode-scrollbar-shadow: #dddddd;
+				--vscode-scrollbarSlider-background: var(--uui-color-disabled-contrast);
+				--vscode-scrollbarSlider-hoverBackground: rgba(100, 100, 100, 0.7);
+				--vscode-scrollbarSlider-activeBackground: rgba(0, 0, 0, 0.6);
 			}
 		`,
 	];
