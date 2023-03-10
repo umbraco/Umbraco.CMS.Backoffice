@@ -17,8 +17,8 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 				height: 100%;
 			}
 
-			#content {
-				height: 100%;
+			umb-code-editor {
+				--editor-height: calc(100vh - 300px);
 			}
 		`,
 	];
@@ -74,19 +74,23 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 		const target = event.target as UUIInputElement;
 		const value = target.value as string;
 
-		this._codeEditor?.insert(`My hoovercraft is full of eels`);
+		this._codeEditor?.insert(`My hovercraft is full of eels`);
 	}
 
 	render() {
 		// TODO: add correct UI elements
 		return html`<umb-workspace-layout alias="Umb.Workspace.Template">
-			<uui-input .value=${this._name} @input=${this.#onNameInput}></uui-input
-			><uui-button @click=${this.#insertCode}>Insert some code</uui-button>
-			<umb-code-editor
-				language="razor"
-				id="content"
-				.code=${this._content ?? ''}
-				@input=${this.#onCodeEditorInput}></umb-code-editor>
+			<uui-input slot="header" .value=${this._name} @input=${this.#onNameInput}></uui-input>
+			<uui-box>
+				<uui-button color="danger" look="primary" slot="header" @click=${this.#insertCode}
+					>Insert "My hovercraft is full of eels"</uui-button
+				>
+				<umb-code-editor
+					language="razor"
+					id="content"
+					.code=${this._content ?? ''}
+					@input=${this.#onCodeEditorInput}></umb-code-editor>
+			</uui-box>
 		</umb-workspace-layout>`;
 	}
 }

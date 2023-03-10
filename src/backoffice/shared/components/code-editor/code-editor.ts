@@ -86,6 +86,7 @@ export class UmbCodeEditor {
 				forceMoveMarkers: true,
 			},
 		]);
+		this.editor.focus();
 	}
 
 	#position: monaco.IPosition | null = null;
