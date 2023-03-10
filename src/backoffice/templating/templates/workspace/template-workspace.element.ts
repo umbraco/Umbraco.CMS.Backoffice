@@ -1,6 +1,6 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, query, state } from 'lit/decorators.js';
 import { UUIInputElement } from '@umbraco-ui/uui';
 import { UmbTemplateWorkspaceContext } from './template-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
@@ -38,6 +38,9 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 	@state()
 	private _content?: string | null = '';
 
+	@query('umb-code-editor')
+	private _codeEditor?: UmbCodeEditorElement;
+
 	#templateWorkspaceContext = new UmbTemplateWorkspaceContext(this);
 	#isNew = false;
 
@@ -67,10 +70,18 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 		this.#templateWorkspaceContext.setContent(value);
 	}
 
+	#insertCode(event: Event) {
+		const target = event.target as UUIInputElement;
+		const value = target.value as string;
+
+		this._codeEditor?.insert(`My hoovercraft is full of eels`);
+	}
+
 	render() {
 		// TODO: add correct UI elements
 		return html`<umb-workspace-layout alias="Umb.Workspace.Template">
-			<uui-input .value=${this._name} @input=${this.#onNameInput}></uui-input>
+			<uui-input .value=${this._name} @input=${this.#onNameInput}></uui-input
+			><uui-button @click=${this.#insertCode}>Insert some code</uui-button>
 			<umb-code-editor
 				language="razor"
 				id="content"
