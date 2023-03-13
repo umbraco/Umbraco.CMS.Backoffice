@@ -99,8 +99,11 @@ export class UmbCodeEditor {
 	insertText(text: string) {
 		if (!this.#editor) throw new Error('Editor object not found');
 		const selections = this.#editor.getSelections() ?? [];
-		if (selections?.length > 1) {
-			this.#editor.executeEdits(null, selections.map((selection) => ({ range: selection, text })));
+		if (selections?.length > 0) {
+			this.#editor.executeEdits(
+				null,
+				selections.map((selection) => ({ range: selection, text }))
+			);
 			return;
 		}
 	}
