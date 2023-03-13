@@ -17,11 +17,25 @@ export interface UmbCodeEditorHost extends HTMLElement {
 	readonly: boolean;
 }
 
+export interface UmbCodeEditorCursorPosition {
+	column: number;
+	lineNumber: number;
+}
+
+export interface UmbCodeEditorCursorPositionChangedEvent {
+	position: UmbCodeEditorCursorPosition;
+	secondaryPositions: UmbCodeEditorCursorPosition[];
+}
+
 //!ISSUES: https://github.com/microsoft/monaco-editor/issues/1997 - razor templates do not get proper syntax highligh, like they do in vsCode
 
 export class UmbCodeEditor {
 	private _host: UmbCodeEditorHost;
-	editor?: monaco.editor.IStandaloneCodeEditor;
+	#editor?: monaco.editor.IStandaloneCodeEditor;
+
+	get editor() {
+		return this.#editor;
+	}
 
 	options: monaco.editor.IEditorOptions = {};
 
@@ -35,33 +49,29 @@ export class UmbCodeEditor {
 	}
 
 	updateOptions(newOptions: monaco.editor.IStandaloneEditorConstructionOptions) {
-		if (!this.editor) return;
-		this.editor.updateOptions(newOptions);
-	}
-
-	insertSnippet(snippet: string) {
-		if (!this.editor) return;
-		this.editor.trigger('snippet', 'editor.action.insertSnippet', { snippet });
+		if (!this.#editor) throw new Error('Editor object not found');
+		this.#editor.updateOptions(newOptions);
 	}
 
 	set value(newValue: string) {
-		if (!this.editor) return;
+		if (!this.#editor) throw new Error('Editor object not found');
+
 		const oldValue = this.value;
 		if (newValue !== oldValue) {
-			this.editor.setValue(newValue);
+			this.#editor.setValue(newValue);
 		}
 	}
 
 	get value() {
-		if (!this.editor) return '';
-		const value = this.editor.getValue();
+		if (!this.#editor) return '';
+		const value = this.#editor.getValue();
 		return value;
 	}
 
 	createEditor() {
 		if (!this._host.container) throw new Error('Container not found');
 		if (this._host.container.hasChildNodes()) throw new Error('Editor container should be empty');
-		this.editor = monaco.editor.create(this._host.container, {
+		this.#editor = monaco.editor.create(this._host.container, {
 			...this.options,
 			value: this._host.code ?? '',
 			language: this._host.language,
@@ -76,40 +86,55 @@ export class UmbCodeEditor {
 		this.#initiateEvents();
 	}
 
-	insertText(text: string) {
-		if (!this.editor) return;
-		this.editor.executeEdits('', [
-			{
-				range: {
-					startLineNumber: this.#position?.lineNumber ?? 0,
-					startColumn: this.#position?.column ?? 0,
-					endLineNumber: this.#position?.lineNumber ?? 0,
-					endColumn: this.#position?.column ?? 0,
-				},
-				text,
-				forceMoveMarkers: true,
-			},
-		]);
-		this.editor.focus();
+	getSelections(): monaco.ISelection[] {
+		if (!this.#editor) return [];
+		return this.#editor.getSelections() ?? [];
 	}
 
-	#position: monaco.IPosition | null = null;
+	getPositions(): monaco.IPosition | null {
+		if (!this.#editor) return null;
+		return this.#editor.getPosition();
+	}
+
+	insertText(text: string) {
+		if (!this.#editor) throw new Error('Editor object not found');
+		const selections = this.#editor.getSelections() ?? [];
+		if (selections?.length > 1) {
+			this.#editor.executeEdits(null, selections.map((selection) => ({ range: selection, text })));
+			return;
+		}
+	}
+
+	#position: UmbCodeEditorCursorPosition | null = null;
+	#secondaryPositions: UmbCodeEditorCursorPosition[] = [];
 
 	#initiateEvents() {
-		this.editor?.onDidChangeModelContent(() => {
+		this.#editor?.onDidChangeModelContent((e) => {
 			this._host.code = this.value ?? '';
+			console.log(e);
 			this._host.dispatchEvent(new CustomEvent('input', { bubbles: true, composed: true, detail: {} }));
 		});
-		this.editor?.onDidChangeCursorPosition((e) => {
+		this.#editor?.onDidChangeCursorPosition((e) => {
 			this.#position = e.position;
+			this.#secondaryPositions = e.secondaryPositions;
 		});
 	}
 
-	onChangeModelContent<T>(callback: (e: monaco.editor.IModelContentChangedEvent | undefined) => T) {
-		let callbackReturnValue: T;
-		this.editor?.onDidChangeModelContent((event) => {
-			callbackReturnValue = callback(event);
-			return callbackReturnValue;
+	onChangeModelContent(callback: (e: monaco.editor.IModelContentChangedEvent | undefined) => void) {
+		this.#editor?.onDidChangeModelContent((event) => {
+			callback(event);
+		});
+	}
+
+	onDidChangeModel(callback: (e: monaco.editor.IModelChangedEvent | undefined) => void) {
+		this.#editor?.onDidChangeModel((event) => {
+			callback(event);
+		});
+	}
+
+	onDidChangeCursorPosition(callback: (e: UmbCodeEditorCursorPositionChangedEvent | undefined) => void) {
+		this.#editor?.onDidChangeCursorPosition((event) => {
+			callback(event);
 		});
 	}
 }
