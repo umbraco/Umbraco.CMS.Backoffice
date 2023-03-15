@@ -1,7 +1,9 @@
-import { IRoute, RouterSlot, ensureSlash } from 'router-slot';
+import type { IRoute } from 'router-slot/model';
+import { RouterSlot } from 'router-slot';
 import { LitElement, PropertyValueMap } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/router';
+import { UmbRouterSlotInitEvent } from './router-slot-init.event';
+import { UmbRouterSlotChangeEvent } from './router-slot-change.event';
 
 /**
  *  @element umb-router-slot-element
@@ -20,30 +22,6 @@ export class UmbRouterSlotElement extends LitElement {
 		return (this.#router as any).routes;
 	}
 	public set routes(value: IRoute[] | undefined) {
-		/*
-		Concept for extending routes with modal routes.
-		const routesWithModals = value?.map((route, i, array) => {
-			{
-				path: 'bla/:key/'
-				component: () => {
-					return import('.....');
-				}
-				setup: () => {
-					...
-				}
-			}
-
-			if (route.path === '') {
-				{
-					...route,
-					path: route.path + '/modal/:modal-alias',
-					setup: () => {
-						route.setup?.();
-						// Call modal service to open modal.
-					}
-			}
-		});
-		*/
 		(this.#router as any).routes = value;
 	}
 
