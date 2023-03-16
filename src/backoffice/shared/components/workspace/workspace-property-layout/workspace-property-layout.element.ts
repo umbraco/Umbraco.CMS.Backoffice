@@ -21,6 +21,11 @@ export class UmbWorkspacePropertyLayoutElement extends LitElement {
 				border-bottom: 1px solid var(--uui-color-divider);
 				padding: var(--uui-size-space-6) 0;
 				container-type: inline-size;
+				position: relative;
+			}
+
+			:host([alias='eyeDropper']) {
+				z-index: 2;
 			}
 
 			:host > div {
@@ -38,7 +43,7 @@ export class UmbWorkspacePropertyLayoutElement extends LitElement {
 			}
 
 			:host-context(umb-variantable-property:first-of-type) {
-				padding-top:0;
+				padding-top: 0;
 			}
 
 			p {
