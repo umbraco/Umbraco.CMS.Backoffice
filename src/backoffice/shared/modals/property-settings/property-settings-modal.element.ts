@@ -123,7 +123,7 @@ export class UmbPropertySettingsModalElement extends UmbModalBaseElement<undefin
 		{
 			name: 'Validate as an email address',
 			value: 'email',
-			validation: '[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+',
+			validation: '[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+',
 		},
 		{
 			name: 'Validate as a number',
@@ -133,7 +133,7 @@ export class UmbPropertySettingsModalElement extends UmbModalBaseElement<undefin
 		{
 			name: 'Validate as an URL',
 			value: 'url',
-			validation: 'https?://[a-zA-Z0-9-.]+.[a-zA-Z]{2,}',
+			validation: 'https?://[a-zA-Z0-9-.]+\\.[a-zA-Z]{2,}',
 		},
 		{
 			name: '...or enter a custom validation',
