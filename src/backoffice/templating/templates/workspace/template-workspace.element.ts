@@ -23,7 +23,7 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 
 			uui-box {
 				margin: 1em;
-				--uui-box-default-padding: 1em 0;
+				--uui-box-default-padding: 0;
 			}
 
 			uui-input {
@@ -87,6 +87,14 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 		this._codeEditor?.insert(`My hovercraft is full of eels`);
 	}
 
+	#searchInEditor(event: Event) {
+		const target = event.target as UUIInputElement;
+		const value = target.value as string;
+
+		const finds = this._codeEditor?.find(value);
+		console.log(finds);
+	}
+
 	render() {
 		// TODO: add correct UI elements
 		return html`<umb-workspace-layout alias="Umb.Workspace.Template">
@@ -95,6 +103,7 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 				<uui-button color="danger" look="primary" slot="header" @click=${this.#insertCode}
 					>Insert "My hovercraft is full of eels"</uui-button
 				>
+				<uui-input @change=${this.#searchInEditor}></uui-input>
 				<umb-code-editor
 					language="razor"
 					id="content"

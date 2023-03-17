@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { CodeEditorLanguage } from './code-editor';
 import { UmbCodeEditorElement } from './code-editor-element';
+import { CodeEditorLanguage } from './code-editor.model';
 
 const meta: Meta<UmbCodeEditorElement> = {
 	title: 'Components/Code Editor',

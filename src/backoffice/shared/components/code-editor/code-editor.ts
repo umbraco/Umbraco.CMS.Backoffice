@@ -1,34 +1,20 @@
 import * as monaco from 'monaco-editor';
+import {
+	CodeEditorConstructorOptions,
+	CodeEditorSearchOptions,
+	UmbCodeEditorCursorPosition,
+	UmbCodeEditorCursorPositionChangedEvent,
+	UmbCodeEditorHost,
+} from './code-editor.model';
 
-export type CodeEditorLanguage = 'razor' | 'typescript' | 'javascript' | 'css' | 'markdown' | 'json' | 'html';
-
-export enum CodeEditorTheme {
-	Light = 'vs',
-	Dark = 'vs-dark',
-	HighContrastLight = 'hc-light',
-	HighContrastDark = 'hc-black',
-}
-
-export interface UmbCodeEditorHost extends HTMLElement {
-	container: HTMLElement;
-	language: CodeEditorLanguage;
-	theme: CodeEditorTheme;
-	code: string;
-	readonly: boolean;
-}
-
-export interface UmbCodeEditorCursorPosition {
-	column: number;
-	lineNumber: number;
-}
-
-export interface UmbCodeEditorCursorPositionChangedEvent {
-	position: UmbCodeEditorCursorPosition;
-	secondaryPositions: UmbCodeEditorCursorPosition[];
-}
-
-//!ISSUES: https://github.com/microsoft/monaco-editor/issues/1997 - razor templates do not get proper syntax highligh, like they do in vsCode
-
+/**
+ * This is a wrapper class for the monaco editor. It exposes some of the monaco editor API. It also handles the creation of the monaco editor.
+ * It also allows access to the entire monaco editor object through editor property, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
+ * Through the UmbCodeEditorHost interface it can be used in a custom element.
+ *
+ * @export
+ * @class UmbCodeEditor
+ */
 export class UmbCodeEditor {
 	private _host: UmbCodeEditorHost;
 	#editor?: monaco.editor.IStandaloneCodeEditor;
@@ -37,20 +23,32 @@ export class UmbCodeEditor {
 		return this.#editor;
 	}
 
-	options: monaco.editor.IEditorOptions = {};
+	#options: CodeEditorConstructorOptions = {};
+	get options(): CodeEditorConstructorOptions {
+		return this.#options;
+	}
 
-	constructor(host: UmbCodeEditorHost) {
+	#defaultMonacoOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
+		automaticLayout: true,
+		scrollBeyondLastLine: false,
+		scrollbar: {
+			verticalScrollbarSize: 5,
+		},
+	};
+
+	constructor(host: UmbCodeEditorHost, options?: CodeEditorConstructorOptions) {
+		this.#options = { ...options };
 		this._host = host;
 		try {
-			this.createEditor();
+			this.createEditor(options);
 		} catch (e) {
 			console.error(e);
 		}
 	}
 
-	updateOptions(newOptions: monaco.editor.IStandaloneEditorConstructionOptions) {
+	updateOptions(newOptions: CodeEditorConstructorOptions) {
 		if (!this.#editor) throw new Error('Editor object not found');
-		this.#editor.updateOptions(newOptions);
+		this.#editor.updateOptions(this.#mapOptions(newOptions));
 	}
 
 	set value(newValue: string) {
@@ -68,20 +66,37 @@ export class UmbCodeEditor {
 		return value;
 	}
 
-	createEditor() {
+	get model() {
+		if (!this.#editor) return null;
+		return this.#editor.getModel();
+	}
+
+	#mapOptions(options: CodeEditorConstructorOptions): monaco.editor.IStandaloneEditorConstructionOptions {
+		const hasLineNumbers = Object.prototype.hasOwnProperty.call(options, 'lineNumbers');
+		const hasMinimap = Object.prototype.hasOwnProperty.call(options, 'minimap');
+		const hasLightbulb = Object.prototype.hasOwnProperty.call(options, 'lightbulb');
+
+		return {
+			...options,
+			lineNumbers: hasLineNumbers ? (options.lineNumbers ? 'on' : 'off') : undefined,
+			minimap: hasMinimap ? (options.minimap ? { enabled: true } : { enabled: false }) : undefined,
+			lightbulb: hasLightbulb ? (options.lightbulb ? { enabled: true } : { enabled: false }) : undefined,
+		};
+	}
+
+	createEditor(options: CodeEditorConstructorOptions = {}) {
 		if (!this._host.container) throw new Error('Container not found');
 		if (this._host.container.hasChildNodes()) throw new Error('Editor container should be empty');
+
+		const mergedOptions = { ...this.#defaultMonacoOptions, ...this.#mapOptions(options) };
+
 		this.#editor = monaco.editor.create(this._host.container, {
-			...this.options,
+			...mergedOptions,
 			value: this._host.code ?? '',
 			language: this._host.language,
 			theme: this._host.theme,
-			automaticLayout: true,
 			readOnly: this._host.readonly,
-			scrollBeyondLastLine: false,
-			scrollbar: {
-				verticalScrollbarSize: 5,
-			},
+			ariaLabel: this._host.label,
 		});
 		this.#initiateEvents();
 	}
@@ -96,7 +111,7 @@ export class UmbCodeEditor {
 		return this.#editor.getPosition();
 	}
 
-	insertText(text: string) {
+	insert(text: string) {
 		if (!this.#editor) throw new Error('Editor object not found');
 		const selections = this.#editor.getSelections() ?? [];
 		if (selections?.length > 0) {
@@ -104,12 +119,49 @@ export class UmbCodeEditor {
 				null,
 				selections.map((selection) => ({ range: selection, text }))
 			);
-			return;
 		}
 	}
 
+	find(searchString: string, searchOptions: CodeEditorSearchOptions = <CodeEditorSearchOptions>{}) {
+		if (!this.#editor) throw new Error('Editor object not found');
+		const defaultOptions = {
+			searchOnlyEditableRange: false,
+
+			isRegex: false,
+
+			matchCase: false,
+
+			wordSeparators: null,
+
+			captureMatches: false,
+		};
+
+		const { searchOnlyEditableRange, isRegex, matchCase, wordSeparators, captureMatches } = {
+			...defaultOptions,
+			...searchOptions,
+		};
+		return this.model?.findMatches(
+			searchString,
+			searchOnlyEditableRange,
+			isRegex,
+			matchCase,
+			wordSeparators,
+			captureMatches
+		);
+	}
+
+	//INSERT AT POSITION
+
+	//SELECT
+
 	#position: UmbCodeEditorCursorPosition | null = null;
+	get position() {
+		return this.#position;
+	}
 	#secondaryPositions: UmbCodeEditorCursorPosition[] = [];
+	get secondaryPositions() {
+		return this.#secondaryPositions;
+	}
 
 	#initiateEvents() {
 		this.#editor?.onDidChangeModelContent((e) => {

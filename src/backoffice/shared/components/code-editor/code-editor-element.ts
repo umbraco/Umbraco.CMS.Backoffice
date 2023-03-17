@@ -1,10 +1,8 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
-
-
-import { CodeEditorLanguage, CodeEditorTheme, UmbCodeEditor, UmbCodeEditorHost } from './code-editor';
-
+import { UmbCodeEditor } from './code-editor';
+import { CodeEditorLanguage, CodeEditorTheme, UmbCodeEditorHost } from './code-editor.model';
 import { monacoEditorStyles } from './styles';
 
 @customElement('umb-code-editor')
@@ -40,6 +38,9 @@ export class UmbCodeEditorElement extends LitElement implements UmbCodeEditorHos
 	@property()
 	language: CodeEditorLanguage = 'javascript';
 
+	@property()
+	label = 'Code Editor';
+
 	#code = '';
 	@property()
 	get code() {
@@ -65,7 +66,11 @@ export class UmbCodeEditorElement extends LitElement implements UmbCodeEditorHos
 	}
 
 	insert(text: string) {
-		this.#editor?.insertText(text);
+		this.#editor?.insert(text);
+	}
+
+	find(text: string) {
+		return this.#editor?.find(text);
 	}
 
 	render() {
