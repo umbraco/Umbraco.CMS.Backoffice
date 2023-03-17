@@ -22,6 +22,12 @@ export class UmbCodeEditorElement extends LitElement implements UmbCodeEditorHos
 				--vscode-scrollbarSlider-hoverBackground: rgba(100, 100, 100, 0.7);
 				--vscode-scrollbarSlider-activeBackground: rgba(0, 0, 0, 0.6);
 			}
+
+			/* a hacky workaround this issue: https://github.com/microsoft/monaco-editor/issues/3217 
+			*/
+			.view-lines {
+				font-feature-settings: revert !important;
+			}
 		`,
 	];
 

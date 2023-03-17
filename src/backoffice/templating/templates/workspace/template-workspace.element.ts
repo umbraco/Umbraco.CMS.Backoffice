@@ -103,7 +103,7 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 				<uui-button color="danger" look="primary" slot="header" @click=${this.#insertCode}
 					>Insert "My hovercraft is full of eels"</uui-button
 				>
-				<uui-input @change=${this.#searchInEditor}></uui-input>
+				<uui-input slot="header" @change=${this.#searchInEditor}></uui-input>
 				<umb-code-editor
 					language="razor"
 					id="content"

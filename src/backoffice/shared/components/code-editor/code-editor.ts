@@ -11,6 +11,9 @@ import {
  * This is a wrapper class for the monaco editor. It exposes some of the monaco editor API. It also handles the creation of the monaco editor.
  * It also allows access to the entire monaco editor object through editor property, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
  * Through the UmbCodeEditorHost interface it can be used in a custom element.
+ * 
+ * Current issues: [jumping cursor](https://github.com/microsoft/monaco-editor/issues/3217) , [razor syntax highlight](https://github.com/microsoft/monaco-editor/issues/1997)
+ * 
  *
  * @export
  * @class UmbCodeEditor
@@ -30,10 +33,10 @@ export class UmbCodeEditor {
 
 	#defaultMonacoOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
 		automaticLayout: true,
-		scrollBeyondLastLine: false,
-		scrollbar: {
-			verticalScrollbarSize: 5,
-		},
+		// scrollBeyondLastLine: false,
+		// scrollbar: {
+		// 	verticalScrollbarSize: 5,
+		// },
 	};
 
 	constructor(host: UmbCodeEditorHost, options?: CodeEditorConstructorOptions) {
@@ -91,7 +94,7 @@ export class UmbCodeEditor {
 		const mergedOptions = { ...this.#defaultMonacoOptions, ...this.#mapOptions(options) };
 
 		this.#editor = monaco.editor.create(this._host.container, {
-			...mergedOptions,
+			...this.#defaultMonacoOptions,
 			value: this._host.code ?? '',
 			language: this._host.language,
 			theme: this._host.theme,
