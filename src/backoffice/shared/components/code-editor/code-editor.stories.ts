@@ -1,13 +1,24 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
 import { UmbCodeEditorElement } from './code-editor-element';
-import { CodeEditorLanguage } from './code-editor.model';
+import { CodeEditorLanguage, CodeEditorTheme } from './code-editor.model';
 
 const meta: Meta<UmbCodeEditorElement> = {
 	title: 'Components/Code Editor',
 	component: 'umb-code-editor',
 	decorators: [(story) => html`<div style="--editor-height: 800px">${story()}</div>`],
 	parameters: { layout: 'fullscreen' },
+	argTypes: {
+		theme: {
+			control: 'select',
+			options: [
+				CodeEditorTheme.Dark,
+				CodeEditorTheme.Light,
+				CodeEditorTheme.HighContrastLight,
+				CodeEditorTheme.HighContrastLight,
+			],
+		},
+	},
 };
 
 const codeSnippets: Record<CodeEditorLanguage, string> = {
@@ -210,4 +221,12 @@ const [Javascript, Css, Html, Razor, Markdown, Typescript, Json]: Story[] = Obje
 	}
 );
 
-export { Javascript, Css, Html, Razor, Markdown, Typescript, Json };
+const Themes: Story = {
+	args: {
+		language: 'javascript',
+		code: codeSnippets.javascript,
+		theme: CodeEditorTheme.Dark,
+	},
+};
+
+export { Javascript, Css, Html, Razor, Markdown, Typescript, Json, Themes };
