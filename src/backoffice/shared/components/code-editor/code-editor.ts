@@ -51,6 +51,15 @@ export class UmbCodeEditor {
 		} catch (e) {
 			console.error(e);
 		}
+
+		monaco.editor.defineTheme('umb-dark', {
+			base: 'vs-dark', // can also be vs-dark or hc-black
+			inherit: true, // can also be false to completely replace the builtin rules
+			rules: [],
+			colors: {
+				'editor.background': '#21262e',
+			},
+		});
 	}
 
 	updateOptions(newOptions: CodeEditorConstructorOptions) {

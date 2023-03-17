@@ -2,7 +2,7 @@ export type CodeEditorLanguage = 'razor' | 'typescript' | 'javascript' | 'css' |
 
 export enum CodeEditorTheme {
 	Light = 'vs',
-	Dark = 'vs-dark',
+	Dark = 'umb-dark',
 	HighContrastLight = 'hc-light',
 	HighContrastDark = 'hc-black',
 }
