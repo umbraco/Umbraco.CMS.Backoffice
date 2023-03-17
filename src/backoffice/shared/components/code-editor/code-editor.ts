@@ -2,6 +2,7 @@ import * as monaco from 'monaco-editor';
 import {
 	CodeEditorConstructorOptions,
 	CodeEditorSearchOptions,
+	CodeEditorTheme,
 	UmbCodeEditorCursorPosition,
 	UmbCodeEditorCursorPositionChangedEvent,
 	UmbCodeEditorHost,
@@ -11,9 +12,9 @@ import {
  * This is a wrapper class for the monaco editor. It exposes some of the monaco editor API. It also handles the creation of the monaco editor.
  * It also allows access to the entire monaco editor object through editor property, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
  * Through the UmbCodeEditorHost interface it can be used in a custom element.
- * 
+ *
  * Current issues: [jumping cursor](https://github.com/microsoft/monaco-editor/issues/3217) , [razor syntax highlight](https://github.com/microsoft/monaco-editor/issues/1997)
- * 
+ *
  *
  * @export
  * @class UmbCodeEditor
@@ -33,10 +34,12 @@ export class UmbCodeEditor {
 
 	#defaultMonacoOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
 		automaticLayout: true,
-		// scrollBeyondLastLine: false,
-		// scrollbar: {
-		// 	verticalScrollbarSize: 5,
-		// },
+		scrollBeyondLastLine: false,
+		scrollbar: {
+			verticalScrollbarSize: 5,
+		},
+		// disable this, as it does not work with shadow dom properly.
+		colorDecorators: false,
 	};
 
 	constructor(host: UmbCodeEditorHost, options?: CodeEditorConstructorOptions) {
@@ -94,7 +97,7 @@ export class UmbCodeEditor {
 		const mergedOptions = { ...this.#defaultMonacoOptions, ...this.#mapOptions(options) };
 
 		this.#editor = monaco.editor.create(this._host.container, {
-			...this.#defaultMonacoOptions,
+			...mergedOptions,
 			value: this._host.code ?? '',
 			language: this._host.language,
 			theme: this._host.theme,
@@ -156,6 +159,11 @@ export class UmbCodeEditor {
 	//INSERT AT POSITION
 
 	//SELECT
+
+	setTheme(theme: CodeEditorTheme) {
+		if (!this.#editor) throw new Error('Editor object not found');
+		monaco.editor.setTheme(theme);
+	}
 
 	#position: UmbCodeEditorCursorPosition | null = null;
 	get position() {

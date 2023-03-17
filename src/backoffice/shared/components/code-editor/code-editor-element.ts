@@ -1,14 +1,17 @@
-import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { UmbLitElement } from '@umbraco-cms/element';
+import { css, html, LitElement, PropertyValueMap } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
+import { UMB_THEME_CONTEXT_TOKEN } from '../../../themes/theme.context';
 import { UmbCodeEditor } from './code-editor';
 import { CodeEditorLanguage, CodeEditorTheme, UmbCodeEditorHost } from './code-editor.model';
-import { monacoEditorStyles } from './styles';
+import { monacoEditorStyles, monacoJumpingCursorHack } from './styles';
 
 @customElement('umb-code-editor')
-export class UmbCodeEditorElement extends LitElement implements UmbCodeEditorHost {
+export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditorHost {
 	static styles = [
 		monacoEditorStyles,
+		monacoJumpingCursorHack,
 		css`
 			:host {
 				display: block;
@@ -22,12 +25,6 @@ export class UmbCodeEditorElement extends LitElement implements UmbCodeEditorHos
 				--vscode-scrollbarSlider-hoverBackground: rgba(100, 100, 100, 0.7);
 				--vscode-scrollbarSlider-activeBackground: rgba(0, 0, 0, 0.6);
 			}
-
-			/* a hacky workaround this issue: https://github.com/microsoft/monaco-editor/issues/3217 
-			*/
-			.view-lines {
-				font-feature-settings: revert !important;
-			}
 		`,
 	];
 
@@ -37,6 +34,20 @@ export class UmbCodeEditorElement extends LitElement implements UmbCodeEditorHos
 		if (!this.containerRef?.value) throw new Error('Container not found');
 		return this.containerRef!.value;
 	}
+
+	constructor() {
+		super();
+		this.consumeContext(UMB_THEME_CONTEXT_TOKEN, (instance) => {
+			instance.theme.subscribe((themeAlias) => {
+				console.log('themeAlias', themeAlias);
+				this._themeAlias = themeAlias;
+				this.theme = themeAlias ? this.#translateTheme(themeAlias) : CodeEditorTheme.Light;
+			});
+		});
+	}
+
+	@state()
+	private _themeAlias?: string;
 
 	@property()
 	theme: CodeEditorTheme = CodeEditorTheme.Light;
@@ -62,6 +73,19 @@ export class UmbCodeEditorElement extends LitElement implements UmbCodeEditorHos
 		this.requestUpdate('code', oldValue);
 	}
 
+	#translateTheme(theme: string) {
+		switch (theme) {
+			case 'umb-light-theme':
+				return CodeEditorTheme.Light;
+			case 'umb-dark-theme':
+				return CodeEditorTheme.Dark;
+			case 'umb-high-contrast-theme':
+				return CodeEditorTheme.HighContrastLight;
+			default:
+				return CodeEditorTheme.Light;
+		}
+	}
+
 	@property({ type: Boolean, attribute: 'readonly' })
 	readonly = false;
 
@@ -69,6 +93,15 @@ export class UmbCodeEditorElement extends LitElement implements UmbCodeEditorHos
 
 	firstUpdated() {
 		this.#editor = new UmbCodeEditor(this);
+	}
+
+	protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+		if (_changedProperties.has('theme') || _changedProperties.has('language')) {
+			this.#editor?.updateOptions({
+				theme: this.theme,
+				language: this.language,
+			});
+		}
 	}
 
 	insert(text: string) {
