@@ -6,6 +6,7 @@ import {
 	UmbCodeEditorCursorPosition,
 	UmbCodeEditorCursorPositionChangedEvent,
 	UmbCodeEditorHost,
+	UmbCodeEditorRange,
 } from './code-editor.model';
 
 /**
@@ -128,7 +129,10 @@ export class UmbCodeEditor {
 		}
 	}
 
-	find(searchString: string, searchOptions: CodeEditorSearchOptions = <CodeEditorSearchOptions>{}) {
+	find(
+		searchString: string,
+		searchOptions: CodeEditorSearchOptions = <CodeEditorSearchOptions>{}
+	): UmbCodeEditorRange[] {
 		if (!this.#editor) throw new Error('Editor object not found');
 		const defaultOptions = {
 			searchOnlyEditableRange: false,
@@ -146,13 +150,15 @@ export class UmbCodeEditor {
 			...defaultOptions,
 			...searchOptions,
 		};
-		return this.model?.findMatches(
-			searchString,
-			searchOnlyEditableRange,
-			isRegex,
-			matchCase,
-			wordSeparators,
-			captureMatches
+		return (
+			this.model
+				?.findMatches(searchString, searchOnlyEditableRange, isRegex, matchCase, wordSeparators, captureMatches)
+				.map((findMatch) => ({
+					startLineNumber: findMatch.range.startLineNumber,
+					startColumn: findMatch.range.startColumn,
+					endLineNumber: findMatch.range.endLineNumber,
+					endColumn: findMatch.range.endColumn,
+				})) ?? []
 		);
 	}
 

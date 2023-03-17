@@ -21,6 +21,13 @@ export interface UmbCodeEditorCursorPosition {
 	lineNumber: number;
 }
 
+export interface UmbCodeEditorRange {
+	startLineNumber: number;
+	startColumn: number;
+	endLineNumber: number;
+	endColumn: number;
+}
+
 export interface UmbCodeEditorCursorPositionChangedEvent {
 	position: UmbCodeEditorCursorPosition;
 	secondaryPositions: UmbCodeEditorCursorPosition[];
