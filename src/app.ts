@@ -20,7 +20,7 @@ import type { Guard, IRoute } from '@umbraco-cms/internal/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import { OpenAPI, RuntimeLevelModel, ServerResource } from '@umbraco-cms/backoffice/backend-api';
-import { UmbIconStore } from '@umbraco-cms/backoffice/store';
+import { UmbIconStore } from './core/stores/icon/icon.store';
 import { umbDebugContextEventType } from '@umbraco-cms/backoffice/context-api';
 
 @customElement('umb-app')
