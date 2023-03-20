@@ -7,6 +7,7 @@ import {
 	UmbCodeEditorCursorPositionChangedEvent,
 	UmbCodeEditorHost,
 	UmbCodeEditorRange,
+	UmbCodeEditorSelection,
 } from './code-editor.model';
 import themes from './themes';
 
@@ -141,12 +142,12 @@ export class UmbCodeEditor {
 		this.#initiateEvents();
 	}
 
-	getSelections(): monaco.ISelection[] {
+	getSelections(): UmbCodeEditorSelection[] {
 		if (!this.#editor) return [];
 		return this.#editor.getSelections() ?? [];
 	}
 
-	getPositions(): monaco.IPosition | null {
+	getPositions(): UmbCodeEditorCursorPosition | null {
 		if (!this.#editor) return null;
 		return this.#editor.getPosition();
 	}
@@ -195,9 +196,30 @@ export class UmbCodeEditor {
 		);
 	}
 
-	//INSERT AT POSITION
+	getValueInRange(range: UmbCodeEditorRange): string {
+		if (!this.#editor) throw new Error('Editor object not found');
+		return this.model?.getValueInRange(range) ?? '';
+	}
 
-	//SELECT
+	insertAtPosition(text: string, position: UmbCodeEditorCursorPosition) {
+		if (!this.#editor) throw new Error('Editor object not found');
+		this.#editor.executeEdits(null, [
+			{
+				range: {
+					startLineNumber: position.lineNumber,
+					startColumn: position.column,
+					endLineNumber: position.lineNumber,
+					endColumn: position.column,
+				},
+				text,
+			},
+		]);
+	}
+
+	select(range: UmbCodeEditorRange) {
+		if (!this.#editor) throw new Error('Editor object not found');
+		this.#editor.setSelection(range);
+	}
 
 	setTheme<T extends string>(theme: CodeEditorTheme | T) {
 		if (!this.#editor) throw new Error('Editor object not found');

@@ -28,6 +28,17 @@ export interface UmbCodeEditorRange {
 	endColumn: number;
 }
 
+export interface UmbCodeEditorSelection {
+	startLineNumber: number;
+	startColumn: number;
+	endLineNumber: number;
+	endColumn: number;
+	positionColumn: number;
+	positionLineNumber: number;
+	selectionStartColumn: number;
+	selectionStartLineNumber: number;
+}
+
 export interface UmbCodeEditorCursorPositionChangedEvent {
 	position: UmbCodeEditorCursorPosition;
 	secondaryPositions: UmbCodeEditorCursorPosition[];
