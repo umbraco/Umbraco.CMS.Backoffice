@@ -14,5 +14,11 @@ const themes: Record<CodeEditorTheme, monaco.editor.IStandaloneThemeData> = {
 	'umb-hc-light': UmbCodeEditorThemeHighContrastLight,
 	'umb-hc-dark': UmbCodeEditorThemeHighContrastDark,
 };
-
+export {
+	UmbCodeEditorThemeDark,
+	UmbCodeEditorThemeLight,
+	UmbCodeEditorThemeHighContrastLight,
+	UmbCodeEditorThemeHighContrastDark,
+	themes,
+};
 export default themes;
