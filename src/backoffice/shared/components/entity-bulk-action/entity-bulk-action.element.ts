@@ -1,6 +1,6 @@
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { ifDefined } from 'lit-html/directives/if-defined.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { UmbEntityBulkAction } from '@umbraco-cms/entity-action';
 import { UmbExecutedEvent } from '@umbraco-cms/events';
 import { UmbLitElement } from '@umbraco-cms/element';

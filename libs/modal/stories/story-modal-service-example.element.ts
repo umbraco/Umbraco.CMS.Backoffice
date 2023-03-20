@@ -1,4 +1,4 @@
-import { html } from 'lit-html';
+import { html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '..';
 import { UmbLitElement } from '@umbraco-cms/element';
