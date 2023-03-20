@@ -1,5 +1,5 @@
 import { manifests as modalManifests } from './modals/manifests';
-import type { ManifestHeaderApp, ManifestUserDashboard } from '@umbraco-cms/models';
+import type { ManifestHeaderApp, ManifestUserDashboard } from '@umbraco-cms/backoffice/models';
 
 export const userDashboards: Array<ManifestUserDashboard> = [
 	{

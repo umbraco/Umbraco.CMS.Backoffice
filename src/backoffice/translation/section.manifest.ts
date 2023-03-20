@@ -1,4 +1,4 @@
-import type { ManifestDashboard, ManifestSection, ManifestMenuSectionSidebarApp } from '@umbraco-cms/models';
+import type { ManifestDashboard, ManifestSection, ManifestMenuSectionSidebarApp } from '@umbraco-cms/backoffice/models';
 
 const sectionAlias = 'Umb.Section.Translation';
 

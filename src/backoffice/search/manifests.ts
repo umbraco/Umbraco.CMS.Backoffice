@@ -1,4 +1,4 @@
-import type { ManifestHeaderApp } from '@umbraco-cms/models';
+import type { ManifestHeaderApp } from '@umbraco-cms/backoffice/models';
 
 const headerApps: Array<ManifestHeaderApp> = [
 	{

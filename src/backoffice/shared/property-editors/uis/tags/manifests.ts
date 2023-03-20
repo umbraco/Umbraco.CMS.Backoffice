@@ -1,5 +1,5 @@
 import { manifest as storageType } from './config/storage-type/manifests';
-import type { ManifestPropertyEditorUI } from '@umbraco-cms/models';
+import type { ManifestPropertyEditorUI } from '@umbraco-cms/backoffice/models';
 
 const manifest: ManifestPropertyEditorUI = {
 	type: 'propertyEditorUI',

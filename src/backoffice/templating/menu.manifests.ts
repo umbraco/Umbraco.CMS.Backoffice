@@ -1,4 +1,4 @@
-import { ManifestMenuSectionSidebarApp, ManifestMenu } from '@umbraco-cms/extensions-registry';
+import { ManifestMenuSectionSidebarApp, ManifestMenu } from '@umbraco-cms/backoffice/extensions-registry';
 
 const menu: ManifestMenu = {
 	type: 'menu',

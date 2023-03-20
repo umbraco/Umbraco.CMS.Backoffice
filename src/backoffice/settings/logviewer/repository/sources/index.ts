@@ -7,8 +7,8 @@ import {
 	PagedLogTemplateResponseModel,
 	PagedSavedLogSearchResponseModel,
 	SavedLogSearchResponseModel,
-} from '@umbraco-cms/backend-api';
-import type { DataSourceResponse } from '@umbraco-cms/models';
+} from '@umbraco-cms/backoffice/backend-api';
+import type { DataSourceResponse } from '@umbraco-cms/backoffice/models';
 
 
 

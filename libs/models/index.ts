@@ -5,10 +5,10 @@ import {
 	FolderTreeItemResponseModel,
 	PackageManifestResponseModel,
 	ProblemDetailsModel,
-} from '@umbraco-cms/backend-api';
+} from '@umbraco-cms/backoffice/backend-api';
 
 // Extension Manifests
-export * from '@umbraco-cms/extensions-registry';
+export * from '@umbraco-cms/backoffice/extensions-registry';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type HTMLElementConstructor<T = HTMLElement> = new (...args: any[]) => T;

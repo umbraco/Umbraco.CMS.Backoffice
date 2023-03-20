@@ -18,10 +18,10 @@ import {
 	UmbAppLanguageContext,
 } from './settings/languages/app-language-select/app-language.context';
 import { UmbServerExtensionController } from './packages/repository/server-extension.controller';
-import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/modal';
-import { createExtensionClass, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
-import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/notification';
-import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
+import { createExtensionClass, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
+import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
+import { UmbLitElement } from '@umbraco-cms/backoffice/element';
 
 // Domains
 import './settings';

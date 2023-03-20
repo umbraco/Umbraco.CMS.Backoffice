@@ -1,8 +1,8 @@
-import type { UserGroupDetails } from '@umbraco-cms/models';
-import { UmbContextToken } from '@umbraco-cms/context-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { ArrayState } from '@umbraco-cms/observable-api';
-import { UmbEntityDetailStore, UmbStoreBase } from '@umbraco-cms/store';
+import type { UserGroupDetails } from '@umbraco-cms/backoffice/models';
+import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { ArrayState } from '@umbraco-cms/backoffice/observable-api';
+import { UmbEntityDetailStore, UmbStoreBase } from '@umbraco-cms/backoffice/store';
 
 // TODO: get rid of this type addition & { ... }:
 //export type UmbUserGroupStoreItemType = UserGroupDetails & { users?: Array<string> };

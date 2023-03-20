@@ -2,7 +2,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { ManifestHeaderApp } from '@umbraco-cms/extensions-registry';
+import { ManifestHeaderApp } from '@umbraco-cms/backoffice/extensions-registry';
 
 @customElement('umb-header-app-button')
 export class UmbHeaderAppButton extends LitElement {

@@ -4,13 +4,13 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'rxjs';
 import { repeat } from 'lit/directives/repeat.js';
 
-import type { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent, IRoutingInfo } from '@umbraco-cms/router';
-import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
-import type { ManifestWorkspaceView, ManifestWorkspaceViewCollection } from '@umbraco-cms/models';
+import type { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent, IRoutingInfo } from '@umbraco-cms/internal/router';
+import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
+import type { ManifestWorkspaceView, ManifestWorkspaceViewCollection } from '@umbraco-cms/backoffice/models';
 
 import '../../body-layout/body-layout.element';
 import '../../extension-slot/extension-slot.element';
-import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbLitElement } from '@umbraco-cms/backoffice/element';
 
 /**
  * @element umb-workspace-layout

@@ -1,5 +1,5 @@
 import { UmbMemberGroupRepository } from '../repository/member-group.repository';
-import type { ManifestTree } from '@umbraco-cms/models';
+import type { ManifestTree } from '@umbraco-cms/backoffice/models';
 
 const treeAlias = 'Umb.Tree.MemberGroups';
 

@@ -1,4 +1,4 @@
-import type { ManifestCollectionView } from '@umbraco-cms/models';
+import type { ManifestCollectionView } from '@umbraco-cms/backoffice/models';
 
 export const manifests: Array<ManifestCollectionView> = [
 	{

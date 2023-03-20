@@ -1,5 +1,5 @@
 import { UmbTemplateRepository } from '../repository/template.repository';
-import type { ManifestTree } from '@umbraco-cms/models';
+import type { ManifestTree } from '@umbraco-cms/backoffice/models';
 
 const tree: ManifestTree = {
 	type: 'tree',

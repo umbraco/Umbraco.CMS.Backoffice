@@ -6,10 +6,10 @@ import { IRoutingInfo } from 'router-slot';
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { UmbLogViewerWorkspaceContext, UMB_APP_LOG_VIEWER_CONTEXT_TOKEN } from '../logviewer.context';
-import { UmbLitElement } from '@umbraco-cms/element';
-import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/extensions-api';
-import { ManifestWorkspaceView, ManifestWorkspaceViewCollection } from '@umbraco-cms/extensions-registry';
-import { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent } from '@umbraco-cms/router';
+import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/backoffice/extensions-api';
+import { ManifestWorkspaceView, ManifestWorkspaceViewCollection } from '@umbraco-cms/backoffice/extensions-registry';
+import { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent } from '@umbraco-cms/internal/router';
 
 //TODO make uui-input accept min and max values
 @customElement('umb-logviewer-workspace')

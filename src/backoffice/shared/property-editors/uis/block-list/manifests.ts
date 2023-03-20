@@ -1,5 +1,5 @@
 import { manifest as blockConfiguration } from './config/block-configuration/manifests';
-import type { ManifestPropertyEditorUI } from '@umbraco-cms/models';
+import type { ManifestPropertyEditorUI } from '@umbraco-cms/backoffice/models';
 
 const manifest: ManifestPropertyEditorUI = {
 	type: 'propertyEditorUI',

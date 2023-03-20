@@ -1,5 +1,5 @@
 import { UmbMediaRepository } from '../repository/media.repository';
-import type { ManifestTree } from '@umbraco-cms/models';
+import type { ManifestTree } from '@umbraco-cms/backoffice/models';
 
 const treeAlias = 'Umb.Tree.Media';
 

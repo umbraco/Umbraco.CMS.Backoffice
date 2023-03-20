@@ -1,6 +1,6 @@
 import { DICTIONARY_REPOSITORY_ALIAS } from '../repository/manifests';
-import { UmbSaveWorkspaceAction } from '@umbraco-cms/workspace';
-import type { ManifestWorkspace, ManifestWorkspaceAction, ManifestWorkspaceView } from '@umbraco-cms/models';
+import { UmbSaveWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
+import type { ManifestWorkspace, ManifestWorkspaceAction, ManifestWorkspaceView } from '@umbraco-cms/backoffice/models';
 
 const workspaceAlias = 'Umb.Workspace.Dictionary';
 

@@ -2,16 +2,16 @@ import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../../users/repository/user.store';
-import type { IRoute, IRoutingInfo } from '@umbraco-cms/router';
-import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/extensions-api';
+import type { IRoute, IRoutingInfo } from '@umbraco-cms/internal/router';
+import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/backoffice/extensions-api';
 
 import './list-view-layouts/table/workspace-view-users-table.element';
 import './list-view-layouts/grid/workspace-view-users-grid.element';
 import './workspace-view-users-selection.element';
 
-import type { ManifestWorkspace, UserDetails } from '@umbraco-cms/models';
-import { UmbLitElement } from '@umbraco-cms/element';
-import { DeepState } from '@umbraco-cms/observable-api';
+import type { ManifestWorkspace, UserDetails } from '@umbraco-cms/backoffice/models';
+import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { DeepState } from '@umbraco-cms/backoffice/observable-api';
 
 @customElement('umb-section-view-users')
 export class UmbSectionViewUsersElement extends UmbLitElement {

@@ -1,4 +1,4 @@
-import type { ManifestSection, ManifestSectionView } from '@umbraco-cms/models';
+import type { ManifestSection, ManifestSectionView } from '@umbraco-cms/backoffice/models';
 
 const sectionAlias = 'Umb.Section.Users';
 

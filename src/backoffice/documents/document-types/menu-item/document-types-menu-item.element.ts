@@ -1,6 +1,6 @@
 import { html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbLitElement } from '@umbraco-cms/backoffice/element';
 
 // TODO: align menu items and tree items
 @customElement('umb-document-types-sidebar-menu-item')

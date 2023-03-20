@@ -15,12 +15,12 @@ import { UUIIconRegistryEssential } from '@umbraco-ui/uui';
 import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
-import type { Guard, IRoute } from '@umbraco-cms/router';
-import { UmbLitElement } from '@umbraco-cms/element';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
-import { OpenAPI, RuntimeLevelModel, ServerResource } from '@umbraco-cms/backend-api';
-import { UmbIconStore } from '@umbraco-cms/store';
-import { umbDebugContextEventType } from '@umbraco-cms/context-api';
+import type { Guard, IRoute } from '@umbraco-cms/internal/router';
+import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { OpenAPI, RuntimeLevelModel, ServerResource } from '@umbraco-cms/backoffice/backend-api';
+import { UmbIconStore } from '@umbraco-cms/backoffice/store';
+import { umbDebugContextEventType } from '@umbraco-cms/backoffice/context-api';
 
 @customElement('umb-app')
 export class UmbApp extends UmbLitElement {

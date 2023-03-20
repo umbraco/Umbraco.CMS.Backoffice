@@ -1,7 +1,7 @@
 import { html } from 'lit-html';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '..';
-import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbLitElement } from '@umbraco-cms/backoffice/element';
 
 @customElement('story-modal-context-example')
 export class StoryModalContextExampleElement extends UmbLitElement {

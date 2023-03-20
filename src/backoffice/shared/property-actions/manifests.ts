@@ -1,4 +1,4 @@
-import type { ManifestPropertyAction } from '@umbraco-cms/models';
+import type { ManifestPropertyAction } from '@umbraco-cms/backoffice/models';
 
 export const manifests: Array<ManifestPropertyAction> = [
 	{

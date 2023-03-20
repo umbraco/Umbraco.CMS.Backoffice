@@ -1,6 +1,6 @@
 import { html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbLitElement } from '@umbraco-cms/backoffice/element';
 
 @customElement('umb-templates-menu-item')
 export class UmbTemplatesMenuItemElement extends UmbLitElement {
