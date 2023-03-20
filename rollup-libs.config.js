@@ -5,7 +5,7 @@ import dts from 'rollup-plugin-dts';
 import { readdirSync, lstatSync } from 'fs';
 
 const libs = readdirSync('./libs').filter(lib => lstatSync(`libs/${lib}`).isDirectory());
-const outputDir = '../Umbraco.Cms.StaticAssets/wwwroot/umbraco/backoffice/libs';
+const outputDir = './dist/libs';
 
 export default libs.map(lib => {
 	/** @type {import('rollup').RollupOptions[]} */
@@ -27,7 +27,7 @@ export default libs.map(lib => {
 				file: `${outputDir}/${lib}.d.ts`,
 				format: 'es'
 			},
-			plugins: [dts({respectExternal: true})],
+			plugins: [dts({ respectExternal: true })],
 		}
 	];
 }).flat();
