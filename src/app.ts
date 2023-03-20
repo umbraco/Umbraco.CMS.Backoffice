@@ -1,5 +1,5 @@
 import '@umbraco-ui/uui-css/dist/uui-css.css';
-import '@umbraco-cms/css';
+import './core/css/custom-properties.css';
 
 // TODO: remove these imports when they are part of UUI
 import '@umbraco-ui/uui-modal';
