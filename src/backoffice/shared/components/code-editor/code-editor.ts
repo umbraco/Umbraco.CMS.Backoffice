@@ -17,6 +17,7 @@ import { UmbChangeEvent, UmbInputEvent } from '@umbraco-cms/events';
  * This is a wrapper class for the [monaco editor](https://microsoft.github.io/monaco-editor). It exposes some of the monaco editor API. It also handles the creation of the monaco editor.
  * It allows access to the entire monaco editor object through `monacoEditor` property, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
  * Through the UmbCodeEditorHost interface it can be used in a custom element.
+ * By using monaco library directly you can access the entire monaco API along with code completions, actions etc. This class creates some level of abstraction over the monaco editor. It only provides basic functionality, that should be enough for most of the use cases and should be possible to implement with any code editor library.
  *
  * Current issues: [shadow DOM related issues](https://github.com/microsoft/monaco-editor/labels/editor-shadow-dom) #3217  currently fixed by a hack , [razor syntax highlight](https://github.com/microsoft/monaco-editor/issues/1997)
  *

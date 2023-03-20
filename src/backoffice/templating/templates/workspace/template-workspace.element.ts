@@ -2,9 +2,9 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, query, state } from 'lit/decorators.js';
 import { UUIInputElement } from '@umbraco-ui/uui';
+import { UmbCodeEditorElement } from '../../../shared/components/code-editor/code-editor.element';
 import { UmbTemplateWorkspaceContext } from './template-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { UmbCodeEditorElement } from 'src/backoffice/shared/components/code-editor/code-editor.element';
 
 @customElement('umb-template-workspace')
 export class UmbTemplateWorkspaceElement extends UmbLitElement {
@@ -87,14 +87,6 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 		this._codeEditor?.insert(`My hovercraft is full of eels`);
 	}
 
-	#searchInEditor(event: Event) {
-		const target = event.target as UUIInputElement;
-		const value = target.value as string;
-
-		const finds = this._codeEditor?.find(value);
-		console.log(finds);
-	}
-
 	render() {
 		// TODO: add correct UI elements
 		return html`<umb-workspace-layout alias="Umb.Workspace.Template">
@@ -103,7 +95,7 @@ export class UmbTemplateWorkspaceElement extends UmbLitElement {
 				<uui-button color="danger" look="primary" slot="header" @click=${this.#insertCode}
 					>Insert "My hovercraft is full of eels"</uui-button
 				>
-				<uui-input slot="header" @change=${this.#searchInEditor}></uui-input>
+
 				<umb-code-editor
 					language="razor"
 					id="content"

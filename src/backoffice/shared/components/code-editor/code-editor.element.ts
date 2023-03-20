@@ -7,7 +7,10 @@ import { CodeEditorLanguage, CodeEditorTheme, UmbCodeEditorHost } from './code-e
 import { monacoEditorStyles, monacoJumpingCursorHack } from './styles';
 import { UmbLitElement } from '@umbraco-cms/element';
 /**
- * A custom element that renders a code editor. Code editor is a wrapper around the Monaco Editor.
+ * A custom element that renders a code editor. Code editor is based on the Monaco Editor library.
+ * The element will listen to the theme context and update the theme accordingly.
+ * Parts of the monaco Api is exposed through the `editor` property. You can access the monaco editor instance through `editor.monacoEditor`.
+ * 
  * @element umb-code-editor
  *
  * @export
