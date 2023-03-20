@@ -9,7 +9,7 @@ import {
 } from '../workspace/workspace-variant/workspace-variant.context';
 import { ActiveVariant } from '../workspace/workspace-context/workspace-split-view-manager.class';
 import { UmbLitElement } from '@umbraco-cms/backoffice/element';
-import type { DocumentVariantResponseModel, ContentStateModel } from '@umbraco-cms/backoffice/backend-api';
+import { DocumentVariantResponseModel, ContentStateModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-variant-selector')
 export class UmbVariantSelectorElement extends UmbLitElement {
