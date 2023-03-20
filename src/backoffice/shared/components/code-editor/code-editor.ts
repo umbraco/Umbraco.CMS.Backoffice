@@ -8,13 +8,14 @@ import {
 	UmbCodeEditorHost,
 	UmbCodeEditorRange,
 } from './code-editor.model';
+import themes from './themes';
 
 /**
  * This is a wrapper class for the monaco editor. It exposes some of the monaco editor API. It also handles the creation of the monaco editor.
  * It also allows access to the entire monaco editor object through editor property, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
  * Through the UmbCodeEditorHost interface it can be used in a custom element.
  *
- * Current issues: [jumping cursor](https://github.com/microsoft/monaco-editor/issues/3217) , [razor syntax highlight](https://github.com/microsoft/monaco-editor/issues/1997)
+ * Current issues: [jumping cursor](https://github.com/microsoft/monaco-editor/issues/3217) currently fixed by a hack , [razor syntax highlight](https://github.com/microsoft/monaco-editor/issues/1997)
  *
  *
  * @export
@@ -24,7 +25,7 @@ export class UmbCodeEditor {
 	private _host: UmbCodeEditorHost;
 	#editor?: monaco.editor.IStandaloneCodeEditor;
 
-	get editor() {
+	get monacoEditor() {
 		return this.#editor;
 	}
 
@@ -43,28 +44,13 @@ export class UmbCodeEditor {
 		colorDecorators: false,
 	};
 
-	constructor(host: UmbCodeEditorHost, options?: CodeEditorConstructorOptions) {
-		this.#options = { ...options };
-		this._host = host;
-		try {
-			this.createEditor(options);
-		} catch (e) {
-			console.error(e);
-		}
-
-		monaco.editor.defineTheme('umb-dark', {
-			base: 'vs-dark', // can also be vs-dark or hc-black
-			inherit: true, // can also be false to completely replace the builtin rules
-			rules: [],
-			colors: {
-				'editor.background': '#21262e',
-			},
-		});
+	#position: UmbCodeEditorCursorPosition | null = null;
+	get position() {
+		return this.#position;
 	}
-
-	updateOptions(newOptions: CodeEditorConstructorOptions) {
-		if (!this.#editor) throw new Error('Editor object not found');
-		this.#editor.updateOptions(this.#mapOptions(newOptions));
+	#secondaryPositions: UmbCodeEditorCursorPosition[] = [];
+	get secondaryPositions() {
+		return this.#secondaryPositions;
 	}
 
 	set value(newValue: string) {
@@ -87,6 +73,39 @@ export class UmbCodeEditor {
 		return this.#editor.getModel();
 	}
 
+	constructor(host: UmbCodeEditorHost, options?: CodeEditorConstructorOptions) {
+		this.#options = { ...options };
+		this._host = host;
+		this.#registerThemes();
+		try {
+			this.createEditor(options);
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	#registerThemes() {
+		Object.entries(themes).forEach(([name, theme]) => {
+			this.#defineTheme(name, theme);
+		});
+	}
+
+	#defineTheme(name: string, theme: monaco.editor.IStandaloneThemeData) {
+		monaco.editor.defineTheme(name, theme);
+	}
+
+	#initiateEvents() {
+		this.#editor?.onDidChangeModelContent((e) => {
+			this._host.code = this.value ?? '';
+			console.log(e);
+			this._host.dispatchEvent(new CustomEvent('input', { bubbles: true, composed: true, detail: {} }));
+		});
+		this.#editor?.onDidChangeCursorPosition((e) => {
+			this.#position = e.position;
+			this.#secondaryPositions = e.secondaryPositions;
+		});
+	}
+
 	#mapOptions(options: CodeEditorConstructorOptions): monaco.editor.IStandaloneEditorConstructionOptions {
 		const hasLineNumbers = Object.prototype.hasOwnProperty.call(options, 'lineNumbers');
 		const hasMinimap = Object.prototype.hasOwnProperty.call(options, 'minimap');
@@ -98,6 +117,11 @@ export class UmbCodeEditor {
 			minimap: hasMinimap ? (options.minimap ? { enabled: true } : { enabled: false }) : undefined,
 			lightbulb: hasLightbulb ? (options.lightbulb ? { enabled: true } : { enabled: false }) : undefined,
 		};
+	}
+
+	updateOptions(newOptions: CodeEditorConstructorOptions) {
+		if (!this.#editor) throw new Error('Editor object not found');
+		this.#editor.updateOptions(this.#mapOptions(newOptions));
 	}
 
 	createEditor(options: CodeEditorConstructorOptions = {}) {
@@ -175,30 +199,9 @@ export class UmbCodeEditor {
 
 	//SELECT
 
-	setTheme(theme: CodeEditorTheme) {
+	setTheme<T extends string>(theme: CodeEditorTheme | T) {
 		if (!this.#editor) throw new Error('Editor object not found');
 		monaco.editor.setTheme(theme);
-	}
-
-	#position: UmbCodeEditorCursorPosition | null = null;
-	get position() {
-		return this.#position;
-	}
-	#secondaryPositions: UmbCodeEditorCursorPosition[] = [];
-	get secondaryPositions() {
-		return this.#secondaryPositions;
-	}
-
-	#initiateEvents() {
-		this.#editor?.onDidChangeModelContent((e) => {
-			this._host.code = this.value ?? '';
-			console.log(e);
-			this._host.dispatchEvent(new CustomEvent('input', { bubbles: true, composed: true, detail: {} }));
-		});
-		this.#editor?.onDidChangeCursorPosition((e) => {
-			this.#position = e.position;
-			this.#secondaryPositions = e.secondaryPositions;
-		});
 	}
 
 	onChangeModelContent(callback: (e: monaco.editor.IModelContentChangedEvent | undefined) => void) {

@@ -1,5 +1,5 @@
 import { UmbLitElement } from '@umbraco-cms/element';
-import { css, html, LitElement, PropertyValueMap } from 'lit';
+import { css, html, LitElement, PropertyValueMap, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 import { UMB_THEME_CONTEXT_TOKEN } from '../../../themes/theme.context';
@@ -35,19 +35,11 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 		return this.containerRef!.value;
 	}
 
-	constructor() {
-		super();
-		this.consumeContext(UMB_THEME_CONTEXT_TOKEN, (instance) => {
-			instance.theme.subscribe((themeAlias) => {
-				console.log('themeAlias', themeAlias);
-				this._themeAlias = themeAlias;
-				this.theme = themeAlias ? this.#translateTheme(themeAlias) : CodeEditorTheme.Light;
-			});
-		});
-	}
+	#editor?: UmbCodeEditor;
 
-	@state()
-	private _themeAlias?: string;
+	get editor() {
+		return this.#editor;
+	}
 
 	@property()
 	theme: CodeEditorTheme = CodeEditorTheme.Light;
@@ -73,6 +65,32 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 		this.requestUpdate('code', oldValue);
 	}
 
+	@property({ type: Boolean, attribute: 'readonly' })
+	readonly = false;
+
+	constructor() {
+		super();
+		this.consumeContext(UMB_THEME_CONTEXT_TOKEN, (instance) => {
+			instance.theme.subscribe((themeAlias) => {
+				console.log('themeAlias', themeAlias);
+				this.theme = themeAlias ? this.#translateTheme(themeAlias) : CodeEditorTheme.Light;
+			});
+		});
+	}
+
+	firstUpdated() {
+		this.#editor = new UmbCodeEditor(this);
+	}
+
+	protected updated(_changedProperties: PropertyValues<this>): void {
+		if (_changedProperties.has('theme') || _changedProperties.has('language')) {
+			this.#editor?.updateOptions({
+				theme: this.theme,
+				language: this.language,
+			});
+		}
+	}
+
 	#translateTheme(theme: string) {
 		switch (theme) {
 			case 'umb-light-theme':
@@ -83,24 +101,6 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 				return CodeEditorTheme.HighContrastLight;
 			default:
 				return CodeEditorTheme.Light;
-		}
-	}
-
-	@property({ type: Boolean, attribute: 'readonly' })
-	readonly = false;
-
-	#editor?: UmbCodeEditor;
-
-	firstUpdated() {
-		this.#editor = new UmbCodeEditor(this);
-	}
-
-	protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-		if (_changedProperties.has('theme') || _changedProperties.has('language')) {
-			this.#editor?.updateOptions({
-				theme: this.theme,
-				language: this.language,
-			});
 		}
 	}
 

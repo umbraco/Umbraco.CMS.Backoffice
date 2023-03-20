@@ -1,10 +1,10 @@
 export type CodeEditorLanguage = 'razor' | 'typescript' | 'javascript' | 'css' | 'markdown' | 'json' | 'html';
 
 export enum CodeEditorTheme {
-	Light = 'vs',
+	Light = 'umb-light',
 	Dark = 'umb-dark',
-	HighContrastLight = 'hc-light',
-	HighContrastDark = 'hc-black',
+	HighContrastLight = 'umb-hc-light',
+	HighContrastDark = 'umb-hc-dark',
 }
 
 export interface UmbCodeEditorHost extends HTMLElement {
