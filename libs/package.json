@@ -1,0 +1,10 @@
+{
+	"name": "@umbraco-cms/backoffice",
+	"version": "13.0.0-alpha.0",
+	"type": "module",
+	"peerDependencies": {
+		"@types/uuid": "^9.0.1",
+		"@umbraco-ui/uui": "^1.2.0-rc.0",
+		"rxjs": "^7.8.0"
+	}
+}
