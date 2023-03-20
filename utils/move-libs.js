@@ -10,7 +10,7 @@
 // Note: This script is not used in the build process, it is only used to transform the d.ts files
 //       when the d.ts files are copied to the dist folder
 
-import { readdirSync, readFileSync, writeFileSync, cpSync } from 'fs';
+import { readdirSync, readFileSync, writeFileSync, cpSync, mkdirSync } from 'fs';
 
 const srcDir = './libs';
 const inputDir = './dist/libs';
@@ -20,6 +20,9 @@ const outputDir = '../Umbraco.Cms.StaticAssets/wwwroot/umbraco/backoffice/libs';
 cpSync(`${srcDir}/package.json`, `${inputDir}/package.json`, { recursive: true });
 
 const libs = readdirSync(inputDir);
+
+// Create output folder
+mkdirSync(outputDir);
 
 // Transform all .d.ts files and copy all other files to the output folder
 libs.forEach(lib => {
