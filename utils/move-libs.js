@@ -17,11 +17,11 @@ const inputDir = './dist/libs';
 const outputDir = '../Umbraco.Cms.StaticAssets/wwwroot/umbraco/backoffice/libs';
 
 // Copy package.json
-cpSync(`${srcDir}/package.json`, `${outputDir}/package.json`, { recursive: true });
+cpSync(`${srcDir}/package.json`, `${inputDir}/package.json`, { recursive: true });
 
 const libs = readdirSync(inputDir);
 
-// Copy and transform all .d.ts files
+// Transform all .d.ts files and copy all other files to the output folder
 libs.forEach(lib => {
 
 	console.log(`Transforming ${lib}`);
