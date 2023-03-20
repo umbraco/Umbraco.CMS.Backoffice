@@ -3,7 +3,7 @@ import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbDataTypeWorkspaceContext } from './data-type-workspace.context';
 import { UmbRouterSlotInitEvent, IRoute, IRoutingInfo } from '@umbraco-cms/internal/router';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 import './data-type-workspace-edit.element';
 

@@ -5,7 +5,7 @@ import { UUIButtonState } from '@umbraco-ui/uui-button';
 import { UMB_CONFIRM_MODAL_TOKEN } from '../../../../shared/modals/confirm';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
 import { HealthStatusModel, IndexResponseModel, IndexerResource } from '@umbraco-cms/backoffice/backend-api';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 import './section-view-examine-searchers';

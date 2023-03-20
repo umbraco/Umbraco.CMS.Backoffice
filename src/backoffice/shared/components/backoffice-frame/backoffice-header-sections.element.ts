@@ -5,7 +5,7 @@ import { when } from 'lit/directives/when.js';
 import { UMB_BACKOFFICE_CONTEXT_TOKEN } from './backoffice.context';
 import type { UmbBackofficeContext } from './backoffice.context';
 import type { ManifestSection } from '@umbraco-cms/backoffice/models';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-backoffice-header-sections')
 export class UmbBackofficeHeaderSections extends UmbLitElement {

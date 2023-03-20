@@ -3,7 +3,7 @@ import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbWorkspaceMemberGroupContext } from '../../member-group-workspace.context';
 import type { MemberGroupDetails } from '@umbraco-cms/backoffice/models';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-workspace-view-member-group-info')
 export class UmbWorkspaceViewMemberGroupInfoElement extends UmbLitElement {

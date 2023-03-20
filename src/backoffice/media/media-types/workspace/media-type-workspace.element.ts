@@ -3,7 +3,7 @@ import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbWorkspaceMediaTypeContext } from './media-type-workspace.context';
 import { UmbMediaTypeWorkspaceEditElement } from './media-type-workspace-edit.element';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { IRoutingInfo } from '@umbraco-cms/internal/router';
 
 @customElement('umb-media-type-workspace')

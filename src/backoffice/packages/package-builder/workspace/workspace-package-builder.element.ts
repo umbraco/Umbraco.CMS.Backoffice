@@ -6,7 +6,7 @@ import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { UmbInputDocumentPickerElement } from '../../../shared/components/input-document-picker/input-document-picker.element';
 import { UmbInputMediaPickerElement } from '../../../shared/components/input-media-picker/input-media-picker.element';
 import { UmbInputLanguagePickerElement } from '../../../shared/components/input-language-picker/input-language-picker.element';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { PackageDefinitionResponseModel, PackageResource } from '@umbraco-cms/backoffice/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';

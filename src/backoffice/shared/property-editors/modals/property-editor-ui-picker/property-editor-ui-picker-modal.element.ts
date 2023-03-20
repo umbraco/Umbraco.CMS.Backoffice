@@ -8,7 +8,7 @@ import { UmbPropertyEditorUIPickerModalData, UmbPropertyEditorUIPickerModalResul
 import type { UmbModalHandler } from '@umbraco-cms/backoffice/modal';
 import type { ManifestPropertyEditorUI } from '@umbraco-cms/backoffice/models';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 interface GroupedPropertyEditorUIs {
 	[key: string]: Array<ManifestPropertyEditorUI>;

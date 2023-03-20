@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { UmbInputCheckboxListElement } from '../../../components/input-checkbox-list/input-checkbox-list.element';
 import { UmbPropertyEditorElement } from '@umbraco-cms/backoffice/property-editor';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { DataTypePropertyPresentationModel } from '@umbraco-cms/backoffice/backend-api';
 
 /**

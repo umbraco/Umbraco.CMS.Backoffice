@@ -6,7 +6,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import { UmbUserStore } from '../../users/repository/user.store';
 import { UmbUserGroupWorkspaceContext } from './user-group-workspace.context';
 import type { UserGroupDetails } from '@umbraco-cms/backoffice/models';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 import '../../../shared/components/input-user/input-user.element';
 import '../../../shared/components/input-section/input-section.element';

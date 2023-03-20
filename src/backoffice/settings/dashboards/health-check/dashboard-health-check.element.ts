@@ -7,7 +7,7 @@ import {
 } from './health-check-dashboard.context';
 import { UmbHealthCheckContext } from './health-check.context';
 import type { IRoute, IRoutingInfo } from '@umbraco-cms/internal/router';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { ManifestHealthCheck } from '@umbraco-cms/backoffice/extensions-registry';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';

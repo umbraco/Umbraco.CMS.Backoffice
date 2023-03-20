@@ -5,7 +5,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'rxjs';
 import { repeat } from 'lit/directives/repeat.js';
 import { createExtensionElement, isManifestElementableType, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 export type InitializedExtension = { alias: string; weight: number; component: HTMLElement | null };
 

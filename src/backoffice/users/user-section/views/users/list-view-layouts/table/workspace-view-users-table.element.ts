@@ -19,7 +19,7 @@ import type { UserDetails, UserGroupEntity } from '@umbraco-cms/backoffice/model
 
 import './column-layouts/name/user-table-name-column-layout.element';
 import './column-layouts/status/user-table-status-column-layout.element';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-workspace-view-users-table')
 export class UmbWorkspaceViewUsersTableElement extends UmbLitElement {

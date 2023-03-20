@@ -7,7 +7,7 @@ import type { UmbSectionViewsElement } from './section-views/section-views.eleme
 import type { IRoutingInfo } from '@umbraco-cms/internal/router';
 import type { ManifestMenuSectionSidebarApp, ManifestSection } from '@umbraco-cms/backoffice/models';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 import './section-sidebar-menu/section-sidebar-menu.element';
 

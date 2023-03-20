@@ -4,7 +4,7 @@ import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbDataTypeWorkspaceContext } from './data-type-workspace.context';
 import { UmbRouteLocation } from '@umbraco-cms/internal/router';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { ManifestWorkspace } from '@umbraco-cms/backoffice/extensions-registry';
 
 /**

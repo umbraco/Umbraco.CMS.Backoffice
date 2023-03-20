@@ -5,7 +5,7 @@ import { UmbDashboardExamineIndexElement } from './views/section-view-examine-in
 import { UmbDashboardExamineSearcherElement } from './views/section-view-examine-searchers';
 import type { IRoute, IRoutingInfo, UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/internal/router';
 
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-dashboard-examine-management')
 export class UmbDashboardExamineManagementElement extends UmbLitElement {

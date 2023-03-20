@@ -10,7 +10,7 @@ import type { ManifestWorkspaceView, ManifestWorkspaceViewCollection } from '@um
 
 import '../../body-layout/body-layout.element';
 import '../../extension-slot/extension-slot.element';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 /**
  * @element umb-workspace-layout

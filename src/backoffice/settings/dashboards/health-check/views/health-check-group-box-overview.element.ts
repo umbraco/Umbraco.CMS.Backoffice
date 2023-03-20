@@ -9,7 +9,7 @@ import {
 import { ensureSlash, path } from '@umbraco-cms/internal/router';
 import type { ManifestHealthCheck } from '@umbraco-cms/backoffice/models';
 import { HealthCheckGroupWithResultResponseModel, StatusResultTypeModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-health-check-group-box-overview')
 export class UmbHealthCheckGroupBoxOverviewElement extends UmbLitElement {

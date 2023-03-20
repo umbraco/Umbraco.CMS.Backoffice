@@ -6,7 +6,7 @@ import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from '../section.context
 import { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/internal/router';
 import type { ManifestDashboard, ManifestSectionView } from '@umbraco-cms/backoffice/models';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 
 // TODO: this might need a new name, since it's both view and dashboard now

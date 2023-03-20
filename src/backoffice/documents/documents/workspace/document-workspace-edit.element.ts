@@ -7,7 +7,7 @@ import { ActiveVariant } from '../../../shared/components/workspace/workspace-co
 import { UmbDocumentWorkspaceContext } from './document-workspace.context';
 import { UmbDocumentWorkspaceSplitViewElement } from './document-workspace-split-view.element';
 import { UmbRouterSlotInitEvent } from '@umbraco-cms/internal/router';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import '../../../shared/components/workspace/workspace-variant/workspace-variant.element';
 import { VariantModelBaseModel } from '@umbraco-cms/backoffice/backend-api';
 

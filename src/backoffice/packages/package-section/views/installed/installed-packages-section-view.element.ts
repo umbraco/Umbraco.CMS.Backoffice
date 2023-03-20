@@ -4,7 +4,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import { combineLatest } from 'rxjs';
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { UmbPackageRepository } from '../../../repository/package.repository';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { UmbPackageWithMigrationStatus } from '@umbraco-cms/backoffice/models';
 
 import './installed-packages-section-view-item.element';

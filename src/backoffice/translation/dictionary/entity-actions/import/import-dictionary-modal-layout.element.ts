@@ -7,7 +7,7 @@ import { UmbTreeElement } from '../../../../shared/components/tree/tree.element'
 import { UmbDictionaryRepository } from '../../repository/dictionary.repository';
 import { UmbImportDictionaryModalData, UmbImportDictionaryModalResult } from '.';
 import { UploadDictionaryResponseModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
+import { UmbModalBaseElement } from '@umbraco-cms/internal/modal';
 
 @customElement('umb-import-dictionary-modal-layout')
 export class UmbImportDictionaryModalLayoutElement extends UmbModalBaseElement<

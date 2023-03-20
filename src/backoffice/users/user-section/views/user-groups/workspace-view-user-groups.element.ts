@@ -20,7 +20,7 @@ import type { UserGroupDetails } from '@umbraco-cms/backoffice/models';
 
 import './user-group-table-name-column-layout.element';
 import './user-group-table-sections-column-layout.element';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-workspace-view-user-groups')
 export class UmbWorkspaceViewUserGroupsElement extends UmbLitElement {

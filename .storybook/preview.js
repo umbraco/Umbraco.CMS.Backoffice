@@ -21,7 +21,7 @@ import { UmbIconStore } from '../libs/store/icon/icon.store';
 import { onUnhandledRequest } from '../src/core/mocks/browser';
 import { handlers } from '../src/core/mocks/browser-handlers';
 import { UMB_MODAL_CONTEXT_TOKEN, UmbModalContext } from '../libs/modal';
-import { UmbLitElement } from '../libs/element';
+import { UmbLitElement } from '../src/core/umb-element';
 
 import { umbExtensionsRegistry } from '../libs/extensions-api';
 

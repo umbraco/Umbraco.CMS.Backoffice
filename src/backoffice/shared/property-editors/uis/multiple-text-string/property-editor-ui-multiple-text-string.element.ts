@@ -7,7 +7,7 @@ import UmbInputMultipleTextStringElement, {
 } from './input-multiple-text-string/input-multiple-text-string.element';
 import { UmbPropertyEditorElement } from '@umbraco-cms/backoffice/property-editor';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/events';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 export type MultipleTextStringConfigData = Array<{
 	alias: 'minNumber' | 'maxNumber';

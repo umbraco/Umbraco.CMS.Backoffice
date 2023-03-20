@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'rxjs';
 import { UmbCollectionContext, UMB_COLLECTION_CONTEXT_TOKEN } from './collection.context';
 import type { ManifestEntityBulkAction, MediaDetails } from '@umbraco-cms/backoffice/models';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbExecutedEvent } from '@umbraco-cms/backoffice/events';
 

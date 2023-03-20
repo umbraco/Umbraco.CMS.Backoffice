@@ -6,7 +6,7 @@ import type { PropertyEditorConfigDefaultData, PropertyEditorConfigProperty } fr
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 
 import '../../../components/workspace-property/workspace-property.element';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 /**
  *  @element umb-property-editor-config

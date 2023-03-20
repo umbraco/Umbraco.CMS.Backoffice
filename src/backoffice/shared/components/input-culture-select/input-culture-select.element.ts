@@ -7,7 +7,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import { UUIComboboxElement, UUIComboboxEvent } from '@umbraco-ui/uui';
 import { UmbCultureRepository } from '../../../settings/cultures/repository/culture.repository';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/events';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { CultureReponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-input-culture-select')

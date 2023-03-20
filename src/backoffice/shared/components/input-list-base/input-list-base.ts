@@ -8,7 +8,7 @@ import {
 	UMB_MODAL_CONTEXT_TOKEN,
 	UmbPickerModalData,
 } from '@umbraco-cms/backoffice/modal';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 /** TODO: Make use of UUI FORM Mixin, to make it easily take part of a form. */
 export class UmbInputListBase extends UmbLitElement {

@@ -5,7 +5,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import type { UmbEntityWorkspaceContextInterface } from '../../../workspace-context/workspace-entity-context.interface';
 import type { ContentProperty, ContentPropertyData, MediaTypeDetails } from '@umbraco-cms/backoffice/models';
 
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-workspace-view-content-edit')
 export class UmbWorkspaceViewContentEditElement extends UmbLitElement {

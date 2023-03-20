@@ -3,7 +3,7 @@ import { css, CSSResultGroup, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { UmbChangePasswordModalData } from '.';
 import { UmbModalHandler } from '@umbraco-cms/backoffice/modal';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-change-password-modal')
 export class UmbChangePasswordModalElement extends UmbLitElement {

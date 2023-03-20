@@ -56,6 +56,8 @@ export default {
 						'@umbraco-cms/backoffice/store': './libs/store/index.ts',
 						'@umbraco-cms/backoffice/utils': './libs/utils/index.ts',
 						'@umbraco-cms/backoffice/workspace': './libs/workspace/index.ts',
+						'@umbraco-cms/internal/lit-element': './src/core/umb-element',
+						'@umbraco-cms/internal/modal': './src/core/modal',
 						'@umbraco-cms/internal/router': './src/core/router/index.ts',
 						'@umbraco-cms/internal/test-utils': './utils/test-utils.ts'
 					},

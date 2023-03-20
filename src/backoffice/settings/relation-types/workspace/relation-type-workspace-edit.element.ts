@@ -3,7 +3,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbRelationTypeWorkspaceContext } from './relation-type-workspace.context';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { RelationTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 /**

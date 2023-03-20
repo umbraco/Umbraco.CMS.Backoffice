@@ -9,7 +9,7 @@ import {
 
 import '../../../../../../shared/collection/dashboards/dashboard-collection.element';
 import type { UmbEntityWorkspaceContextInterface } from '../../../workspace-context/workspace-entity-context.interface';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { FolderTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import { ManifestWorkspaceViewCollection } from '@umbraco-cms/backoffice/extensions-registry';
 

@@ -6,7 +6,7 @@ import { UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN } from '../../../../shared/componen
 import { UmbVariantId } from '../../../../shared/variants/variant-id.class';
 import { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/internal/router';
 import { UmbPropertyEditorElement } from '@umbraco-cms/backoffice/property-editor';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 /**
  * @element umb-property-editor-ui-block-grid

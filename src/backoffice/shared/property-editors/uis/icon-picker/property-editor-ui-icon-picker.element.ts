@@ -4,7 +4,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { UMB_ICON_PICKER_MODAL_TOKEN } from '../../../modals/icon-picker';
 import { UmbPropertyEditorElement } from '@umbraco-cms/backoffice/property-editor';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 /**
  * @element umb-property-editor-ui-icon-picker

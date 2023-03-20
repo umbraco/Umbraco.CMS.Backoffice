@@ -4,7 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { UmbDataTypeWorkspaceContext } from '../../data-type-workspace.context';
 import { UMB_PROPERTY_EDITOR_UI_PICKER_MODAL_TOKEN } from '../../../../../shared/property-editors/modals/property-editor-ui-picker';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { DataTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 

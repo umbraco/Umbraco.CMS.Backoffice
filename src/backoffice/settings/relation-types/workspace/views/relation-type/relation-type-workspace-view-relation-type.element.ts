@@ -4,7 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { UUIBooleanInputEvent, UUIRadioGroupElement, UUIRadioGroupEvent, UUIToggleElement } from '@umbraco-ui/uui';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { UmbRelationTypeWorkspaceContext } from '../../relation-type-workspace.context';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { RelationTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-relation-type-workspace-view-relation-type')

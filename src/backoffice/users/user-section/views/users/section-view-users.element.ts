@@ -10,7 +10,7 @@ import './list-view-layouts/grid/workspace-view-users-grid.element';
 import './workspace-view-users-selection.element';
 
 import type { ManifestWorkspace, UserDetails } from '@umbraco-cms/backoffice/models';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DeepState } from '@umbraco-cms/backoffice/observable-api';
 
 @customElement('umb-section-view-users')

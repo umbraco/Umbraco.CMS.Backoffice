@@ -4,7 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { IRoutingInfo } from 'router-slot';
 import { UmbLanguageWorkspaceContext } from './language-workspace.context';
 import { UmbRouterSlotInitEvent } from '@umbraco-cms/internal/router';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-language-workspace')
 export class UmbLanguageWorkspaceElement extends UmbLitElement {

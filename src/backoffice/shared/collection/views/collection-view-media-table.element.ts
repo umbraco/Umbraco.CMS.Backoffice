@@ -12,7 +12,7 @@ import {
 	UmbTableSelectedEvent,
 } from '../../components/table';
 import type { MediaDetails } from '@umbraco-cms/backoffice/models';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-collection-view-media-table')

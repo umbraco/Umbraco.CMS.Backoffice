@@ -10,13 +10,14 @@ import 'element-internals-polyfill';
 
 import './core/router/router-slot.element';
 import './core/notification/layouts/default';
+import './core/modal/modal-element.element';
 
 import { UUIIconRegistryEssential } from '@umbraco-ui/uui';
 import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 import type { Guard, IRoute } from '@umbraco-cms/internal/router';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import { OpenAPI, RuntimeLevelModel, ServerResource } from '@umbraco-cms/backoffice/backend-api';
 import { UmbIconStore } from '@umbraco-cms/backoffice/store';

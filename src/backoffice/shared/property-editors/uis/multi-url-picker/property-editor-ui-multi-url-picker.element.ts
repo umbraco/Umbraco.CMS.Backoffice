@@ -5,7 +5,7 @@ import { UUIModalSidebarSize } from '@umbraco-ui/uui-modal-sidebar';
 import { UmbInputMultiUrlPickerElement } from '../../../../shared/components/input-multi-url-picker/input-multi-url-picker.element';
 import { UmbLinkPickerLink } from '../../../../shared/modals/link-picker';
 import { UmbPropertyEditorElement } from '@umbraco-cms/backoffice/property-editor';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DataTypePropertyPresentationModel } from '@umbraco-cms/backoffice/backend-api';
 
 /**

@@ -3,7 +3,7 @@ import { css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import type { ManifestWorkspaceAction } from '@umbraco-cms/backoffice/models';
 
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 /**
  * @element umb-workspace-footer-layout

@@ -12,7 +12,7 @@ import {
 import type { UmbTreeContextBase } from './tree.context';
 import type { Entity } from '@umbraco-cms/backoffice/models';
 import type { UmbTreeStore } from '@umbraco-cms/backoffice/store';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 
 // TODO: align menu items and tree items

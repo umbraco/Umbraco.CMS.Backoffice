@@ -3,7 +3,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbUserWorkspaceContext } from './user-workspace.context';
 import { UmbUserWorkspaceEditElement } from './user-workspace-edit.element';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { IRoutingInfo } from '@umbraco-cms/internal/router';
 
 import '../../../shared/components/input-user-group/input-user-group.element';

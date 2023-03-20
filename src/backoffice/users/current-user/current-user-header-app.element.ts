@@ -5,7 +5,7 @@ import { UmbCurrentUserStore, UMB_CURRENT_USER_STORE_CONTEXT_TOKEN } from './cur
 import { UMB_CURRENT_USER_MODAL_TOKEN } from './modals/current-user';
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-current-user-header-app')
 export class UmbCurrentUserHeaderApp extends UmbLitElement {

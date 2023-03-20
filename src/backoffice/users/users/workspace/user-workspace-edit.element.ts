@@ -11,7 +11,7 @@ import { UmbUserWorkspaceContext } from './user-workspace.context';
 import type { UmbModalContext } from '@umbraco-cms/backoffice/modal';
 import { getLookAndColorFromUserStatus } from '@umbraco-cms/backoffice/utils';
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 import '../../../shared/components/input-user-group/input-user-group.element';
 import '../../../shared/property-editors/uis/document-picker/property-editor-ui-document-picker.element';

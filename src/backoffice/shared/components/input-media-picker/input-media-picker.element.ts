@@ -7,7 +7,7 @@ import { UmbMediaRepository } from '../../../media/media/repository/media.reposi
 import { UMB_CONFIRM_MODAL_TOKEN } from '../../modals/confirm';
 import { UMB_MEDIA_PICKER_MODAL_TOKEN } from '../../../media/media/modals/media-picker';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import type { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 

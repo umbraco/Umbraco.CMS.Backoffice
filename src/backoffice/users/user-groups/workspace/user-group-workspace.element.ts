@@ -6,7 +6,7 @@ import { UmbUserGroupWorkspaceEditElement } from './user-group-workspace-edit.el
 import { UmbSaveWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
 import type { ManifestWorkspaceAction } from '@umbraco-cms/backoffice/models';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { IRoutingInfo } from '@umbraco-cms/internal/router';
 
 @customElement('umb-user-group-workspace')

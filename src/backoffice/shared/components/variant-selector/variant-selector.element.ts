@@ -8,7 +8,7 @@ import {
 	UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN,
 } from '../workspace/workspace-variant/workspace-variant.context';
 import { ActiveVariant } from '../workspace/workspace-context/workspace-split-view-manager.class';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DocumentVariantResponseModel, ContentStateModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-variant-selector')

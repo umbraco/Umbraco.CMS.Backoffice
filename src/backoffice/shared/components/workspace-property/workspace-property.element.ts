@@ -11,7 +11,7 @@ import type { ManifestPropertyEditorUI } from '@umbraco-cms/backoffice/models';
 import '../../property-actions/shared/property-action-menu/property-action-menu.element';
 import '../../../../backoffice/shared/components/workspace/workspace-property-layout/workspace-property-layout.element';
 import { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
-import { UmbLitElement } from '@umbraco-cms/backoffice/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DataTypePropertyPresentationModel } from '@umbraco-cms/backoffice/backend-api';
 
 /**
