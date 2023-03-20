@@ -43,7 +43,7 @@ export default {
 						'@umbraco-cms/backoffice/controller': './libs/controller/index.ts',
 						'@umbraco-cms/backoffice/element': './libs/element/index.ts',
 						'@umbraco-cms/backoffice/entity-action': './libs/entity-action/index.ts',
-						'@umbraco-cms/backoffice/events': './libs/events/index.ts',
+						'@umbraco-cms/backoffice/events': './libs/umb-events/index.ts',
 						'@umbraco-cms/backoffice/extensions-api': './libs/extensions-api/index.ts',
 						'@umbraco-cms/backoffice/extensions-registry': './libs/extensions-registry/index.ts',
 						'@umbraco-cms/backoffice/modal': './libs/modal/index.ts',
