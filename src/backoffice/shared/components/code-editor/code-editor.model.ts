@@ -44,6 +44,11 @@ export interface UmbCodeEditorCursorPositionChangedEvent {
 	secondaryPositions: UmbCodeEditorCursorPosition[];
 }
 
+export interface UmbCodeEditorCursorSelectionChangedEvent {
+	selection: UmbCodeEditorSelection;
+	secondarySelections: UmbCodeEditorSelection[];
+}
+
 export interface CodeEditorConstructorOptions {
 	/**
 	 * The initial value of the auto created model in the editor.

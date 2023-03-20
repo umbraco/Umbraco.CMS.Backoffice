@@ -5,32 +5,46 @@ import {
 	CodeEditorTheme,
 	UmbCodeEditorCursorPosition,
 	UmbCodeEditorCursorPositionChangedEvent,
+	UmbCodeEditorCursorSelectionChangedEvent,
 	UmbCodeEditorHost,
 	UmbCodeEditorRange,
 	UmbCodeEditorSelection,
 } from './code-editor.model';
 import themes from './themes';
+import { UmbChangeEvent, UmbInputEvent } from '@umbraco-cms/events';
 
 /**
- * This is a wrapper class for the monaco editor. It exposes some of the monaco editor API. It also handles the creation of the monaco editor.
- * It also allows access to the entire monaco editor object through editor property, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
+ * This is a wrapper class for the [monaco editor](https://microsoft.github.io/monaco-editor). It exposes some of the monaco editor API. It also handles the creation of the monaco editor.
+ * It allows access to the entire monaco editor object through `monacoEditor` property, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
  * Through the UmbCodeEditorHost interface it can be used in a custom element.
  *
- * Current issues: [jumping cursor](https://github.com/microsoft/monaco-editor/issues/3217) currently fixed by a hack , [razor syntax highlight](https://github.com/microsoft/monaco-editor/issues/1997)
+ * Current issues: [shadow DOM related issues](https://github.com/microsoft/monaco-editor/labels/editor-shadow-dom) #3217  currently fixed by a hack , [razor syntax highlight](https://github.com/microsoft/monaco-editor/issues/1997)
  *
  *
  * @export
  * @class UmbCodeEditor
  */
 export class UmbCodeEditor {
-	private _host: UmbCodeEditorHost;
+	#host: UmbCodeEditorHost;
 	#editor?: monaco.editor.IStandaloneCodeEditor;
-
+	/**
+	 * The monaco editor object. This is the actual monaco editor object. It is exposed for advanced usage, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
+	 *
+	 * @readonly
+	 * @memberof UmbCodeEditor
+	 */
 	get monacoEditor() {
 		return this.#editor;
 	}
 
 	#options: CodeEditorConstructorOptions = {};
+	/**
+	 * The options used to create the editor.
+	 *
+	 * @readonly
+	 * @type {CodeEditorConstructorOptions}
+	 * @memberof UmbCodeEditor
+	 */
 	get options(): CodeEditorConstructorOptions {
 		return this.#options;
 	}
@@ -46,12 +60,35 @@ export class UmbCodeEditor {
 	};
 
 	#position: UmbCodeEditorCursorPosition | null = null;
+	/**
+	 * Provides the current position of the cursor.
+	 *
+	 * @readonly
+	 * @memberof UmbCodeEditor
+	 */
 	get position() {
 		return this.#position;
 	}
 	#secondaryPositions: UmbCodeEditorCursorPosition[] = [];
+	/**
+	 * Provides positions of all the secondary cursors.
+	 *
+	 * @readonly
+	 * @memberof UmbCodeEditor
+	 */
 	get secondaryPositions() {
 		return this.#secondaryPositions;
+	}
+
+	/**
+	 * Provides the current value of the editor.
+	 *
+	 * @memberof UmbCodeEditor
+	 */
+	get value() {
+		if (!this.#editor) return '';
+		const value = this.#editor.getValue();
+		return value;
 	}
 
 	set value(newValue: string) {
@@ -62,27 +99,27 @@ export class UmbCodeEditor {
 			this.#editor.setValue(newValue);
 		}
 	}
-
-	get value() {
-		if (!this.#editor) return '';
-		const value = this.#editor.getValue();
-		return value;
-	}
-
-	get model() {
+	/**
+	 * Provides the current model of the editor. For advanced usage. Bare in mind that in case of the monaco library being swapped in the future, this might not be available.
+	 *
+	 * @readonly
+	 * @memberof UmbCodeEditor
+	 */
+	get monacoModel() {
 		if (!this.#editor) return null;
 		return this.#editor.getModel();
 	}
-
+	/**
+	 * Creates an instance of UmbCodeEditor.
+	 * @param {UmbCodeEditorHost} host
+	 * @param {CodeEditorConstructorOptions} [options]
+	 * @memberof UmbCodeEditor
+	 */
 	constructor(host: UmbCodeEditorHost, options?: CodeEditorConstructorOptions) {
 		this.#options = { ...options };
-		this._host = host;
+		this.#host = host;
 		this.#registerThemes();
-		try {
-			this.createEditor(options);
-		} catch (e) {
-			console.error(e);
-		}
+		this.#createEditor(options);
 	}
 
 	#registerThemes() {
@@ -96,10 +133,13 @@ export class UmbCodeEditor {
 	}
 
 	#initiateEvents() {
-		this.#editor?.onDidChangeModelContent((e) => {
-			this._host.code = this.value ?? '';
-			console.log(e);
-			this._host.dispatchEvent(new CustomEvent('input', { bubbles: true, composed: true, detail: {} }));
+		this.#editor?.onDidChangeModelContent(() => {
+			this.#host.code = this.value ?? '';
+			this.#host.dispatchEvent(new UmbInputEvent());
+		});
+
+		this.#editor?.onDidChangeModel(() => {
+			this.#host.dispatchEvent(new UmbChangeEvent());
 		});
 		this.#editor?.onDidChangeCursorPosition((e) => {
 			this.#position = e.position;
@@ -119,39 +159,60 @@ export class UmbCodeEditor {
 			lightbulb: hasLightbulb ? (options.lightbulb ? { enabled: true } : { enabled: false }) : undefined,
 		};
 	}
-
+	/**
+	 * Updates the options of the editor. This is useful for updating the options after the editor has been created.
+	 *
+	 * @param {CodeEditorConstructorOptions} newOptions
+	 * @memberof UmbCodeEditor
+	 */
 	updateOptions(newOptions: CodeEditorConstructorOptions) {
 		if (!this.#editor) throw new Error('Editor object not found');
+		this.#options = { ...this.#options, ...newOptions };
 		this.#editor.updateOptions(this.#mapOptions(newOptions));
 	}
 
-	createEditor(options: CodeEditorConstructorOptions = {}) {
-		if (!this._host.container) throw new Error('Container not found');
-		if (this._host.container.hasChildNodes()) throw new Error('Editor container should be empty');
+	#createEditor(options: CodeEditorConstructorOptions = {}) {
+		if (!this.#host.container) throw new Error('Container not found');
+		if (this.#host.container.hasChildNodes()) throw new Error('Editor container should be empty');
 
 		const mergedOptions = { ...this.#defaultMonacoOptions, ...this.#mapOptions(options) };
 
-		this.#editor = monaco.editor.create(this._host.container, {
+		this.#editor = monaco.editor.create(this.#host.container, {
 			...mergedOptions,
-			value: this._host.code ?? '',
-			language: this._host.language,
-			theme: this._host.theme,
-			readOnly: this._host.readonly,
-			ariaLabel: this._host.label,
+			value: this.#host.code ?? '',
+			language: this.#host.language,
+			theme: this.#host.theme,
+			readOnly: this.#host.readonly,
+			ariaLabel: this.#host.label,
 		});
 		this.#initiateEvents();
 	}
-
+	/**
+	 * Provides the current selections of the editor.
+	 *
+	 * @return {*}  {UmbCodeEditorSelection[]}
+	 * @memberof UmbCodeEditor
+	 */
 	getSelections(): UmbCodeEditorSelection[] {
 		if (!this.#editor) return [];
 		return this.#editor.getSelections() ?? [];
 	}
-
+	/**
+	 * Provides the current positions of the cursor or multiple cursors.
+	 *
+	 * @return {*}  {(UmbCodeEditorCursorPosition | null)}
+	 * @memberof UmbCodeEditor
+	 */
 	getPositions(): UmbCodeEditorCursorPosition | null {
 		if (!this.#editor) return null;
 		return this.#editor.getPosition();
 	}
-
+	/**
+	 * Inserts text at the current cursor position or multiple cursor positions.
+	 *
+	 * @param {string} text
+	 * @memberof UmbCodeEditor
+	 */
 	insert(text: string) {
 		if (!this.#editor) throw new Error('Editor object not found');
 		const selections = this.#editor.getSelections() ?? [];
@@ -162,7 +223,14 @@ export class UmbCodeEditor {
 			);
 		}
 	}
-
+	/**
+	 * Looks for a string or matching strings in the editor and returns the ranges of the found strings. Can use regex, case sensitive and more. If you want regex set the isRegex to true in the options.
+	 *
+	 * @param {string} searchString
+	 * @param {CodeEditorSearchOptions} [searchOptions=<CodeEditorSearchOptions>{}]
+	 * @return {*}  {UmbCodeEditorRange[]}
+	 * @memberof UmbCodeEditor
+	 */
 	find(
 		searchString: string,
 		searchOptions: CodeEditorSearchOptions = <CodeEditorSearchOptions>{}
@@ -185,7 +253,7 @@ export class UmbCodeEditor {
 			...searchOptions,
 		};
 		return (
-			this.model
+			this.monacoModel
 				?.findMatches(searchString, searchOnlyEditableRange, isRegex, matchCase, wordSeparators, captureMatches)
 				.map((findMatch) => ({
 					startLineNumber: findMatch.range.startLineNumber,
@@ -195,12 +263,24 @@ export class UmbCodeEditor {
 				})) ?? []
 		);
 	}
-
+	/**
+	 * Returns the value of the editor for a given range.
+	 *
+	 * @param {UmbCodeEditorRange} range
+	 * @return {*}  {string}
+	 * @memberof UmbCodeEditor
+	 */
 	getValueInRange(range: UmbCodeEditorRange): string {
 		if (!this.#editor) throw new Error('Editor object not found');
-		return this.model?.getValueInRange(range) ?? '';
+		return this.monacoModel?.getValueInRange(range) ?? '';
 	}
-
+	/**
+	 * Inserts text at a given position.
+	 *
+	 * @param {string} text
+	 * @param {UmbCodeEditorCursorPosition} position
+	 * @memberof UmbCodeEditor
+	 */
 	insertAtPosition(text: string, position: UmbCodeEditorCursorPosition) {
 		if (!this.#editor) throw new Error('Editor object not found');
 		this.#editor.executeEdits(null, [
@@ -215,31 +295,72 @@ export class UmbCodeEditor {
 			},
 		]);
 	}
-
+	/**
+	 * Selects a range of text in the editor.
+	 *
+	 * @param {UmbCodeEditorRange} range
+	 * @memberof UmbCodeEditor
+	 */
 	select(range: UmbCodeEditorRange) {
 		if (!this.#editor) throw new Error('Editor object not found');
 		this.#editor.setSelection(range);
 	}
-
+	/**
+	 * Changes the theme of the editor.
+	 *
+	 * @template T
+	 * @param {(CodeEditorTheme | T)} theme
+	 * @memberof UmbCodeEditor
+	 */
 	setTheme<T extends string>(theme: CodeEditorTheme | T) {
 		if (!this.#editor) throw new Error('Editor object not found');
 		monaco.editor.setTheme(theme);
 	}
-
-	onChangeModelContent(callback: (e: monaco.editor.IModelContentChangedEvent | undefined) => void) {
-		this.#editor?.onDidChangeModelContent((event) => {
-			callback(event);
+	/**
+	 * Runs callback on change of model content. (for example when typing)
+	 *
+	 * @param {() => void} callback
+	 * @memberof UmbCodeEditor
+	 */
+	onChangeModelContent(callback: () => void) {
+		if (!this.#editor) throw new Error('Editor object not found');
+		this.#editor.onDidChangeModelContent(() => {
+			callback();
 		});
 	}
-
-	onDidChangeModel(callback: (e: monaco.editor.IModelChangedEvent | undefined) => void) {
-		this.#editor?.onDidChangeModel((event) => {
-			callback(event);
+	/**
+	 * Runs callback on change of model (when the entire model is replaced	)
+	 *
+	 * @param {() => void} callback
+	 * @memberof UmbCodeEditor
+	 */
+	onDidChangeModel(callback: () => void) {
+		if (!this.#editor) throw new Error('Editor object not found');
+		this.#editor.onDidChangeModel(() => {
+			callback();
 		});
 	}
-
+	/**
+	 * Runs callback on change of cursor position. Gives as parameter the new position.
+	 *
+	 * @param {((e: UmbCodeEditorCursorPositionChangedEvent | undefined) => void)} callback
+	 * @memberof UmbCodeEditor
+	 */
 	onDidChangeCursorPosition(callback: (e: UmbCodeEditorCursorPositionChangedEvent | undefined) => void) {
-		this.#editor?.onDidChangeCursorPosition((event) => {
+		if (!this.#editor) throw new Error('Editor object not found');
+		this.#editor.onDidChangeCursorPosition((event) => {
+			callback(event);
+		});
+	}
+	/**
+	 * Runs callback on change of cursor selection. Gives as parameter the new selection.
+	 *
+	 * @param {((e: UmbCodeEditorCursorSelectionChangedEvent | undefined) => void)} callback
+	 * @memberof UmbCodeEditor
+	 */
+	onDidChangeCursorSelection(callback: (e: UmbCodeEditorCursorSelectionChangedEvent | undefined) => void) {
+		if (!this.#editor) throw new Error('Editor object not found');
+		this.#editor.onDidChangeCursorSelection((event) => {
 			callback(event);
 		});
 	}
