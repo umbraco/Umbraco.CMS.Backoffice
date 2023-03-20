@@ -2,9 +2,9 @@ import esbuild from 'rollup-plugin-esbuild';
 import pluginJson from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import dts from 'rollup-plugin-dts';
-import {readdirSync, lstatSync} from 'fs';
+import { readdirSync, lstatSync } from 'fs';
 
-const libs = readdirSync('./libs');
+const libs = readdirSync('./libs').filter(lib => lstatSync(`libs/${lib}`).isDirectory());
 const outputDir = '../Umbraco.Cms.StaticAssets/wwwroot/umbraco/backoffice/libs';
 
 export default libs.map(lib => {
