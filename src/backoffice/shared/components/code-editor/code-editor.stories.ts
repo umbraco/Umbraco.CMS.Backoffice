@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { UmbCodeEditorElement } from './code-editor-element';
+import { UmbCodeEditorElement } from './code-editor.element';
 import { CodeEditorLanguage, CodeEditorTheme } from './code-editor.model';
 
 const meta: Meta<UmbCodeEditorElement> = {

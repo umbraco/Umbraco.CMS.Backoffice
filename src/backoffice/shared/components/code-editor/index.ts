@@ -1,6 +1,6 @@
 import * as initializeWorkers from './languageWorkers';
 
-import { UmbCodeEditorElement } from './code-editor-element';
+import { UmbCodeEditorElement } from './code-editor.element';
 
 export default UmbCodeEditorElement;
 
