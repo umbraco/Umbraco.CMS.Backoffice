@@ -1,12 +1,22 @@
-import { UmbLitElement } from '@umbraco-cms/element';
-import { css, html, LitElement, PropertyValueMap, PropertyValues } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { css, html, PropertyValues } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 import { UMB_THEME_CONTEXT_TOKEN } from '../../../themes/theme.context';
 import { UmbCodeEditor } from './code-editor';
 import { CodeEditorLanguage, CodeEditorTheme, UmbCodeEditorHost } from './code-editor.model';
 import { monacoEditorStyles, monacoJumpingCursorHack } from './styles';
-
+import { UmbLitElement } from '@umbraco-cms/element';
+/**
+ * A custom element that renders a code editor. Code editor is a wrapper around the Monaco Editor.
+ * @element umb-code-editor
+ *
+ * @export
+ * @class UmbCodeEditorElement
+ * @extends {UmbLitElement}
+ * @implements {UmbCodeEditorHost}
+ * @fires input - Fired when the value of the editor changes.
+ * @fires change - Fired when the entire model of editor is replaced.
+ */
 @customElement('umb-code-editor')
 export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditorHost {
 	static styles = [
@@ -40,17 +50,37 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 	get editor() {
 		return this.#editor;
 	}
-
+	/**
+	 * Theme of the editor. Default is light. Element will listen to the theme context and update the theme accordingly.
+	 *
+	 * @type {CodeEditorTheme}
+	 * @memberof UmbCodeEditorElement
+	 */
 	@property()
 	theme: CodeEditorTheme = CodeEditorTheme.Light;
-
+	/**
+	 * Language of the editor. Default is javascript.
+	 *
+	 * @type {CodeEditorLanguage}
+	 * @memberof UmbCodeEditorElement
+	 */
 	@property()
 	language: CodeEditorLanguage = 'javascript';
-
+	/**
+	 * Label of the editor. Default is 'Code Editor'.
+	 *
+	 * @memberof UmbCodeEditorElement
+	 */
 	@property()
 	label = 'Code Editor';
 
 	#code = '';
+	/**
+	 * Value of the editor. Default is empty string.
+	 *
+	 * @readonly
+	 * @memberof UmbCodeEditorElement
+	 */
 	@property()
 	get code() {
 		return this.#code;
@@ -64,7 +94,11 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 		}
 		this.requestUpdate('code', oldValue);
 	}
-
+	/**
+	 * Whether the editor is readonly. Default is false.
+	 *
+	 * @memberof UmbCodeEditorElement
+	 */
 	@property({ type: Boolean, attribute: 'readonly' })
 	readonly = false;
 
@@ -72,7 +106,6 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 		super();
 		this.consumeContext(UMB_THEME_CONTEXT_TOKEN, (instance) => {
 			instance.theme.subscribe((themeAlias) => {
-				console.log('themeAlias', themeAlias);
 				this.theme = themeAlias ? this.#translateTheme(themeAlias) : CodeEditorTheme.Light;
 			});
 		});
@@ -103,11 +136,22 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 				return CodeEditorTheme.Light;
 		}
 	}
-
+	/**
+	 * Inserts text at the current cursor position.
+	 *
+	 * @param {string} text
+	 * @memberof UmbCodeEditorElement
+	 */
 	insert(text: string) {
 		this.#editor?.insert(text);
 	}
-
+	/**
+	 * Finds all occurrence of the given string or matches the given regular expression.
+	 *
+	 * @param {string} text
+	 * @return {*}
+	 * @memberof UmbCodeEditorElement
+	 */
 	find(text: string) {
 		return this.#editor?.find(text);
 	}

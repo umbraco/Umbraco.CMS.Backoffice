@@ -28,7 +28,7 @@ export class UmbCodeEditor {
 	#host: UmbCodeEditorHost;
 	#editor?: monaco.editor.IStandaloneCodeEditor;
 	/**
-	 * The monaco editor object. This is the actual monaco editor object. It is exposed for advanced usage, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
+	 * The monaco editor object. This is the actual monaco editor object. It is exposed for advanced usage, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility. For more information see [monaco editor API](https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.IStandaloneCodeEditor.html).
 	 *
 	 * @readonly
 	 * @memberof UmbCodeEditor
@@ -100,7 +100,7 @@ export class UmbCodeEditor {
 		}
 	}
 	/**
-	 * Provides the current model of the editor. For advanced usage. Bare in mind that in case of the monaco library being swapped in the future, this might not be available.
+	 * Provides the current model of the editor. For advanced usage. Bare in mind that in case of the monaco library being swapped in the future, this might not be available. For more information see [monaco editor model API](https://microsoft.github.io/monaco-editor/docs.html#interfaces/editor.ITextModel.html).
 	 *
 	 * @readonly
 	 * @memberof UmbCodeEditor
@@ -110,7 +110,7 @@ export class UmbCodeEditor {
 		return this.#editor.getModel();
 	}
 	/**
-	 * Creates an instance of UmbCodeEditor.
+	 * Creates an instance of UmbCodeEditor. You should instantiate this class through the `UmbCodeEditorHost` interface and that should happen when inside DOM nodes of the host container are available, otherwise the editor will not be able to initialize, for example in lit `firstUpdated` lifecycle hook. It will make host emit change and input events when the value of the editor changes.
 	 * @param {UmbCodeEditorHost} host
 	 * @param {CodeEditorConstructorOptions} [options]
 	 * @memberof UmbCodeEditor
