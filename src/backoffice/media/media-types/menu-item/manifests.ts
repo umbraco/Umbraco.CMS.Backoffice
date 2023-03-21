@@ -1,14 +1,15 @@
-import type { ManifestMenuItem } from '@umbraco-cms/backoffice/models';
+import type { ManifestTypes } from '@umbraco-cms/backoffice/models';
 
-const menuItem: ManifestMenuItem = {
+const menuItem: ManifestTypes = {
 	type: 'menuItem',
+	kind: 'tree',
 	alias: 'Umb.MenuItem.MediaTypes',
 	name: 'Media Types Menu Item',
 	weight: 20,
-	loader: () => import('./media-types-menu-item.element'),
 	meta: {
 		label: 'Media Types',
 		icon: 'umb:folder',
+		treeAlias: 'Umb.Tree.MediaTypes',
 	},
 	conditions: {
 		menus: ['Umb.Menu.Settings'],
