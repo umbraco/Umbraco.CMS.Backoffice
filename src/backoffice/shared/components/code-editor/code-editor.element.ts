@@ -2,7 +2,7 @@ import { css, html, PropertyValues } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 import { UMB_THEME_CONTEXT_TOKEN } from '../../../themes/theme.context';
-import { UmbCodeEditor } from './code-editor';
+import { UmbCodeEditorController } from './code-editor.controller';
 import { CodeEditorLanguage, CodeEditorTheme, UmbCodeEditorHost } from './code-editor.model';
 import { monacoEditorStyles, monacoJumpingCursorHack } from './styles';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
@@ -10,7 +10,7 @@ import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
  * A custom element that renders a code editor. Code editor is based on the Monaco Editor library.
  * The element will listen to the theme context and update the theme accordingly.
  * Parts of the monaco Api is exposed through the `editor` property. You can access the monaco editor instance through `editor.monacoEditor`.
- * 
+ *
  * @element umb-code-editor
  *
  * @export
@@ -48,7 +48,7 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 		return this.containerRef!.value;
 	}
 
-	#editor?: UmbCodeEditor;
+	#editor?: UmbCodeEditorController;
 
 	get editor() {
 		return this.#editor;
@@ -77,6 +77,7 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 	@property()
 	label = 'Code Editor';
 
+	//TODO - this should be called a value
 	#code = '';
 	/**
 	 * Value of the editor. Default is empty string.
@@ -115,7 +116,7 @@ export class UmbCodeEditorElement extends UmbLitElement implements UmbCodeEditor
 	}
 
 	firstUpdated() {
-		this.#editor = new UmbCodeEditor(this);
+		this.#editor = new UmbCodeEditorController(this);
 	}
 
 	protected updated(_changedProperties: PropertyValues<this>): void {

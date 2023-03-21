@@ -1,8 +1,8 @@
 import * as initializeWorkers from './languageWorkers';
 import { UmbCodeEditorElement } from './code-editor.element';
-import { UmbCodeEditor } from './code-editor';
+import { UmbCodeEditorController } from './code-editor.controller';
 import { monacoEditorStyles } from './styles';
 
 export default UmbCodeEditorElement;
 
-export { initializeWorkers, UmbCodeEditor, UmbCodeEditorElement, monacoEditorStyles };
+export { initializeWorkers, UmbCodeEditorController as UmbCodeEditor, UmbCodeEditorElement, monacoEditorStyles };

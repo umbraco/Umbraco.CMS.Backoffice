@@ -13,6 +13,8 @@ import {
 } from './code-editor.model';
 import themes from './themes';
 
+//TODO - consider firing change event on blur
+
 /**
  * This is a wrapper class for the [monaco editor](https://microsoft.github.io/monaco-editor). It exposes some of the monaco editor API. It also handles the creation of the monaco editor.
  * It allows access to the entire monaco editor object through `monacoEditor` property, but mind the fact that editor might be swapped in the future for a different library, so use on your own responsibility.
@@ -25,7 +27,7 @@ import themes from './themes';
  * @export
  * @class UmbCodeEditor
  */
-export class UmbCodeEditor {
+export class UmbCodeEditorController {
 	#host: UmbCodeEditorHost;
 	#editor?: monaco.editor.IStandaloneCodeEditor;
 	/**
