@@ -1,4 +1,3 @@
-import { MEDIA_REPOSITORY_ALIAS } from '../repository/manifests';
 import { UmbSaveWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
 import type {
 	ManifestWorkspace,
@@ -6,6 +5,7 @@ import type {
 	ManifestWorkspaceView,
 	ManifestWorkspaceViewCollection,
 } from '@umbraco-cms/backoffice/extensions-registry';
+import { MEDIA_REPOSITORY_ALIAS } from '../repository/manifests';
 
 const workspace: ManifestWorkspace = {
 	type: 'workspace',
