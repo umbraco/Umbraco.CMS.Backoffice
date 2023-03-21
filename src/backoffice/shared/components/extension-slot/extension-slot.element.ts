@@ -38,8 +38,8 @@ export class UmbExtensionSlotElement extends UmbLitElement {
 	public defaultElement = '';
 
 	@property()
-	public renderMethod: (manifest: InitializedExtension) => TemplateResult<1 | 2> | HTMLElement | null = (manifest) =>
-		manifest.component;
+	public renderMethod: (extension: InitializedExtension) => TemplateResult<1 | 2> | HTMLElement | null = (extension) =>
+		extension.component;
 
 	connectedCallback(): void {
 		super.connectedCallback();
@@ -71,8 +71,10 @@ export class UmbExtensionSlotElement extends UmbLitElement {
 
 						if (isManifestElementableType(extension)) {
 							component = await createExtensionElement(extension);
-						} else {
+						} else if (this.defaultElement) {
 							component = document.createElement(this.defaultElement);
+						} else {
+							// TODO: Lets make an console.error in this case?
 						}
 						if (component) {
 							(component as any).manifest = extension;
