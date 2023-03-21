@@ -9,9 +9,9 @@ import { html } from 'lit-html';
 import type { UmbDocumentInfoWorkspaceViewElement } from './document-info-workspace-view.element';
 
 export default {
-	title: 'Workspaces/Shared/Node/Views/Info',
-	component: 'umb-workspace-view-content-info',
-	id: 'umb-workspace-view-content-info',
+	title: 'Workspaces/Documents/Views/Info',
+	component: 'umb-document-info-workspace-view',
+	id: 'umb-document-info-workspace-view',
 	decorators: [
 		(story) => {
 			return html`TODO: make use of mocked workspace context??`;
@@ -23,5 +23,5 @@ export default {
 } as Meta;
 
 export const AAAOverview: Story<UmbDocumentInfoWorkspaceViewElement> = () =>
-	html` <umb-workspace-view-content-info></umb-workspace-view-content-info>`;
+	html` <umb-document-info-workspace-view></umb-document-info-workspace-view>`;
 AAAOverview.storyName = 'Overview';
