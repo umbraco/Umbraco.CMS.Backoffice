@@ -22,7 +22,7 @@ export default libs.map(lib => {
 		},
 		{
 			input: `./libs/${lib}/index.ts`,
-			external: [/^@umbraco-cms\//, /^lit/, /^rxjs/, /^uuid/],
+			external: [/^@umbraco/, /^lit/, /^rxjs/, /^uuid/],
 			output: {
 				file: `${outputDir}/${lib}.d.ts`,
 				format: 'es'
