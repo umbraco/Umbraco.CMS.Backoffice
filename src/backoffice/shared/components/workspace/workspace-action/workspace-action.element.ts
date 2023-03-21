@@ -5,7 +5,7 @@ import type { UUIButtonState } from '@umbraco-ui/uui';
 import { UmbWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
 import { UmbExecutedEvent } from '@umbraco-cms/backoffice/events';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import type { ManifestWorkspaceAction } from '@umbraco-cms/backoffice/models';
+import type { ManifestWorkspaceAction } from '@umbraco-cms/backoffice/extensions-registry';
 
 @customElement('umb-workspace-action')
 export class UmbWorkspaceActionElement extends UmbLitElement {

@@ -6,7 +6,7 @@ import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from '../section/section
 import { UmbSectionElement } from '../section/section.element';
 import { UmbBackofficeContext, UMB_BACKOFFICE_CONTEXT_TOKEN } from './backoffice.context';
 import type { IRoutingInfo, UmbRouterSlotChangeEvent } from '@umbraco-cms/internal/router';
-import type { ManifestSection } from '@umbraco-cms/backoffice/models';
+import type { ManifestSection } from '@umbraco-cms/backoffice/extensions-registry';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { createExtensionElementOrFallback } from '@umbraco-cms/backoffice/extensions-api';
 

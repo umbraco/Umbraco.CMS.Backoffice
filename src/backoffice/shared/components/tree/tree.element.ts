@@ -3,7 +3,8 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 import { UmbTreeContextBase } from './tree.context';
-import type { Entity, ManifestTree } from '@umbraco-cms/backoffice/models';
+import type { Entity } from '@umbraco-cms/backoffice/models';
+import type { ManifestTree } from '@umbraco-cms/backoffice/extensions-registry';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 

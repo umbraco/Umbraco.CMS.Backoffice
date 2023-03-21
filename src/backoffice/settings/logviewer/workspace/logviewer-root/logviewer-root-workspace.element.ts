@@ -1,7 +1,7 @@
 import './components';
 import { map } from 'rxjs';
 import { css, html, nothing } from 'lit';
-import { customElement, state, property } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { IRoutingInfo } from 'router-slot';
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { repeat } from 'lit-html/directives/repeat.js';

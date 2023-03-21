@@ -1,4 +1,8 @@
-import type { ManifestWorkspace, ManifestWorkspaceAction, ManifestWorkspaceView } from '@umbraco-cms/backoffice/models';
+import type {
+	ManifestWorkspace,
+	ManifestWorkspaceAction,
+	ManifestWorkspaceView,
+} from '@umbraco-cms/backoffice/extensions-registry';
 
 const workspaceAlias = 'Umb.Workspace.LogviewerRoot';
 

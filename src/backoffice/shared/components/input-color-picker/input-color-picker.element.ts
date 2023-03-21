@@ -9,7 +9,7 @@ import type { SwatchDetails } from '@umbraco-cms/backoffice/models';
 /*
  * This wraps the UUI library uui-color-swatches component
  * @element umb-input-color-picker
-*/
+ */
 @customElement('umb-input-color-picker')
 export class UmbInputColorPickerElement extends FormControlMixin(UmbLitElement) {
 	static styles = [UUITextStyles];

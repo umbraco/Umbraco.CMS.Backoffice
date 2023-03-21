@@ -1,8 +1,8 @@
 import { UmbPackageStore, UMB_PACKAGE_STORE_TOKEN } from './package.store';
 import { UmbPackageServerDataSource } from './sources/package.server.data';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import type { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
-import { ManifestBase } from '@umbraco-cms/backoffice/extensions-registry';
+import type { ManifestBase } from '@umbraco-cms/backoffice/extensions-registry';
 import { isManifestJSType } from '@umbraco-cms/backoffice/extensions-api';
 import { OpenAPI } from '@umbraco-cms/backoffice/backend-api';
 

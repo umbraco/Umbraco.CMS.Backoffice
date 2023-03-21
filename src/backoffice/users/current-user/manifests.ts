@@ -1,5 +1,5 @@
 import { manifests as modalManifests } from './modals/manifests';
-import type { ManifestTypes, ManifestUserDashboard } from '@umbraco-cms/backoffice/models';
+import type { ManifestTypes, ManifestUserDashboard } from '@umbraco-cms/backoffice/extensions-registry';
 
 export const userDashboards: Array<ManifestUserDashboard> = [
 	{

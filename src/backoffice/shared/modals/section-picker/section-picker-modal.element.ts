@@ -3,7 +3,7 @@ import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbModalElementPickerBase } from '@umbraco-cms/internal/modal';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import type { ManifestSection } from '@umbraco-cms/backoffice/models';
+import type { ManifestSection } from '@umbraco-cms/backoffice/extensions-registry';
 
 @customElement('umb-section-picker-modal')
 export class UmbSectionPickerModalElement extends UmbModalElementPickerBase<ManifestSection> {

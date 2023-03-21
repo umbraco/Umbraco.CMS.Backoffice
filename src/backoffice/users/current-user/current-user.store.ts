@@ -31,4 +31,3 @@ export class UmbCurrentUserStore {
 		return currentUser ? currentUser.userGroups.includes(adminUserGroupKey) : false;
 	}
 }
-

@@ -1,7 +1,7 @@
 import { html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import type { IRoute, IRoutingInfo } from '@umbraco-cms/internal/router';
-import type { ManifestTree, ManifestWorkspace } from '@umbraco-cms/backoffice/models';
+import type { ManifestTree, ManifestWorkspace } from '@umbraco-cms/backoffice/extensions-registry';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 

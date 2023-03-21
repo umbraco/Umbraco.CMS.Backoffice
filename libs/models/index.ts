@@ -1,4 +1,4 @@
-import {
+import type {
 	ContentTreeItemResponseModel,
 	DictionaryItemTranslationModel,
 	EntityTreeItemResponseModel,
@@ -7,12 +7,10 @@ import {
 	ProblemDetailsModel,
 } from '@umbraco-cms/backoffice/backend-api';
 
-// Extension Manifests
-export * from '@umbraco-cms/backoffice/extensions-registry';
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type HTMLElementConstructor<T = HTMLElement> = new (...args: any[]) => T;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ClassConstructor<T> = new (...args: any[]) => T;
 
 // Users

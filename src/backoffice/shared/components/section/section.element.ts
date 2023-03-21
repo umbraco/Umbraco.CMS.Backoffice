@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'rxjs';
 import type { UmbWorkspaceElement } from '../workspace/workspace.element';
 import type { UmbSectionViewsElement } from './section-views/section-views.element';
-import type { ManifestSection, ManifestSectionSidebarApp } from '@umbraco-cms/backoffice/models';
+import type { ManifestSection, ManifestSectionSidebarApp } from '@umbraco-cms/backoffice/extensions-registry';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import type { IRoutingInfo } from '@umbraco-cms/internal/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';

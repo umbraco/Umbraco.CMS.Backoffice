@@ -1,6 +1,6 @@
 import type { Observable } from 'rxjs';
 import { UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
-import type { ManifestTree } from '@umbraco-cms/backoffice/models';
+import type { ManifestTree } from '@umbraco-cms/backoffice/extensions-registry';
 import { DeepState } from '@umbraco-cms/backoffice/observable-api';
 import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
 

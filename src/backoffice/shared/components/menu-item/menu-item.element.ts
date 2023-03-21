@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from '../section/section.context';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import type { ManifestMenuItem } from '@umbraco-cms/backoffice/models';
+import type { ManifestMenuItem } from '@umbraco-cms/backoffice/extensions-registry';
 
 @customElement('umb-menu-item')
 export class UmbMenuItem extends UmbLitElement {

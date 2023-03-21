@@ -6,7 +6,10 @@ import { repeat } from 'lit/directives/repeat.js';
 
 import type { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent, IRoutingInfo } from '@umbraco-cms/internal/router';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import type { ManifestWorkspaceView, ManifestWorkspaceViewCollection } from '@umbraco-cms/backoffice/models';
+import type {
+	ManifestWorkspaceView,
+	ManifestWorkspaceViewCollection,
+} from '@umbraco-cms/backoffice/extensions-registry';
 
 import '../../body-layout/body-layout.element';
 import '../../extension-slot/extension-slot.element';

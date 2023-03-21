@@ -8,7 +8,7 @@ import { UMB_CONFIRM_MODAL_TOKEN } from '../../../../shared/modals/confirm';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 
-import type { ManifestPackageView } from '@umbraco-cms/backoffice/models';
+import type { ManifestPackageView } from '@umbraco-cms/backoffice/extensions-registry';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import { PackageResource } from '@umbraco-cms/backoffice/backend-api';
@@ -27,7 +27,7 @@ export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 	name?: string;
 
 	@property()
-	version?: string;
+	version?: string | null;
 
 	@property()
 	hasPendingMigrations = false;
@@ -106,7 +106,7 @@ export class UmbInstalledPackagesSectionViewItem extends UmbLitElement {
 		return html`
 			<uui-ref-node-package
 				name=${ifDefined(this.name)}
-				version="${ifDefined(this.version)}"
+				version="${ifDefined(this.version ?? undefined)}"
 				@open=${this._onConfigure}
 				?disabled="${!this._packageView}">
 				${this.customIcon ? html`<uui-icon slot="icon" name="${this.customIcon}"></uui-icon>` : nothing}

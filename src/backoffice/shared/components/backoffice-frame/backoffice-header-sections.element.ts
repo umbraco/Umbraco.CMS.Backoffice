@@ -4,7 +4,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 import { UMB_BACKOFFICE_CONTEXT_TOKEN } from './backoffice.context';
 import type { UmbBackofficeContext } from './backoffice.context';
-import type { ManifestSection } from '@umbraco-cms/backoffice/models';
+import type { ManifestSection } from '@umbraco-cms/backoffice/extensions-registry';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-backoffice-header-sections')
@@ -104,8 +104,7 @@ export class UmbBackofficeHeaderSections extends UmbLitElement {
 							@click="${() => this._handleSectionTabClick(section.alias)}"
 							?active="${this._currentSectionAlias === section.alias}"
 							href="${`section/${section.meta.pathname}`}"
-							label="${section.meta.label || section.name}"
-							></uui-tab>
+							label="${section.meta.label || section.name}"></uui-tab>
 					`
 				)}
 				${this._renderExtraSections()}

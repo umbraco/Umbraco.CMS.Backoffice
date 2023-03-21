@@ -56,9 +56,9 @@ export class UmbResourceController extends UmbController {
 	 */
 	static async tryExecute<T>(promise: Promise<T>): Promise<DataSourceResponse<T>> {
 		try {
-			return {data: await promise};
+			return { data: await promise };
 		} catch (e) {
-			return {error: UmbResourceController.toProblemDetailsModel(e)};
+			return { error: UmbResourceController.toProblemDetailsModel(e) };
 		}
 	}
 
@@ -67,15 +67,16 @@ export class UmbResourceController extends UmbController {
 	 * If the executor function throws an error, then show the details in a notification.
 	 */
 	async tryExecuteAndNotify<T>(options?: UmbNotificationOptions): Promise<DataSourceResponse<T>> {
-		const {data, error} = await UmbResourceController.tryExecute<T>(this.#promise);
+		const { data, error } = await UmbResourceController.tryExecute<T>(this.#promise);
 
 		if (error) {
 			if (this.#notificationContext) {
 				this.#notificationContext?.peek('danger', {
 					data: {
 						headline: error.title ?? 'Server Error',
-						message: error.detail ?? 'Something went wrong'
-					}, ...options
+						message: error.detail ?? 'Something went wrong',
+					},
+					...options,
 				});
 			} else {
 				console.group('UmbResourceController');
@@ -84,7 +85,7 @@ export class UmbResourceController extends UmbController {
 			}
 		}
 
-		return {data, error};
+		return { data, error };
 	}
 
 	/**

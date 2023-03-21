@@ -6,7 +6,7 @@ import { UmbVariantId } from '../../variants/variant-id.class';
 import { UmbWorkspacePropertyContext } from './workspace-property.context';
 import { UmbPropertyEditorElement } from '@umbraco-cms/backoffice/property-editor';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import type { ManifestPropertyEditorUI } from '@umbraco-cms/backoffice/models';
+import type { ManifestPropertyEditorUI } from '@umbraco-cms/backoffice/extensions-registry';
 
 import '../../property-actions/shared/property-action-menu/property-action-menu.element';
 import '../../../../backoffice/shared/components/workspace/workspace-property-layout/workspace-property-layout.element';

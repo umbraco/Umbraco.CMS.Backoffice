@@ -5,7 +5,7 @@ import type {
 	ManifestWorkspaceAction,
 	ManifestWorkspaceView,
 	ManifestWorkspaceViewCollection,
-} from '@umbraco-cms/backoffice/models';
+} from '@umbraco-cms/backoffice/extensions-registry';
 
 const workspace: ManifestWorkspace = {
 	type: 'workspace',

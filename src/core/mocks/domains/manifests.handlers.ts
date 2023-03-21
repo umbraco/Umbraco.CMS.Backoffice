@@ -1,4 +1,3 @@
-
 import { rest } from 'msw';
 
 import { umbracoPath } from '@umbraco-cms/backoffice/utils';

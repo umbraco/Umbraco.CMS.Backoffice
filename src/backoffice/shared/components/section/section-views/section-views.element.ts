@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { map, of } from 'rxjs';
 import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from '../section.context';
 import { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/internal/router';
-import type { ManifestDashboard, ManifestSectionView } from '@umbraco-cms/backoffice/models';
+import type { ManifestDashboard, ManifestSectionView } from '@umbraco-cms/backoffice/extensions-registry';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';

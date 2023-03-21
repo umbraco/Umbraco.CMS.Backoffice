@@ -16,17 +16,12 @@ export const UMB_USER_GROUP_STORE_CONTEXT_TOKEN = new UmbContextToken<UmbUserGro
  * @description - Data Store for User Groups
  */
 export class UmbUserGroupStore extends UmbStoreBase implements UmbEntityDetailStore<UserGroupDetails> {
-
-
-	#groups = new ArrayState<UserGroupDetails>([], x => x.key);
+	#groups = new ArrayState<UserGroupDetails>([], (x) => x.key);
 	public groups = this.#groups.asObservable();
-
 
 	constructor(host: UmbControllerHostInterface) {
 		super(host, UMB_USER_GROUP_STORE_CONTEXT_TOKEN.toString());
 	}
-
-
 
 	getScaffold(entityType: string, parentKey: string | null) {
 		return {
@@ -63,7 +58,7 @@ export class UmbUserGroupStore extends UmbStoreBase implements UmbEntityDetailSt
 				this.#groups.append([data]);
 			});
 
-		return this.#groups.getObservablePart((userGroups) => userGroups.find(userGroup => userGroup.key === key));
+		return this.#groups.getObservablePart((userGroups) => userGroups.find((userGroup) => userGroup.key === key));
 	}
 
 	getByKeys(keys: Array<string>) {
@@ -74,7 +69,7 @@ export class UmbUserGroupStore extends UmbStoreBase implements UmbEntityDetailSt
 				this.#groups.append(data);
 			});
 
-			return this.#groups.getObservablePart((items) => items.filter(node => keys.includes(node.key)));
+		return this.#groups.getObservablePart((items) => items.filter((node) => keys.includes(node.key)));
 	}
 
 	async save(userGroups: Array<UserGroupDetails>) {
