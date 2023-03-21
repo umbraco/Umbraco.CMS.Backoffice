@@ -22,13 +22,6 @@ export interface Entity {
 	parentKey: string | null;
 }
 
-export interface ContentDetails extends ContentTreeItemResponseModel {
-	isTrashed: boolean; // TODO: remove only temp part of refactor
-	properties: Array<ContentProperty>;
-	//data: Array<ContentPropertyData>;
-	//layout?: any; // TODO: define layout type - make it non-optional
-}
-
 export interface UserEntity extends Entity {
 	type: 'user';
 }
