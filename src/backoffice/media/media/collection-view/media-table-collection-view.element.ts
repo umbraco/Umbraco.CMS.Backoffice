@@ -1,11 +1,7 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import type { MediaDetails } from '@umbraco-cms/backoffice/models';
-import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbCollectionContext, UMB_COLLECTION_CONTEXT_TOKEN } from '../collection.context';
-import {
+import type {
 	UmbTableColumn,
 	UmbTableConfig,
 	UmbTableDeselectedEvent,
@@ -13,7 +9,11 @@ import {
 	UmbTableItem,
 	UmbTableOrderedEvent,
 	UmbTableSelectedEvent,
-} from '../../components/table';
+} from '../../../shared/components/table';
+import type { MediaDetails } from '../';
+import { UmbCollectionContext, UMB_COLLECTION_CONTEXT_TOKEN } from '../../../shared/collection/collection.context';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-media-table-collection-view')
 export class UmbMediaTableCollectionViewElement extends UmbLitElement {
