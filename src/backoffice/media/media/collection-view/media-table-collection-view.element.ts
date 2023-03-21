@@ -15,8 +15,8 @@ import {
 	UmbTableSelectedEvent,
 } from '../../components/table';
 
-@customElement('umb-collection-view-media-table')
-export class UmbCollectionViewMediaTableElement extends UmbLitElement {
+@customElement('umb-media-table-collection-view')
+export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -132,8 +132,10 @@ export class UmbCollectionViewMediaTableElement extends UmbLitElement {
 	}
 }
 
+export default UmbMediaTableCollectionViewElement;
+
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-collection-view-media-table': UmbCollectionViewMediaTableElement;
+		'umb-media-table-collection-view': UmbMediaTableCollectionViewElement;
 	}
 }
