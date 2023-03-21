@@ -4,14 +4,15 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit-html/directives/if-defined.js';
 import { UmbVariantId } from '../../variants/variant-id.class';
 import { UmbWorkspacePropertyContext } from './workspace-property.context';
+import { UmbPropertyEditorElement } from '@umbraco-cms/property-editor';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
-import type { ManifestPropertyEditorUI, ManifestTypes } from '@umbraco-cms/models';
+import type { ManifestPropertyEditorUI } from '@umbraco-cms/models';
 
 import '../../property-actions/shared/property-action-menu/property-action-menu.element';
 import '../../../../backoffice/shared/components/workspace/workspace-property-layout/workspace-property-layout.element';
 import { UmbObserverController } from '@umbraco-cms/observable-api';
 import { UmbLitElement } from '@umbraco-cms/element';
-import { DataTypePropertyModel } from '@umbraco-cms/backend-api';
+import { DataTypePropertyPresentationModel } from '@umbraco-cms/backend-api';
 
 /**
  *  @element umb-workspace-property
@@ -113,7 +114,7 @@ export class UmbWorkspacePropertyElement extends UmbLitElement {
 	 * @default ''
 	 */
 	@property({ type: Object, attribute: false })
-	public set config(value: DataTypePropertyModel[]) {
+	public set config(value: DataTypePropertyPresentationModel[]) {
 		this._propertyContext.setConfig(value);
 	}
 
@@ -133,9 +134,8 @@ export class UmbWorkspacePropertyElement extends UmbLitElement {
 	@state()
 	private _variantDifference?: string;
 
-	// TODO: make interface for UMBPropertyEditorElement
 	@state()
-	private _element?: { value?: any; config?: any } & HTMLElement; // TODO: invent interface for propertyEditorUI.
+	private _element?: UmbPropertyEditorElement;
 
 	@state()
 	private _value?: unknown;
@@ -151,10 +151,10 @@ export class UmbWorkspacePropertyElement extends UmbLitElement {
 
 	private _propertyContext = new UmbWorkspacePropertyContext(this);
 
-	private propertyEditorUIObserver?: UmbObserverController<ManifestTypes>;
+	private propertyEditorUIObserver?: UmbObserverController<ManifestPropertyEditorUI | null>;
 
 	private _valueObserver?: UmbObserverController<unknown>;
-	private _configObserver?: UmbObserverController<unknown>;
+	private _configObserver?: UmbObserverController<DataTypePropertyPresentationModel[] | undefined>;
 
 	constructor() {
 		super();
@@ -203,7 +203,7 @@ export class UmbWorkspacePropertyElement extends UmbLitElement {
 
 				oldValue?.removeEventListener('change', this._onPropertyEditorChange as any as EventListener);
 
-				this._element = el;
+				this._element = el as UmbPropertyEditorElement;
 
 				this._valueObserver?.destroy();
 				this._configObserver?.destroy();
@@ -218,7 +218,7 @@ export class UmbWorkspacePropertyElement extends UmbLitElement {
 						}
 					});
 					this._configObserver = this.observe(this._propertyContext.config, (config) => {
-						if (this._element) {
+						if (this._element && config) {
 							this._element.config = config;
 						}
 					});

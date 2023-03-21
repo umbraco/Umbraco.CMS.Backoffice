@@ -1,11 +1,10 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { IRoutingInfo } from 'router-slot';
 import { map } from 'rxjs';
 import { repeat } from 'lit/directives/repeat.js';
 
-import type { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent } from '@umbraco-cms/router';
+import type { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent, IRoutingInfo } from '@umbraco-cms/router';
 import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
 import type { ManifestWorkspaceView, ManifestWorkspaceViewCollection } from '@umbraco-cms/models';
 
@@ -100,7 +99,9 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 		this.observe(
 			umbExtensionsRegistry
 				.extensionsOfTypes<ManifestWorkspaceView>(['workspaceView', 'workspaceViewCollection'])
-				.pipe(map((extensions) => extensions.filter((extension) => extension.meta.workspaces.includes(this.alias)))),
+				.pipe(
+					map((extensions) => extensions.filter((extension) => extension.conditions.workspaces.includes(this.alias)))
+				),
 			(workspaceViews) => {
 				this._workspaceViews = workspaceViews;
 				this._createRoutes();

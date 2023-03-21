@@ -8,7 +8,7 @@ import { UmbLitElement } from '@umbraco-cms/element';
 /**
  * @element umb-workspace-footer-layout
  * @description Uses the alias to insert extensions that targets this workspace-alias.
- * @slot default - Slot for workspace footer items
+ * @slot - Slot for workspace footer items
  * @slot actions - Slot for workspace actions
  * @export
  * @class UmbWorkspaceFooterLayout
@@ -61,7 +61,7 @@ export class UmbWorkspaceFooterLayout extends UmbLitElement {
 				<umb-extension-slot
 					slot="actions"
 					type="workspaceAction"
-					.filter=${(extension: ManifestWorkspaceAction) => extension.meta.workspaces.includes(this.alias)}
+					.filter=${(extension: ManifestWorkspaceAction) => extension.conditions.workspaces.includes(this.alias)}
 					default-element="umb-workspace-action"></umb-extension-slot>
 				<slot name="actions" slot="actions"></slot>
 			</umb-footer-layout>
