@@ -1,3 +1,4 @@
+import { UmbChangeEvent, UmbInputEvent } from '@umbraco-cms/backoffice/events';
 import * as monaco from 'monaco-editor';
 import {
 	CodeEditorConstructorOptions,
@@ -11,7 +12,6 @@ import {
 	UmbCodeEditorSelection,
 } from './code-editor.model';
 import themes from './themes';
-import { UmbChangeEvent, UmbInputEvent } from '@umbraco-cms/events';
 
 /**
  * This is a wrapper class for the [monaco editor](https://microsoft.github.io/monaco-editor). It exposes some of the monaco editor API. It also handles the creation of the monaco editor.

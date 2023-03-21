@@ -5,7 +5,7 @@ import { UMB_THEME_CONTEXT_TOKEN } from '../../../themes/theme.context';
 import { UmbCodeEditor } from './code-editor';
 import { CodeEditorLanguage, CodeEditorTheme, UmbCodeEditorHost } from './code-editor.model';
 import { monacoEditorStyles, monacoJumpingCursorHack } from './styles';
-import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 /**
  * A custom element that renders a code editor. Code editor is based on the Monaco Editor library.
  * The element will listen to the theme context and update the theme accordingly.
