@@ -22,8 +22,7 @@ const workspaceViews: Array<ManifestWorkspaceView> = [
 		type: 'workspaceView',
 		alias: 'Umb.WorkspaceView.Media.Edit',
 		name: 'Media Workspace Edit View',
-		loader: () =>
-			import('../../../shared/components/workspace/workspace-content/views/edit/workspace-view-content-edit.element'),
+		loader: () => import('./views/edit/media-edit-workspace-view.element'),
 		weight: 200,
 		meta: {
 			label: 'Media',
@@ -38,7 +37,7 @@ const workspaceViews: Array<ManifestWorkspaceView> = [
 		type: 'workspaceView',
 		alias: 'Umb.WorkspaceView.Media.Info',
 		name: 'Media Workspace Info View',
-		loader: () => import('../../../documents/documents/workspace/views/info/document-info-workspace-view.element'),
+		loader: () => import('./views/info/media-info-workspace-view.element'),
 		weight: 100,
 		meta: {
 			label: 'Info',
