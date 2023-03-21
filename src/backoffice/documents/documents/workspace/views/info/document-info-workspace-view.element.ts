@@ -21,8 +21,8 @@ interface HistoryNode {
 
 type HistoryLogType = 'Publish' | 'Save' | 'Unpublish' | 'ContentVersionEnableCleanup' | 'ContentVersionPreventCleanup';
 
-@customElement('umb-workspace-view-content-info')
-export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
+@customElement('umb-document-info-workspace-view')
+export class UmbDocumentInfoWorkspaceViewElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -332,10 +332,10 @@ export class UmbWorkspaceViewContentInfoElement extends UmbLitElement {
 	}
 }
 
-export default UmbWorkspaceViewContentInfoElement;
+export default UmbDocumentInfoWorkspaceViewElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-workspace-view-content-info': UmbWorkspaceViewContentInfoElement;
+		'umb-document-info-workspace-view': UmbDocumentInfoWorkspaceViewElement;
 	}
 }

@@ -38,7 +38,7 @@ const workspaceViews: Array<ManifestWorkspaceView> = [
 		type: 'workspaceView',
 		alias: 'Umb.WorkspaceView.Media.Info',
 		name: 'Media Workspace Info View',
-		loader: () => import('../../../documents/documents/workspace/views/info/workspace-view-document-info.element'),
+		loader: () => import('../../../documents/documents/workspace/views/info/document-info-workspace-view.element'),
 		weight: 100,
 		meta: {
 			label: 'Info',

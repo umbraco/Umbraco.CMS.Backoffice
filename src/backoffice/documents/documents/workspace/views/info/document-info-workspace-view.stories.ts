@@ -1,4 +1,4 @@
-import './workspace-view-document-info.element';
+import './document-info-workspace-view.element';
 
 import { Meta, Story } from '@storybook/web-components';
 import { html } from 'lit-html';
@@ -6,7 +6,7 @@ import { html } from 'lit-html';
 // import { data } from '../../../../../../core/mocks/data/document.data';
 // import { UmbNodeContext } from '../../node.context';
 
-import type { UmbWorkspaceViewContentInfoElement } from './workspace-view-document-info.element';
+import type { UmbDocumentInfoWorkspaceViewElement } from './document-info-workspace-view.element';
 
 export default {
 	title: 'Workspaces/Shared/Node/Views/Info',
@@ -22,6 +22,6 @@ export default {
 	],
 } as Meta;
 
-export const AAAOverview: Story<UmbWorkspaceViewContentInfoElement> = () =>
+export const AAAOverview: Story<UmbDocumentInfoWorkspaceViewElement> = () =>
 	html` <umb-workspace-view-content-info></umb-workspace-view-content-info>`;
 AAAOverview.storyName = 'Overview';
