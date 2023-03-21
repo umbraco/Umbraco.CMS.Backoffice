@@ -4,7 +4,7 @@ import { customElement, query, state } from 'lit/decorators.js';
 import { UUIInputElement } from '@umbraco-ui/uui';
 import { UmbCodeEditorElement } from '../../../shared/components/code-editor/code-editor.element';
 import { UmbTemplateWorkspaceContext } from './template-workspace.context';
-import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-template-workspace')
 export class UmbTemplateWorkspaceElement extends UmbLitElement {
