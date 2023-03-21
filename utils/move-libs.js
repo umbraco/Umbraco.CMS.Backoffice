@@ -42,6 +42,8 @@ libs.forEach(lib => {
 		});
 	}
 
-	writeFileSync(`${outputDir}/${lib}`, code, 'utf8');
+	writeFileSync(dtsFile, code, 'utf8');
+
+	cpSync(dtsFile, `${outputDir}/${lib}`, { recursive: true });
 
 });
