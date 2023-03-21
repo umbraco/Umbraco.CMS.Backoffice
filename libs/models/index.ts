@@ -1,6 +1,5 @@
 import type {
 	ContentTreeItemResponseModel,
-	DictionaryItemTranslationModel,
 	EntityTreeItemResponseModel,
 	FolderTreeItemResponseModel,
 	PackageManifestResponseModel,
@@ -106,12 +105,6 @@ export interface MemberGroupDetails extends EntityTreeItemResponseModel {
 
 export interface MemberDetails extends EntityTreeItemResponseModel {
 	key: string; // TODO: Remove this when the backend is fixed
-}
-
-// Dictionary
-export interface DictionaryDetails extends EntityTreeItemResponseModel {
-	key: string; // TODO: Remove this when the backend is fixed
-	translations: DictionaryItemTranslationModel[];
 }
 
 // Document Blueprint
