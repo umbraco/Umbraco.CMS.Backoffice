@@ -3,15 +3,10 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { when } from 'lit-html/directives/when.js';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
+import { OEmbedResult, OEmbedStatus, UmbEmbeddedMediaModalData, UmbEmbeddedMediaModalResult } from '.';
 import { umbracoPath } from '@umbraco-cms/backoffice/utils';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UmbModalHandler } from '@umbraco-cms/backoffice/modal';
-import {
-	OEmbedResult,
-	OEmbedStatus,
-	UmbEmbeddedMediaModalData,
-	UmbEmbeddedMediaModalResult,
-} from '.';
 
 interface UmbEmbeddedMediaModalModel {
 	url?: string;
@@ -195,7 +190,7 @@ export class UmbEmbeddedMediaModalElement extends UmbLitElement {
 	 * @returns {boolean}
 	 */
 	#dimensionControlsDisabled() {
-		return  !this.#embedResult?.supportsDimensions || this.#embedResult?.oEmbedStatus !== OEmbedStatus.Success;
+		return !this.#embedResult?.supportsDimensions || this.#embedResult?.oEmbedStatus !== OEmbedStatus.Success;
 	}
 
 	render() {
@@ -267,6 +262,8 @@ export class UmbEmbeddedMediaModalElement extends UmbLitElement {
 		`;
 	}
 }
+
+export default UmbEmbeddedMediaModalElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
