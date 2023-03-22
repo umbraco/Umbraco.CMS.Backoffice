@@ -33,22 +33,21 @@ const workspaceViews: Array<ManifestWorkspaceView> = [
 	},
 ];
 
-// TODO => registering the save action results in two save buttons? Where does #2 come from?
 const workspaceActions: Array<ManifestWorkspaceAction> = [
-	// {
-	// 	type: 'workspaceAction',
-	// 	alias: 'Umb.WorkspaceAction.MemberGroup.Save',
-	// 	name: 'Save Member Group Workspace Action',
-	// 	meta: {
-	// 		label: 'Save',
-	// 		look: 'primary',
-	// 		color: 'positive',
-	// 		api: UmbSaveWorkspaceAction,
-	// 	},
-	// 	conditions: {
-	// 		workspaces: ['Umb.Workspace.MemberGroup'],
-	// 	},
-	// },
+	{
+		type: 'workspaceAction',
+		alias: 'Umb.WorkspaceAction.MemberGroup.Save',
+		name: 'Save Member Group Workspace Action',
+		meta: {
+			label: 'Save',
+			look: 'primary',
+			color: 'positive',
+			api: UmbSaveWorkspaceAction,
+		},
+		conditions: {
+			workspaces: ['Umb.Workspace.MemberGroup'],
+		},
+	},
 ];
 
 export const manifests = [workspace, ...workspaceViews, ...workspaceActions];
