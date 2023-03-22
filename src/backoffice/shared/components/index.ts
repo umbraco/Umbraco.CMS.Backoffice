@@ -44,7 +44,6 @@ import './history/history-list.element';
 import './history/history-item.element';
 
 import './workspace/workspace-action/workspace-action.element';
-import './workspace/workspace-content/workspace-content.element';
 import './workspace/workspace-layout/workspace-layout.element';
 import './code-editor';
 
