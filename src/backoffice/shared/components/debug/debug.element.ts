@@ -58,7 +58,7 @@ export class UmbDebug extends UmbLitElement {
 	];
 
 	@property({ reflect: true, type: Boolean })
-	enabled = false;
+	visible = false;
 
 	@property({ reflect: true, type: Boolean })
 	dialog = false;
