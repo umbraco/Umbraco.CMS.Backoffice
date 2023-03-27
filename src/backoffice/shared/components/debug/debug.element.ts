@@ -63,8 +63,8 @@ export class UmbDebug extends UmbLitElement {
 	@property({ reflect: true, type: Boolean })
 	dialog = false;
 
-	@property()
-	contexts = new Map();
+	@state()
+	contextData = [{}];
 
 	@state()
 	private _debugPaneOpen = false;
@@ -89,13 +89,32 @@ export class UmbDebug extends UmbLitElement {
 				// to the root of <umb-app> which then uses the callback prop
 				// of the this event tha has been raised to assign the contexts
 				// back to this property of the WebComponent
-				this.contexts = contexts;
+				
+				// NOTE: This is fired even if the <umb-debug> element is not visible
+				// And is useful for a browser extension to insert this DOM element invisibly but still
+				// get the information needed (as its passed on in an event fired from this callback after collection)
+
+				// Dispatch an event that anyone can listen to be notified about the data
+				// In our case it will be a browser extension content script that will listen for this
+				// And then pass the data from the browser extension content script to the background script
+				// which in turn sends it onto the browser devtools HTML panel/code
+				console.log('umb debug about to emit umb:debug-contexts:data', contexts);
+
+				// Massage the data into a simplier array of objects
+				this.contextData = this._contextData(contexts);
+				const data = {
+					contexts: this.contextData
+				};
+
+				// NOTE: Can't send contexts data directly - browser seems to not serialize it and says its null
+				// But a simple object works fine
+				this.dispatchEvent(new CustomEvent('umb:debug-contexts:data', { detail: data, bubbles: true }));
 			})
 		);
 	}
 
 	render() {
-		if (this.enabled) {
+		if (this.visible) {
 			return this.dialog ? this._renderDialog() : this._renderPanel();
 		} else {
 			return nothing;
@@ -137,39 +156,89 @@ export class UmbDebug extends UmbLitElement {
 		</div>`;
 	}
 
+	private _contextData(contexts:Map<any, any>) {
+		const contextData = [];
+		for (const [alias, instance] of contexts) {
+
+			const contextItemData = this._contextItemData(instance);
+			contextData.push({ alias: alias, instance: typeof instance, data: contextItemData });					
+		}
+
+		console.log('contextData', contextData);
+
+		return contextData;
+	}
+
+	private _contextItemData(contextInstance:any) {
+		let  contextItemData = {};
+
+		if (typeof contextInstance === 'function') {
+			contextItemData = { ...contextItemData, type: 'function'};
+		} else if (typeof contextInstance === 'object') {
+			contextItemData = { ...contextItemData, type: 'object' };
+
+			const methodNames = this.getClassMethodNames(contextInstance);
+			if (methodNames.length) {
+				contextItemData = { ...contextItemData, methods: methodNames };
+
+				const props = [];
+				for (const key in contextInstance) {
+					if (key.startsWith('_')) {
+						continue;
+					}
+	
+					const value = contextInstance[key];
+					if (typeof value === 'string' || typeof value === 'boolean') {
+						props.push({ key: key, value: value, type: typeof value });
+					} else {
+						props.push({ key: key, type: typeof value });
+					}
+				}
+
+				contextItemData = { ...contextItemData, properties: props };
+			}
+		}
+		else{
+			contextItemData =  {...contextItemData, type: 'primitive', value: contextInstance };
+		}
+
+		return contextItemData;
+	};
+
 	private _renderContextAliases() {
 		const contextsTemplates: TemplateResult[] = [];
 
-		for (const [alias, instance] of this.contexts) {
+		this.contextData.forEach((contextData) => {
 			contextsTemplates.push(
 				html` <li>
-					Context: <strong>${alias}</strong>
-					<em>(${typeof instance})</em>
+					Context: <strong>${contextData.alias}</strong>
+					<em>(${contextData.instance})</em>
 					<ul>
-						${this._renderInstance(instance)}
+						${this._renderInstance(contextData.data)}
 					</ul>
 				</li>`
 			);
-		}
+		});
 
 		return contextsTemplates;
 	}
 
 	private _renderInstance(instance: any) {
 		const instanceTemplates: TemplateResult[] = [];
+		
+		console.log('instance', instance);
 
-		// TODO: WB - Maybe make this a switch statement?
-		if (typeof instance === 'function') {
+		if(instance.type === 'function'){
 			return instanceTemplates.push(html`<li>Callable Function</li>`);
-		} else if (typeof instance === 'object') {
-			const methodNames = this.getClassMethodNames(instance);
-			if (methodNames.length) {
+		}
+		else if(instance.type === 'object'){
+			if(instance.methods.length){
 				instanceTemplates.push(
 					html`
 						<li>
 							<strong>Methods</strong>
 							<ul>
-								${methodNames.map((methodName) => html`<li>${methodName}</li>`)}
+								${instance.methods.map((methodName) => html`<li>${methodName}</li>`)}
 							</ul>
 						</li>
 					`
@@ -177,19 +246,13 @@ export class UmbDebug extends UmbLitElement {
 			}
 
 			const props: TemplateResult[] = [];
-
-			for (const key in instance) {
-				if (key.startsWith('_')) {
-					continue;
-				}
-
-				const value = instance[key];
-				if (typeof value === 'string') {
-					props.push(html`<li>${key} = ${value}</li>`);
+			instance.properties.forEach((property) => {
+				if (property.type === 'string') {
+					props.push(html`<li>${property.key} = ${property.value}</li>`);
 				} else {
-					props.push(html`<li>${key} <em>(${typeof value})</em></li>`);
+					props.push(html`<li>${property.key} <em>(${property.type})</em></li>`);
 				}
-			}
+			});
 
 			instanceTemplates.push(html`
 				<li>
@@ -199,8 +262,9 @@ export class UmbDebug extends UmbLitElement {
 					</ul>
 				</li>
 			`);
-		} else {
-			instanceTemplates.push(html`<li>Context is a primitive with value: ${instance}</li>`);
+		}
+		else if(instance.type === 'primitive'){
+			instanceTemplates.push(html`<li>Context is a primitive with value: ${instance.value}</li>`);
 		}
 
 		return instanceTemplates;
