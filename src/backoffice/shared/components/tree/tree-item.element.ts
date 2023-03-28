@@ -17,7 +17,7 @@ import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 
 // TODO: align menu items and tree items
 @customElement('umb-tree-item')
-export class UmbTreeItem extends UmbLitElement {
+export class UmbTreeItemElement extends UmbLitElement {
 	static styles = [UUITextStyles, css``];
 
 	@property({ type: String })
@@ -268,6 +268,6 @@ export class UmbTreeItem extends UmbLitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-tree-item': UmbTreeItem;
+		'umb-tree-item': UmbTreeItemElement;
 	}
 }

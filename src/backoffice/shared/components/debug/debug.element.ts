@@ -7,7 +7,7 @@ import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffic
 import { UMB_CONTEXT_DEBUGGER_MODAL_TOKEN } from './modals/debug';
 
 @customElement('umb-debug')
-export class UmbDebug extends UmbLitElement {
+export class UmbDebugElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -226,6 +226,6 @@ export class UmbDebug extends UmbLitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-debug': UmbDebug;
+		'umb-debug': UmbDebugElement;
 	}
 }
