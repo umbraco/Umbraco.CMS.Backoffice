@@ -1,5 +1,5 @@
 import { MemberGroupResource, ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { RepositoryTreeDataSource } from '@umbraco-cms/backoffice/repository';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
@@ -10,54 +10,54 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
  * @implements {MemberGroupTreeDataSource}
  */
 export class MemberGroupTreeServerDataSource implements RepositoryTreeDataSource {
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
 	/**
 	 * Creates an instance of MemberGroupTreeServerDataSource.
-	 * @param {UmbControllerHostInterface} host
+	 * @param {UmbControllerHostElement} host
 	 * @memberof MemberGroupTreeServerDataSource
 	 */
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
 
 	/**
-	* Fetches the root items for the tree from the server
-	* @return {*}
-	* @memberof MemberGroupTreeServerDataSource
-	*/
-   async getRootItems() {
-	   return tryExecuteAndNotify(this.#host, MemberGroupResource.getTreeMemberGroupRoot({}));
-   }
+	 * Fetches the root items for the tree from the server
+	 * @return {*}
+	 * @memberof MemberGroupTreeServerDataSource
+	 */
+	async getRootItems() {
+		return tryExecuteAndNotify(this.#host, MemberGroupResource.getTreeMemberGroupRoot({}));
+	}
 
-   /**
-	* Fetches the children of a given parent key from the server
-	* @param {(string | null)} parentKey
-	* @return {*}
-	* @memberof MemberGroupTreeServerDataSource
-	*/
-   async getChildrenOf(parentKey: string | null) {
-	   // Not implemented for this tree
-	   return {};
-   }
+	/**
+	 * Fetches the children of a given parent key from the server
+	 * @param {(string | null)} parentKey
+	 * @return {*}
+	 * @memberof MemberGroupTreeServerDataSource
+	 */
+	async getChildrenOf(parentKey: string | null) {
+		// Not implemented for this tree
+		return {};
+	}
 
-   /**
-	* Fetches the items for the given keys from the server
-	* @param {Array<string>} keys
-	* @return {*}
-	* @memberof MemberGroupTreeServerDataSource
-	*/
-   async getItems(keys: Array<string>) {
-	   if (!keys || keys.length === 0) {
-		   const error: ProblemDetailsModel = { title: 'Keys are missing' };
-		   return { error };
-	   }
+	/**
+	 * Fetches the items for the given keys from the server
+	 * @param {Array<string>} keys
+	 * @return {*}
+	 * @memberof MemberGroupTreeServerDataSource
+	 */
+	async getItems(keys: Array<string>) {
+		if (!keys || keys.length === 0) {
+			const error: ProblemDetailsModel = { title: 'Keys are missing' };
+			return { error };
+		}
 
-	   return tryExecuteAndNotify(
-		   this.#host,
-		   MemberGroupResource.getTreeMemberGroupItem({
-			   key: keys,
-		   })
-	   );
-   }
+		return tryExecuteAndNotify(
+			this.#host,
+			MemberGroupResource.getTreeMemberGroupItem({
+				key: keys,
+			})
+		);
+	}
 }

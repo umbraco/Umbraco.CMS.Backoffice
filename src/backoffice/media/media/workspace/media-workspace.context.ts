@@ -2,7 +2,7 @@ import { UmbWorkspaceContext } from '../../../shared/components/workspace/worksp
 import { UmbMediaRepository } from '../repository/media.repository';
 import type { UmbEntityWorkspaceContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-entity-context.interface';
 import { appendToFrozenArray, ObjectState } from '@umbraco-cms/backoffice/observable-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import type { MediaDetails } from '../';
 
 type EntityType = MediaDetails;
@@ -14,7 +14,7 @@ export class UmbMediaWorkspaceContext
 	data = this.#data.asObservable();
 	name = this.#data.getObservablePart((data) => data?.name);
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		super(host, new UmbMediaRepository(host));
 	}
 

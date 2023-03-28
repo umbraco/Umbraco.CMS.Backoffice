@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import type { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import type { UmbTreeStore } from '@umbraco-cms/backoffice/store';
-import type { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextToken, UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import { ArrayState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
@@ -13,7 +13,7 @@ export class UmbCollectionContext<
 	DataType extends EntityTreeItemResponseModel = EntityTreeItemResponseModel,
 	StoreType extends UmbTreeStore<DataType> = UmbTreeStore<DataType>
 > {
-	private _host: UmbControllerHostInterface;
+	private _host: UmbControllerHostElement;
 	private _entityType: string | null;
 	private _entityKey: string | null;
 
@@ -35,7 +35,7 @@ export class UmbCollectionContext<
 	*/
 
 	constructor(
-		host: UmbControllerHostInterface,
+		host: UmbControllerHostElement,
 		entityType: string | null,
 		entityKey: string | null,
 		storeAlias?: string,

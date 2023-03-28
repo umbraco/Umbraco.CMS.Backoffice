@@ -1,5 +1,5 @@
 import type { RepositoryTreeDataSource } from '@umbraco-cms/backoffice/repository';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
 import { UmbDetailRepository } from '@umbraco-cms/backoffice/repository';
@@ -16,7 +16,7 @@ type ItemDetailType = MediaDetails;
 export class UmbMediaRepository implements UmbTreeRepository, UmbDetailRepository<ItemDetailType> {
 	#init!: Promise<unknown>;
 
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
 	#treeSource: RepositoryTreeDataSource;
 	#treeStore?: UmbMediaTreeStore;
@@ -26,7 +26,7 @@ export class UmbMediaRepository implements UmbTreeRepository, UmbDetailRepositor
 
 	#notificationContext?: UmbNotificationContext;
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 
 		// TODO: figure out how spin up get the correct data source

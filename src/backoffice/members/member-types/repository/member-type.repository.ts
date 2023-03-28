@@ -2,7 +2,7 @@ import { MemberTypeTreeServerDataSource } from './sources/member-type.tree.serve
 import { UmbMemberTypeTreeStore, UMB_MEMBER_TYPE_TREE_STORE_CONTEXT_TOKEN } from './member-type.tree.store';
 import { UmbMemberTypeStore, UMB_MEMBER_TYPE_STORE_CONTEXT_TOKEN } from './member-type.store';
 import { UmbMemberTypeDetailServerDataSource } from './sources/member-type.detail.server.data';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import { RepositoryTreeDataSource, UmbDetailRepository, UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
 import { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
@@ -15,7 +15,7 @@ type ItemType = any;
 export class UmbMemberTypeRepository implements UmbTreeRepository, UmbDetailRepository<ItemType> {
 	#init!: Promise<unknown>;
 
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
 	#treeSource: RepositoryTreeDataSource;
 	#treeStore?: UmbMemberTypeTreeStore;
@@ -25,7 +25,7 @@ export class UmbMemberTypeRepository implements UmbTreeRepository, UmbDetailRepo
 
 	#notificationContext?: UmbNotificationContext;
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 
 		// TODO: figure out how spin up get the correct data source

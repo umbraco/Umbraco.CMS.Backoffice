@@ -2,7 +2,7 @@ import type { Observable } from 'rxjs';
 import { UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
 import type { ManifestTree } from '@umbraco-cms/backoffice/extensions-registry';
 import { DeepState } from '@umbraco-cms/backoffice/observable-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 
 export interface UmbTreeContext {
 	tree: ManifestTree;
@@ -14,7 +14,7 @@ export interface UmbTreeContext {
 }
 
 export class UmbTreeContextBase implements UmbTreeContext {
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 	public tree: ManifestTree;
 
 	#selectable = new DeepState(false);
@@ -25,7 +25,7 @@ export class UmbTreeContextBase implements UmbTreeContext {
 
 	repository!: UmbTreeRepository;
 
-	constructor(host: UmbControllerHostInterface, tree: ManifestTree) {
+	constructor(host: UmbControllerHostElement, tree: ManifestTree) {
 		this.#host = host;
 		this.tree = tree;
 

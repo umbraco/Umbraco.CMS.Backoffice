@@ -2,7 +2,7 @@ import { UmbVariantId } from '../../variants/variant-id.class';
 import { UmbWorkspaceVariableEntityContextInterface } from '../workspace/workspace-context/workspace-variable-entity-context.interface';
 import { UMB_WORKSPACE_VARIANT_CONTEXT_TOKEN } from '../workspace/workspace-variant/workspace-variant.context';
 import type { DataTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { ObjectState, StringState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import { UmbContextConsumerController, UmbContextProviderController } from '@umbraco-cms/backoffice/context-api';
 
@@ -16,7 +16,7 @@ export type WorkspacePropertyData<ValueType> = {
 };
 
 export class UmbWorkspacePropertyContext<ValueType = unknown> {
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
 	private _providerController: UmbContextProviderController;
 
@@ -35,7 +35,7 @@ export class UmbWorkspacePropertyContext<ValueType = unknown> {
 
 	private _workspaceContext?: UmbWorkspaceVariableEntityContextInterface;
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 		// TODO: Figure out how to get the magic string in a better way.
 		new UmbContextConsumerController<UmbWorkspaceVariableEntityContextInterface>(

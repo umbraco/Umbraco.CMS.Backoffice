@@ -1,10 +1,10 @@
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { StringState } from '@umbraco-cms/backoffice/observable-api';
 import { BasicState } from 'libs/observable-api/basic-state';
 
 export class UmbSectionSidebarContext {
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 	#contextMenuIsOpen = new BasicState<boolean>(false);
 	contextMenuIsOpen = this.#contextMenuIsOpen.asObservable();
 
@@ -17,7 +17,7 @@ export class UmbSectionSidebarContext {
 	#headline = new StringState<undefined>(undefined);
 	headline = this.#headline.asObservable();
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
 

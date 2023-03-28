@@ -1,6 +1,10 @@
 import { RepositoryDetailDataSource } from '@umbraco-cms/backoffice/repository';
-import { DocumentTypeResource, ProblemDetailsModel, DocumentTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import {
+	DocumentTypeResource,
+	ProblemDetailsModel,
+	DocumentTypeResponseModel,
+} from '@umbraco-cms/backoffice/backend-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 /**
@@ -10,14 +14,14 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
  * @implements {RepositoryDetailDataSource}
  */
 export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSource<DocumentTypeResponseModel> {
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
 	/**
 	 * Creates an instance of UmbDocumentServerDataSource.
-	 * @param {UmbControllerHostInterface} host
+	 * @param {UmbControllerHostElement} host
 	 * @memberof UmbDocumentServerDataSource
 	 */
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
 
