@@ -131,11 +131,7 @@ module.exports = {
 						context.report({
 							node,
 							message: "Element class name should end with 'Element'.",
-							fix(fixer) {
-								const oldName = node.id.name;
-								const newName = `${oldName}Element`;
-								return fixer.replaceText(node.id, newName);
-							},
+							// There us no fixer on purpose because it's not safe to rename the class. We want to do that trough the refactoring tool.
 						});
 					}
 				},
