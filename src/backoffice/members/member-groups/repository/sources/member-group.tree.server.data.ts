@@ -1,6 +1,6 @@
 import { MemberGroupResource, ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
-import { RepositoryTreeDataSource } from '@umbraco-cms/backoffice/repository';
+import { UmbTreeDataSource } from '@umbraco-cms/backoffice/repository';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 /**
@@ -9,7 +9,7 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
  * @class MemberGroupTreeServerDataSource
  * @implements {MemberGroupTreeDataSource}
  */
-export class MemberGroupTreeServerDataSource implements RepositoryTreeDataSource {
+export class MemberGroupTreeServerDataSource implements UmbTreeDataSource {
 	#host: UmbControllerHostElement;
 
 	/**
