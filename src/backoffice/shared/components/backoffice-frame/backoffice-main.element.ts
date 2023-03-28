@@ -11,7 +11,7 @@ import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from '../section/section
 import { UmbBackofficeContext, UMB_BACKOFFICE_CONTEXT_TOKEN } from './backoffice.context';
 
 @defineElement('umb-backoffice-main')
-export class UmbBackofficeMain extends UmbLitElement {
+export class UmbBackofficeMainElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -101,6 +101,6 @@ export class UmbBackofficeMain extends UmbLitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-backoffice-main': UmbBackofficeMain;
+		'umb-backoffice-main': UmbBackofficeMainElement;
 	}
 }
