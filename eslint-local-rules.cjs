@@ -116,7 +116,6 @@ module.exports = {
 				category: 'Naming',
 				recommended: true,
 			},
-			fixable: 'code',
 		},
 		create: function (context) {
 			return {
