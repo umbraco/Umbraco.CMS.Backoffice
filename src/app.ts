@@ -36,7 +36,7 @@ export class UmbApp extends UmbLitElement {
 	`;
 
 	@property({ type: String })
-	private umbracoUrl?: string;
+	private serverUrl?: string;
 
 	@state()
 	private _routes: IRoute<any>[] = [
@@ -65,7 +65,14 @@ export class UmbApp extends UmbLitElement {
 
 	constructor() {
 		super();
-		this.authFlow = new AuthFlow('https://localhost:44331', 'http://127.0.0.1:5173/login');
+
+		OpenAPI.BASE =
+			import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? '' : this.serverUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
+		OpenAPI.WITH_CREDENTIALS = true;
+
+		this.provideContext('UMBRACOBASE', OpenAPI.BASE);
+
+		this.authFlow = new AuthFlow(OpenAPI.BASE, window.location.href);
 
 		this._umbIconRegistry.attach(this);
 
@@ -74,14 +81,6 @@ export class UmbApp extends UmbLitElement {
 
 	async connectedCallback() {
 		super.connectedCallback();
-
-		OpenAPI.BASE =
-			import.meta.env.VITE_UMBRACO_USE_MSW === 'on'
-				? ''
-				: this.umbracoUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
-		OpenAPI.WITH_CREDENTIALS = true;
-
-		this.provideContext('UMBRACOBASE', OpenAPI.BASE);
 
 		await this._setInitStatus();
 		this._redirect();
@@ -139,7 +138,7 @@ export class UmbApp extends UmbLitElement {
 	}
 
 	private _isAuthorized(): boolean {
-		return this.authFlow.loggedIn();
+		return import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? true : this.authFlow.loggedIn();
 	}
 
 	private _isAuthorizedGuard(redirectTo?: string): Guard {
