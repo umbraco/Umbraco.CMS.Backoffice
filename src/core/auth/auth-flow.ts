@@ -46,10 +46,10 @@ export class AuthFlow {
 
 	// state
 	private configuration: AuthorizationServiceConfiguration | undefined;
-	private openIdConnectUrl: string;
-	private redirectUri: string;
-	private clientId: string;
-	private scope: string;
+	private readonly openIdConnectUrl: string;
+	private readonly redirectUri: string;
+	private readonly clientId: string;
+	private readonly scope: string;
 
 	private refreshToken: string | undefined;
 	private accessTokenResponse: TokenResponse | undefined;
@@ -112,7 +112,7 @@ export class AuthFlow {
 		}
 
 		// If no token was found, or if it was invalid, check if there is a new authorization to be made
-		this.completeAuthorizationIfPossible();
+		await this.completeAuthorizationIfPossible();
 	}
 
 	/**

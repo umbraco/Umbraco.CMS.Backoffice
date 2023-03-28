@@ -72,7 +72,7 @@ export class UmbApp extends UmbLitElement {
 
 		this.provideContext('UMBRACOBASE', OpenAPI.BASE);
 
-		this.authFlow = new AuthFlow(OpenAPI.BASE, window.location.href);
+		this.authFlow = new AuthFlow(OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin, window.location.href);
 
 		this._umbIconRegistry.attach(this);
 
