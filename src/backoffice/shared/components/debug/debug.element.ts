@@ -1,10 +1,10 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html, nothing, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { UMB_CONTEXT_DEBUGGER_MODAL_TOKEN } from './modals/debug';
 import { UmbContextDebugRequest } from '@umbraco-cms/backoffice/context-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
-import { UMB_CONTEXT_DEBUGGER_MODAL_TOKEN } from './modals/debug';
 
 @customElement('umb-debug')
 export class UmbDebug extends UmbLitElement {
@@ -64,7 +64,7 @@ export class UmbDebug extends UmbLitElement {
 	dialog = false;
 
 	@state()
-	contextData = [{}];
+	contextData = Array<DebugContextData>();
 
 	@state()
 	private _debugPaneOpen = false;
@@ -98,8 +98,7 @@ export class UmbDebug extends UmbLitElement {
 				// In our case it will be a browser extension content script that will listen for this
 				// And then pass the data from the browser extension content script to the background script
 				// which in turn sends it onto the browser devtools HTML panel/code
-				console.log('umb debug about to emit umb:debug-contexts:data', contexts);
-
+				
 				// Massage the data into a simplier array of objects
 				this.contextData = this._contextData(contexts);
 				const data = {
@@ -156,21 +155,18 @@ export class UmbDebug extends UmbLitElement {
 		</div>`;
 	}
 
-	private _contextData(contexts:Map<any, any>) {
-		const contextData = [];
+	private _contextData(contexts:Map<any, any>): Array<DebugContextData> {
+		const contextData = new Array<DebugContextData>;
 		for (const [alias, instance] of contexts) {
 
-			const contextItemData = this._contextItemData(instance);
-			contextData.push({ alias: alias, instance: typeof instance, data: contextItemData });					
+			const contextItemData:DebugContextItemData = this._contextItemData(instance);
+			contextData.push({ alias: alias, type: typeof instance, data: contextItemData });					
 		}
-
-		console.log('contextData', contextData);
-
 		return contextData;
 	}
 
-	private _contextItemData(contextInstance:any) {
-		let  contextItemData = {};
+	private _contextItemData(contextInstance:any):DebugContextItemData {
+		let  contextItemData:DebugContextItemData = { type: 'unknown' };
 
 		if (typeof contextInstance === 'function') {
 			contextItemData = { ...contextItemData, type: 'function'};
@@ -212,7 +208,7 @@ export class UmbDebug extends UmbLitElement {
 			contextsTemplates.push(
 				html` <li>
 					Context: <strong>${contextData.alias}</strong>
-					<em>(${contextData.instance})</em>
+					<em>(${contextData.type})</em>
 					<ul>
 						${this._renderInstance(contextData.data)}
 					</ul>
@@ -223,22 +219,20 @@ export class UmbDebug extends UmbLitElement {
 		return contextsTemplates;
 	}
 
-	private _renderInstance(instance: any) {
+	private _renderInstance(instance: DebugContextItemData) {
 		const instanceTemplates: TemplateResult[] = [];
 		
-		console.log('instance', instance);
-
 		if(instance.type === 'function'){
 			return instanceTemplates.push(html`<li>Callable Function</li>`);
 		}
 		else if(instance.type === 'object'){
-			if(instance.methods.length){
+			if(instance.methods?.length){
 				instanceTemplates.push(
 					html`
 						<li>
 							<strong>Methods</strong>
 							<ul>
-								${instance.methods.map((methodName) => html`<li>${methodName}</li>`)}
+								${instance.methods?.map((methodName) => html`<li>${methodName}</li>`)}
 							</ul>
 						</li>
 					`
@@ -246,7 +240,7 @@ export class UmbDebug extends UmbLitElement {
 			}
 
 			const props: TemplateResult[] = [];
-			instance.properties.forEach((property) => {
+			instance.properties?.forEach((property) => {
 				if (property.type === 'string') {
 					props.push(html`<li>${property.key} = ${property.value}</li>`);
 				} else {
@@ -286,6 +280,26 @@ export class UmbDebug extends UmbLitElement {
 				: Object.getOwnPropertyNames(klass.prototype);
 		return allMethods.filter((name: any) => name !== 'constructor' && !name.startsWith('_'));
 	}
+}
+
+
+interface DebugContextData {
+	alias: string;
+	type: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
+	data: DebugContextItemData;
+}
+
+interface DebugContextItemData {
+	type: string;
+	methods?: Array<unknown>;
+	properties?: Array<DebugContextItemPropertyData>;
+	value?: unknown;
+}
+
+interface DebugContextItemPropertyData {
+	key: string;
+	type: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
+	value?: unknown;
 }
 
 declare global {
