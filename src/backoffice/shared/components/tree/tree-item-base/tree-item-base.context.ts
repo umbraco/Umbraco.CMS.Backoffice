@@ -7,7 +7,7 @@ import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from '../../section/sect
 import { UmbTreeContextBase } from '../tree.context';
 import { UmbTreeItemContext } from '../tree-item.context.interface';
 import { BooleanState, DeepState, StringState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import {
 	UmbContextConsumerController,
 	UmbContextProviderController,
@@ -22,7 +22,7 @@ export type UmbTreeItemUniqueFunction<T extends TreeItemPresentationModel> = (x:
 export class UmbTreeItemContextBase<T extends TreeItemPresentationModel = TreeItemPresentationModel>
 	implements UmbTreeItemContext<T>
 {
-	public host: UmbControllerHostInterface;
+	public host: UmbControllerHostElement;
 	public unique?: string;
 	public type?: string;
 
@@ -55,7 +55,7 @@ export class UmbTreeItemContextBase<T extends TreeItemPresentationModel = TreeIt
 	#sectionSidebarContext?: UmbSectionSidebarContext;
 	#getUniqueFunction: UmbTreeItemUniqueFunction<T>;
 
-	constructor(host: UmbControllerHostInterface, getUniqueFunction: UmbTreeItemUniqueFunction<T>) {
+	constructor(host: UmbControllerHostElement, getUniqueFunction: UmbTreeItemUniqueFunction<T>) {
 		this.host = host;
 		this.#getUniqueFunction = getUniqueFunction;
 		this.#observeTreeItemActions();
