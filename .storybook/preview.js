@@ -1,43 +1,53 @@
-import '../src/core/context/context-provider.element';
-import '../src/css/custom-properties.css';
-import '../src/backoffice/components/backoffice-modal-container.element';
-import '@umbraco-ui/uui';
-import '@umbraco-ui/uui-modal';
-import '@umbraco-ui/uui-modal-container';
-import '@umbraco-ui/uui-modal-dialog';
-import '@umbraco-ui/uui-modal-sidebar';
+import '@umbraco-ui/uui-css/dist/uui-css.css';
+import '../src/core/css/custom-properties.css';
 
-import { html } from 'lit-html';
+import 'element-internals-polyfill';
+import '@umbraco-ui/uui';
+
+import { html } from 'lit';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
 import { setCustomElements } from '@storybook/web-components';
 
+import { UmbDataTypeStore } from '../src/backoffice/settings/data-types/repository/data-type.store.ts';
+import { UmbDocumentTypeStore } from '../src/backoffice/documents/document-types/repository/document-type.store.ts';
+import { UmbDocumentStore } from '../src/backoffice/documents/documents/repository/document.store.ts';
+import { UmbDocumentTreeStore } from '../src/backoffice/documents/documents/repository/document.tree.store.ts';
+
 import customElementManifests from '../custom-elements.json';
-import { UmbExtensionRegistry } from '../src/core/extension';
-import { UmbDataTypeStore } from '../src/core/stores/data-type/data-type.store';
-import { UmbDocumentTypeStore } from '../src/core/stores/document-type.store';
-import { UmbNodeStore } from '../src/core/stores/node.store';
-import { UmbPropertyEditorStore } from '../src/core/stores/property-editor/property-editor.store';
-import { UmbPropertyEditorConfigStore } from '../src/core/stores/property-editor-config/property-editor-config.store';
 import { UmbIconStore } from '../src/core/stores/icon/icon.store';
-import { onUnhandledRequest } from '../src/mocks/browser';
-import { handlers } from '../src/mocks/browser-handlers';
-import { internalManifests } from '../src/temp-internal-manifests';
-import { LitElement } from 'lit';
-import { UmbModalService } from '../src/core/services/modal';
+import { onUnhandledRequest } from '../src/core/mocks/browser';
+import { handlers } from '../src/core/mocks/browser-handlers';
+import { UMB_MODAL_CONTEXT_TOKEN, UmbModalContext } from '../libs/modal';
+import { UmbLitElement } from '../src/core/lit-element';
 
-const extensionRegistry = new UmbExtensionRegistry();
-internalManifests.forEach((manifest) => extensionRegistry.register(manifest));
+import { umbExtensionsRegistry } from '../libs/extensions-api';
 
-class UmbStoryBookElement extends LitElement {
+import '../src/core/context-provider/context-provider.element';
+import '../src/core/controller-host/controller-host-test.element';
+import '../src/backoffice/shared/components';
+
+import { manifests as documentManifests } from '../src/backoffice/documents';
+
+class UmbStoryBookElement extends UmbLitElement {
 	_umbIconStore = new UmbIconStore();
 
 	constructor() {
 		super();
 		this._umbIconStore.attach(this);
+		this._registerExtensions(documentManifests);
+		this.provideContext(UMB_MODAL_CONTEXT_TOKEN, new UmbModalContext(this));
+	}
+
+	_registerExtensions(manifests) {
+		manifests.forEach((manifest) => {
+			if (umbExtensionsRegistry.isRegistered(manifest.alias)) return;
+			umbExtensionsRegistry.register(manifest);
+		});
 	}
 
 	render() {
-		return html`<slot></slot>`;
+		return html`<slot></slot>
+			<umb-backoffice-modal-container></umb-backoffice-modal-container> `;
 	}
 }
 
@@ -45,41 +55,20 @@ customElements.define('umb-storybook', UmbStoryBookElement);
 
 const storybookProvider = (story) => html` <umb-storybook>${story()}</umb-storybook> `;
 
-const extensionRegistryProvider = (story) => html`
-	<umb-context-provider key="umbExtensionRegistry" .value=${extensionRegistry}>${story()}</umb-context-provider>
-`;
-
-const nodeStoreProvider = (story) => html`
-	<umb-context-provider key="umbNodeStore" .value=${new UmbNodeStore()}>${story()}</umb-context-provider>
-`;
-
 const dataTypeStoreProvider = (story) => html`
-	<umb-context-provider key="umbDataTypeStore" .value=${new UmbDataTypeStore()}>${story()}</umb-context-provider>
+	<umb-controller-host-test .create=${(host) => new UmbDataTypeStore(host)}>${story()}</umb-controller-host-test>
 `;
 
 const documentTypeStoreProvider = (story) => html`
-	<umb-context-provider key="umbDocumentTypeStore" .value=${new UmbDocumentTypeStore()}
-		>${story()}</umb-context-provider
-	>
+	<umb-controller-host-test .create=${(host) => new UmbDocumentTypeStore(host)}>${story()}</umb-controller-host-test>
 `;
 
-const propertyEditorStoreProvider = (story) => html`
-	<umb-context-provider key="umbPropertyEditorStore" .value=${new UmbPropertyEditorStore()}
-		>${story()}</umb-context-provider
-	>
+const documentStoreProvider = (story) => html`
+	<umb-controller-host-test .create=${(host) => new UmbDocumentStore(host)}>${story()}</umb-controller-host-test>
 `;
 
-const propertyEditorConfigStoreProvider = (story) => html`
-	<umb-context-provider key="umbPropertyEditorConfigStore" .value=${new UmbPropertyEditorConfigStore()}
-		>${story()}</umb-context-provider
-	>
-`;
-
-const modalServiceProvider = (story) => html`
-	<umb-context-provider style="display: block; padding: 32px;" key="umbModalService" .value=${new UmbModalService()}>
-		${story()}
-		<umb-backoffice-modal-container></umb-backoffice-modal-container>
-	</umb-context-provider>
+const documentTreeStoreProvider = (story) => html`
+	<umb-controller-host-test .create=${(host) => new UmbDocumentTreeStore(host)}>${story()}</umb-controller-host-test>
 `;
 
 // Initialize MSW
@@ -89,13 +78,10 @@ initialize({ onUnhandledRequest });
 export const decorators = [
 	mswDecorator,
 	storybookProvider,
-	extensionRegistryProvider,
-	nodeStoreProvider,
+	documentStoreProvider,
+	documentTreeStoreProvider,
 	dataTypeStoreProvider,
 	documentTypeStoreProvider,
-	propertyEditorStoreProvider,
-	propertyEditorConfigStoreProvider,
-	modalServiceProvider,
 ];
 
 export const parameters = {
@@ -103,6 +89,28 @@ export const parameters = {
 		storySort: {
 			method: 'alphabetical',
 			includeNames: true,
+			order: [
+				'Guides',
+				[
+					'Getting started',
+					'Extending the Backoffice',
+					[
+						'Intro',
+						'Registration',
+						'Header Apps',
+						'Sections',
+						['Intro', 'Sidebar', 'Views', '*'],
+						'Entity Actions',
+						'Workspaces',
+						['Intro', 'Views', 'Actions', '*'],
+						'Property Editors',
+						'Repositories',
+						'*',
+					],
+					'*',
+				],
+				'*',
+			],
 		},
 	},
 	actions: { argTypesRegex: '^on.*' },
@@ -117,6 +125,19 @@ export const parameters = {
 		handlers: {
 			global: handlers,
 		},
+	},
+	backgrounds: {
+		default: 'Greyish',
+		values: [
+			{
+				name: 'Greyish',
+				value: '#F3F3F5',
+			},
+			{
+				name: 'White',
+				value: '#ffffff',
+			},
+		],
 	},
 };
 

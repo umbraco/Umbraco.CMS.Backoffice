@@ -1,13 +1,10 @@
-import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { css, CSSResultGroup, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-
-import { UmbContextConsumerMixin } from '../../core/context';
-import type { PostInstallRequest } from '../../core/models';
-import { UmbObserverMixin } from '../../core/observer';
-import { UmbInstallerContext } from '../installer.context';
+import { UmbInstallerContext, UMB_INSTALLER_CONTEXT_TOKEN } from '../installer.context';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-installer-user')
-export class UmbInstallerUserElement extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
+export class UmbInstallerUserElement extends UmbLitElement {
 	static styles: CSSResultGroup = [
 		css`
 			:host,
@@ -19,7 +16,7 @@ export class UmbInstallerUserElement extends UmbContextConsumerMixin(UmbObserver
 
 			uui-form-layout-item {
 				margin-top: 0;
-				margin-bottom: var(--uui-size-space-6);
+				margin-bottom: var(--uui-size-layout-1);
 			}
 
 			uui-form {
@@ -66,7 +63,7 @@ export class UmbInstallerUserElement extends UmbContextConsumerMixin(UmbObserver
 	constructor() {
 		super();
 
-		this.consumeContext('umbInstallerContext', (installerContext: UmbInstallerContext) => {
+		this.consumeContext(UMB_INSTALLER_CONTEXT_TOKEN, (installerContext) => {
 			this._installerContext = installerContext;
 			this._observeInstallerData();
 		});
@@ -75,12 +72,12 @@ export class UmbInstallerUserElement extends UmbContextConsumerMixin(UmbObserver
 	private _observeInstallerData() {
 		if (!this._installerContext) return;
 
-		this.observe<PostInstallRequest>(this._installerContext.data, ({ user }) => {
+		this.observe(this._installerContext.data, ({ user }) => {
 			this._userFormData = {
 				name: user.name,
 				password: user.password,
 				email: user.email,
-				subscribeToNewsletter: user.subscribeToNewsletter,
+				subscribeToNewsletter: user.subscribeToNewsletter ?? false,
 			};
 		});
 	}

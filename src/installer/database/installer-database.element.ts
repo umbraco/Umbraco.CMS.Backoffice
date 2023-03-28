@@ -1,20 +1,19 @@
 import { UUIButtonElement } from '@umbraco-ui/uui';
-import { css, CSSResultGroup, html, LitElement, nothing } from 'lit';
+import { css, CSSResultGroup, html, nothing } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 
-import { postInstallSetup, postInstallValidateDatabase } from '../../core/api/fetcher';
-import { UmbContextConsumerMixin } from '../../core/context';
-import type {
-	PostInstallRequest,
-	UmbracoInstaller,
-	UmbracoInstallerDatabaseModel,
-	UmbracoPerformInstallDatabaseConfiguration,
-} from '../../core/models';
-import { UmbObserverMixin } from '../../core/observer';
-import { UmbInstallerContext } from '../installer.context';
+import { UmbInstallerContext, UMB_INSTALLER_CONTEXT_TOKEN } from '../installer.context';
+import {
+	DatabaseInstallResponseModel,
+	DatabaseSettingsPresentationModel,
+	InstallResource,
+	ProblemDetailsModel,
+} from '@umbraco-cms/backoffice/backend-api';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
 
 @customElement('umb-installer-database')
-export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
+export class UmbInstallerDatabaseElement extends UmbLitElement {
 	static styles: CSSResultGroup = [
 		css`
 			:host,
@@ -36,7 +35,7 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 
 			uui-form-layout-item {
 				margin-top: 0;
-				margin-bottom: var(--uui-size-space-6);
+				margin-bottom: var(--uui-size-layout-1);
 			}
 
 			uui-input,
@@ -48,7 +47,7 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 			hr {
 				width: 100%;
 				margin-top: var(--uui-size-space-2);
-				margin-bottom: var(--uui-size-space-6);
+				margin-bottom: var(--uui-size-layout-1);
 				border: none;
 				border-bottom: 1px solid var(--uui-color-border);
 			}
@@ -83,16 +82,16 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 	private _installButton!: UUIButtonElement;
 
 	@property({ attribute: false })
-	public databaseFormData!: UmbracoPerformInstallDatabaseConfiguration;
+	public databaseFormData!: DatabaseInstallResponseModel;
 
 	@state()
-	private _options: { name: string; value: string; selected?: boolean }[] = [];
+	private _options: Option[] = [];
 
 	@state()
-	private _databases: UmbracoInstallerDatabaseModel[] = [];
+	private _databases: DatabaseSettingsPresentationModel[] = [];
 
 	@state()
-	private _preConfiguredDatabase?: UmbracoInstallerDatabaseModel;
+	private _preConfiguredDatabase?: DatabaseSettingsPresentationModel;
 
 	@state()
 	private _validationErrorMessage = '';
@@ -102,7 +101,7 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 	constructor() {
 		super();
 
-		this.consumeContext('umbInstallerContext', (installerContext: UmbInstallerContext) => {
+		this.consumeContext(UMB_INSTALLER_CONTEXT_TOKEN, (installerContext) => {
 			this._installerContext = installerContext;
 			this._observeInstallerSettings();
 			this._observeInstallerData();
@@ -112,14 +111,26 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 	private _observeInstallerSettings() {
 		if (!this._installerContext) return;
 
-		this.observe<UmbracoInstaller>(this._installerContext.settings, (settings) => {
-			this._databases = settings.databases;
+		this.observe(this._installerContext.settings, (settings) => {
+			this._databases = settings?.databases ?? [];
 
 			// If there is an isConfigured database in the databases array then we can skip the database selection step
 			// and just use that.
 			this._preConfiguredDatabase = this._databases.find((x) => x.isConfigured);
-			if (!this._preConfiguredDatabase) {
-				this._options = settings.databases.map((x, i) => ({ name: x.displayName, value: x.id, selected: i === 0 }));
+			if (this._preConfiguredDatabase) {
+				this._setDatabase({
+					id: this._preConfiguredDatabase.id!,
+					providerName: this._preConfiguredDatabase.providerName!,
+				});
+			} else {
+				this._options = this._databases
+					.filter((x) => !!x.id)
+					.map((x, i) => ({
+						name: x.displayName ?? 'Unknown database',
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+						value: x.id!,
+						selected: i === 0,
+					}));
 			}
 		});
 	}
@@ -127,9 +138,9 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 	private _observeInstallerData() {
 		if (!this._installerContext) return;
 
-		this.observe<PostInstallRequest>(this._installerContext.data, (data) => {
-			this.databaseFormData = data.database ?? {};
-			this._options.forEach((x, i) => (x.selected = data.database?.id === x.value || i === 0));
+		this.observe(this._installerContext.data, (data) => {
+			this.databaseFormData = data?.database ?? {};
+			this._options.forEach((x, i) => (x.selected = data?.database?.id === x.value || i === 0));
 		});
 	}
 
@@ -139,8 +150,18 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 		const value: { [key: string]: string | boolean } = {};
 		value[target.name] = target.checked ?? target.value; // handle boolean and text inputs
 
-		const database = { ...this._installerContext?.getData().database, ...value };
+		// TODO: Mark id and providerName as non-optional in schema
+		const database: DatabaseInstallResponseModel = {
+			id: '0',
+			providerName: '',
+			...this._installerContext?.getData().database,
+			...value,
+		};
 
+		this._setDatabase(database);
+	}
+
+	private _setDatabase(database: DatabaseInstallResponseModel) {
 		this._installerContext?.appendData({ database });
 	}
 
@@ -170,37 +191,37 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 
 			// Validate connection
 			const selectedDatabase = this._databases.find((x) => x.id === id);
-			if (selectedDatabase?.requiresConnectionTest) {
-				try {
-					let databaseDetails: UmbracoPerformInstallDatabaseConfiguration = {};
 
-					if (connectionString) {
-						databaseDetails.connectionString = connectionString;
-					} else {
-						databaseDetails = {
-							id,
-							username,
-							password,
-							server,
-							useIntegratedAuthentication,
-							name,
-						};
-					}
-					await postInstallValidateDatabase(databaseDetails);
-				} catch (e) {
-					if (e instanceof postInstallSetup.Error) {
-						const error = e.getActualType();
-						console.warn('Database validation failed', error.data);
-						this._validationErrorMessage = error.data.detail ?? 'Could not verify database connection';
-					} else {
-						this._validationErrorMessage = 'A server error happened when trying to validate the database';
-					}
+			if (!selectedDatabase || !selectedDatabase.providerName || !selectedDatabase.id) {
+				this._validationErrorMessage = 'No valid database selected';
+				this._installButton.state = 'failed';
+				return;
+			}
+
+			if (selectedDatabase.requiresConnectionTest) {
+				const databaseDetails: DatabaseInstallResponseModel = {
+					id,
+					username,
+					password,
+					server,
+					useIntegratedAuthentication,
+					name,
+					connectionString,
+					providerName: selectedDatabase.providerName,
+				};
+
+				const { error } = await tryExecute(
+					InstallResource.postInstallValidateDatabase({ requestBody: databaseDetails })
+				);
+
+				if (error) {
+					this._validationErrorMessage = `The server could not validate the database connection. Details: ${error.detail}`;
 					this._installButton.state = 'failed';
 					return;
 				}
 			}
 
-			const database = {
+			const database: DatabaseInstallResponseModel = {
 				...this._installerContext?.getData().database,
 				id,
 				username,
@@ -209,32 +230,34 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 				name,
 				useIntegratedAuthentication,
 				connectionString,
-			} as UmbracoPerformInstallDatabaseConfiguration;
+				providerName: selectedDatabase.providerName,
+			};
 
-			this._installerContext?.appendData({ database });
+			this._installerContext.appendData({ database });
 		}
 
-		this._installerContext?.nextStep();
-		this._installerContext
-			.requestInstall()
-			.then(() => this._handleFulfilled())
-			.catch((error) => this._handleRejected(error));
+		this._installerContext.nextStep();
+
+		const { error } = await tryExecute(
+			InstallResource.postInstallSetup({ requestBody: this._installerContext.getData() })
+		);
+
+		if (error) {
+			this._handleRejected(error);
+		} else {
+			this._handleFulfilled();
+		}
 	};
 
 	private _handleFulfilled() {
+		// TODO: The post install will probably return a user in the future, so we have to set that context somewhere to let the client know that it is authenticated
 		console.warn('TODO: Set up real authentication');
 		sessionStorage.setItem('is-authenticated', 'true');
 		history.replaceState(null, '', '/content');
 	}
 
-	private _handleRejected(e: unknown) {
-		if (e instanceof postInstallSetup.Error) {
-			const error = e.getActualType();
-			if (error.status === 400) {
-				this._installerContext?.setInstallStatus(error.data);
-			}
-		}
-		this._installerContext?.nextStep();
+	private _handleRejected(e: ProblemDetailsModel) {
+		this._installerContext?.setInstallStatus(e);
 	}
 
 	private _onBack() {
@@ -249,7 +272,7 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 	private _renderSettings() {
 		if (!this._selectedDatabase) return;
 
-		if (this._selectedDatabase.displayName.toLowerCase() === 'custom') {
+		if (this._selectedDatabase.displayName?.toLowerCase() === 'custom') {
 			return this._renderCustom();
 		}
 
@@ -259,7 +282,9 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 			result.push(this._renderServer());
 		}
 
-		result.push(this._renderDatabaseName(this.databaseFormData.name ?? this._selectedDatabase.defaultDatabaseName));
+		result.push(
+			this._renderDatabaseName(this.databaseFormData.name ?? this._selectedDatabase.defaultDatabaseName ?? 'umbraco')
+		);
 
 		if (this._selectedDatabase.requiresCredentials) {
 			result.push(this._renderCredentials());
@@ -372,7 +397,7 @@ export class UmbInstallerDatabaseElement extends UmbContextConsumerMixin(UmbObse
 		${this._renderSettings()}
 	`;
 
-	private _renderPreConfiguredDatabase = (database: UmbracoInstallerDatabaseModel) => html`
+	private _renderPreConfiguredDatabase = (database: DatabaseSettingsPresentationModel) => html`
 		<p>A database has already been pre-configured on the server and will be used:</p>
 		<p>
 			Type: <strong>${database.displayName}</strong>

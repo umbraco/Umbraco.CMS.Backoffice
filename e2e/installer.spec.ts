@@ -1,9 +1,8 @@
 import { rest } from 'msw';
 
-import umbracoPath from '../src/core/helpers/umbraco-path';
-import { expect, test } from '../test';
-
-import type { ProblemDetails, StatusResponse } from '../src/core/models';
+import { umbracoPath } from '@umbraco-cms/backoffice/utils';
+import { ProblemDetailsModel, RuntimeLevelModel, ServerStatusResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import { expect, test } from './test';
 
 test.describe('installer tests', () => {
 	test.beforeEach(async ({ page, worker }) => {
@@ -13,8 +12,8 @@ test.describe('installer tests', () => {
 				return res(
 					// Respond with a 200 status code
 					ctx.status(200),
-					ctx.json<StatusResponse>({
-						serverStatus: 'must-install',
+					ctx.json<ServerStatusResponseModel>({
+						serverStatus: RuntimeLevelModel.INSTALL,
 					})
 				);
 			})
@@ -63,7 +62,7 @@ test.describe('installer tests', () => {
 					return res(
 						// Respond with a 200 status code
 						ctx.status(400),
-						ctx.json<ProblemDetails>({
+						ctx.json<ProblemDetailsModel>({
 							status: 400,
 							type: 'validation',
 							detail: 'Something went wrong',

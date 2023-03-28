@@ -1,20 +1,19 @@
 import '../installer/shared/layout/installer-layout.element';
 import './upgrader-view.element';
 
-import { html, LitElement } from 'lit';
+import { html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-
-import { getUpgradeSettings, PostUpgradeAuthorize } from '../core/api/fetcher';
-
-import type { UmbracoUpgrader } from '../core/models';
+import { UpgradeResource, UpgradeSettingsResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 /**
  * @element umb-upgrader
  */
 @customElement('umb-upgrader')
-export class UmbUpgrader extends LitElement {
+export class UmbUpgrader extends UmbLitElement {
 	@state()
-	private upgradeSettings?: UmbracoUpgrader;
+	private upgradeSettings?: UpgradeSettingsResponseModel;
 
 	@state()
 	private fetching = true;
@@ -44,14 +43,12 @@ export class UmbUpgrader extends LitElement {
 	private async _setup() {
 		this.fetching = true;
 
-		try {
-			const { data } = await getUpgradeSettings({});
+		const { data, error } = await tryExecute(UpgradeResource.getUpgradeSettings());
 
+		if (data) {
 			this.upgradeSettings = data;
-		} catch (e) {
-			if (e instanceof getUpgradeSettings.Error) {
-				this.errorMessage = e.data.detail;
-			}
+		} else if (error) {
+			this.errorMessage = error.detail;
 		}
 
 		this.fetching = false;
@@ -62,18 +59,12 @@ export class UmbUpgrader extends LitElement {
 		this.errorMessage = '';
 		this.upgrading = true;
 
-		try {
-			await PostUpgradeAuthorize({});
+		const { error } = await tryExecute(UpgradeResource.postUpgradeAuthorize());
+
+		if (error) {
+			this.errorMessage = error.detail || 'Unknown error, please try again';
+		} else {
 			history.pushState(null, '', '/');
-		} catch (e) {
-			if (e instanceof PostUpgradeAuthorize.Error) {
-				const error = e.getActualType();
-				if (error.status === 400) {
-					this.errorMessage = error.data.detail || 'Unknown error, please try again';
-				}
-			} else {
-				this.errorMessage = 'Unknown error, please try again';
-			}
 		}
 
 		this.upgrading = false;

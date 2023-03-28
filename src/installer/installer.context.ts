@@ -1,7 +1,14 @@
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-
-import { getInstallSettings, postInstallSetup } from '../core/api/fetcher';
-import type { PostInstallRequest, ProblemDetails, UmbracoInstaller } from '../core/models';
+import { Observable } from 'rxjs';
+import {
+	InstallVResponseModel,
+	InstallResource,
+	InstallSettingsResponseModel,
+	ProblemDetailsModel,
+	TelemetryLevelModel,
+} from '@umbraco-cms/backoffice/backend-api';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
+import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { ObjectState, NumberState } from '@umbraco-cms/backoffice/observable-api';
 
 /**
  * Context API for the installer
@@ -9,19 +16,20 @@ import type { PostInstallRequest, ProblemDetails, UmbracoInstaller } from '../co
  * @class UmbInstallerContext
  */
 export class UmbInstallerContext {
-	private _data = new BehaviorSubject<PostInstallRequest>({
+	private _data = new ObjectState<InstallVResponseModel>({
 		user: { name: '', email: '', password: '', subscribeToNewsletter: false },
-		telemetryLevel: 'Basic',
+		database: { id: '', providerName: '' },
+		telemetryLevel: TelemetryLevelModel.BASIC,
 	});
 	public readonly data = this._data.asObservable();
 
-	private _currentStep = new BehaviorSubject<number>(1);
+	private _currentStep = new NumberState<number>(1);
 	public readonly currentStep = this._currentStep.asObservable();
 
-	private _settings = new ReplaySubject<UmbracoInstaller>();
+	private _settings = new ObjectState<InstallSettingsResponseModel | undefined>(undefined);
 	public readonly settings = this._settings.asObservable();
 
-	private _installStatus = new ReplaySubject<ProblemDetails | null>(1);
+	private _installStatus = new ObjectState<ProblemDetailsModel | null>(null);
 	public readonly installStatus = this._installStatus.asObservable();
 
 	constructor() {
@@ -41,10 +49,10 @@ export class UmbInstallerContext {
 	/**
 	 * Observable method to get the install status in the installation process
 	 * @public
-	 * @return {*}  {(Observable<ProblemDetails | null>)}
+	 * @return {*}  {(Observable<ProblemDetailsModel | null>)}
 	 * @memberof UmbInstallerContext
 	 */
-	public installStatusChanges(): Observable<ProblemDetails | null> {
+	public installStatusChanges(): Observable<ProblemDetailsModel | null> {
 		return this.installStatus;
 	}
 
@@ -72,8 +80,8 @@ export class UmbInstallerContext {
 	 * @memberof UmbInstallerContext
 	 */
 	public reset(): void {
-		this._currentStep.next(1);
 		this._installStatus.next(null);
+		this._currentStep.next(1);
 	}
 
 	/**
@@ -82,7 +90,7 @@ export class UmbInstallerContext {
 	 * @param {Partial<PostInstallRequest>} data
 	 * @memberof UmbInstallerContext
 	 */
-	public appendData(data: Partial<PostInstallRequest>): void {
+	public appendData(data: Partial<InstallVResponseModel>): void {
 		this._data.next({ ...this.getData(), ...data });
 	}
 
@@ -92,28 +100,17 @@ export class UmbInstallerContext {
 	 * @return {*}  {PostInstallRequest}
 	 * @memberof UmbInstallerContext
 	 */
-	public getData(): PostInstallRequest {
+	public getData(): InstallVResponseModel {
 		return this._data.getValue();
-	}
-
-	/**
-	 * Post the installation data to the API
-	 * @public
-	 * @return {*}
-	 * @memberof UmbInstallerContext
-	 */
-	public requestInstall() {
-		// TODO: The post install will probably return a user in the future, so we have to set that context somewhere to let the client know that it is authenticated
-		return postInstallSetup(this.getData());
 	}
 
 	/**
 	 * Set the install status
 	 * @public
-	 * @param {(ProblemDetails | null)} status
+	 * @param {(ProblemDetailsModel | null)} status
 	 * @memberof UmbInstallerContext
 	 */
-	public setInstallStatus(status: ProblemDetails | null): void {
+	public setInstallStatus(status: ProblemDetailsModel | null): void {
 		this._installStatus.next(status);
 	}
 
@@ -122,9 +119,15 @@ export class UmbInstallerContext {
 	 * @private
 	 * @memberof UmbInstallerContext
 	 */
-	private _loadInstallerSettings() {
-		getInstallSettings({}).then(({ data }) => {
+	private async _loadInstallerSettings() {
+		const { data, error } = await tryExecute(InstallResource.getInstallSettings());
+		if (data) {
 			this._settings.next(data);
-		});
+		} else if (error) {
+			console.error(error.detail, error);
+			this._installStatus.next(error);
+		}
 	}
 }
+
+export const UMB_INSTALLER_CONTEXT_TOKEN = new UmbContextToken<UmbInstallerContext>('UmbInstallerContext');

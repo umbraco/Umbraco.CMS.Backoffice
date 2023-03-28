@@ -1,4 +1,4 @@
-import { UUIIconRegistry } from '@umbraco-ui/uui';
+import { UUIIconRegistry } from '@umbraco-ui/uui-icon-registry';
 import icons from '../../../../public-assets/icons/icons.json';
 
 interface UmbIconDescriptor {
@@ -24,9 +24,15 @@ export class UmbIconStore extends UUIIconRegistry {
 
 		const icon = this.provideIcon(iconName);
 
-		import(/* @vite-ignore */ `${iconManifest.path}`).then((iconModule) => {
-			icon.svg = iconModule.default;
-		});
+		const iconPath = `${import.meta.env.BASE_URL}${iconManifest.path}`;
+
+		import(/* @vite-ignore */ iconPath)
+			.then((iconModule) => {
+				icon.svg = iconModule.default;
+			})
+			.catch((err) => {
+				console.error(`Failed to load icon ${iconName} on path ${iconPath}`, err.message);
+			});
 
 		return true;
 	}

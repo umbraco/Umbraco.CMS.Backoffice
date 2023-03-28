@@ -1,13 +1,12 @@
-import { css, CSSResultGroup, html, LitElement, nothing } from 'lit';
+import { css, CSSResultGroup, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { UmbContextConsumerMixin } from '../../core/context';
 
-import type { ProblemDetails } from '../../core/models';
-import { UmbObserverMixin } from '../../core/observer';
-import { UmbInstallerContext } from '../installer.context';
+import { UmbInstallerContext, UMB_INSTALLER_CONTEXT_TOKEN } from '../installer.context';
+import { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-installer-error')
-export class UmbInstallerErrorElement extends UmbContextConsumerMixin(UmbObserverMixin(LitElement)) {
+export class UmbInstallerErrorElement extends UmbLitElement {
 	static styles: CSSResultGroup = [
 		css`
 			:host,
@@ -22,20 +21,20 @@ export class UmbInstallerErrorElement extends UmbContextConsumerMixin(UmbObserve
 			}
 
 			#error-message {
-				color: var(--uui-color-error, red);
+				color: var(--uui-color-danger, #d42054);
 			}
 		`,
 	];
 
 	@state()
-	_error?: ProblemDetails;
+	_error?: ProblemDetailsModel;
 
 	private _installerContext?: UmbInstallerContext;
 
 	connectedCallback() {
 		super.connectedCallback();
 
-		this.consumeContext('umbInstallerContext', (installerContext) => {
+		this.consumeContext(UMB_INSTALLER_CONTEXT_TOKEN, (installerContext) => {
 			this._installerContext = installerContext;
 			this._observeInstallStatus();
 		});
@@ -56,16 +55,19 @@ export class UmbInstallerErrorElement extends UmbContextConsumerMixin(UmbObserve
 		this._installerContext?.reset();
 	}
 
-	private _renderError(error: ProblemDetails) {
+	private _renderError(error: ProblemDetailsModel) {
 		return html`
-			<p id="error-message" data-test="error-message">${error.detail ?? 'Unknown error'}</p>
-			<hr />
+			<p>Description: ${error.title}</p>
 			${error.errors ? this._renderErrors(error.errors) : nothing}
+			<hr />
+			<h3>Details:</h3>
+			<p id="error-message" data-test="error-message">${error.detail ?? 'Unknown error'}</p>
 		`;
 	}
 
 	private _renderErrors(errors: Record<string, unknown>) {
 		return html`
+			<h3>Errors:</h3>
 			<ul>
 				${Object.keys(errors).map((key) => html` <li>${key}: ${(errors[key] as string[]).join(', ')}</li> `)}
 			</ul>
@@ -76,8 +78,7 @@ export class UmbInstallerErrorElement extends UmbContextConsumerMixin(UmbObserve
 		return html` <div id="container" class="uui-text" data-test="installer-error">
 			<uui-form>
 				<form id="installer-form" @submit="${this._handleSubmit}">
-					<h1 class="uui-h3">Installing Umbraco</h1>
-					<h2>Something went wrong</h2>
+					<h2>Something went wrong:</h2>
 					${this._error ? this._renderError(this._error) : nothing}
 					<div id="buttons">
 						<uui-button

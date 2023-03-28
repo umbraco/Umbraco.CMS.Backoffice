@@ -1,0 +1,48 @@
+import type { ManifestSection } from '@umbraco-cms/backoffice/extensions-registry';
+import type { Entity } from '@umbraco-cms/backoffice/models';
+import { ObjectState, StringState } from '@umbraco-cms/backoffice/observable-api';
+import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+
+export type ActiveTreeItemType = Entity | undefined;
+
+export class UmbSectionContext {
+	#manifestAlias = new StringState<string | undefined>(undefined);
+	#manifestPathname = new StringState<string | undefined>(undefined);
+	#manifestLabel = new StringState<string | undefined>(undefined);
+	public readonly alias = this.#manifestAlias.asObservable();
+	public readonly pathname = this.#manifestPathname.asObservable();
+	public readonly label = this.#manifestLabel.asObservable();
+
+	/*
+	This was not used anywhere
+	private _activeTree = new BehaviorSubject<ManifestTree | undefined>(undefined);
+	public readonly activeTree = this._activeTree.asObservable();
+	*/
+
+	// TODO: what is the best context to put this in?
+	#activeTreeItem = new ObjectState<ActiveTreeItemType | undefined>(undefined);
+	public readonly activeTreeItem = this.#activeTreeItem.asObservable();
+
+	constructor(manifest: ManifestSection) {
+		this.setManifest(manifest);
+	}
+
+	public setManifest(manifest?: ManifestSection) {
+		this.#manifestAlias.next(manifest?.alias);
+		this.#manifestPathname.next(manifest?.meta?.pathname);
+		this.#manifestLabel.next(manifest ? manifest.meta?.label || manifest.name : undefined);
+	}
+
+	/*
+	This was not used anywhere
+	public setActiveTree(tree: ManifestTree) {
+		this._activeTree.next(tree);
+	}
+	*/
+
+	public setActiveTreeItem(item?: ActiveTreeItemType) {
+		this.#activeTreeItem.next(item);
+	}
+}
+
+export const UMB_SECTION_CONTEXT_TOKEN = new UmbContextToken<UmbSectionContext>('UmbSectionContext');

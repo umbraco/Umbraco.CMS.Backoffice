@@ -1,27 +1,27 @@
-import './css/custom-properties.css';
-import 'router-slot';
+import '@umbraco-ui/uui-css/dist/uui-css.css';
+import './core/css/custom-properties.css';
 
-// TODO: remove these imports when they are part of UUI
-import '@umbraco-ui/uui-modal';
-import '@umbraco-ui/uui-modal-sidebar';
-import '@umbraco-ui/uui-modal-container';
-import '@umbraco-ui/uui-modal-dialog';
+import 'element-internals-polyfill';
+
+import './core/router/router-slot.element';
+import './core/notification/layouts/default';
+import './core/modal/modal-element.element';
 
 import { UUIIconRegistryEssential } from '@umbraco-ui/uui';
-import { css, html, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 
-import type { Guard, IRoute } from 'router-slot/model';
-import { getManifests, getServerStatus } from './core/api/fetcher';
-import { UmbContextProviderMixin } from './core/context';
-import { UmbExtensionRegistry } from './core/extension';
-import { AuthFlow } from './core/services/flow';
-import { internalManifests } from './temp-internal-manifests';
+import { AuthFlow } from './core/auth/auth-flow';
+import { UmbIconStore } from './core/stores/icon/icon.store';
 
-import type { ServerStatus } from './core/models';
+import type { Guard, IRoute } from '@umbraco-cms/internal/router';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { OpenAPI, RuntimeLevelModel, ServerResource } from '@umbraco-cms/backoffice/backend-api';
+import { umbDebugContextEventType } from '@umbraco-cms/backoffice/context-api';
 
 @customElement('umb-app')
-export class UmbApp extends UmbContextProviderMixin(LitElement) {
+export class UmbApp extends UmbLitElement {
 	static styles = css`
 		:host {
 			overflow: hidden;
@@ -35,12 +35,11 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 		}
 	`;
 
+	@property({ type: String })
+	private umbracoUrl?: string;
+
 	@state()
-	private _routes: IRoute[] = [
-		{
-			path: 'login',
-			component: () => import('./auth/login/login.element'),
-		},
+	private _routes: IRoute<any>[] = [
 		{
 			path: 'install',
 			component: () => import('./installer/installer.element'),
@@ -57,16 +56,45 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 		},
 	];
 
-	private _extensionRegistry = new UmbExtensionRegistry();
+	private _umbIconRegistry = new UmbIconStore();
+
 	private _iconRegistry = new UUIIconRegistryEssential();
-	private _serverStatus: ServerStatus = 'running';
+	private _runtimeLevel = RuntimeLevelModel.UNKNOWN;
 
 	private authFlow: AuthFlow;
 
 	constructor() {
 		super();
 		this.authFlow = new AuthFlow('https://localhost:44331', 'http://127.0.0.1:5173/login');
+
+		this._umbIconRegistry.attach(this);
+
 		this._setup();
+	}
+
+	async connectedCallback() {
+		super.connectedCallback();
+
+		OpenAPI.BASE =
+			import.meta.env.VITE_UMBRACO_USE_MSW === 'on'
+				? ''
+				: this.umbracoUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
+		OpenAPI.WITH_CREDENTIALS = true;
+
+		this.provideContext('UMBRACOBASE', OpenAPI.BASE);
+
+		await this._setInitStatus();
+		this._redirect();
+
+		// Listen for the debug event from the <umb-debug> component
+		this.addEventListener(umbDebugContextEventType, (event: any) => {
+			// Once we got to the outter most component <umb-app>
+			// we can send the event containing all the contexts
+			// we have collected whilst coming up through the DOM
+			// and pass it back down to the callback in
+			// the <umb-debug> component that originally fired the event
+			event.callback(event.instances);
+		});
 	}
 
 	private async _setup() {
@@ -79,34 +107,24 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 		await this.authFlow.setInitialState();
 
 		this._iconRegistry.attach(this);
-		this.provideContext('umbExtensionRegistry', this._extensionRegistry);
-
-		await this._registerExtensionManifestsFromServer();
-		await this._registerInternalManifests();
-		await this._setInitStatus();
-		this._redirect();
 	}
 
 	private async _setInitStatus() {
-		try {
-			const { data } = await getServerStatus({});
-			this._serverStatus = data.serverStatus;
-		} catch (error) {
-			console.log(error);
-		}
+		const { data } = await tryExecuteAndNotify(this, ServerResource.getServerStatus());
+		this._runtimeLevel = data?.serverStatus ?? RuntimeLevelModel.UNKNOWN;
 	}
 
 	private _redirect() {
-		switch (this._serverStatus) {
-			case 'must-install':
+		switch (this._runtimeLevel) {
+			case RuntimeLevelModel.INSTALL:
 				history.replaceState(null, '', '/install');
 				break;
 
-			case 'must-upgrade':
+			case RuntimeLevelModel.UPGRADE:
 				history.replaceState(null, '', '/upgrade');
 				break;
 
-			case 'running': {
+			case RuntimeLevelModel.RUN: {
 				const pathname =
 					window.location.pathname === '/install' || window.location.pathname === '/upgrade'
 						? '/'
@@ -114,6 +132,9 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 				history.replaceState(null, '', pathname);
 				break;
 			}
+
+			default:
+				throw new Error(`Unsupported runtime level: ${this._runtimeLevel}`);
 		}
 	}
 
@@ -142,19 +163,8 @@ export class UmbApp extends UmbContextProviderMixin(LitElement) {
 		};
 	}
 
-	private async _registerExtensionManifestsFromServer() {
-		const res = await getManifests({});
-		const { manifests } = res.data;
-		manifests.forEach((manifest) => this._extensionRegistry.register(manifest));
-	}
-
-	private async _registerInternalManifests() {
-		// TODO: where do we get these from?
-		internalManifests.forEach((manifest) => this._extensionRegistry.register(manifest));
-	}
-
 	render() {
-		return html`<router-slot id="router-slot" .routes=${this._routes}></router-slot>`;
+		return html`<umb-router-slot id="router-slot" .routes=${this._routes}></umb-router-slot>`;
 	}
 }
 

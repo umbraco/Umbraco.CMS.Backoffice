@@ -1,5 +1,5 @@
 import { Meta, Story } from '@storybook/web-components';
-import { html } from 'lit-html';
+import { html } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import icons from '../../../../public-assets/icons/icons.json';
 
@@ -23,11 +23,11 @@ const Template: Story = () => {
 				(icon) =>
 					html` <div
 						style="
-						display: flex; 
-						flex-direction: column; 
-						align-items: center; 
-						justify-content: center; 
-						text-align: center; 
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						justify-content: center;
+						text-align: center;
 						width: 100%;
     				height: 100%;">
 						<uui-icon style="font-size: 30px; margin-bottom: 9px;" name="${icon.name}"></uui-icon
