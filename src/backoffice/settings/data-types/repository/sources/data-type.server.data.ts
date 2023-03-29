@@ -95,7 +95,6 @@ export class UmbDataTypeServerDataSource implements UmbDataSource<DataTypeRespon
 	 * @return {*}
 	 * @memberof UmbDataTypeServerDataSource
 	 */
-	// TODO: Error mistake in this:
 	async update(dataType: DataTypeResponseModel) {
 		if (!dataType.key) {
 			const error: ProblemDetailsModel = { title: 'DataType key is missing' };
