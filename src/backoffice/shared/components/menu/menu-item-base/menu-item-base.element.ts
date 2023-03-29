@@ -28,10 +28,13 @@ export class UmbMenuItemBaseElement extends UmbLitElement {
 	}
 
 	@property({ type: String, attribute: 'icon-name' })
-	iconName = '';
+	public iconName = '';
 
 	@property({ type: String })
-	label = '';
+	public label = '';
+
+	@property({ type: Boolean, attribute: 'has-children' })
+	public hasChildren = false;
 
 	@state()
 	private _href?: string;
@@ -87,13 +90,13 @@ export class UmbMenuItemBaseElement extends UmbLitElement {
 
 	private _openActions() {
 		if (!this.entityType) throw new Error('Entity type is not defined');
-		this.#sectionSidebarContext?.toggleContextMenu(this.entityType, null, this.label);
+		this.#sectionSidebarContext?.toggleContextMenu(this.entityType, undefined, this.label);
 	}
 
 	render() {
-		return html` <uui-menu-item href="${ifDefined(this._href)}" label=${this.label}
-			>${this.#renderIcon()}${this.#renderActions()}</uui-menu-item
-		>`;
+		return html` <uui-menu-item href="${ifDefined(this._href)}" label=${this.label} ?has-children=${this.hasChildren}
+			>${this.#renderIcon()}${this.#renderActions()}<slot></slot
+		></uui-menu-item>`;
 	}
 
 	#renderIcon() {
