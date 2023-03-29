@@ -2,24 +2,38 @@ import { UmbDataTypeTreeServerDataSource } from './sources/data-type.tree.server
 import { UmbDataTypeStore, UMB_DATA_TYPE_STORE_CONTEXT_TOKEN } from './data-type.store';
 import { UmbDataTypeServerDataSource } from './sources/data-type.server.data';
 import { UmbDataTypeTreeStore, UMB_DATA_TYPE_TREE_STORE_CONTEXT_TOKEN } from './data-type.tree.store';
-import type { UmbTreeDataSource, UmbTreeRepository, UmbDetailRepository } from '@umbraco-cms/backoffice/repository';
+import { UmbDataTypeFolderServerDataSource } from './sources/data-type-folder.server.data';
+import type {
+	UmbTreeDataSource,
+	UmbTreeRepository,
+	UmbDetailRepository,
+	UmbFolderDataSource,
+	UmbDataSource,
+} from '@umbraco-cms/backoffice/repository';
 import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
-import { DataTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import {
+	CreateFolderRequestModel,
+	DataTypeResponseModel,
+	FolderReponseModel,
+} from '@umbraco-cms/backoffice/backend-api';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 
 type ItemType = DataTypeResponseModel;
 type TreeItemType = any;
-export class UmbDataTypeRepository implements UmbTreeRepository<TreeItemType>, UmbDetailRepository<ItemType> {
+export class UmbDataTypeRepository
+	implements UmbTreeRepository<TreeItemType>, UmbDetailRepository<ItemType>, UmbFolderDataSource<FolderReponseModel>
+{
 	#init!: Promise<unknown>;
 
 	#host: UmbControllerHostInterface;
 
 	#treeSource: UmbTreeDataSource;
-	#treeStore?: UmbDataTypeTreeStore;
+	#detailSource: UmbDataSource<DataTypeResponseModel>;
+	#folderSource: UmbFolderDataSource<CreateFolderRequestModel, FolderReponseModel>;
 
-	#detailDataSource: UmbDataTypeServerDataSource;
 	#detailStore?: UmbDataTypeStore;
+	#treeStore?: UmbDataTypeTreeStore;
 
 	#notificationContext?: UmbNotificationContext;
 
@@ -28,7 +42,8 @@ export class UmbDataTypeRepository implements UmbTreeRepository<TreeItemType>, U
 
 		// TODO: figure out how spin up get the correct data source
 		this.#treeSource = new UmbDataTypeTreeServerDataSource(this.#host);
-		this.#detailDataSource = new UmbDataTypeServerDataSource(this.#host);
+		this.#detailSource = new UmbDataTypeServerDataSource(this.#host);
+		this.#folderSource = new UmbDataTypeFolderServerDataSource(this.#host);
 
 		this.#init = Promise.all([
 			new UmbContextConsumerController(this.#host, UMB_DATA_TYPE_TREE_STORE_CONTEXT_TOKEN, (instance) => {
@@ -44,9 +59,6 @@ export class UmbDataTypeRepository implements UmbTreeRepository<TreeItemType>, U
 			}),
 		]);
 	}
-
-	// TODO: Trash
-	// TODO: Move
 
 	async requestRootTreeItems() {
 		await this.#init;
@@ -104,14 +116,14 @@ export class UmbDataTypeRepository implements UmbTreeRepository<TreeItemType>, U
 		if (parentKey === undefined) throw new Error('Parent key is missing');
 		await this.#init;
 
-		return this.#detailDataSource.createScaffold(parentKey);
+		return this.#detailSource.createScaffold(parentKey);
 	}
 
 	async requestByKey(key: string) {
 		if (!key) throw new Error('Key is missing');
 		await this.#init;
 
-		const { data, error } = await this.#detailDataSource.get(key);
+		const { data, error } = await this.#detailSource.get(key);
 
 		if (data) {
 			this.#detailStore?.append(data);
@@ -135,7 +147,7 @@ export class UmbDataTypeRepository implements UmbTreeRepository<TreeItemType>, U
 
 		await this.#init;
 
-		const { error } = await this.#detailDataSource.insert(template);
+		const { error } = await this.#detailSource.insert(template);
 
 		if (!error) {
 			const notification = { data: { message: `Document created` } };
@@ -157,7 +169,7 @@ export class UmbDataTypeRepository implements UmbTreeRepository<TreeItemType>, U
 
 		await this.#init;
 
-		const { error } = await this.#detailDataSource.update(item);
+		const { error } = await this.#detailSource.update(item);
 
 		if (!error) {
 			const notification = { data: { message: `Document saved` } };
@@ -180,7 +192,7 @@ export class UmbDataTypeRepository implements UmbTreeRepository<TreeItemType>, U
 		if (!key) throw new Error('Data Type key is missing');
 		await this.#init;
 
-		const { error } = await this.#detailDataSource.delete(key);
+		const { error } = await this.#detailSource.delete(key);
 
 		if (!error) {
 			const notification = { data: { message: `Data Type deleted` } };
@@ -195,5 +207,14 @@ export class UmbDataTypeRepository implements UmbTreeRepository<TreeItemType>, U
 		// TODO: would be nice to align the stores on methods/methodNames.
 
 		return { error };
+	}
+
+	// folder
+	async createFolder(folder: CreateFolderRequestModel) {
+		if (!folder) throw new Error('folder is missing');
+		await this.#init;
+
+		const { data, error } = await this.#folderSource.insert(folder);
+		debugger;
 	}
 }
