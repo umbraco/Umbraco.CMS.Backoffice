@@ -1,32 +1,44 @@
 import { html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement } from 'lit/decorators.js';
+import { UMB_CREATE_DATA_TYPE_FOLDER_MODAL } from '.';
 import { UmbModalBaseElement } from '@umbraco-cms/internal/modal';
+import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from 'libs/modal/modal.context';
 
 @customElement('umb-create-data-type-modal')
 export class UmbCreateDataTypeModalElement extends UmbModalBaseElement {
 	static styles = [UUITextStyles];
 
-	private _handleCancel() {
-		this.modalHandler?.reject();
+	#modalContext?: UmbModalContext;
+
+	constructor() {
+		super();
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
+			this.#modalContext = instance;
+		});
 	}
 
 	#onClick(event: PointerEvent) {
 		event.stopPropagation();
+		this.#modalContext?.open(UMB_CREATE_DATA_TYPE_FOLDER_MODAL);
+	}
+
+	#onCancel() {
+		this.modalHandler?.reject();
 	}
 
 	render() {
 		return html`
 			<umb-body-layout headline="Create Data Type">
 				<uui-box>
-					<uui-menu-item @click=${this.#onClick} label="Create Data Type">
-						<uui-icon slot="icon" name="icon:folder"></uui-icon>}
+					<uui-menu-item href="" label="New Data Type...">
+						<uui-icon slot="icon" name="umb:autofill"></uui-icon>}
 					</uui-menu-item>
-					<uui-menu-item @click=${this.#onClick} label="Create Folder">
-						<uui-icon slot="icon" name="icon:folder"></uui-icon>}
+					<uui-menu-item @click=${this.#onClick} label="New Folder...">
+						<uui-icon slot="icon" name="umb:folder"></uui-icon>}
 					</uui-menu-item>
 				</uui-box>
-				<uui-button slot="actions" id="cancel" label="Cancel" @click="${this._handleCancel}">Cancel</uui-button>
+				<uui-button slot="actions" id="cancel" label="Cancel" @click="${this.#onCancel}">Cancel</uui-button>
 			</umb-body-layout>
 		`;
 	}
