@@ -40,6 +40,7 @@ export const handlers = [
 		return res(ctx.status(200), ctx.json(saved));
 	}),
 
+	// TREE
 	rest.get(umbracoPath('/tree/data-type/root'), (req, res, ctx) => {
 		const rootItems = umbDataTypeData.getTreeRoot();
 		const response = {
@@ -68,5 +69,16 @@ export const handlers = [
 		if (!keys) return;
 		const items = umbDataTypeData.getTreeItem(keys);
 		return res(ctx.status(200), ctx.json(items));
+	}),
+
+	// FOLDERS
+	rest.post(umbracoPath('/data-type/folder'), async (req, res, ctx) => {
+		const data = await req.json();
+		if (!data) return;
+		debugger;
+
+		umbDataTypeData.createFolder(data);
+
+		return res(ctx.status(200));
 	}),
 ];
