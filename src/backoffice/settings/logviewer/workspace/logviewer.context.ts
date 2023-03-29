@@ -1,5 +1,6 @@
 import { UmbLogViewerRepository } from '../repository/log-viewer.repository';
 import {
+	BasicState,
 	ArrayState,
 	createObservablePart,
 	DeepState,
@@ -17,7 +18,6 @@ import {
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
-import { BasicState } from 'libs/observable-api/basic-state';
 
 export type PoolingInterval = 0 | 2000 | 5000 | 10000 | 20000 | 30000;
 export interface PoolingCOnfig {
