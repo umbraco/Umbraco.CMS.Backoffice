@@ -1,5 +1,6 @@
 import { html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import { ManifestKind, ManifestMenuItemTreeKind } from '@umbraco-cms/backoffice/extensions-registry';
@@ -38,15 +39,15 @@ export class UmbMenuItemTreeElement extends UmbLitElement {
 	render() {
 		return this.manifest
 			? html`
-					<uui-menu-item
-						href=""
-						label=${this.manifest?.meta.label}
+					<umb-menu-item-base
+						label=${this.manifest.meta.label || this.manifest.name}
+						icon-name=${this.manifest?.meta.icon}
+						entity-type=${ifDefined(this.manifest?.meta.entityType)}
 						@show-children=${this._onShowChildren}
 						@hide-children=${this._onHideChildren}
-						has-children
-						><uui-icon slot="icon" name=${this.manifest?.meta.icon}></uui-icon>
+						has-children>
 						${this._renderTree ? html`<umb-tree alias=${this.manifest?.meta.treeAlias}></umb-tree>` : nothing}
-					</uui-menu-item>
+					</umb-menu-item-base>
 			  `
 			: '';
 	}
