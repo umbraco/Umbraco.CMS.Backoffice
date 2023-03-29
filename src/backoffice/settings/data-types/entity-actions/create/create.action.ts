@@ -1,5 +1,5 @@
 import { UmbDataTypeRepository } from '../../repository/data-type.repository';
-import { UMB_CREATE_DATA_TYPE_MODAL_TOKEN } from './modal';
+import { UMB_CREATE_DATA_TYPE_MODAL } from './modal';
 import { UmbEntityActionBase } from '@umbraco-cms/backoffice/entity-action';
 import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
@@ -17,15 +17,9 @@ export class UmbCreateDataTypeEntityAction extends UmbEntityActionBase<UmbDataTy
 	}
 
 	async execute() {
-		debugger;
 		// TODO: what to do if modal service is not available?
 		if (!this.#modalContext) return;
 		if (!this.repository) return;
-
-		const { data } = await this.repository.requestByKey(this.unique);
-
-		if (data && data.contentTypeKey) {
-			this.#modalContext?.open(UMB_CREATE_DATA_TYPE_MODAL_TOKEN);
-		}
+		this.#modalContext?.open(UMB_CREATE_DATA_TYPE_MODAL);
 	}
 }
