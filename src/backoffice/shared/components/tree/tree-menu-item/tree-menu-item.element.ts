@@ -1,6 +1,7 @@
 import { html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { UUIMenuItemEvent } from '@umbraco-ui/uui';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import { ManifestKind, ManifestMenuItemTreeKind } from '@umbraco-cms/backoffice/extensions-registry';
@@ -23,11 +24,13 @@ export class UmbMenuItemTreeElement extends UmbLitElement {
 	@state()
 	private _renderTree = false;
 
-	private _onShowChildren() {
+	private _onShowChildren(event: UUIMenuItemEvent) {
+		event.stopPropagation();
 		this._renderTree = true;
 	}
 
-	private _onHideChildren() {
+	private _onHideChildren(event: UUIMenuItemEvent) {
+		event.stopPropagation();
 		this._renderTree = false;
 	}
 
