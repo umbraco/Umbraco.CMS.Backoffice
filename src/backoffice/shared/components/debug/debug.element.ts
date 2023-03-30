@@ -2,12 +2,12 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html, nothing, TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
-import { UmbContextDebugRequest } from '@umbraco-cms/backoffice/context-api';
+import { contextData, DebugContextData, DebugContextItemData, UmbContextDebugRequest } from '@umbraco-cms/backoffice/context-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UmbModalContext, UMB_CONTEXT_DEBUGGER_MODAL, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
 
 @customElement('umb-debug')
-export class UmbDebugElement extends UmbLitElement {
+export class UmbDebug extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -90,24 +90,9 @@ export class UmbDebugElement extends UmbLitElement {
 				// of the this event tha has been raised to assign the contexts
 				// back to this property of the WebComponent
 				
-				// NOTE: This is fired even if the <umb-debug> element is not visible
-				// And is useful for a browser extension to insert this DOM element invisibly but still
-				// get the information needed (as its passed on in an event fired from this callback after collection)
-
-				// Dispatch an event that anyone can listen to be notified about the data
-				// In our case it will be a browser extension content script that will listen for this
-				// And then pass the data from the browser extension content script to the background script
-				// which in turn sends it onto the browser devtools HTML panel/code
-				
 				// Massage the data into a simplier array of objects
-				this.contextData = this._contextData(contexts);
-				const data = {
-					contexts: this.contextData
-				};
-
-				// NOTE: Can't send contexts data directly - browser seems to not serialize it and says its null
-				// But a simple object works fine
-				this.dispatchEvent(new CustomEvent('umb:debug-contexts:data', { detail: data, bubbles: true }));
+				// From a function in the context-api '
+				this.contextData = contextData(contexts);
 			})
 		);
 	}
@@ -125,7 +110,7 @@ export class UmbDebugElement extends UmbLitElement {
 	}
 
 	private _openDialog() {
-		this._modalContext?.open(UMB_CONTEXT_DEBUGGER_MODAL, {
+		this._modalContext?.open(UMB_CONTEXT_DEBUGGER_MODAL_TOKEN, {
 			content: html`${this._renderContextAliases()}`,
 		});
 	}
@@ -154,53 +139,7 @@ export class UmbDebugElement extends UmbLitElement {
 			</div>
 		</div>`;
 	}
-
-	private _contextData(contexts:Map<any, any>): Array<DebugContextData> {
-		const contextData = new Array<DebugContextData>;
-		for (const [alias, instance] of contexts) {
-
-			const contextItemData:DebugContextItemData = this._contextItemData(instance);
-			contextData.push({ alias: alias, type: typeof instance, data: contextItemData });					
-		}
-		return contextData;
-	}
-
-	private _contextItemData(contextInstance:any):DebugContextItemData {
-		let  contextItemData:DebugContextItemData = { type: 'unknown' };
-
-		if (typeof contextInstance === 'function') {
-			contextItemData = { ...contextItemData, type: 'function'};
-		} else if (typeof contextInstance === 'object') {
-			contextItemData = { ...contextItemData, type: 'object' };
-
-			const methodNames = this.getClassMethodNames(contextInstance);
-			if (methodNames.length) {
-				contextItemData = { ...contextItemData, methods: methodNames };
-
-				const props = [];
-				for (const key in contextInstance) {
-					if (key.startsWith('_')) {
-						continue;
-					}
 	
-					const value = contextInstance[key];
-					if (typeof value === 'string' || typeof value === 'boolean') {
-						props.push({ key: key, value: value, type: typeof value });
-					} else {
-						props.push({ key: key, type: typeof value });
-					}
-				}
-
-				contextItemData = { ...contextItemData, properties: props };
-			}
-		}
-		else{
-			contextItemData =  {...contextItemData, type: 'primitive', value: contextInstance };
-		}
-
-		return contextItemData;
-	};
-
 	private _renderContextAliases() {
 		const contextsTemplates: TemplateResult[] = [];
 
@@ -263,47 +202,10 @@ export class UmbDebugElement extends UmbLitElement {
 
 		return instanceTemplates;
 	}
-
-	private getClassMethodNames(klass: any) {
-		const isGetter = (x: any, name: string): boolean => !!(Object.getOwnPropertyDescriptor(x, name) || {}).get;
-		const isFunction = (x: any, name: string): boolean => typeof x[name] === 'function';
-		const deepFunctions = (x: any): any =>
-			x !== Object.prototype &&
-			Object.getOwnPropertyNames(x)
-				.filter((name) => isGetter(x, name) || isFunction(x, name))
-				.concat(deepFunctions(Object.getPrototypeOf(x)) || []);
-		const distinctDeepFunctions = (klass: any) => Array.from(new Set(deepFunctions(klass)));
-
-		const allMethods =
-			typeof klass.prototype === 'undefined'
-				? distinctDeepFunctions(klass)
-				: Object.getOwnPropertyNames(klass.prototype);
-		return allMethods.filter((name: any) => name !== 'constructor' && !name.startsWith('_'));
-	}
-}
-
-
-interface DebugContextData {
-	alias: string;
-	type: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
-	data: DebugContextItemData;
-}
-
-interface DebugContextItemData {
-	type: string;
-	methods?: Array<unknown>;
-	properties?: Array<DebugContextItemPropertyData>;
-	value?: unknown;
-}
-
-interface DebugContextItemPropertyData {
-	key: string;
-	type: "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
-	value?: unknown;
 }
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-debug': UmbDebugElement;
+		'umb-debug': UmbDebug;
 	}
 }
