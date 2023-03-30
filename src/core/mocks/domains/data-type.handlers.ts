@@ -55,6 +55,15 @@ export const handlers = [
 		return res(ctx.status(200), ctx.json(dataType));
 	}),
 
+	rest.put(umbracoPath('/data-type/folder/:key'), async (req, res, ctx) => {
+		const data = await req.json();
+		if (!data) return;
+
+		umbDataTypeData.save(data);
+
+		return res(ctx.status(200));
+	}),
+
 	rest.delete(umbracoPath('/data-type/folder/:key'), async (req, res, ctx) => {
 		const key = req.params.key as string;
 		if (!key) return;
