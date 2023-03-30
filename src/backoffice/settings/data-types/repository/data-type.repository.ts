@@ -13,10 +13,12 @@ import type {
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import {
+	CreateDataTypeRequestModel,
 	CreateFolderRequestModel,
 	DataTypeResponseModel,
 	FolderReponseModel,
 	FolderTreeItemResponseModel,
+	UpdateDataTypeRequestModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 import { UmbFolderRepository } from 'libs/repository/folder-repository.interface';
@@ -32,8 +34,8 @@ export class UmbDataTypeRepository
 	#host: UmbControllerHostElement;
 
 	#treeSource: UmbTreeDataSource;
-	#detailSource: UmbDataSource<DataTypeResponseModel>;
-	#folderSource: UmbFolderDataSource<CreateFolderRequestModel, FolderReponseModel>;
+	#detailSource: UmbDataSource<CreateDataTypeRequestModel, UpdateDataTypeRequestModel, DataTypeResponseModel>;
+	#folderSource: UmbFolderDataSource;
 
 	#detailStore?: UmbDataTypeStore;
 	#treeStore?: UmbDataTypeTreeStore;
@@ -142,37 +144,32 @@ export class UmbDataTypeRepository
 	}
 
 	// Could potentially be general methods:
-
-	async create(template: ItemType) {
-		if (!template || !template.key) {
-			throw new Error('Template is missing');
-		}
+	async create(dataType: ItemType) {
+		if (!dataType) throw new Error('Data Type is missing');
+		if (!dataType.key) throw new Error('Data Type key is missing');
 
 		await this.#init;
 
-		const { error } = await this.#detailSource.insert(template);
+		const { error } = await this.#detailSource.insert(dataType);
 
 		if (!error) {
-			const notification = { data: { message: `Document created` } };
+			const notification = { data: { message: `Data Type created` } };
 			this.#notificationContext?.peek('positive', notification);
-		}
 
-		// TODO: we currently don't use the detail store for anything.
-		// Consider to look up the data before fetching from the server
-		this.#detailStore?.append(template);
-		// TODO: Update tree store with the new item? or ask tree to request the new item?
+			this.#detailStore?.append(dataType);
+			this.#treeStore?.appendItems([dataType]);
+		}
 
 		return { error };
 	}
 
-	async save(item: ItemType) {
-		if (!item || !item.key) {
-			throw new Error('Data Type is missing');
-		}
+	async save(dataType: ItemType) {
+		if (!dataType) throw new Error('Data Type is missing');
+		if (!dataType.key) throw new Error('Data Type key is missing');
 
 		await this.#init;
 
-		const { error } = await this.#detailSource.update(item);
+		const { error } = await this.#detailSource.update(dataType.key, dataType);
 
 		if (!error) {
 			const notification = { data: { message: `Document saved` } };
@@ -182,8 +179,8 @@ export class UmbDataTypeRepository
 		// TODO: we currently don't use the detail store for anything.
 		// Consider to look up the data before fetching from the server
 		// Consider notify a workspace if a template is updated in the store while someone is editing it.
-		this.#detailStore?.append(item);
-		this.#treeStore?.updateItem(item.key, { name: item.name });
+		this.#detailStore?.append(dataType);
+		this.#treeStore?.updateItem(dataType.key, { name: dataType.name });
 		// TODO: would be nice to align the stores on methods/methodNames.
 
 		return { error };
@@ -257,13 +254,14 @@ export class UmbDataTypeRepository
 		return { error };
 	}
 
-	async renameFolder(key: string) {
+	async updateFolder(key: string, folder: CreateFolderRequestModel) {
 		if (!key) throw new Error('Key is missing');
+		if (!folder) throw new Error('Folder data is missing');
 
-		const { error } = await this.#folderSource.delete(key);
+		const { error } = await this.#folderSource.update(key, folder);
 
 		if (!error) {
-			this.#treeStore?.removeItem(key);
+			this.#treeStore?.updateItem(key, { name: folder.name });
 		}
 
 		return { error };

@@ -16,7 +16,10 @@ export interface UmbFolderRepository {
 		error?: ProblemDetailsModel;
 	}>;
 
-	updateFolder(unique: string): Promise<{
+	updateFolder(
+		unique: string,
+		folder: UpdateFolderReponseModel
+	): Promise<{
 		data?: UpdateFolderReponseModel;
 		error?: ProblemDetailsModel;
 	}>;
