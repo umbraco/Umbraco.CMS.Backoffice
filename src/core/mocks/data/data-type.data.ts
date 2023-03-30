@@ -623,7 +623,7 @@ class UmbDataTypeData extends UmbEntityData<DataTypeResponseModel | FolderTreeIt
 	}
 
 	createFolder(folder: CreateFolderRequestModel & { key: string | undefined }) {
-		const newFolder = {
+		const newFolder: FolderTreeItemResponseModel = {
 			name: folder.name,
 			key: folder.key,
 			parentKey: folder.parentKey,
@@ -634,6 +634,14 @@ class UmbDataTypeData extends UmbEntityData<DataTypeResponseModel | FolderTreeIt
 		};
 
 		this.data.push(newFolder);
+	}
+
+	// TODO: this could be reused across other types that support folders
+	deleteFolder(key: string) {
+		const item = this.getByKey(key) as FolderTreeItemResponseModel;
+		if (!item) throw new Error(`Item with key ${key} not found`);
+		if (!item.isFolder) throw new Error(`Item with key ${key} is not a folder`);
+		this.data = this.data.filter((item) => item.key !== key);
 	}
 }
 

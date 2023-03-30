@@ -1,45 +1,10 @@
 import { rest } from 'msw';
 import { umbDataTypeData } from '../data/data-type.data';
 import { umbracoPath } from '@umbraco-cms/backoffice/utils';
+import { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
 
 // TODO: add schema
 export const handlers = [
-	rest.delete<string>(umbracoPath('/data-type/:key'), async (req, res, ctx) => {
-		const key = req.params.key as string;
-		if (!key) return;
-
-		umbDataTypeData.delete([key]);
-
-		return res(ctx.status(200));
-	}),
-
-	rest.get(umbracoPath('/data-type/:key'), (req, res, ctx) => {
-		const key = req.params.key as string;
-		if (!key) return;
-
-		const dataType = umbDataTypeData.getByKey(key);
-
-		return res(ctx.status(200), ctx.json(dataType));
-	}),
-
-	rest.post(umbracoPath('/data-type/:key'), async (req, res, ctx) => {
-		const data = await req.json();
-		if (!data) return;
-
-		const saved = umbDataTypeData.save(data);
-
-		return res(ctx.status(200), ctx.json(saved));
-	}),
-
-	rest.put(umbracoPath('/data-type/:key'), async (req, res, ctx) => {
-		const data = await req.json();
-		if (!data) return;
-
-		const saved = umbDataTypeData.save(data);
-
-		return res(ctx.status(200), ctx.json(saved));
-	}),
-
 	// TREE
 	rest.get(umbracoPath('/tree/data-type/root'), (req, res, ctx) => {
 		const rootItems = umbDataTypeData.getTreeRoot();
@@ -75,9 +40,73 @@ export const handlers = [
 	rest.post(umbracoPath('/data-type/folder'), async (req, res, ctx) => {
 		const data = await req.json();
 		if (!data) return;
-		debugger;
 
 		umbDataTypeData.createFolder(data);
+
+		return res(ctx.status(200));
+	}),
+
+	rest.get(umbracoPath('/data-type/folder/:key'), (req, res, ctx) => {
+		const key = req.params.key as string;
+		if (!key) return;
+
+		const dataType = umbDataTypeData.getByKey(key);
+
+		return res(ctx.status(200), ctx.json(dataType));
+	}),
+
+	rest.delete(umbracoPath('/data-type/folder/:key'), async (req, res, ctx) => {
+		const key = req.params.key as string;
+		if (!key) return;
+
+		try {
+			umbDataTypeData.deleteFolder(key);
+			return res(ctx.status(200));
+		} catch (error) {
+			return res(
+				ctx.status(404),
+				ctx.json<ProblemDetailsModel>({
+					status: 404,
+					type: 'error',
+					detail: 'Not Found',
+				})
+			);
+		}
+	}),
+
+	// Details
+	rest.post(umbracoPath('/data-type'), async (req, res, ctx) => {
+		const data = await req.json();
+		if (!data) return;
+
+		const saved = umbDataTypeData.save(data);
+
+		return res(ctx.status(200), ctx.json(saved));
+	}),
+
+	rest.get(umbracoPath('/data-type/:key'), (req, res, ctx) => {
+		const key = req.params.key as string;
+		if (!key) return;
+
+		const dataType = umbDataTypeData.getByKey(key);
+
+		return res(ctx.status(200), ctx.json(dataType));
+	}),
+
+	rest.put(umbracoPath('/data-type/:key'), async (req, res, ctx) => {
+		const data = await req.json();
+		if (!data) return;
+
+		const saved = umbDataTypeData.save(data);
+
+		return res(ctx.status(200), ctx.json(saved));
+	}),
+
+	rest.delete<string>(umbracoPath('/data-type/:key'), async (req, res, ctx) => {
+		const key = req.params.key as string;
+		if (!key) return;
+
+		umbDataTypeData.delete([key]);
 
 		return res(ctx.status(200));
 	}),

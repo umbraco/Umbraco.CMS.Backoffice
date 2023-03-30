@@ -17,6 +17,7 @@ import {
 	DataTypeResponseModel,
 	FolderReponseModel,
 	FolderTreeItemResponseModel,
+	ProblemDetailsModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 import { UmbFolderRepository } from 'libs/repository/folder-repository.interface';
@@ -243,6 +244,18 @@ export class UmbDataTypeRepository
 			};
 
 			this.#treeStore?.appendItems([treeItem]);
+		}
+
+		return { error };
+	}
+
+	async deleteFolder(key: string) {
+		if (!key) throw new Error('Key is missing');
+
+		const { error } = await this.#folderSource.delete(key);
+
+		if (!error) {
+			this.#treeStore?.removeItem(key);
 		}
 
 		return { error };

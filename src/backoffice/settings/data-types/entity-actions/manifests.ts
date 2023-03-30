@@ -1,6 +1,6 @@
 import { DATA_TYPE_REPOSITORY_ALIAS } from '../repository/manifests';
 import { manifests as createManifests } from './create/manifests';
-import { UmbDeleteEntityAction } from '@umbraco-cms/backoffice/entity-action';
+import { UmbDeleteEntityAction, UmbDeleteFolderEntityAction } from '@umbraco-cms/backoffice/entity-action';
 import { ManifestEntityAction } from '@umbraco-cms/backoffice/extensions-registry';
 
 const entityActions: Array<ManifestEntityAction> = [
@@ -11,9 +11,24 @@ const entityActions: Array<ManifestEntityAction> = [
 		weight: 900,
 		meta: {
 			icon: 'umb:trash',
-			label: 'Delete',
+			label: 'Delete...',
 			repositoryAlias: DATA_TYPE_REPOSITORY_ALIAS,
 			api: UmbDeleteEntityAction,
+		},
+		conditions: {
+			entityType: 'data-type',
+		},
+	},
+	{
+		type: 'entityAction',
+		alias: 'Umb.EntityAction.DataType.DeleteFolder',
+		name: 'Delete Data Type Folder Entity Action',
+		weight: 800,
+		meta: {
+			icon: 'umb:trash',
+			label: 'Delete Folder...',
+			repositoryAlias: DATA_TYPE_REPOSITORY_ALIAS,
+			api: UmbDeleteFolderEntityAction,
 		},
 		conditions: {
 			entityType: 'data-type',
