@@ -12,13 +12,8 @@ export class UmbDocumentWorkspaceViewEditTabElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
-			:host {
-				display: block;
+			uui-box {
 				margin: var(--uui-size-layout-1);
-			}
-
-			uui-box + uui-box {
-				margin-top: var(--uui-size-layout-1);
 			}
 		`,
 	];
