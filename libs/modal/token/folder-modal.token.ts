@@ -1,5 +1,5 @@
 import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
-import { FolderReponseModel } from 'libs/backend-api/src';
+import { FolderReponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 export interface UmbFolderModalData {
 	repositoryAlias: string;
