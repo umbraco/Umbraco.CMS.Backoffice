@@ -6,7 +6,7 @@ import type { DocumentTypeResponseModel } from '@umbraco-cms/backoffice/backend-
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 
 type EntityType = DocumentTypeResponseModel;
-export class UmbWorkspaceDocumentTypeContext
+export class UmbDocumentTypeWorkspaceContext
 	extends UmbWorkspaceContext<UmbDocumentTypeRepository, EntityType>
 	implements UmbEntityWorkspaceContextInterface<EntityType | undefined>
 {
@@ -25,7 +25,7 @@ export class UmbWorkspaceDocumentTypeContext
 	}
 
 	public setPropertyValue(alias: string, value: unknown) {
-		throw new Error('setPropertyValue is not implemented for UmbWorkspaceDocumentTypeContext');
+		throw new Error('setPropertyValue is not implemented for UmbDocumentTypeWorkspaceContext');
 	}
 
 	getData() {

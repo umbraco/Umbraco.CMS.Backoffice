@@ -2,7 +2,7 @@ import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { UmbWorkspaceDocumentTypeContext } from './document-type-workspace.context';
+import { UmbDocumentTypeWorkspaceContext } from './document-type-workspace.context';
 import type { DocumentTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN, UMB_ICON_PICKER_MODAL } from '@umbraco-cms/backoffice/modal';
@@ -48,7 +48,7 @@ export class UmbDocumentTypeWorkspaceEditorElement extends UmbLitElement {
 		name: 'umb:document-dashed-line',
 	};
 
-	#workspaceContext?: UmbWorkspaceDocumentTypeContext;
+	#workspaceContext?: UmbDocumentTypeWorkspaceContext;
 
 	//@state()
 	//private _documentType?: DocumentTypeResponseModel;
@@ -64,7 +64,7 @@ export class UmbDocumentTypeWorkspaceEditorElement extends UmbLitElement {
 		super();
 
 		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (instance) => {
-			this.#workspaceContext = instance as UmbWorkspaceDocumentTypeContext;
+			this.#workspaceContext = instance as UmbDocumentTypeWorkspaceContext;
 			this.#observeDocumentType();
 		});
 

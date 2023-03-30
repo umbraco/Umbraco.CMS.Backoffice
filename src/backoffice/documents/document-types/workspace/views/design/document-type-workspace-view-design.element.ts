@@ -2,7 +2,7 @@ import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { UmbWorkspaceDocumentTypeContext } from '../../document-type-workspace.context';
+import { UmbDocumentTypeWorkspaceContext } from '../../document-type-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { DocumentTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import '../../../../../shared/property-creator/property-creator.element.ts';
@@ -78,7 +78,7 @@ export class UmbDocumentTypeWorkspaceViewDesignElement extends UmbLitElement {
 		`,
 	];
 
-	private _workspaceContext?: UmbWorkspaceDocumentTypeContext;
+	private _workspaceContext?: UmbDocumentTypeWorkspaceContext;
 
 	@state()
 	private _tabs: any[] = [];
@@ -88,7 +88,7 @@ export class UmbDocumentTypeWorkspaceViewDesignElement extends UmbLitElement {
 
 		// TODO: Figure out if this is the best way to consume the context or if it can be strongly typed with an UmbContextToken
 		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (documentTypeContext) => {
-			this._workspaceContext = documentTypeContext as UmbWorkspaceDocumentTypeContext;
+			this._workspaceContext = documentTypeContext as UmbDocumentTypeWorkspaceContext;
 			this._observeDocumentType();
 		});
 	}
