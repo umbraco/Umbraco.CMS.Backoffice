@@ -16,13 +16,19 @@ import {
 	CreateFolderRequestModel,
 	DataTypeResponseModel,
 	FolderReponseModel,
+	FolderTreeItemResponseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
+import { UmbFolderRepository } from 'libs/repository/folder-repository.interface';
 
 type ItemType = DataTypeResponseModel;
 type TreeItemType = any;
+
 export class UmbDataTypeRepository
-	implements UmbTreeRepository<TreeItemType>, UmbDetailRepository<ItemType>, UmbFolderDataSource<FolderReponseModel>
+	implements
+		UmbTreeRepository<TreeItemType>,
+		UmbDetailRepository<ItemType>,
+		UmbFolderRepository<CreateFolderRequestModel, FolderReponseModel>
 {
 	#init!: Promise<unknown>;
 
@@ -210,11 +216,35 @@ export class UmbDataTypeRepository
 	}
 
 	// folder
-	async createFolder(folder: CreateFolderRequestModel) {
-		if (!folder) throw new Error('folder is missing');
+	async createFolderScaffold(parentKey: string | null) {
+		if (parentKey === undefined) throw new Error('Parent key is missing');
+		return this.#folderSource.createScaffold(parentKey);
+	}
+
+	// TODO: temp create type until backend is ready. Remove the key addition when new types are generated.
+	async createFolder(folderRequest: CreateFolderRequestModel & { key?: string | undefined }) {
+		if (!folderRequest) throw new Error('folder request is missing');
 		await this.#init;
 
-		const { data, error } = await this.#folderSource.insert(folder);
-		debugger;
+		const { error } = await this.#folderSource.insert(folderRequest);
+
+		// TODO: We need to push a new item to the tree store to update the tree. How do we want to create the tree items?
+		if (!error) {
+			const treeItem: FolderTreeItemResponseModel = {
+				$type: 'FolderTreeItemResponseModel',
+				parentKey: folderRequest.parentKey,
+				name: folderRequest.name,
+				key: folderRequest.key,
+				isFolder: true,
+				isContainer: false,
+				type: 'data-type',
+				icon: 'umb:folder',
+				hasChildren: false,
+			};
+
+			this.#treeStore?.appendItems([treeItem]);
+		}
+
+		return { error };
 	}
 }

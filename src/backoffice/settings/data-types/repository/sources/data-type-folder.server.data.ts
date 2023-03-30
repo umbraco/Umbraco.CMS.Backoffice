@@ -1,6 +1,7 @@
+import { v4 as uuidv4 } from 'uuid';
 import { UmbFolderDataSource } from '@umbraco-cms/backoffice/repository';
 import { DataTypeResource, FolderReponseModel, CreateFolderRequestModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 /**
@@ -12,15 +13,24 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 export class UmbDataTypeFolderServerDataSource
 	implements UmbFolderDataSource<CreateFolderRequestModel, FolderReponseModel>
 {
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
 	/**
 	 * Creates an instance of UmbDataTypeFolderServerDataSource.
-	 * @param {UmbControllerHostInterface} host
+	 * @param {UmbControllerHostElement} host
 	 * @memberof UmbDataTypeFolderServerDataSource
 	 */
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
+	}
+
+	async createScaffold(parentKey: string | null) {
+		return {
+			$type: 'FolderReponseModel', // TODO: check if we can remove this in the typescript generator
+			name: '',
+			key: uuidv4(),
+			parentKey,
+		};
 	}
 
 	/**

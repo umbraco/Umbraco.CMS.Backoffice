@@ -8,17 +8,17 @@ export interface UmbFolderRepository<
 	RequestType extends CreateFolderRequestModel,
 	ResponseType extends FolderReponseModel
 > {
-	createFolder(folder: RequestType): Promise<{
+	createFolder(folderRequest: RequestType): Promise<{
 		data?: string;
 		error?: ProblemDetailsModel;
 	}>;
 
-	requestFolder(unique: string): Promise<{
+	requestFolder?(unique: string): Promise<{
 		data?: ResponseType;
 		error?: ProblemDetailsModel;
 	}>;
 
-	deleteFolder(key: string): Promise<{
+	deleteFolder?(key: string): Promise<{
 		error?: ProblemDetailsModel;
 	}>;
 }

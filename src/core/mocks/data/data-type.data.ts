@@ -1,6 +1,10 @@
 import { UmbEntityData } from './entity.data';
 import { createFolderTreeItem } from './utils';
-import type { FolderTreeItemResponseModel, DataTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import type {
+	FolderTreeItemResponseModel,
+	DataTypeResponseModel,
+	CreateFolderRequestModel,
+} from '@umbraco-cms/backoffice/backend-api';
 
 // TODO: investigate why we don't get an entity type as part of the DataTypeModel
 export const data: Array<DataTypeResponseModel & { type: 'data-type' }> = [
@@ -608,6 +612,20 @@ class UmbDataTypeData extends UmbEntityData<DataTypeResponseModel> {
 	getTreeItem(keys: Array<string>): Array<FolderTreeItemResponseModel> {
 		const items = this.data.filter((item) => keys.includes(item.key ?? ''));
 		return items.map((item) => createFolderTreeItem(item));
+	}
+
+	createFolder(folder: CreateFolderRequestModel & { key: string | undefined }) {
+		const newFolder = {
+			name: folder.name,
+			key: folder.key,
+			parentKey: folder.parentKey,
+			$type: 'data-type',
+			type: 'data-type',
+			isFolder: true,
+			isContainer: false,
+		};
+
+		this.data.push(newFolder);
 	}
 }
 

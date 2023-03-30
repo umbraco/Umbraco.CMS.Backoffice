@@ -1,7 +1,6 @@
 import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, query } from 'lit/decorators.js';
-import { v4 as uuidv4 } from 'uuid';
 import { UmbDataTypeRepository } from '../../../repository/data-type.repository';
 import { UmbModalBaseElement } from '@umbraco-cms/internal/modal';
 
@@ -18,6 +17,10 @@ export class UmbCreateDataTypeFolderModalElement extends UmbModalBaseElement {
 
 	#repository = new UmbDataTypeRepository(this);
 
+	connectedCallback() {
+		super.connectedCallback();
+	}
+
 	@query('#dataTypeFolderForm')
 	private _formElement?: HTMLFormElement;
 
@@ -30,28 +33,27 @@ export class UmbCreateDataTypeFolderModalElement extends UmbModalBaseElement {
 	}
 
 	async #onSubmit(event: SubmitEvent) {
-		console.log('onSubmit', event);
 		event.preventDefault();
-		this._formElement?.checkValidity();
+
+		const isValid = this._formElement?.checkValidity();
+		if (!isValid) return;
+
 		const formData = new FormData(this._formElement);
-		console.log(formData);
 		const folderName = formData.get('name') as string;
-		console.log(folderName);
 
-		const folder = {
-			key: uuidv4(),
-			name: folderName,
-		};
+		const folderScaffold = await this.#repository.createFolderScaffold(null);
+		folderScaffold.name = folderName;
 
-		debugger;
+		const { error } = await this.#repository.createFolder(folderScaffold);
 
-		const { data, error } = await this.#repository.createFolder(folder);
-		debugger;
+		if (!error) {
+			this.modalHandler?.submit();
+		}
 	}
 
 	render() {
 		return html`
-			<umb-body-layout headline="Create Data Type">
+			<umb-body-layout headline="Create Folder">
 				<uui-box>
 					<uui-form>
 						<form id="dataTypeFolderForm" name="data" @submit="${this.#onSubmit}">

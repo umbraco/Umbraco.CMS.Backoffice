@@ -20,7 +20,8 @@ export class UmbCreateDataTypeModalElement extends UmbModalBaseElement {
 
 	#onClick(event: PointerEvent) {
 		event.stopPropagation();
-		this.#modalContext?.open(UMB_CREATE_DATA_TYPE_FOLDER_MODAL);
+		const folderModalHandler = this.#modalContext?.open(UMB_CREATE_DATA_TYPE_FOLDER_MODAL);
+		folderModalHandler?.onSubmit().then(() => this.modalHandler?.submit());
 	}
 
 	#onCancel() {
