@@ -89,15 +89,15 @@ export class UmbPropertyEditorUIImageCropsConfigurationElement
 				<p id="empty-state-description">
 					Here you can setup predefined crops that images using this image cropper can use. This is useful if you want
 					to have specific crops for different usages of the same image.
+					<a
+						target="_blank"
+						href="https://docs.umbraco.com/umbraco-cms/fundamentals/backoffice/property-editors/built-in-umbraco-property-editors/image-cropper">
+						Learn more
+					</a>
 				</p>
 			</div>
 			<div id="empty-state-actions">
-				<uui-button @click=${this.#addCrop} look="outline" label="Add crop"></uui-button>
-				<a
-					target="_blank"
-					href="https://docs.umbraco.com/umbraco-cms/fundamentals/backoffice/property-editors/built-in-umbraco-property-editors/image-cropper">
-					Learn more
-				</a>
+				<uui-button @click=${this.#addCrop} look="placeholder" label="Add crop"></uui-button>
 			</div>
 			<p></p>
 		</div>`;
@@ -106,6 +106,10 @@ export class UmbPropertyEditorUIImageCropsConfigurationElement
 	static styles = [
 		UUITextStyles,
 		css`
+			:host {
+				display: block;
+				max-width: 500px;
+			}
 			#crops {
 				display: flex;
 				flex-direction: column;
@@ -119,11 +123,11 @@ export class UmbPropertyEditorUIImageCropsConfigurationElement
 				gap: var(--uui-size-space-4);
 				align-items: baseline;
 			}
-			#empty-state-actions a {
+			#empty-state-description a {
 				color: var(--uui-color-interactive);
 				text-decoration: none;
 			}
-			#empty-state-actions a:hover {
+			#empty-state-description a:hover {
 				color: var(--uui-color-interactive-emphasis);
 			}
 			.crop {
