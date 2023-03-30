@@ -1,13 +1,14 @@
 import { DataSourceResponse } from './data-source-response.interface';
-import { CreateFolderRequestModel, FolderReponseModel } from '@umbraco-cms/backoffice/backend-api';
+import {
+	CreateFolderRequestModel,
+	FolderReponseModel,
+	UpdateFolderReponseModel,
+} from '@umbraco-cms/backoffice/backend-api';
 
-export interface UmbFolderDataSource<
-	RequestType extends CreateFolderRequestModel,
-	ResponseType extends FolderReponseModel
-> {
-	createScaffold(parentKey: string | null): Promise<ResponseType>;
-	get(unique: string): Promise<DataSourceResponse<ResponseType>>;
-	insert(data: RequestType): Promise<DataSourceResponse<string>>;
-	//update(data: T): Promise<DataSourceResponse<T>>;
+export interface UmbFolderDataSource {
+	createScaffold(parentKey: string | null): Promise<FolderReponseModel>;
+	get(unique: string): Promise<DataSourceResponse<FolderReponseModel>>;
+	insert(data: CreateFolderRequestModel): Promise<DataSourceResponse<string>>;
+	update(unique: string, data: CreateFolderRequestModel): Promise<DataSourceResponse<UpdateFolderReponseModel>>;
 	delete(unique: string): Promise<DataSourceResponse>;
 }

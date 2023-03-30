@@ -17,7 +17,6 @@ import {
 	DataTypeResponseModel,
 	FolderReponseModel,
 	FolderTreeItemResponseModel,
-	ProblemDetailsModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 import { UmbFolderRepository } from 'libs/repository/folder-repository.interface';
@@ -26,10 +25,7 @@ type ItemType = DataTypeResponseModel;
 type TreeItemType = any;
 
 export class UmbDataTypeRepository
-	implements
-		UmbTreeRepository<TreeItemType>,
-		UmbDetailRepository<ItemType>,
-		UmbFolderRepository<CreateFolderRequestModel, FolderReponseModel>
+	implements UmbTreeRepository<TreeItemType>, UmbDetailRepository<ItemType>, UmbFolderRepository
 {
 	#init!: Promise<unknown>;
 
@@ -250,6 +246,18 @@ export class UmbDataTypeRepository
 	}
 
 	async deleteFolder(key: string) {
+		if (!key) throw new Error('Key is missing');
+
+		const { error } = await this.#folderSource.delete(key);
+
+		if (!error) {
+			this.#treeStore?.removeItem(key);
+		}
+
+		return { error };
+	}
+
+	async renameFolder(key: string) {
 		if (!key) throw new Error('Key is missing');
 
 		const { error } = await this.#folderSource.delete(key);

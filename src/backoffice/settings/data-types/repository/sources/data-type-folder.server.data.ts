@@ -10,9 +10,7 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
  * @class UmbDataTypeFolderServerDataSource
  * @implements {RepositoryDetailDataSource}
  */
-export class UmbDataTypeFolderServerDataSource
-	implements UmbFolderDataSource<CreateFolderRequestModel, FolderReponseModel>
-{
+export class UmbDataTypeFolderServerDataSource implements UmbFolderDataSource {
 	#host: UmbControllerHostElement;
 
 	/**
@@ -56,10 +54,28 @@ export class UmbDataTypeFolderServerDataSource
 	 * @memberof UmbDataTypeFolderServerDataSource
 	 */
 	async insert(folder: CreateFolderRequestModel) {
-		if (!folder) throw new Error('folder is missing');
+		if (!folder) throw new Error('Folder is missing');
 		return tryExecuteAndNotify(
 			this.#host,
 			DataTypeResource.postDataTypeFolder({
+				requestBody: folder,
+			})
+		);
+	}
+
+	/**
+	 * Updates a Data Type folder on the server
+	 * @param {folder} folder
+	 * @return {*}
+	 * @memberof UmbDataTypeFolderServerDataSource
+	 */
+	async update(key: string, folder: CreateFolderRequestModel) {
+		if (!key) throw new Error('Key is missing');
+		if (!key) throw new Error('Folder data is missing');
+		return tryExecuteAndNotify(
+			this.#host,
+			DataTypeResource.putDataTypeFolderByKey({
+				key,
 				requestBody: folder,
 			})
 		);
