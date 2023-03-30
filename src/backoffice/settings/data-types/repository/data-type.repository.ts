@@ -21,7 +21,7 @@ import {
 	UpdateDataTypeRequestModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
-import { UmbFolderRepository } from 'libs/repository/folder-repository.interface';
+import { UmbFolderRepository } from '@umbraco-cms/backoffice/repository';
 
 type ItemType = DataTypeResponseModel;
 type TreeItemType = any;

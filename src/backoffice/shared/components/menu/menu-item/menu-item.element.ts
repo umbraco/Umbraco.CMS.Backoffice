@@ -10,7 +10,7 @@ export interface UmbMenuItemExtensionElement {
 }
 
 @customElement('umb-menu-item')
-export class UmbMenuItem extends UmbLitElement implements UmbMenuItemExtensionElement {
+export class UmbMenuItemElement extends UmbLitElement implements UmbMenuItemExtensionElement {
 	static styles = [UUITextStyles];
 
 	@property({ type: Object, attribute: false })
@@ -26,6 +26,6 @@ export class UmbMenuItem extends UmbLitElement implements UmbMenuItemExtensionEl
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-menu-item': UmbMenuItem;
+		'umb-menu-item': UmbMenuItemElement;
 	}
 }

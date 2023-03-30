@@ -3,7 +3,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement } from 'lit/decorators.js';
 import { UMB_CREATE_DATA_TYPE_FOLDER_MODAL } from '.';
 import { UmbModalBaseElement } from '@umbraco-cms/internal/modal';
-import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from 'libs/modal/modal.context';
+import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
 
 @customElement('umb-create-data-type-modal')
 export class UmbCreateDataTypeModalElement extends UmbModalBaseElement {

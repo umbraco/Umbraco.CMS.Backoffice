@@ -10,7 +10,7 @@ import {
 } from '../../section/section-sidebar/section-sidebar.context';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import { ManifestEntityAction } from 'libs/extensions-registry/entity-action.models';
+import { ManifestEntityAction } from '@umbraco-cms/backoffice/extensions-registry';
 import { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 
 @customElement('umb-menu-item-base')
