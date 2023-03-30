@@ -64,7 +64,7 @@ export class UmbDocumentWorkspaceViewEditElement extends UmbLitElement {
 		);
 
 		/*
-		Impleent this, when it becomes an option to have properties directly in the root of the document.
+		Implement this, when it becomes an option to have properties directly in the root of the document.
 		this.observe(
 			this._workspaceContext.rootPropertyStructures(),
 			(rootPropertyStructure) => {
@@ -81,7 +81,7 @@ export class UmbDocumentWorkspaceViewEditElement extends UmbLitElement {
 				this._hasRootGroups = hasRootGroups;
 				this._createRoutes();
 			},
-			'_observeTabs'
+			'_observeGroups'
 		);
 	}
 
