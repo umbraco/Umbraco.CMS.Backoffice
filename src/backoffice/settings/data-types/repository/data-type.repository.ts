@@ -172,7 +172,7 @@ export class UmbDataTypeRepository
 		const { error } = await this.#detailSource.update(dataType.key, dataType);
 
 		if (!error) {
-			const notification = { data: { message: `Document saved` } };
+			const notification = { data: { message: `Data Type saved` } };
 			this.#notificationContext?.peek('positive', notification);
 		}
 
