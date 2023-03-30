@@ -2,7 +2,7 @@ import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { UmbWorkspaceContainerManager } from '../../../../../shared/components/workspace/workspace-context/workspace-container-manager.class';
+import { UmbWorkspaceContainerStructureHelper } from '../../../../../shared/components/workspace/workspace-context/workspace-container-structure-helper.class';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { PropertyTypeContainerResponseModelBaseModel } from '@umbraco-cms/backoffice/backend-api';
 import './document-workspace-view-edit-properties.element';
@@ -22,13 +22,13 @@ export class UmbDocumentWorkspaceViewEditTabElement extends UmbLitElement {
 
 	@property({ type: String })
 	public get tabName(): string | undefined {
-		return this._structureManager.getContainerName();
+		return this._structureManager.getName();
 	}
 	public set tabName(value: string | undefined) {
 		if (value === this._tabName) return;
 		const oldValue = this._tabName;
 		this._tabName = value;
-		this._structureManager.setContainerName(value);
+		this._structureManager.setName(value);
 		this.requestUpdate('tabName', oldValue);
 	}
 
@@ -40,7 +40,7 @@ export class UmbDocumentWorkspaceViewEditTabElement extends UmbLitElement {
 		this._structureManager.setIsRoot(value);
 	}
 
-	_structureManager = new UmbWorkspaceContainerManager(this);
+	_structureManager = new UmbWorkspaceContainerStructureHelper(this);
 
 	@state()
 	_hasProperties = false;
@@ -51,7 +51,7 @@ export class UmbDocumentWorkspaceViewEditTabElement extends UmbLitElement {
 	constructor() {
 		super();
 
-		this.observe(this._structureManager.groups, (groups) => {
+		this.observe(this._structureManager.containers, (groups) => {
 			this._groups = groups;
 		});
 		this.observe(this._structureManager.hasProperties, (hasProperties) => {

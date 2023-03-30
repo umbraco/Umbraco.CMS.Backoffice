@@ -3,6 +3,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { UmbDocumentWorkspaceContext } from '../../document-workspace.context';
+import { UmbWorkspaceContainerStructureHelper } from '../../../../../shared/components/workspace/workspace-context/workspace-container-structure-helper.class';
 import type { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent, IRoute } from '@umbraco-cms/internal/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { PropertyTypeContainerResponseModelBaseModel } from '@umbraco-cms/backoffice/backend-api';
@@ -37,43 +38,28 @@ export class UmbDocumentWorkspaceViewEditElement extends UmbLitElement {
 
 	private _workspaceContext?: UmbDocumentWorkspaceContext;
 
+	private _tabsStructureHelper = new UmbWorkspaceContainerStructureHelper(this);
+
 	constructor() {
 		super();
 
+		this._tabsStructureHelper.setIsRoot(true);
+		this._tabsStructureHelper.setContainerChildType('Tab');
+		this.observe(this._tabsStructureHelper.containers, (tabs) => {
+			this._tabs = tabs;
+			this._createRoutes();
+		});
+
+		// _hasRootProperties can be gotten via _tabsStructureHelper.hasProperties. But we do not support root properties currently.
+
 		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (workspaceContext) => {
 			this._workspaceContext = workspaceContext as UmbDocumentWorkspaceContext;
-			this._observeTabs();
+			this._observeRootGroups();
 		});
 	}
 
-	private _observeTabs() {
+	private _observeRootGroups() {
 		if (!this._workspaceContext) return;
-
-		this.observe(
-			this._workspaceContext.structure.rootContainers('Tab'),
-			(tabs) => {
-				tabs.forEach((tab) => {
-					// Only add each tab name once, as our containers merge on name:
-					if (!this._tabs.find((x) => x.name === tab.name || '')) {
-						this._tabs.push(tab);
-					}
-				});
-				this._createRoutes();
-			},
-			'_observeTabs'
-		);
-
-		/*
-		Implement this, when it becomes an option to have properties directly in the root of the document.
-		this.observe(
-			this._workspaceContext.rootPropertyStructures(),
-			(rootPropertyStructure) => {
-				this._hasRootProperties = rootPropertyStructure.length > 0;
-				this._createRoutes();
-			},
-			'_observeTabs'
-		);
-		*/
 
 		this.observe(
 			this._workspaceContext.structure.hasRootContainers('Group'),

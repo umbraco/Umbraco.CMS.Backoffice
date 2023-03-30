@@ -1,18 +1,18 @@
 import { UmbDocumentWorkspaceContext } from '../../../../documents/documents/workspace/document-workspace.context';
-import { PropertyContainerTypes } from './workspace-property-structure-manager.class';
+import { PropertyContainerTypes } from './workspace-structure-manager.class';
 import { DocumentTypePropertyTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController, UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 import { ArrayState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 
-export class UmbWorkspaceContainerPropertiesManager {
+export class UmbWorkspacePropertyStructureManager {
 	#host: UmbControllerHostElement;
 
 	#workspaceContext?: UmbDocumentWorkspaceContext;
 
+	private _containerType?: PropertyContainerTypes;
 	private _isRoot?: boolean;
 	private _containerName?: string;
-	private _containerType?: PropertyContainerTypes;
 
 	#propertyStructure = new ArrayState<DocumentTypePropertyTypeResponseModel>([], (x) => x.key);
 	readonly propertyStructure = this.#propertyStructure.asObservable();
@@ -23,6 +23,15 @@ export class UmbWorkspaceContainerPropertiesManager {
 			this.#workspaceContext = context as UmbDocumentWorkspaceContext;
 			this._observeGroupContainers();
 		});
+	}
+
+	public setContainerType(value?: PropertyContainerTypes) {
+		if (this._containerType === value) return;
+		this._containerType = value;
+		this._observeGroupContainers();
+	}
+	public getContainerType() {
+		return this._containerType;
 	}
 
 	public setContainerName(value?: string) {
@@ -41,15 +50,6 @@ export class UmbWorkspaceContainerPropertiesManager {
 	}
 	public getIsRoot() {
 		return this._isRoot;
-	}
-
-	public setContainerType(value?: PropertyContainerTypes) {
-		if (this._containerType === value) return;
-		this._containerType = value;
-		this._observeGroupContainers();
-	}
-	public getContainerType() {
-		return this._containerType;
 	}
 
 	private _observeGroupContainers() {
