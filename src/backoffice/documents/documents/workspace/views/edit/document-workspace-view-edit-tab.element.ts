@@ -43,10 +43,10 @@ export class UmbDocumentWorkspaceViewEditTabElement extends UmbLitElement {
 	_groupStructureHelper = new UmbWorkspaceContainerStructureHelper(this);
 
 	@state()
-	_hasProperties = false;
+	_groups: Array<PropertyTypeContainerResponseModelBaseModel> = [];
 
 	@state()
-	_groups: Array<PropertyTypeContainerResponseModelBaseModel> = [];
+	_hasProperties = false;
 
 	constructor() {
 		super();
