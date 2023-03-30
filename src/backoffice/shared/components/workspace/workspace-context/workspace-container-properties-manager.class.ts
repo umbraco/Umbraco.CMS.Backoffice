@@ -1,9 +1,6 @@
 import { UmbDocumentWorkspaceContext } from '../../../../documents/documents/workspace/document-workspace.context';
 import { PropertyContainerTypes } from './workspace-property-structure-manager.class';
-import {
-	DocumentTypePropertyTypeResponseModel,
-	PropertyTypeContainerResponseModelBaseModel,
-} from '@umbraco-cms/backoffice/backend-api';
+import { DocumentTypePropertyTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController, UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 import { ArrayState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
@@ -13,6 +10,7 @@ export class UmbWorkspaceContainerPropertiesManager {
 
 	#workspaceContext?: UmbDocumentWorkspaceContext;
 
+	private _isRoot?: boolean;
 	private _containerName?: string;
 	private _containerType?: PropertyContainerTypes;
 
@@ -36,6 +34,15 @@ export class UmbWorkspaceContainerPropertiesManager {
 		return this._containerName;
 	}
 
+	public setIsRoot(value: boolean) {
+		if (this._isRoot === value) return;
+		this._isRoot = value;
+		this._observeGroupContainers();
+	}
+	public getIsRoot() {
+		return this._isRoot;
+	}
+
 	public setContainerType(value?: PropertyContainerTypes) {
 		if (this._containerType === value) return;
 		this._containerType = value;
@@ -46,32 +53,31 @@ export class UmbWorkspaceContainerPropertiesManager {
 	}
 
 	private _observeGroupContainers() {
-		if (!this.#workspaceContext || !this._containerName || !this._containerType) return;
+		if (!this.#workspaceContext || !this._containerType) return;
 
-		new UmbObserverController(
-			this.#host,
-			this.#workspaceContext!.structure.containersByNameAndType(this._containerName, this._containerType),
-			(groupContainers) => {
-				groupContainers.forEach((group) => {
-					if (group.key) {
-						// Gather property aliases of this group, by group key.
-						this._observePropertyStructureOfGroup(group);
-					}
-				});
-			},
-			'_observeGroupContainers'
-		);
+		if (this._isRoot === true) {
+			this._observePropertyStructureOf(null);
+		} else if (this._containerName !== undefined) {
+			new UmbObserverController(
+				this.#host,
+				this.#workspaceContext!.structure.containersByNameAndType(this._containerName, this._containerType),
+				(groupContainers) => {
+					groupContainers.forEach((group) => this._observePropertyStructureOf(group.key));
+				},
+				'_observeGroupContainers'
+			);
+		}
 	}
 
-	private _observePropertyStructureOfGroup(group: PropertyTypeContainerResponseModelBaseModel) {
-		if (!this.#workspaceContext || !group.key) return;
+	private _observePropertyStructureOf(groupKey?: string | null) {
+		if (!this.#workspaceContext || groupKey === undefined) return;
 
 		new UmbObserverController(
 			this.#host,
-			this.#workspaceContext.structure.propertyStructuresOf(group.key),
+			this.#workspaceContext.structure.propertyStructuresOf(groupKey),
 			(properties) => {
 				// If this need to be able to remove properties, we need to clean out the ones of this group.key before inserting them:
-				const _propertyStructure = this.#propertyStructure.getValue().filter((x) => x.containerKey !== group.key);
+				const _propertyStructure = this.#propertyStructure.getValue().filter((x) => x.containerKey !== groupKey);
 
 				properties?.forEach((property) => {
 					if (!_propertyStructure.find((x) => x.alias === property.alias)) {
@@ -87,7 +93,7 @@ export class UmbWorkspaceContainerPropertiesManager {
 				// Fire update to subscribers:
 				this.#propertyStructure.next(_propertyStructure);
 			},
-			'_observePropertyStructureOfGroup' + group.key
+			'_observePropertyStructureOfGroup' + groupKey
 		);
 	}
 }
