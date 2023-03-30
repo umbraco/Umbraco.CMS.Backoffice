@@ -2,7 +2,7 @@ import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { UmbWorkspacePropertyStructureManager } from '../../../../../shared/components/workspace/workspace-context/workspace-property-structure-helper.class';
+import { UmbWorkspacePropertyStructureHelper } from '../../../../../shared/components/workspace/workspace-context/workspace-property-structure-helper.class';
 import { PropertyContainerTypes } from '../../../../../shared/components/workspace/workspace-context/workspace-structure-manager.class';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DocumentTypePropertyTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
@@ -23,21 +23,21 @@ export class UmbDocumentWorkspaceViewEditPropertiesElement extends UmbLitElement
 
 	@property({ type: String, attribute: 'container-name', reflect: false })
 	public get containerName(): string | undefined {
-		return this._propertyStructureManager.getContainerName();
+		return this._propertyStructureHelper.getContainerName();
 	}
 	public set containerName(value: string | undefined) {
-		this._propertyStructureManager.setContainerName(value);
+		this._propertyStructureHelper.setContainerName(value);
 	}
 
 	@property({ type: String, attribute: 'container-type', reflect: false })
 	public get containerType(): PropertyContainerTypes | undefined {
-		return this._propertyStructureManager.getContainerType();
+		return this._propertyStructureHelper.getContainerType();
 	}
 	public set containerType(value: PropertyContainerTypes | undefined) {
-		this._propertyStructureManager.setContainerType(value);
+		this._propertyStructureHelper.setContainerType(value);
 	}
 
-	_propertyStructureManager = new UmbWorkspacePropertyStructureManager(this);
+	_propertyStructureHelper = new UmbWorkspacePropertyStructureHelper(this);
 
 	@state()
 	_propertyStructure: Array<DocumentTypePropertyTypeResponseModel> = [];
@@ -45,7 +45,7 @@ export class UmbDocumentWorkspaceViewEditPropertiesElement extends UmbLitElement
 	constructor() {
 		super();
 
-		this.observe(this._propertyStructureManager.propertyStructure, (propertyStructure) => {
+		this.observe(this._propertyStructureHelper.propertyStructure, (propertyStructure) => {
 			this._propertyStructure = propertyStructure;
 		});
 	}

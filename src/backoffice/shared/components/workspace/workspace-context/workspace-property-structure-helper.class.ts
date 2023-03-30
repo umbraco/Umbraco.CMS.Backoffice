@@ -5,7 +5,7 @@ import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController, UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 import { ArrayState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 
-export class UmbWorkspacePropertyStructureManager {
+export class UmbWorkspacePropertyStructureHelper {
 	#host: UmbControllerHostElement;
 
 	#workspaceContext?: UmbDocumentWorkspaceContext;

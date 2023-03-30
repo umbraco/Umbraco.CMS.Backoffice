@@ -22,25 +22,25 @@ export class UmbDocumentWorkspaceViewEditTabElement extends UmbLitElement {
 
 	@property({ type: String })
 	public get tabName(): string | undefined {
-		return this._structureManager.getName();
+		return this._groupStructureHelper.getName();
 	}
 	public set tabName(value: string | undefined) {
 		if (value === this._tabName) return;
 		const oldValue = this._tabName;
 		this._tabName = value;
-		this._structureManager.setName(value);
+		this._groupStructureHelper.setName(value);
 		this.requestUpdate('tabName', oldValue);
 	}
 
 	@property({ type: Boolean })
 	public get noTabName(): boolean {
-		return this._structureManager.getIsRoot();
+		return this._groupStructureHelper.getIsRoot();
 	}
 	public set noTabName(value: boolean) {
-		this._structureManager.setIsRoot(value);
+		this._groupStructureHelper.setIsRoot(value);
 	}
 
-	_structureManager = new UmbWorkspaceContainerStructureHelper(this);
+	_groupStructureHelper = new UmbWorkspaceContainerStructureHelper(this);
 
 	@state()
 	_hasProperties = false;
@@ -51,10 +51,10 @@ export class UmbDocumentWorkspaceViewEditTabElement extends UmbLitElement {
 	constructor() {
 		super();
 
-		this.observe(this._structureManager.containers, (groups) => {
+		this.observe(this._groupStructureHelper.containers, (groups) => {
 			this._groups = groups;
 		});
-		this.observe(this._structureManager.hasProperties, (hasProperties) => {
+		this.observe(this._groupStructureHelper.hasProperties, (hasProperties) => {
 			this._hasProperties = hasProperties;
 		});
 	}
