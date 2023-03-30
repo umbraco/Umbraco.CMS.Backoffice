@@ -6,7 +6,7 @@ import {
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
-import { UmbDataSource } from 'libs/repository/data-source';
+import { UmbDataSource } from '@umbraco-cms/backoffice/repository';
 
 /**
  * A data source for the Language that fetches data from the server
