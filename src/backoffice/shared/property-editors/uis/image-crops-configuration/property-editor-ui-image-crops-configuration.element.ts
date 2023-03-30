@@ -126,6 +126,7 @@ export class UmbPropertyEditorUIImageCropsConfigurationElement
 			#empty-state-description a {
 				color: var(--uui-color-interactive);
 				text-decoration: none;
+				margin-left: var(--uui-size-space-1);
 			}
 			#empty-state-description a:hover {
 				color: var(--uui-color-interactive-emphasis);
