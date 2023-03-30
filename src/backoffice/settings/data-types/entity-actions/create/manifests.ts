@@ -24,12 +24,6 @@ const entityActions: Array<ManifestTypes> = [
 		name: 'Create Data Type Modal',
 		loader: () => import('./modal/create-data-type-modal.element'),
 	},
-	{
-		type: 'modal',
-		alias: 'Umb.Modal.CreateDataTypeFolder',
-		name: 'Create Data Type Folder Modal',
-		loader: () => import('./modal/create-data-type-folder-modal.element'),
-	},
 ];
 
 export const manifests = [...entityActions];

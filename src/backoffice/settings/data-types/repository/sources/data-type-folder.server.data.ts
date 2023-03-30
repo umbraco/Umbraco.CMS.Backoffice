@@ -1,6 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { UmbFolderDataSource } from '@umbraco-cms/backoffice/repository';
-import { DataTypeResource, FolderReponseModel, CreateFolderRequestModel } from '@umbraco-cms/backoffice/backend-api';
+import {
+	DataTypeResource,
+	FolderReponseModel,
+	CreateFolderRequestModel,
+	FolderModelBaseModel,
+} from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
@@ -22,13 +27,21 @@ export class UmbDataTypeFolderServerDataSource implements UmbFolderDataSource {
 		this.#host = host;
 	}
 
+	/**
+	 * Creates a Data Type folder with the given key from the server
+	 * @param {string} key
+	 * @return {*}
+	 * @memberof UmbDataTypeFolderServerDataSource
+	 */
 	async createScaffold(parentKey: string | null) {
-		return {
-			$type: 'FolderReponseModel', // TODO: check if we can remove this in the typescript generator
+		const scaffold: FolderReponseModel = {
+			$type: 'FolderReponseModel',
 			name: '',
 			key: uuidv4(),
 			parentKey,
 		};
+
+		return { data: scaffold };
 	}
 
 	/**
@@ -69,7 +82,7 @@ export class UmbDataTypeFolderServerDataSource implements UmbFolderDataSource {
 	 * @return {*}
 	 * @memberof UmbDataTypeFolderServerDataSource
 	 */
-	async update(key: string, folder: CreateFolderRequestModel) {
+	async update(key: string, folder: FolderModelBaseModel) {
 		if (!key) throw new Error('Key is missing');
 		if (!key) throw new Error('Folder data is missing');
 		return tryExecuteAndNotify(

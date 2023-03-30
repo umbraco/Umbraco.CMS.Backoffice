@@ -4,8 +4,3 @@ export const UMB_CREATE_DATA_TYPE_MODAL = new UmbModalToken('Umb.Modal.CreateDat
 	type: 'sidebar',
 	size: 'small',
 });
-
-export const UMB_CREATE_DATA_TYPE_FOLDER_MODAL = new UmbModalToken('Umb.Modal.CreateDataTypeFolder', {
-	type: 'sidebar',
-	size: 'small',
-});

@@ -266,4 +266,16 @@ export class UmbDataTypeRepository
 
 		return { error };
 	}
+
+	async requestFolder(key: string) {
+		if (!key) throw new Error('Key is missing');
+
+		const { data, error } = await this.#folderSource.get(key);
+
+		if (data) {
+			this.#treeStore?.appendItems([data]);
+		}
+
+		return { data, error };
+	}
 }

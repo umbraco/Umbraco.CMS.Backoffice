@@ -1,9 +1,9 @@
 import { html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement } from 'lit/decorators.js';
-import { UMB_CREATE_DATA_TYPE_FOLDER_MODAL } from '.';
+import { DATA_TYPE_REPOSITORY_ALIAS } from '../../../repository/manifests';
 import { UmbModalBaseElement } from '@umbraco-cms/internal/modal';
-import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
+import { UmbModalContext, UMB_FOLDER_MODAL, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
 
 @customElement('umb-create-data-type-modal')
 export class UmbCreateDataTypeModalElement extends UmbModalBaseElement {
@@ -20,7 +20,9 @@ export class UmbCreateDataTypeModalElement extends UmbModalBaseElement {
 
 	#onClick(event: PointerEvent) {
 		event.stopPropagation();
-		const folderModalHandler = this.#modalContext?.open(UMB_CREATE_DATA_TYPE_FOLDER_MODAL);
+		const folderModalHandler = this.#modalContext?.open(UMB_FOLDER_MODAL, {
+			repositoryAlias: DATA_TYPE_REPOSITORY_ALIAS,
+		});
 		folderModalHandler?.onSubmit().then(() => this.modalHandler?.submit());
 	}
 
