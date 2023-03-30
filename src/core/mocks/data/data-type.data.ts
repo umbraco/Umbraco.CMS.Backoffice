@@ -6,8 +6,16 @@ import type {
 	CreateFolderRequestModel,
 } from '@umbraco-cms/backoffice/backend-api';
 
-// TODO: investigate why we don't get an entity type as part of the DataTypeModel
-export const data: Array<DataTypeResponseModel & { type: 'data-type' }> = [
+// TODO: investigate why we don't get an type as part of the DataTypeModel
+export const data: Array<(DataTypeResponseModel & { type: 'data-type' }) | FolderTreeItemResponseModel> = [
+	{
+		$type: 'data-type',
+		type: 'data-type',
+		name: 'Folder 1',
+		key: 'dt-folder1',
+		parentKey: null,
+		isFolder: true,
+	},
 	{
 		$type: 'data-type',
 		type: 'data-type',
@@ -594,7 +602,7 @@ export const data: Array<DataTypeResponseModel & { type: 'data-type' }> = [
 // TODO: all properties are optional in the server schema. I don't think this is correct.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-class UmbDataTypeData extends UmbEntityData<DataTypeResponseModel> {
+class UmbDataTypeData extends UmbEntityData<DataTypeResponseModel | FolderTreeItemResponseModel> {
 	constructor() {
 		super(data);
 	}
