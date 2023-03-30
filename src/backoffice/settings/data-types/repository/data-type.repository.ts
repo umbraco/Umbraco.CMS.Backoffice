@@ -16,7 +16,7 @@ import {
 	CreateDataTypeRequestModel,
 	CreateFolderRequestModel,
 	DataTypeResponseModel,
-	FolderReponseModel,
+	FolderModelBaseModel,
 	FolderTreeItemResponseModel,
 	UpdateDataTypeRequestModel,
 } from '@umbraco-cms/backoffice/backend-api';
@@ -254,7 +254,7 @@ export class UmbDataTypeRepository
 		return { error };
 	}
 
-	async updateFolder(key: string, folder: CreateFolderRequestModel) {
+	async updateFolder(key: string, folder: FolderModelBaseModel) {
 		if (!key) throw new Error('Key is missing');
 		if (!folder) throw new Error('Folder data is missing');
 
