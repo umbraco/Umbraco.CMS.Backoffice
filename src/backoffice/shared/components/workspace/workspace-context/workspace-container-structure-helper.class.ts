@@ -89,7 +89,7 @@ export class UmbWorkspaceContainerStructureHelper {
 					this.#containers.next([]);
 					this._ownerContainers = tabContainers || [];
 					if (this._ownerContainers.length > 0) {
-						this._observeHasTabProperties();
+						this._observeOwnerProperties();
 						this._observeChildContainers();
 					}
 				},
@@ -98,7 +98,7 @@ export class UmbWorkspaceContainerStructureHelper {
 		}
 	}
 
-	private _observeHasTabProperties() {
+	private _observeOwnerProperties() {
 		if (!this.#workspaceContext) return;
 
 		this._ownerContainers.forEach((container) => {
