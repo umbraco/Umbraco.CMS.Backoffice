@@ -104,4 +104,10 @@ export class UmbWorkspacePropertyStructureHelper {
 
 		return await this.#workspaceContext.structure.createProperty(null, ownerKey, sortOrder);
 	}
+
+	async partialUpdateProperty(propertyKey?: string, partialUpdate?: Partial<DocumentTypePropertyTypeResponseModel>) {
+		if (!this.#workspaceContext) return;
+
+		return await this.#workspaceContext.structure.updateProperty(null, propertyKey, partialUpdate);
+	}
 }

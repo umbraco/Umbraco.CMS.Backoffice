@@ -7,25 +7,10 @@ import { PropertyContainerTypes } from '../../../../../shared/components/workspa
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DocumentTypePropertyTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import { UMB_MODAL_CONTEXT_TOKEN, UMB_PROPERTY_SETTINGS_MODAL } from '@umbraco-cms/backoffice/modal';
+import './document-type-workspace-view-edit-property.element';
 
 @customElement('umb-document-type-workspace-view-edit-properties')
 export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitElement {
-	static styles = [
-		UUITextStyles,
-		css`
-			.property {
-				border-bottom: 1px solid var(--uui-color-divider);
-			}
-			.property:last-child {
-				border-bottom: 0;
-			}
-
-			#add {
-				width: 100%;
-			}
-		`,
-	];
-
 	private _containerKey: string | undefined;
 
 	public get containerKey(): string | undefined {
@@ -88,9 +73,52 @@ export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitEle
 		return html`${repeat(
 				this._propertyStructure,
 				(property) => property.alias,
-				(property) => html`${property.alias}`
+				(property) =>
+					html`<document-type-workspace-view-edit-property
+						.property=${property}
+						@partial-property-update=${(event: CustomEvent) => {
+							this._propertyStructureHelper.partialUpdateProperty(property.key, event.detail);
+						}}></document-type-workspace-view-edit-property>`
 			)}<uui-button id="add" look="placeholder" @click=${this.#onAddProperty}> Add property </uui-button>`;
 	}
+
+	static styles = [
+		UUITextStyles,
+		css`
+			.property:first-of-type {
+				padding-top: 0;
+			}
+			.property {
+				border-bottom: 1px solid var(--uui-color-divider);
+			}
+			.property:last-child {
+				border-bottom: 0;
+			}
+
+			.property {
+				display: grid;
+				grid-template-columns: 200px auto;
+				column-gap: var(--uui-size-layout-2);
+				border-bottom: 1px solid var(--uui-color-divider);
+				padding: var(--uui-size-layout-1) 0;
+				container-type: inline-size;
+			}
+
+			.property > div {
+				grid-column: span 2;
+			}
+
+			@container (width > 600px) {
+				.property:not([orientation='vertical']) > div {
+					grid-column: span 1;
+				}
+			}
+
+			#add {
+				width: 100%;
+			}
+		`,
+	];
 }
 
 export default UmbDocumentTypeWorkspaceViewEditPropertiesElement;

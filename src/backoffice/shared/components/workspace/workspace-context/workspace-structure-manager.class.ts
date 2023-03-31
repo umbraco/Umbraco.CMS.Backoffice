@@ -7,7 +7,12 @@ import {
 	PropertyTypeResponseModelBaseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement, UmbControllerInterface } from '@umbraco-cms/backoffice/controller';
-import { ArrayState, UmbObserverController, MappingFunction } from '@umbraco-cms/backoffice/observable-api';
+import {
+	ArrayState,
+	UmbObserverController,
+	MappingFunction,
+	partialUpdateFrozenArray,
+} from '@umbraco-cms/backoffice/observable-api';
 import { generateGuid } from 'libs/utils/generate-guid';
 
 export type PropertyContainerTypes = 'Group' | 'Tab';
@@ -194,6 +199,21 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 		this.#documentTypes.updateOne(documentTypeKey, { properties });
 
 		return property;
+	}
+
+	async updateProperty(
+		documentTypeKey: string | null,
+		propertyKey: string,
+		partialUpdate: Partial<DocumentTypePropertyTypeResponseModel>
+	) {
+		await this.#init;
+		documentTypeKey = documentTypeKey ?? this.#rootDocumentTypeKey!;
+
+		const frozenProperties = this.#documentTypes.getValue().find((x) => x.key === documentTypeKey)?.properties ?? [];
+
+		const properties = partialUpdateFrozenArray(frozenProperties, partialUpdate, (x) => x.key === propertyKey!);
+
+		this.#documentTypes.updateOne(documentTypeKey, { properties });
 	}
 
 	/*
