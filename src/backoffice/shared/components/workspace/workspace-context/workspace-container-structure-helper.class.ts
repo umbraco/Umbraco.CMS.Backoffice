@@ -14,6 +14,7 @@ export class UmbWorkspaceContainerStructureHelper {
 	private _childType?: PropertyContainerTypes = 'Group';
 	private _isRoot = false;
 	private _ownerName?: string;
+	private _ownerKey?: string;
 
 	// Containers defined in data might be more than actual containers to display as we merge them by name.
 	private _ownerContainers: PropertyTypeContainerResponseModelBaseModel[] = [];
@@ -148,4 +149,12 @@ export class UmbWorkspaceContainerStructureHelper {
 			}
 		});
 	};
+
+	/** Manipulate methods: */
+	async addGroup(ownerKey?: string, sortOrder?: number) {
+		if (!this.#workspaceContext) return;
+
+		const group = await this.#workspaceContext.structure.createContainer(null, ownerKey, this._childType, sortOrder);
+		this.#containers.appendOne(group);
+	}
 }

@@ -6,6 +6,7 @@ import { UmbWorkspacePropertyStructureHelper } from '../../../../../shared/compo
 import { PropertyContainerTypes } from '../../../../../shared/components/workspace/workspace-context/workspace-structure-manager.class';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DocumentTypePropertyTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import { UMB_MODAL_CONTEXT_TOKEN, UMB_PROPERTY_SETTINGS_MODAL } from '@umbraco-cms/backoffice/modal';
 
 @customElement('umb-document-type-workspace-view-edit-properties')
 export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitElement {
@@ -17,6 +18,10 @@ export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitEle
 			}
 			.property:last-child {
 				border-bottom: 0;
+			}
+
+			#add {
+				width: 100%;
 			}
 		`,
 	];
@@ -42,20 +47,31 @@ export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitEle
 	@state()
 	_propertyStructure: Array<DocumentTypePropertyTypeResponseModel> = [];
 
+	#modalContext?: typeof UMB_MODAL_CONTEXT_TOKEN.TYPE;
+
 	constructor() {
 		super();
 
+		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => (this.#modalContext = instance));
 		this.observe(this._propertyStructureHelper.propertyStructure, (propertyStructure) => {
 			this._propertyStructure = propertyStructure;
 		});
 	}
 
+	#onAddProperty() {
+		const modalHandler = this.#modalContext?.open(UMB_PROPERTY_SETTINGS_MODAL);
+
+		modalHandler?.onSubmit().then((result) => {
+			console.log('result', result);
+		});
+	}
+
 	render() {
-		return repeat(
-			this._propertyStructure,
-			(property) => property.alias,
-			(property) => html`<umb-variantable-property class="property" .property=${property}></umb-variantable-property> `
-		);
+		return html`${repeat(
+				this._propertyStructure,
+				(property) => property.alias,
+				(property) => html`${property.alias}`
+			)}<uui-button id="add" look="placeholder" @click=${this.#onAddProperty}> Add property </uui-button>`;
 	}
 }
 

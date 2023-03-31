@@ -15,8 +15,25 @@ export class UmbDocumentTypeWorkspaceViewEditTabElement extends UmbLitElement {
 			uui-box {
 				margin: var(--uui-size-layout-1);
 			}
+
+			#add {
+				width: 100%;
+			}
 		`,
 	];
+
+	private _ownerTabKey?: string | undefined;
+
+	@property({ type: String })
+	public get ownerTabKey(): string | undefined {
+		return this._ownerTabKey;
+	}
+	public set ownerTabKey(value: string | undefined) {
+		if (value === this._ownerTabKey) return;
+		const oldValue = this._ownerTabKey;
+		this._ownerTabKey = value;
+		this.requestUpdate('ownerTabKey', oldValue);
+	}
 
 	private _tabName?: string | undefined;
 
@@ -59,14 +76,19 @@ export class UmbDocumentTypeWorkspaceViewEditTabElement extends UmbLitElement {
 		});
 	}
 
+	#onAddGroup = () => {
+		// Idea, maybe we can gather the sortOrder from the last group rendered and add 1 to it?
+		this._groupStructureHelper.addGroup(this._ownerTabKey);
+	};
+
 	render() {
 		return html`
 			${this._hasProperties
 				? html`
 						<uui-box>
-							<umb-document-workspace-view-edit-properties
+							<umb-document-type-workspace-view-edit-properties
 								container-type="Tab"
-								container-name=${this.tabName || ''}></umb-document-workspace-view-edit-properties>
+								container-name=${this.tabName || ''}></umb-document-type-workspace-view-edit-properties>
 						</uui-box>
 				  `
 				: ''}
@@ -74,11 +96,12 @@ export class UmbDocumentTypeWorkspaceViewEditTabElement extends UmbLitElement {
 				this._groups,
 				(group) => group.name,
 				(group) => html`<uui-box .headline=${group.name || ''}>
-					<umb-document-workspace-view-edit-properties
+					<umb-document-type-workspace-view-edit-properties
 						container-type="Group"
-						container-name=${group.name || ''}></umb-document-workspace-view-edit-properties>
+						container-name=${group.name || ''}></umb-document-type-workspace-view-edit-properties>
 				</uui-box>`
 			)}
+			<uui-button id="add" look="placeholder" @click=${this.#onAddGroup}> Add Group </uui-button>
 		`;
 	}
 }
