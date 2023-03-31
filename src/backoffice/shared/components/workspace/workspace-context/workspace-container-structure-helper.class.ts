@@ -81,11 +81,12 @@ export class UmbWorkspaceContainerStructureHelper {
 			this.#hasProperties.next(false);
 			this._observeRootContainers();
 		} else if (this._ownerName && this._ownerType) {
-			this.#containers.next([]);
 			new UmbObserverController(
 				this.#host,
 				this.#workspaceContext.structure.containersByNameAndType(this._ownerName, this._ownerType),
 				(tabContainers) => {
+					console.log('containersByNameAndType...', this._ownerName);
+					this.#containers.next([]);
 					this._ownerContainers = tabContainers || [];
 					if (this._ownerContainers.length > 0) {
 						this._observeHasTabProperties();
@@ -131,14 +132,17 @@ export class UmbWorkspaceContainerStructureHelper {
 		new UmbObserverController(
 			this.#host,
 			this.#workspaceContext!.structure.rootContainers(this._childType!),
-			this._insertGroupContainers,
+			(rootContainers) => {
+				this.#containers.next([]);
+				this._insertGroupContainers(rootContainers);
+			},
 			'_observeRootContainers'
 		);
 	}
 
 	private _insertGroupContainers = (groupContainers: PropertyTypeContainerResponseModelBaseModel[]) => {
 		groupContainers.forEach((group) => {
-			if (group.name) {
+			if (group.name !== null && group.name !== undefined) {
 				if (!this.#containers.getValue().find((x) => x.name === group.name)) {
 					this.#containers.appendOne(group);
 				}

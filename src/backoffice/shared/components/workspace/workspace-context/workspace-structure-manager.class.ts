@@ -7,6 +7,7 @@ import {
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement, UmbControllerInterface } from '@umbraco-cms/backoffice/controller';
 import { ArrayState, UmbObserverController, MappingFunction } from '@umbraco-cms/backoffice/observable-api';
+import { generateGuid } from 'libs/utils/generate-guid';
 
 export type PropertyContainerTypes = 'Group' | 'Tab';
 
@@ -16,18 +17,36 @@ type T = DocumentTypeResponseModel;
 // TODO: make general interface for NodeTypeRepository, to replace UmbDocumentTypeRepository:
 export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepository = UmbDocumentTypeRepository> {
 	#host: UmbControllerHostElement;
+	#init!: Promise<unknown>;
 
 	#documentTypeRepository: R;
 
 	#rootDocumentTypeKey?: string;
 	#documentTypeObservers = new Array<UmbControllerInterface>();
 	#documentTypes = new ArrayState<T>([], (x) => x.key);
+	readonly documentTypes = this.#documentTypes.asObservable();
+	private readonly _documentTypeContainers = this.#documentTypes.getObservablePart((x) =>
+		x.flatMap((x) => x.containers ?? [])
+	);
 
 	#containers = new ArrayState<PropertyTypeContainerResponseModelBaseModel>([], (x) => x.key);
 
 	constructor(host: UmbControllerHostElement, typeRepository: R) {
 		this.#host = host;
 		this.#documentTypeRepository = typeRepository;
+
+		new UmbObserverController(host, this.documentTypes, (documentTypes) => {
+			documentTypes.forEach((documentType) => {
+				// We could cache by docType Key?
+				// TODO: how do we ensure a container goes away?
+
+				//this._initDocumentTypeContainers(documentType);
+				this._loadDocumentTypeCompositions(documentType);
+			});
+		});
+		new UmbObserverController(host, this._documentTypeContainers, (documentTypeContainers) => {
+			this.#containers.next(documentTypeContainers);
+		});
 	}
 
 	/**
@@ -39,7 +58,8 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 
 		this.#rootDocumentTypeKey = key;
 
-		return await this._loadType(key);
+		this.#init = this._loadType(key);
+		return await this.#init;
 	}
 
 	public async createScaffold(parentKey: string) {
@@ -52,8 +72,15 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 
 		this.#rootDocumentTypeKey = data.key;
 
-		await this._observeDocumentType(data);
+		this.#init = this._observeDocumentType(data);
+		await this.#init;
 		return { data };
+	}
+
+	private async _ensureType(key?: string) {
+		if (!key) return;
+		if (this.#documentTypes.getValue().find((x) => x.key === key)) return;
+		await this._loadType(key);
 	}
 
 	private async _loadType(key?: string) {
@@ -77,9 +104,11 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 		this.#documentTypeObservers.push(
 			new UmbObserverController(this.#host, await this.#documentTypeRepository.byKey(data.key), (docType) => {
 				if (docType) {
+					// TODO: Handle if there was changes made to the specific document type in this context.
+					/*
+					possible easy solutions could be to notify user wether they want to update(Discard the changes to accept the new ones).
+					 */
 					this.#documentTypes.appendOne(docType);
-					this._initDocumentTypeContainers(docType);
-					this._loadDocumentTypeCompositions(docType);
 				}
 			})
 		);
@@ -87,15 +116,17 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 
 	private async _loadDocumentTypeCompositions(documentType: T) {
 		documentType.compositions?.forEach((composition) => {
-			this._loadType(composition.key);
+			this._ensureType(composition.key);
 		});
 	}
 
+	/*
 	private async _initDocumentTypeContainers(documentType: T) {
 		documentType.containers?.forEach((container) => {
-			this.#containers.appendOne(container);
+			this.#containers.appendOne({ ...container, _ownerDocumentTypeKey: documentType.key });
 		});
 	}
+	*/
 
 	/** Public methods for consuming structure: */
 
@@ -106,7 +137,46 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 		return this.#documentTypes.getValue().find((y) => y.key === this.#rootDocumentTypeKey);
 	}
 	updateRootDocumentType(entry: T) {
-		return this.#documentTypes.updateOne(this.#rootDocumentTypeKey, entry);
+		this.#documentTypes.updateOne(this.#rootDocumentTypeKey, entry);
+	}
+
+	// We could move the actions to another class?
+
+	async createContainer(
+		documentTypeKey: string | null,
+		parentKey: string | null = null,
+		type: PropertyContainerTypes = 'Group',
+		sortOrder?: number
+	) {
+		await this.#init;
+		documentTypeKey = documentTypeKey ?? this.#rootDocumentTypeKey!;
+
+		const container: PropertyTypeContainerResponseModelBaseModel = {
+			key: generateGuid(),
+			parentKey: parentKey,
+			name: 'New',
+			type: type,
+			sortOrder: sortOrder ?? 0,
+		};
+
+		const containers = [...(this.#documentTypes.getValue().find((x) => x.key === documentTypeKey)?.containers ?? [])];
+		containers.push(container);
+
+		console.log('createContainer', containers);
+		this.#documentTypes.updateOne(documentTypeKey, { containers });
+
+		return container;
+	}
+
+	async removeContainer(documentTypeKey: string | null, containerKey: string | null = null) {
+		await this.#init;
+		documentTypeKey = documentTypeKey ?? this.#rootDocumentTypeKey!;
+
+		console.log('removeContainer', containerKey);
+		const frozenContainers = this.#documentTypes.getValue().find((x) => x.key === documentTypeKey)?.containers ?? [];
+		const containers = frozenContainers.filter((x) => x.key !== containerKey);
+
+		this.#documentTypes.updateOne(documentTypeKey, { containers });
 	}
 
 	/*
@@ -180,6 +250,7 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 		});
 	}
 
+	// TODO: Maybe this must take parentKey into account as well?
 	containersByNameAndType(name: string, containerType: PropertyContainerTypes) {
 		return this.#containers.getObservablePart((data) => {
 			return data.filter((x) => x.name === name && x.type === containerType);

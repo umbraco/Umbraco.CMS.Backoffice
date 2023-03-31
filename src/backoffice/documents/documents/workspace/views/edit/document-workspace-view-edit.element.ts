@@ -125,6 +125,7 @@ export class UmbDocumentWorkspaceViewEditElement extends UmbLitElement {
 							this._tabs,
 							(tab) => tab.name,
 							(tab) => {
+								// TODO: make better url folder name:
 								const path = this._routerPath + '/tab/' + encodeURI(tab.name || '');
 								return html`<uui-tab label=${tab.name!} .active=${path === this._activePath} href=${path}
 									>${tab.name}</uui-tab

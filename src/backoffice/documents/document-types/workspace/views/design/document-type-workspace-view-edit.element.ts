@@ -107,11 +107,19 @@ export class UmbDocumentTypeWorkspaceViewEditElement extends UmbLitElement {
 		this._routes = routes;
 	}
 
+	#remove(tabKey: string) {
+		console.log('remove tab: ' + tabKey);
+		this._workspaceContext?.structure.removeContainer(null, tabKey);
+	}
+	async #addTab() {
+		this._workspaceContext?.structure.createContainer(null, null, 'Tab');
+	}
+
 	render() {
 		return html`
-			${this._routerPath && this._tabs.length > 1
+			${this._routerPath
 				? html` <uui-tab-group>
-						${this._hasRootGroups && this._tabs.length > 1
+						${this._hasRootGroups
 							? html`
 									<uui-tab
 										label="Content"
@@ -123,14 +131,35 @@ export class UmbDocumentTypeWorkspaceViewEditElement extends UmbLitElement {
 							: ''}
 						${repeat(
 							this._tabs,
-							(tab) => tab.name,
+							(tab) => tab.key,
 							(tab) => {
+								// TODO: make better url folder name:
 								const path = this._routerPath + '/tab/' + encodeURI(tab.name || '');
-								return html`<uui-tab label=${tab.name!} .active=${path === this._activePath} href=${path}
-									>${tab.name}</uui-tab
-								>`;
+								return html`<uui-tab label=${tab.name!} .active=${path === this._activePath} href=${path}>
+									${path === this._activePath
+										? html` <uui-input
+												label="Tab name"
+												look="placeholder"
+												value="${tab.name!}"
+												placeholder="Enter a name">
+												<!-- todo only if its part of root: -->
+												<uui-button
+													label="Remove tab"
+													class="trash"
+													slot="append"
+													@click="${() => this.#remove(tab.key!)}"
+													compact>
+													<uui-icon name="umb:trash"></uui-icon>
+												</uui-button>
+										  </uui-input>`
+										: tab.name}
+								</uui-tab>`;
 							}
 						)}
+						<uui-button id="add-tab" @click="${this.#addTab}" label="Add tab" compact>
+							<uui-icon name="umb:add"></uui-icon>
+							Add tab
+						</uui-button>
 				  </uui-tab-group>`
 				: ''}
 
