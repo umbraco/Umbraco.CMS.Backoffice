@@ -96,4 +96,12 @@ export class UmbWorkspacePropertyStructureHelper {
 			'_observePropertyStructureOfGroup' + groupKey
 		);
 	}
+
+	/** Manipulate methods: */
+
+	async addProperty(ownerKey?: string, sortOrder?: number) {
+		if (!this.#workspaceContext) return;
+
+		return await this.#workspaceContext.structure.createProperty(null, ownerKey, sortOrder);
+	}
 }

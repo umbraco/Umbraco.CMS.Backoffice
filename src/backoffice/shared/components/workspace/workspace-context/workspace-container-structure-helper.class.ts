@@ -151,10 +151,10 @@ export class UmbWorkspaceContainerStructureHelper {
 	};
 
 	/** Manipulate methods: */
+
 	async addGroup(ownerKey?: string, sortOrder?: number) {
 		if (!this.#workspaceContext) return;
 
-		const group = await this.#workspaceContext.structure.createContainer(null, ownerKey, this._childType, sortOrder);
-		this.#containers.appendOne(group);
+		await this.#workspaceContext.structure.createContainer(null, ownerKey, this._childType, sortOrder);
 	}
 }

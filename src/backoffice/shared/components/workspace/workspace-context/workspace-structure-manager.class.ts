@@ -4,6 +4,7 @@ import {
 	DocumentTypePropertyTypeResponseModel,
 	PropertyTypeContainerResponseModelBaseModel,
 	ContentTypeResponseModelBaseDocumentTypePropertyTypeResponseModelDocumentTypePropertyTypeContainerResponseModel,
+	PropertyTypeResponseModelBaseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement, UmbControllerInterface } from '@umbraco-cms/backoffice/controller';
 import { ArrayState, UmbObserverController, MappingFunction } from '@umbraco-cms/backoffice/observable-api';
@@ -175,6 +176,24 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 		const containers = frozenContainers.filter((x) => x.key !== containerKey);
 
 		this.#documentTypes.updateOne(documentTypeKey, { containers });
+	}
+
+	async createProperty(documentTypeKey: string | null, containerKey: string | null = null, sortOrder?: number) {
+		await this.#init;
+		documentTypeKey = documentTypeKey ?? this.#rootDocumentTypeKey!;
+
+		const property: PropertyTypeResponseModelBaseModel = {
+			key: generateGuid(),
+			containerKey: containerKey,
+			//sortOrder: sortOrder ?? 0,
+		};
+
+		const properties = [...(this.#documentTypes.getValue().find((x) => x.key === documentTypeKey)?.properties ?? [])];
+		properties.push(property);
+
+		this.#documentTypes.updateOne(documentTypeKey, { properties });
+
+		return property;
 	}
 
 	/*

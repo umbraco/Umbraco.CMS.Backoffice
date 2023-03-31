@@ -26,6 +26,18 @@ export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitEle
 		`,
 	];
 
+	private _containerKey: string | undefined;
+
+	public get containerKey(): string | undefined {
+		return this._containerKey;
+	}
+	public set containerKey(value: string | undefined) {
+		if (value === this._containerKey) return;
+		const oldValue = this._containerKey;
+		this._containerKey = value;
+		this.requestUpdate('containerKey', oldValue);
+	}
+
 	@property({ type: String, attribute: 'container-name', reflect: false })
 	public get containerName(): string | undefined {
 		return this._propertyStructureHelper.getContainerName();
@@ -58,11 +70,17 @@ export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitEle
 		});
 	}
 
-	#onAddProperty() {
+	async #onAddProperty() {
+		const property = await this._propertyStructureHelper.addProperty(this._containerKey);
+		if (!property) return;
+
+		// Take key and parse to modal:
+		console.log('property key:', property.key!);
+
 		const modalHandler = this.#modalContext?.open(UMB_PROPERTY_SETTINGS_MODAL);
 
 		modalHandler?.onSubmit().then((result) => {
-			console.log('result', result);
+			console.log(result);
 		});
 	}
 
