@@ -162,7 +162,6 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 		const containers = [...(this.#documentTypes.getValue().find((x) => x.key === documentTypeKey)?.containers ?? [])];
 		containers.push(container);
 
-		console.log('createContainer', containers);
 		this.#documentTypes.updateOne(documentTypeKey, { containers });
 
 		return container;
@@ -172,7 +171,6 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 		await this.#init;
 		documentTypeKey = documentTypeKey ?? this.#rootDocumentTypeKey!;
 
-		console.log('removeContainer', containerKey);
 		const frozenContainers = this.#documentTypes.getValue().find((x) => x.key === documentTypeKey)?.containers ?? [];
 		const containers = frozenContainers.filter((x) => x.key !== containerKey);
 

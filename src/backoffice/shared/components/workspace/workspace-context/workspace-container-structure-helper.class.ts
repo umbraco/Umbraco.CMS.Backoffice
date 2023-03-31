@@ -84,10 +84,9 @@ export class UmbWorkspaceContainerStructureHelper {
 			new UmbObserverController(
 				this.#host,
 				this.#workspaceContext.structure.containersByNameAndType(this._ownerName, this._ownerType),
-				(tabContainers) => {
-					console.log('containersByNameAndType...', this._ownerName);
+				(ownerContainers) => {
 					this.#containers.next([]);
-					this._ownerContainers = tabContainers || [];
+					this._ownerContainers = ownerContainers || [];
 					if (this._ownerContainers.length > 0) {
 						this._observeOwnerProperties();
 						this._observeChildContainers();
