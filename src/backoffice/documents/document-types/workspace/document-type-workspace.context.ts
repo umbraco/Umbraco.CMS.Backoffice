@@ -11,8 +11,26 @@ export class UmbDocumentTypeWorkspaceContext
 	implements UmbEntityWorkspaceContextInterface<EntityType | undefined>
 {
 	// Draft is located in structure manager
+
+	// General for content types:
 	readonly data;
 	readonly name;
+	readonly alias;
+	readonly description;
+	readonly icon;
+
+	// TODO: Consider if each of these should go the view it self, but only if its used in that one view, otherwise make then go here.
+	readonly allowedAsRoot;
+	readonly variesByCulture;
+	readonly variesBySegment;
+	readonly isElement;
+	readonly allowedContentTypes;
+	readonly compositions;
+
+	// Document type specific:
+	readonly allowedTemplateKeys;
+	readonly defaultTemplateKey;
+	readonly cleanup;
 
 	readonly structure;
 
@@ -20,8 +38,24 @@ export class UmbDocumentTypeWorkspaceContext
 		super(host, new UmbDocumentTypeRepository(host));
 
 		this.structure = new UmbWorkspacePropertyStructureManager(this.host, this.repository);
+
+		// General for content types:
 		this.data = this.structure.rootDocumentType;
 		this.name = this.structure.rootDocumentTypeObservablePart((data) => data?.name);
+		this.alias = this.structure.rootDocumentTypeObservablePart((data) => data?.alias);
+		this.description = this.structure.rootDocumentTypeObservablePart((data) => data?.description);
+		this.icon = this.structure.rootDocumentTypeObservablePart((data) => data?.icon);
+		this.allowedAsRoot = this.structure.rootDocumentTypeObservablePart((data) => data?.allowedAsRoot);
+		this.variesByCulture = this.structure.rootDocumentTypeObservablePart((data) => data?.variesByCulture);
+		this.variesBySegment = this.structure.rootDocumentTypeObservablePart((data) => data?.variesBySegment);
+		this.isElement = this.structure.rootDocumentTypeObservablePart((data) => data?.isElement);
+		this.allowedContentTypes = this.structure.rootDocumentTypeObservablePart((data) => data?.allowedContentTypes);
+		this.compositions = this.structure.rootDocumentTypeObservablePart((data) => data?.compositions);
+
+		// Document type specific:
+		this.allowedTemplateKeys = this.structure.rootDocumentTypeObservablePart((data) => data?.allowedTemplateKeys);
+		this.defaultTemplateKey = this.structure.rootDocumentTypeObservablePart((data) => data?.defaultTemplateKey);
+		this.cleanup = this.structure.rootDocumentTypeObservablePart((data) => data?.defaultTemplateKey);
 	}
 
 	public setPropertyValue(alias: string, value: unknown) {
@@ -42,6 +76,9 @@ export class UmbDocumentTypeWorkspaceContext
 
 	setName(name: string) {
 		this.structure.updateRootDocumentType({ name });
+	}
+	setAlias(alias: string) {
+		this.structure.updateRootDocumentType({ alias });
 	}
 
 	// TODO => manage setting icon color
