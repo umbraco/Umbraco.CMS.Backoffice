@@ -1,27 +1,25 @@
-import type { RepositoryTreeDataSource } from '../../../../../libs/repository/repository-tree-data-source.interface';
-import { DocumentTreeServerDataSource } from './sources/document.tree.server.data';
-import { UmbDocumentTreeStore, UMB_DOCUMENT_TREE_STORE_CONTEXT_TOKEN } from './document.tree.store';
-import { UmbDocumentStore, UMB_DOCUMENT_STORE_CONTEXT_TOKEN } from './document.store';
 import { UmbDocumentServerDataSource } from './sources/document.server.data';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { UmbContextConsumerController } from '@umbraco-cms/context-api';
-import { ProblemDetailsModel, DocumentModel } from '@umbraco-cms/backend-api';
-import type { UmbTreeRepository } from 'libs/repository/tree-repository.interface';
-import { UmbDetailRepository } from '@umbraco-cms/repository';
-import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/notification';
+import { UmbDocumentStore, UMB_DOCUMENT_STORE_CONTEXT_TOKEN } from './document.store';
+import { UmbDocumentTreeStore, UMB_DOCUMENT_TREE_STORE_CONTEXT_TOKEN } from './document.tree.store';
+import { DocumentTreeServerDataSource } from './sources/document.tree.server.data';
+import type { UmbTreeDataSource, UmbTreeRepository, UmbDetailRepository } from '@umbraco-cms/backoffice/repository';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
+import {
+	ProblemDetailsModel,
+	DocumentResponseModel,
+	CreateDocumentRequestModel,
+} from '@umbraco-cms/backoffice/backend-api';
+import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 
-type ItemType = DocumentModel;
+type ItemType = DocumentResponseModel;
 
-// Move to documentation / JSdoc
-/* We need to create a new instance of the repository from within the element context. We want the notifications to be displayed in the right context. */
-// element -> context -> repository -> (store) -> data source
-// All methods should be async and return a promise. Some methods might return an observable as part of the promise response.
-export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailRepository<ItemType> {
+export class UmbDocumentRepository implements UmbTreeRepository<ItemType>, UmbDetailRepository<ItemType> {
 	#init!: Promise<unknown>;
 
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
-	#treeSource: RepositoryTreeDataSource;
+	#treeSource: UmbTreeDataSource;
 	#treeStore?: UmbDocumentTreeStore;
 
 	#detailDataSource: UmbDocumentServerDataSource;
@@ -29,7 +27,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 
 	#notificationContext?: UmbNotificationContext;
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 
 		// TODO: figure out how spin up get the correct data source
@@ -113,14 +111,10 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 
 	// DETAILS:
 
-	async createScaffold(parentKey: string | null) {
+	async createScaffold(documentTypeKey: string) {
+		if (!documentTypeKey) throw new Error('Document type key is missing');
 		await this.#init;
-
-		if (!parentKey) {
-			throw new Error('Parent key is missing');
-		}
-
-		return this.#detailDataSource.createScaffold(parentKey);
+		return this.#detailDataSource.createScaffold(documentTypeKey);
 	}
 
 	async requestByKey(key: string) {
@@ -143,7 +137,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 
 	// Could potentially be general methods:
 
-	async create(item: ItemType) {
+	async create(item: CreateDocumentRequestModel & { key: string }) {
 		await this.#init;
 
 		if (!item || !item.key) {
@@ -172,7 +166,7 @@ export class UmbDocumentRepository implements UmbTreeRepository, UmbDetailReposi
 			throw new Error('Document is missing');
 		}
 
-		const { error } = await this.#detailDataSource.update(item);
+		const { error } = await this.#detailDataSource.update(item.key, item);
 
 		if (!error) {
 			const notification = { data: { message: `Document saved` } };

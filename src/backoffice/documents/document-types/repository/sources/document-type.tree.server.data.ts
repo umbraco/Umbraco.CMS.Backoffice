@@ -1,7 +1,7 @@
-import type { RepositoryTreeDataSource } from '../../../../../../libs/repository/repository-tree-data-source.interface';
-import { ProblemDetailsModel, DocumentTypeResource } from '@umbraco-cms/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+import type { UmbTreeDataSource } from '@umbraco-cms/backoffice/repository';
+import { ProblemDetailsModel, DocumentTypeResource } from '@umbraco-cms/backoffice/backend-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 /**
  * A data source for the Document tree that fetches data from the server
@@ -9,8 +9,8 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
  * @class DocumentTreeServerDataSource
  * @implements {DocumentTreeDataSource}
  */
-export class DocumentTypeTreeServerDataSource implements RepositoryTreeDataSource {
-	#host: UmbControllerHostInterface;
+export class DocumentTypeTreeServerDataSource implements UmbTreeDataSource {
+	#host: UmbControllerHostElement;
 
 	// TODO: how do we handle trashed items?
 	async trashItems(keys: Array<string>) {
@@ -43,10 +43,10 @@ export class DocumentTypeTreeServerDataSource implements RepositoryTreeDataSourc
 
 	/**
 	 * Creates an instance of DocumentTreeServerDataSource.
-	 * @param {UmbControllerHostInterface} host
+	 * @param {UmbControllerHostElement} host
 	 * @memberof DocumentTreeServerDataSource
 	 */
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
 

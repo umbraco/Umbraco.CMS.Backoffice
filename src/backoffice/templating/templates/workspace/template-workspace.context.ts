@@ -1,17 +1,25 @@
 import { UmbTemplateRepository } from '../repository/template.repository';
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
-import { createObservablePart, DeepState } from '@umbraco-cms/observable-api';
-import { TemplateModel } from '@umbraco-cms/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
+import { createObservablePart, DeepState } from '@umbraco-cms/backoffice/observable-api';
+import { TemplateResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 
-export class UmbTemplateWorkspaceContext extends UmbWorkspaceContext<UmbTemplateRepository> {
-	#data = new DeepState<TemplateModel | undefined>(undefined);
+export class UmbTemplateWorkspaceContext extends UmbWorkspaceContext<UmbTemplateRepository, TemplateResponseModel> {
+	#data = new DeepState<TemplateResponseModel | undefined>(undefined);
 	data = this.#data.asObservable();
 	name = createObservablePart(this.#data, (data) => data?.name);
 	content = createObservablePart(this.#data, (data) => data?.content);
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		super(host, new UmbTemplateRepository(host));
+	}
+
+	getEntityType(): string {
+		return 'template';
+	}
+
+	getEntityKey() {
+		return this.getData()?.key || '';
 	}
 
 	getData() {
@@ -34,10 +42,18 @@ export class UmbTemplateWorkspaceContext extends UmbWorkspaceContext<UmbTemplate
 		}
 	}
 
+	public async save() {
+		throw new Error('Save method not implemented.');
+	}
+
 	async createScaffold(parentKey: string | null) {
 		const { data } = await this.repository.createScaffold(parentKey);
 		if (!data) return;
 		this.setIsNew(true);
 		this.#data.next(data);
+	}
+
+	public destroy() {
+		this.#data.complete();
 	}
 }

@@ -2,19 +2,19 @@ import { UmbMediaTypeTreeStore, UMB_MEDIA_TYPE_TREE_STORE_CONTEXT_TOKEN } from '
 import { UmbMediaTypeDetailServerDataSource } from './sources/media-type.detail.server.data';
 import { UmbMediaTypeStore, UMB_MEDIA_TYPE_STORE_CONTEXT_TOKEN } from './media-type.detail.store';
 import { MediaTypeTreeServerDataSource } from './sources/media-type.tree.server.data';
-import { ProblemDetailsModel } from '@umbraco-cms/backend-api';
-import { UmbContextConsumerController } from '@umbraco-cms/context-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import type { MediaTypeDetails } from '@umbraco-cms/models';
-import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/notification';
-import { UmbTreeRepository, RepositoryTreeDataSource } from '@umbraco-cms/repository';
+import { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import type { MediaTypeDetails } from '@umbraco-cms/backoffice/models';
+import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
+import { UmbTreeRepository, UmbTreeDataSource } from '@umbraco-cms/backoffice/repository';
 
 export class UmbMediaTypeRepository implements UmbTreeRepository {
 	#init!: Promise<unknown>;
 
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
-	#treeSource: RepositoryTreeDataSource;
+	#treeSource: UmbTreeDataSource;
 	#treeStore?: UmbMediaTypeTreeStore;
 
 	#detailSource: UmbMediaTypeDetailServerDataSource;
@@ -22,7 +22,7 @@ export class UmbMediaTypeRepository implements UmbTreeRepository {
 
 	#notificationContext?: UmbNotificationContext;
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 
 		// TODO: figure out how spin up get the correct data source

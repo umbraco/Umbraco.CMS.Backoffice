@@ -1,9 +1,21 @@
 import { UmbEntityData } from './entity.data';
 import { createFolderTreeItem } from './utils';
-import type { FolderTreeItemModel, DataTypeModel } from '@umbraco-cms/backend-api';
+import type {
+	FolderTreeItemResponseModel,
+	DataTypeResponseModel,
+	CreateFolderRequestModel,
+} from '@umbraco-cms/backoffice/backend-api';
 
-// TODO: investigate why we don't get an entity type as part of the DataTypeModel
-export const data: Array<DataTypeModel & { type: 'data-type' }> = [
+// TODO: investigate why we don't get an type as part of the DataTypeModel
+export const data: Array<(DataTypeResponseModel & { type: 'data-type' }) | FolderTreeItemResponseModel> = [
+	{
+		$type: 'data-type',
+		type: 'data-type',
+		name: 'Folder 1',
+		key: 'dt-folder1',
+		parentKey: null,
+		isFolder: true,
+	},
 	{
 		$type: 'data-type',
 		type: 'data-type',
@@ -12,7 +24,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		name: 'Textstring',
 		propertyEditorAlias: 'Umbraco.TextBox',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.TextBox',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -22,7 +34,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.TextBox',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.TextBox',
-		data: [
+		values: [
 			{
 				alias: 'maxChars',
 				value: 10,
@@ -37,7 +49,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.TextArea',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.TextArea',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -47,7 +59,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.JSON',
 		propertyEditorUiAlias: 'My.PropertyEditorUI.Custom',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -57,7 +69,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.ColorPicker',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.ColorPicker',
-		data: [
+		values: [
 			{
 				alias: 'useLabel',
 				value: true,
@@ -113,7 +125,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.ContentPicker',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.DocumentPicker',
-		data: [
+		values: [
 			{
 				alias: 'validationLimit',
 				value: { min: 2, max: 4 },
@@ -128,7 +140,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.ColorPicker.EyeDropper',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.EyeDropper',
-		data: [
+		values: [
 			{
 				//showPalette
 				alias: 'palette',
@@ -165,7 +177,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.MultiUrlPicker',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.MultiUrlPicker',
-		data: [
+		values: [
 			{
 				alias: 'overlaySize',
 				value: 'small',
@@ -196,7 +208,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.MultiNodeTreePicker',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.TreePicker',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -206,7 +218,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.DateTime',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.DatePicker',
-		data: [
+		values: [
 			{
 				alias: 'format',
 				value: 'YYYY-MM-DD',
@@ -225,7 +237,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.DateTime',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.DatePicker',
-		data: [
+		values: [
 			{
 				alias: 'format',
 				value: 'YYYY-MM-DD HH:mm:ss',
@@ -244,7 +256,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.DateTime',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.DatePicker',
-		data: [
+		values: [
 			{
 				alias: 'format',
 				value: 'HH:mm:ss',
@@ -263,7 +275,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.EmailAddress',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.Email',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -273,7 +285,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.MultipleTextString',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.MultipleTextString',
-		data: [
+		values: [
 			{
 				alias: 'minNumber',
 				value: 2,
@@ -292,7 +304,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.DropDown.Flexible',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.Dropdown',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -302,7 +314,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.Slider',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.Slider',
-		data: [
+		values: [
 			{
 				alias: 'enableRange',
 				value: true,
@@ -337,7 +349,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.TrueFalse',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.Toggle',
-		data: [
+		values: [
 			{
 				alias: 'default',
 				value: false,
@@ -364,7 +376,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.Tags',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.Tags',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -374,7 +386,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.MarkdownEditor',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.MarkdownEditor',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -384,7 +396,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.RadioButtonList',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.RadioButtonList',
-		data: [
+		values: [
 			{
 				alias: 'items',
 				value: {
@@ -403,7 +415,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.CheckboxList',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.CheckboxList',
-		data: [
+		values: [
 			{
 				alias: 'items',
 				value: {
@@ -422,7 +434,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.BlockList',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.BlockList',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -432,7 +444,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.MediaPicker3',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.MediaPicker',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -442,7 +454,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.ImageCropper',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.ImageCropper',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -452,7 +464,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.UploadField',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.UploadField',
-		data: [
+		values: [
 			{
 				alias: 'fileExtensions',
 				value: ['jpg', 'jpeg', 'png'],
@@ -467,7 +479,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.BlockGrid',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.BlockGrid',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -477,7 +489,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.ListView',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.CollectionView',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -487,7 +499,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.IconPicker',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.IconPicker',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -497,7 +509,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.JSON',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.NumberRange',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -507,7 +519,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.JSON',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.OrderDirection',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -517,7 +529,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.JSON',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.OverlaySize',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -527,7 +539,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.TinyMCE',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.TinyMCE',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -537,7 +549,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.Label',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.Label',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -547,7 +559,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.Integer',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.Integer',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -557,7 +569,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.Decimal',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.Decimal',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -567,7 +579,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.UserPicker',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.UserPicker',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -577,7 +589,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.MemberPicker',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.MemberPicker',
-		data: [],
+		values: [],
 	},
 	{
 		$type: 'data-type',
@@ -587,7 +599,7 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 		parentKey: null,
 		propertyEditorAlias: 'Umbraco.MemberGroupPicker',
 		propertyEditorUiAlias: 'Umb.PropertyEditorUI.MemberGroupPicker',
-		data: [],
+		values: [],
 	},
 ];
 
@@ -595,24 +607,46 @@ export const data: Array<DataTypeModel & { type: 'data-type' }> = [
 // TODO: all properties are optional in the server schema. I don't think this is correct.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-class UmbDataTypeData extends UmbEntityData<DataTypeModel> {
+class UmbDataTypeData extends UmbEntityData<DataTypeResponseModel | FolderTreeItemResponseModel> {
 	constructor() {
 		super(data);
 	}
 
-	getTreeRoot(): Array<FolderTreeItemModel> {
+	getTreeRoot(): Array<FolderTreeItemResponseModel> {
 		const rootItems = this.data.filter((item) => item.parentKey === null);
 		return rootItems.map((item) => createFolderTreeItem(item));
 	}
 
-	getTreeItemChildren(key: string): Array<FolderTreeItemModel> {
+	getTreeItemChildren(key: string): Array<FolderTreeItemResponseModel> {
 		const childItems = this.data.filter((item) => item.parentKey === key);
 		return childItems.map((item) => createFolderTreeItem(item));
 	}
 
-	getTreeItem(keys: Array<string>): Array<FolderTreeItemModel> {
+	getTreeItem(keys: Array<string>): Array<FolderTreeItemResponseModel> {
 		const items = this.data.filter((item) => keys.includes(item.key ?? ''));
 		return items.map((item) => createFolderTreeItem(item));
+	}
+
+	createFolder(folder: CreateFolderRequestModel & { key: string | undefined }) {
+		const newFolder: FolderTreeItemResponseModel = {
+			name: folder.name,
+			key: folder.key,
+			parentKey: folder.parentKey,
+			$type: 'data-type',
+			type: 'data-type',
+			isFolder: true,
+			isContainer: false,
+		};
+
+		this.data.push(newFolder);
+	}
+
+	// TODO: this could be reused across other types that support folders
+	deleteFolder(key: string) {
+		const item = this.getByKey(key) as FolderTreeItemResponseModel;
+		if (!item) throw new Error(`Item with key ${key} not found`);
+		if (!item.isFolder) throw new Error(`Item with key ${key} is not a folder`);
+		this.data = this.data.filter((item) => item.key !== key);
 	}
 }
 

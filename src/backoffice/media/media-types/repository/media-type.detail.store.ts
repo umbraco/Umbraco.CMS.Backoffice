@@ -1,8 +1,8 @@
-import { UmbContextToken } from '@umbraco-cms/context-api';
-import { UmbStoreBase } from '@umbraco-cms/store';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { ArrayState } from '@umbraco-cms/observable-api';
-import type { MediaTypeDetails } from '@umbraco-cms/models';
+import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbStoreBase } from '@umbraco-cms/backoffice/store';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import { ArrayState } from '@umbraco-cms/backoffice/observable-api';
+import type { MediaTypeDetails } from '@umbraco-cms/backoffice/models';
 
 /**
  * @export
@@ -13,7 +13,7 @@ import type { MediaTypeDetails } from '@umbraco-cms/models';
 export class UmbMediaTypeStore extends UmbStoreBase {
 	#data = new ArrayState<MediaTypeDetails>([], (x) => x.key);
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		super(host, UMB_MEDIA_TYPE_STORE_CONTEXT_TOKEN.toString());
 	}
 

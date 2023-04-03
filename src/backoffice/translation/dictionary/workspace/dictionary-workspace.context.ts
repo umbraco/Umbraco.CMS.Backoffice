@@ -1,21 +1,22 @@
 import { UmbDictionaryRepository } from '../repository/dictionary.repository';
 import { UmbWorkspaceContext } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-context';
-import { UmbWorkspaceEntityContextInterface } from '../../../../backoffice/shared/components/workspace/workspace-context/workspace-entity-context.interface';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { ObjectState } from '@umbraco-cms/observable-api';
-import type { DictionaryDetails } from '@umbraco-cms/models';
+import type { DictionaryDetails } from '../';
+import { UmbEntityWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import { ObjectState } from '@umbraco-cms/backoffice/observable-api';
 
 type EntityType = DictionaryDetails;
-export class UmbWorkspaceDictionaryContext
-	extends UmbWorkspaceContext<UmbDictionaryRepository>
-	implements UmbWorkspaceEntityContextInterface<EntityType | undefined>
+
+export class UmbDictionaryWorkspaceContext
+	extends UmbWorkspaceContext<UmbDictionaryRepository, EntityType>
+	implements UmbEntityWorkspaceContextInterface<EntityType | undefined>
 {
 	#data = new ObjectState<DictionaryDetails | undefined>(undefined);
 	data = this.#data.asObservable();
 	name = this.#data.getObservablePart((data) => data?.name);
 	dictionary = this.#data.getObservablePart((data) => data);
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		super(host, new UmbDictionaryRepository(host));
 	}
 

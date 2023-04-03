@@ -1,11 +1,11 @@
-import { css, html, nothing, PropertyValueMap } from 'lit';
+import { css, html, nothing } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { FormControlMixin } from '@umbraco-ui/uui-base/lib/mixins';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { UUIFileDropzoneElement } from '@umbraco-ui/uui';
-import { UmbLitElement } from '@umbraco-cms/element';
-import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/notification';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 
 @customElement('umb-input-upload-field')
 export class UmbInputUploadFieldElement extends FormControlMixin(UmbLitElement) {
@@ -58,6 +58,7 @@ export class UmbInputUploadFieldElement extends FormControlMixin(UmbLitElement) 
 	 * @description Allows the user to upload multiple files.
 	 * @type {Boolean}
 	 * @default false
+	 * @attr
 	 */
 	@property({ type: Boolean })
 	multiple = false;

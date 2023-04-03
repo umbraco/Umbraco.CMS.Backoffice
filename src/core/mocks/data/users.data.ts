@@ -1,5 +1,5 @@
 import { UmbEntityData } from './entity.data';
-import type { UserDetails } from '@umbraco-cms/models';
+import type { UserDetails } from '@umbraco-cms/backoffice/models';
 
 // Temp mocked database
 class UmbUsersData extends UmbEntityData<UserDetails> {
@@ -53,7 +53,7 @@ export const data: Array<UserDetails> = [
 		contentStartNodes: [],
 		mediaStartNodes: [],
 		icon: 'umb:user',
-		name: 'Lurleen Rozycki',
+		name: 'Lasse Fredslund',
 		email: 'lrozycki0@technorati.com',
 		language: 'Bosnian',
 		status: 'invited',

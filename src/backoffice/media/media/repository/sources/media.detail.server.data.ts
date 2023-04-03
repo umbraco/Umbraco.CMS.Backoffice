@@ -1,8 +1,8 @@
-import { RepositoryDetailDataSource } from '@umbraco-cms/repository';
-import { ProblemDetailsModel } from '@umbraco-cms/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
-import type { MediaDetails } from '@umbraco-cms/models';
+import type { MediaDetails } from '../../';
+import { UmbDataSource } from '@umbraco-cms/backoffice/repository';
+import { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 /**
  * A data source for the Template detail that fetches data from the server
@@ -10,15 +10,15 @@ import type { MediaDetails } from '@umbraco-cms/models';
  * @class UmbTemplateDetailServerDataSource
  * @implements {TemplateDetailDataSource}
  */
-export class UmbMediaDetailServerDataSource implements RepositoryDetailDataSource<MediaDetails> {
-	#host: UmbControllerHostInterface;
+export class UmbMediaDetailServerDataSource implements UmbDataSource<any, any, MediaDetails> {
+	#host: UmbControllerHostElement;
 
 	/**
 	 * Creates an instance of UmbMediaDetailServerDataSource.
-	 * @param {UmbControllerHostInterface} host
+	 * @param {UmbControllerHostElement} host
 	 * @memberof UmbMediaDetailServerDataSource
 	 */
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
 
@@ -124,7 +124,7 @@ export class UmbMediaDetailServerDataSource implements RepositoryDetailDataSourc
 	 * @memberof UmbMediaDetailServerDataSource
 	 */
 	// TODO: Error mistake in this:
-	async update(media: MediaDetails) {
+	async update(key: string, media: MediaDetails) {
 		if (!media.key) {
 			const error: ProblemDetailsModel = { title: 'Media key is missing' };
 			return { error };

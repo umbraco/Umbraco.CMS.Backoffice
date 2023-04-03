@@ -1,8 +1,8 @@
 import { MediaTypeDetailDataSource } from './media-type.details.server.data.interface';
-import { ProblemDetailsModel } from '@umbraco-cms/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import type { MediaTypeDetails } from '@umbraco-cms/models';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+import { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import type { MediaTypeDetails } from '@umbraco-cms/backoffice/models';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 /**
  * @description - A data source for the Media Type detail that fetches data from the server
@@ -11,9 +11,9 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
  * @implements {MediaTypeDetailDataSource}
  */
 export class UmbMediaTypeDetailServerDataSource implements MediaTypeDetailDataSource {
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
 

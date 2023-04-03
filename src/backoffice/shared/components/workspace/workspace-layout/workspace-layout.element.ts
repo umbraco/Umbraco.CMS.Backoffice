@@ -1,42 +1,47 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { IRoutingInfo } from 'router-slot';
 import { map } from 'rxjs';
 import { repeat } from 'lit/directives/repeat.js';
 
-import type { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent } from '@umbraco-cms/router';
-import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/extensions-api';
+import type { UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent, IRoutingInfo } from '@umbraco-cms/internal/router';
+import { createExtensionElement, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import type {
-	ManifestWorkspaceAction,
 	ManifestWorkspaceView,
 	ManifestWorkspaceViewCollection,
-} from '@umbraco-cms/models';
+} from '@umbraco-cms/backoffice/extensions-registry';
 
 import '../../body-layout/body-layout.element';
 import '../../extension-slot/extension-slot.element';
-import { UmbLitElement } from '@umbraco-cms/element';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 /**
  * @element umb-workspace-layout
  * @description
- * @slot icon - Slot for rendering the icon
- * @slot name - Slot for rendering the name
- * @slot footer - Slot for rendering the workspace footer
- * @slot actions - Slot for rendering the workspace actions
+ * @slot icon - Slot for icon
+ * @slot name - Slot for name
+ * @slot footer - Slot for workspace footer
+ * @slot actions - Slot for workspace footer actions
  * @slot default - slot for main content
  * @export
  * @class UmbWorkspaceLayout
  * @extends {UmbLitElement}
  */
+// TODO: stop naming this something with layout. as its not just an layout. it hooks up with extensions.
 @customElement('umb-workspace-layout')
-export class UmbWorkspaceLayout extends UmbLitElement {
+export class UmbWorkspaceLayoutElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
 			:host {
 				display: block;
 				width: 100%;
+				height: 100%;
+			}
+
+			#router-slot {
+				display: flex;
+				flex-direction: column;
 				height: 100%;
 			}
 
@@ -59,6 +64,12 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 
 	@property()
 	public headline = '';
+
+	@property()
+	public hideNavigation = false;
+
+	@property()
+	public enforceNoFooter = false;
 
 	private _alias = '';
 	/**
@@ -97,7 +108,9 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 		this.observe(
 			umbExtensionsRegistry
 				.extensionsOfTypes<ManifestWorkspaceView>(['workspaceView', 'workspaceViewCollection'])
-				.pipe(map((extensions) => extensions.filter((extension) => extension.meta.workspaces.includes(this.alias)))),
+				.pipe(
+					map((extensions) => extensions.filter((extension) => extension.conditions.workspaces.includes(this.alias)))
+				),
 			(workspaceViews) => {
 				this._workspaceViews = workspaceViews;
 				this._createRoutes();
@@ -131,10 +144,14 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 				};
 			});
 
-			this._routes.push({
-				path: '**',
-				redirectTo: `view/${this._workspaceViews[0].meta.pathname}`,
-			});
+			// If we have a post fix then we need to add a direct from the empty url of the split-view-index:
+			const firstView = this._workspaceViews[0];
+			if (firstView) {
+				this._routes.push({
+					path: ``,
+					redirectTo: `view/${firstView.meta.pathname}`,
+				});
+			}
 		}
 	}
 
@@ -146,16 +163,21 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 				<slot name="action-menu" slot="action-menu"></slot>
 				${this.#renderRoutes()}
 				<slot></slot>
-				<slot name="footer" slot="footer"></slot>
-				${this.#renderWorkspaceActions()}
-				<slot name="actions" slot="actions"></slot>
+				${this.enforceNoFooter
+					? ''
+					: html`
+							<umb-workspace-footer-layout alias=${this.alias}>
+								<slot name="footer"></slot>
+								<slot name="actions" slot="actions"></slot>
+							</umb-workspace-footer-layout>
+					  `}
 			</umb-body-layout>
 		`;
 	}
 
 	#renderViews() {
 		return html`
-			${this._workspaceViews.length > 1
+			${!this.hideNavigation && this._workspaceViews.length > 1
 				? html`
 						<uui-tab-group slot="tabs">
 							${repeat(
@@ -194,20 +216,10 @@ export class UmbWorkspaceLayout extends UmbLitElement {
 				: nothing}
 		`;
 	}
-
-	#renderWorkspaceActions() {
-		return html`
-			<umb-extension-slot
-				slot="actions"
-				type="workspaceAction"
-				.filter=${(extension: ManifestWorkspaceAction) => extension.meta.workspaces.includes(this.alias)}
-				default-element="umb-workspace-action"></umb-extension-slot>
-		`;
-	}
 }
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-workspace-layout': UmbWorkspaceLayout;
+		'umb-workspace-layout': UmbWorkspaceLayoutElement;
 	}
 }

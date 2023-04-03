@@ -1,7 +1,7 @@
-import { MediaTypeResource, ProblemDetailsModel } from '@umbraco-cms/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { RepositoryTreeDataSource } from '@umbraco-cms/repository';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+import { MediaTypeResource, ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import { UmbTreeDataSource } from '@umbraco-cms/backoffice/repository';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 /**
  * A data source for the MediaType tree that fetches data from the server
@@ -9,15 +9,15 @@ import { tryExecuteAndNotify } from '@umbraco-cms/resources';
  * @class MediaTypeTreeServerDataSource
  * @implements {MediaTypeTreeDataSource}
  */
-export class MediaTypeTreeServerDataSource implements RepositoryTreeDataSource {
-	#host: UmbControllerHostInterface;
+export class MediaTypeTreeServerDataSource implements UmbTreeDataSource {
+	#host: UmbControllerHostElement;
 
 	/**
 	 * Creates an instance of MediaTypeTreeDataSource.
-	 * @param {UmbControllerHostInterface} host
+	 * @param {UmbControllerHostElement} host
 	 * @memberof MediaTypeTreeDataSource
 	 */
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
 

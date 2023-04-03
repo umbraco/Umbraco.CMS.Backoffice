@@ -1,20 +1,20 @@
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
 import { UmbMediaRepository } from '../repository/media.repository';
-import type { UmbWorkspaceEntityContextInterface } from '../../../shared/components/workspace/workspace-context/workspace-entity-context.interface';
-import { appendToFrozenArray, ObjectState } from '@umbraco-cms/observable-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import type { MediaDetails } from '@umbraco-cms/models';
+import type { MediaDetails } from '../';
+import type { UmbEntityWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
+import { appendToFrozenArray, ObjectState } from '@umbraco-cms/backoffice/observable-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 
 type EntityType = MediaDetails;
 export class UmbMediaWorkspaceContext
-	extends UmbWorkspaceContext<UmbMediaRepository>
-	implements UmbWorkspaceEntityContextInterface<EntityType | undefined>
+	extends UmbWorkspaceContext<UmbMediaRepository, EntityType>
+	implements UmbEntityWorkspaceContextInterface<EntityType | undefined>
 {
 	#data = new ObjectState<EntityType | undefined>(undefined);
 	data = this.#data.asObservable();
 	name = this.#data.getObservablePart((data) => data?.name);
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		super(host, new UmbMediaRepository(host));
 	}
 
@@ -22,6 +22,7 @@ export class UmbMediaWorkspaceContext
 		return this.#data.getValue();
 	}
 
+	// TODO: this should be async because it can only return the key if the data is loaded.
 	getEntityKey() {
 		return this.getData()?.key || '';
 	}

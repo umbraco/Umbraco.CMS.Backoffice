@@ -1,13 +1,13 @@
+import type { DictionaryDetails } from '../../';
 import { DictionaryDetailDataSource } from './dictionary.details.server.data.interface';
-import { UmbControllerHostInterface } from '@umbraco-cms/controller';
-import { tryExecuteAndNotify } from '@umbraco-cms/resources';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import {
-	DictionaryItemCreateModel,
+	CreateDictionaryItemRequestModel,
 	DictionaryResource,
 	LanguageResource,
 	ProblemDetailsModel,
-} from '@umbraco-cms/backend-api';
-import type { DictionaryDetails } from '@umbraco-cms/models';
+} from '@umbraco-cms/backoffice/backend-api';
 
 /**
  * @description - A data source for the Dictionary detail that fetches data from the server
@@ -16,9 +16,9 @@ import type { DictionaryDetails } from '@umbraco-cms/models';
  * @implements {DictionaryDetailDataSource}
  */
 export class UmbDictionaryDetailServerDataSource implements DictionaryDetailDataSource {
-	#host: UmbControllerHostInterface;
+	#host: UmbControllerHostElement;
 
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
 
@@ -80,7 +80,7 @@ export class UmbDictionaryDetailServerDataSource implements DictionaryDetailData
 	 * @memberof UmbDictionaryDetailServerDataSource
 	 */
 	async insert(data: DictionaryDetails) {
-		const requestBody: DictionaryItemCreateModel = {
+		const requestBody: CreateDictionaryItemRequestModel = {
 			parentKey: data.parentKey,
 			name: data.name,
 		};

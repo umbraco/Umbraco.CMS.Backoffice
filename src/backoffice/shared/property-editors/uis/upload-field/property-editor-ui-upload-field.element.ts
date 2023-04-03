@@ -2,21 +2,22 @@ import { html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbInputUploadFieldElement } from '../../../../shared/components/input-upload-field/input-upload-field.element';
-import { UmbLitElement } from '@umbraco-cms/element';
-import { DataTypePropertyModel } from '@umbraco-cms/backend-api';
+import type { DataTypePropertyPresentationModel } from '@umbraco-cms/backoffice/backend-api';
+import type { UmbPropertyEditorElement } from '@umbraco-cms/backoffice/property-editor';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 /**
  * @element umb-property-editor-ui-upload-field
  */
 @customElement('umb-property-editor-ui-upload-field')
-export class UmbPropertyEditorUIUploadFieldElement extends UmbLitElement {
+export class UmbPropertyEditorUIUploadFieldElement extends UmbLitElement implements UmbPropertyEditorElement {
 	static styles = [UUITextStyles];
 
 	@property()
 	value = '';
 
 	@property({ type: Array, attribute: false })
-	public set config(config: Array<DataTypePropertyModel>) {
+	public set config(config: Array<DataTypePropertyPresentationModel>) {
 		const fileExtensions = config.find((x) => x.alias === 'fileExtensions');
 		if (fileExtensions) this._fileExtensions = fileExtensions.value;
 
@@ -31,7 +32,7 @@ export class UmbPropertyEditorUIUploadFieldElement extends UmbLitElement {
 	private _multiple?: boolean;
 
 	private _onChange(event: CustomEvent) {
-		this.value = (event.target as UmbInputUploadFieldElement).value as string;
+		this.value = (event.target as unknown as UmbInputUploadFieldElement).value as string;
 		this.dispatchEvent(new CustomEvent('property-value-change'));
 	}
 
