@@ -1,5 +1,5 @@
-import { generateGuid } from '@umbraco-cms/backoffice/utils/generate-guid';
 import { UmbDocumentTypeRepository } from '../../../../documents/document-types/repository/document-type.repository';
+import { generateGuid } from '@umbraco-cms/backoffice/utils';
 import {
 	DocumentTypeResponseModel,
 	DocumentTypePropertyTypeResponseModel,

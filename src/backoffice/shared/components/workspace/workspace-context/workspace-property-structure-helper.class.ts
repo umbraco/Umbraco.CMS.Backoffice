@@ -105,8 +105,9 @@ export class UmbWorkspacePropertyStructureHelper {
 		return await this.#workspaceContext.structure.createProperty(null, ownerKey, sortOrder);
 	}
 
+	// Takes optional arguments as this is easier for the implementation in the view:
 	async partialUpdateProperty(propertyKey?: string, partialUpdate?: Partial<DocumentTypePropertyTypeResponseModel>) {
-		if (!this.#workspaceContext) return;
+		if (!this.#workspaceContext || !propertyKey || !partialUpdate) return;
 
 		return await this.#workspaceContext.structure.updateProperty(null, propertyKey, partialUpdate);
 	}
