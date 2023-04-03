@@ -64,8 +64,10 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 
 		this.#rootDocumentTypeKey = key;
 
-		this.#init = this._loadType(key);
-		return await this.#init;
+		const promiseResult = this._loadType(key);
+		this.#init = promiseResult;
+		await this.#init;
+		return promiseResult;
 	}
 
 	public async createScaffold(parentKey: string) {
