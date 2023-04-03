@@ -1,3 +1,4 @@
+import { generateGuid } from '@umbraco-cms/backoffice/utils/generate-guid';
 import { UmbDocumentTypeRepository } from '../../../../documents/document-types/repository/document-type.repository';
 import {
 	DocumentTypeResponseModel,
@@ -13,7 +14,6 @@ import {
 	MappingFunction,
 	partialUpdateFrozenArray,
 } from '@umbraco-cms/backoffice/observable-api';
-import { generateGuid } from 'libs/utils/generate-guid';
 
 export type PropertyContainerTypes = 'Group' | 'Tab';
 
