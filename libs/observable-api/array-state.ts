@@ -198,13 +198,7 @@ export class ArrayState<T> extends DeepState<T[]> {
 		if (!this.#getUnique) {
 			throw new Error("Can't partial update an ArrayState without a getUnique method provided when constructed.");
 		}
-		this.next(
-			partialUpdateFrozenArray(
-				this.getValue(),
-				entry,
-				(x) => unique === (this.#getUnique as Exclude<typeof this.#getUnique, undefined>)(x)
-			)
-		);
+		this.next(partialUpdateFrozenArray(this.getValue(), entry, (x) => unique === this.#getUnique!(x)));
 		return this;
 	}
 }
