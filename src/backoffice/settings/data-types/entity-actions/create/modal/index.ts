@@ -1,11 +1,13 @@
 import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
 
-// TODO: rename to UmbDataTypeCreateOptionsModal
-export interface UmbCreateDataTypeModalData {
+export interface UmbDataTypeCreateOptionsModalData {
 	parentKey: string | null;
 }
 
-export const UMB_CREATE_DATA_TYPE_MODAL = new UmbModalToken<UmbCreateDataTypeModalData>('Umb.Modal.CreateDataType', {
-	type: 'sidebar',
-	size: 'small',
-});
+export const UMB_DATA_TYPE_CREATE_OPTIONS_MODAL = new UmbModalToken<UmbDataTypeCreateOptionsModalData>(
+	'Umb.Modal.DataTypeCreateOptions',
+	{
+		type: 'sidebar',
+		size: 'small',
+	}
+);

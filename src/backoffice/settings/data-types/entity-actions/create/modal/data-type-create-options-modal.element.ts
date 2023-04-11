@@ -2,7 +2,7 @@ import { html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property } from 'lit/decorators.js';
 import { DATA_TYPE_REPOSITORY_ALIAS } from '../../../repository/manifests';
-import { UmbCreateDataTypeModalData } from '.';
+import { UmbDataTypeCreateOptionsModalData } from '.';
 import {
 	UmbModalContext,
 	UmbModalHandler,
@@ -11,15 +11,15 @@ import {
 } from '@umbraco-cms/backoffice/modal';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
-@customElement('umb-create-data-type-modal')
-export class UmbCreateDataTypeModalElement extends UmbLitElement {
+@customElement('umb-data-type-create-options-modal')
+export class UmbDataTypeCreateOptionsModalElement extends UmbLitElement {
 	static styles = [UUITextStyles];
 
 	@property({ attribute: false })
-	modalHandler?: UmbModalHandler<UmbCreateDataTypeModalData>;
+	modalHandler?: UmbModalHandler<UmbDataTypeCreateOptionsModalData>;
 
 	@property({ type: Object })
-	data?: UmbCreateDataTypeModalData;
+	data?: UmbDataTypeCreateOptionsModalData;
 
 	#modalContext?: UmbModalContext;
 
@@ -68,10 +68,10 @@ export class UmbCreateDataTypeModalElement extends UmbLitElement {
 	}
 }
 
-export default UmbCreateDataTypeModalElement;
+export default UmbDataTypeCreateOptionsModalElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-create-data-type-modal': UmbCreateDataTypeModalElement;
+		'umb-data-type-create-options-modal': UmbDataTypeCreateOptionsModalElement;
 	}
 }
