@@ -7,7 +7,7 @@ const entityActions: Array<ManifestTypes> = [
 		type: 'entityAction',
 		alias: 'Umb.EntityAction.DataType.Create',
 		name: 'Create Data Type Entity Action',
-		weight: 900,
+		weight: 1000,
 		meta: {
 			icon: 'umb:add',
 			label: 'Create',
@@ -15,7 +15,7 @@ const entityActions: Array<ManifestTypes> = [
 			api: UmbCreateDataTypeEntityAction,
 		},
 		conditions: {
-			entityType: 'data-type-root',
+			entityType: 'data-type',
 		},
 	},
 	{
