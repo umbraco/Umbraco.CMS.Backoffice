@@ -23,11 +23,11 @@ import {
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 import { UmbFolderRepository } from '@umbraco-cms/backoffice/repository';
 
-type ItemType = DataTypeResponseModel;
-type TreeItemType = any;
-
 export class UmbDataTypeRepository
-	implements UmbTreeRepository<TreeItemType>, UmbDetailRepository<ItemType>, UmbFolderRepository
+	implements
+		UmbTreeRepository<FolderTreeItemResponseModel>,
+		UmbDetailRepository<CreateDataTypeRequestModel, UpdateDataTypeRequestModel, DataTypeResponseModel>,
+		UmbFolderRepository
 {
 	#init!: Promise<unknown>;
 
@@ -143,8 +143,7 @@ export class UmbDataTypeRepository
 		return this.#detailStore!.byId(id);
 	}
 
-	// Could potentially be general methods:
-	async create(dataType: ItemType) {
+	async create(dataType: CreateDataTypeRequestModel) {
 		if (!dataType) throw new Error('Data Type is missing');
 		if (!dataType.id) throw new Error('Data Type id is missing');
 
@@ -156,32 +155,32 @@ export class UmbDataTypeRepository
 			const notification = { data: { message: `Data Type created` } };
 			this.#notificationContext?.peek('positive', notification);
 
-			this.#detailStore?.append(dataType);
-			this.#treeStore?.appendItems([dataType]);
+			//this.#detailStore?.append(dataType);
+			// this.#treeStore?.appendItems([dataType]);
 		}
 
 		return { error };
 	}
 
-	async save(dataType: ItemType) {
-		if (!dataType) throw new Error('Data Type is missing');
-		if (!dataType.id) throw new Error('Data Type id is missing');
+	async save(id: string, updatedDataType: UpdateDataTypeRequestModel) {
+		if (!id) throw new Error('Data Type id is missing');
+		if (!updatedDataType) throw new Error('Data Type is missing');
 
 		await this.#init;
 
-		const { error } = await this.#detailSource.update(dataType.id, dataType);
+		const { error } = await this.#detailSource.update(id, updatedDataType);
 
 		if (!error) {
 			const notification = { data: { message: `Data Type saved` } };
 			this.#notificationContext?.peek('positive', notification);
-		}
 
-		// TODO: we currently don't use the detail store for anything.
-		// Consider to look up the data before fetching from the server
-		// Consider notify a workspace if a template is updated in the store while someone is editing it.
-		this.#detailStore?.append(dataType);
-		this.#treeStore?.updateItem(dataType.id, { name: dataType.name });
-		// TODO: would be nice to align the stores on methods/methodNames.
+			// TODO: we currently don't use the detail store for anything.
+			// Consider to look up the data before fetching from the server
+			// Consider notify a workspace if a template is updated in the store while someone is editing it.
+			// TODO: would be nice to align the stores on methods/methodNames.
+			// this.#detailStore?.append(dataType);
+			this.#treeStore?.updateItem(id, updatedDataType);
+		}
 
 		return { error };
 	}
@@ -202,9 +201,9 @@ export class UmbDataTypeRepository
 		// TODO: we currently don't use the detail store for anything.
 		// Consider to look up the data before fetching from the server.
 		// Consider notify a workspace if a template is deleted from the store while someone is editing it.
+		// TODO: would be nice to align the stores on methods/methodNames.
 		this.#detailStore?.remove([id]);
 		this.#treeStore?.removeItem(id);
-		// TODO: would be nice to align the stores on methods/methodNames.
 
 		return { error };
 	}

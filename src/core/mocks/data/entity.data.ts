@@ -20,7 +20,6 @@ export class UmbEntityData<T extends Entity> extends UmbData<T> {
 	}
 
 	insert(item: T) {
-		debugger;
 		const exits = this.data.find((i) => i.id === item.id);
 
 		if (exits) {
