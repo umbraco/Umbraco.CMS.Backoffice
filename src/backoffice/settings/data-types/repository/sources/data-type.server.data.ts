@@ -73,7 +73,7 @@ export class UmbDataTypeServerDataSource
 		if (!dataType) throw new Error('Data Type is missing');
 		if (!dataType.id) throw new Error('Data Type id is missing');
 
-		tryExecuteAndNotify(
+		return tryExecuteAndNotify(
 			this.#host,
 			DataTypeResource.postDataType({
 				requestBody: dataType,
