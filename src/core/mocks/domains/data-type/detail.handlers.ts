@@ -8,9 +8,9 @@ export const detailHandlers = [
 		const data = await req.json();
 		if (!data) return;
 
-		const saved = umbDataTypeData.save(data);
+		umbDataTypeData.insert(data);
 
-		return res(ctx.status(200), ctx.json(saved));
+		return res(ctx.status(200));
 	}),
 
 	rest.get(umbracoPath(`${slug}/:id`), (req, res, ctx) => {

@@ -21,7 +21,7 @@ export class UmbDataTypeWorkspaceElement extends UmbLitElement {
 			path: 'create/:parentId',
 			component: () => this.#element,
 			setup: async (component: HTMLElement, info: IRoutingInfo) => {
-				const parentId = info.match.params.parentId;
+				const parentId = info.match.params.parentId === 'null' ? null : info.match.params.parentId;
 				this.#workspaceContext.createScaffold(parentId);
 			},
 		},
