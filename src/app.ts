@@ -92,6 +92,7 @@ export class UmbAppElement extends UmbLitElement {
 			console.log('%cis logged in: ' + this.authFlow.loggedIn(), 'background: red; color: yellow; font-size: x-large');
 		});
 
+		this._umbIconRegistry.attach(this);
 		this._iconRegistry.attach(this);
 
 		// Listen for the debug event from the <umb-debug> component
