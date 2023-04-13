@@ -9,7 +9,7 @@ import './core/notification/layouts/default';
 import './core/modal/modal-element.element';
 
 import { UUIIconRegistryEssential } from '@umbraco-ui/uui';
-import { PropertyValueMap, css, html } from 'lit';
+import { css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { AuthFlow } from './core/auth/auth-flow';
@@ -47,19 +47,18 @@ export class UmbAppElement extends UmbLitElement {
 		{
 			path: 'upgrade',
 			component: () => import('./upgrader/upgrader.element'),
-			guards: [this._isAuthorizedGuard()],
+			guards: [this.#isAuthorizedGuard()],
 		},
 		{
 			path: '**',
 			component: () => import('./backoffice/backoffice.element'),
-			guards: [this._isAuthorizedGuard()],
+			guards: [this.#isAuthorizedGuard()],
 		},
 	];
 
-	private _umbIconRegistry = new UmbIconStore();
-
-	private _iconRegistry = new UUIIconRegistryEssential();
-	private _runtimeLevel = RuntimeLevelModel.UNKNOWN;
+	#umbIconRegistry = new UmbIconStore();
+	#uuiIconRegistry = new UUIIconRegistryEssential();
+	#runtimeLevel = RuntimeLevelModel.UNKNOWN;
 
 	private authFlow: AuthFlow;
 
@@ -69,7 +68,6 @@ export class UmbAppElement extends UmbLitElement {
 		OpenAPI.BASE =
 			import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? '' : this.serverUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
 		OpenAPI.WITH_CREDENTIALS = true;
-		OpenAPI.TOKEN = () => this.authFlow.performWithFreshTokens();
 
 		this.authFlow = new AuthFlow(
 			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
@@ -81,23 +79,23 @@ export class UmbAppElement extends UmbLitElement {
 		this._setup();
 	}
 
-	async firstUpdated(props: PropertyValueMap<unknown>) {
-		super.firstUpdated(props);
-
-		// TODO: Handle fallthrough if no cases were hit in setInitialState() - this should mean we need to perform an authorization request
+	private async _setup() {
+		// Get service configuration from authentication server
 		await this.authFlow.setInitialState();
 
-		await this._setInitStatus();
-	}
+		// Get the current runtime level and initialise router
+		await this.#setInitStatus();
 
-	private async _setup() {
 		window.addEventListener('auth-success', () => {
 			// TODO: What happens when the user is successfully logged in - persist in user service?
 			console.log('%cis logged in: ' + this.authFlow.loggedIn(), 'background: red; color: yellow; font-size: x-large');
+
+			// After succesful authentication, we need to update the OpenAPI.TOKEN function
+			OpenAPI.TOKEN = () => this.authFlow.performWithFreshTokens();
 		});
 
-		this._umbIconRegistry.attach(this);
-		this._iconRegistry.attach(this);
+		this.#umbIconRegistry.attach(this);
+		this.#uuiIconRegistry.attach(this);
 
 		// Listen for the debug event from the <umb-debug> component
 		this.addEventListener(umbDebugContextEventType, (event: any) => {
@@ -122,14 +120,14 @@ export class UmbAppElement extends UmbLitElement {
 		});
 	}
 
-	private async _setInitStatus() {
+	async #setInitStatus() {
 		const { data } = await tryExecuteAndNotify(this, ServerResource.getServerStatus());
-		this._runtimeLevel = data?.serverStatus ?? RuntimeLevelModel.UNKNOWN;
-		this._redirect();
+		this.#runtimeLevel = data?.serverStatus ?? RuntimeLevelModel.UNKNOWN;
+		this.#redirect();
 	}
 
-	private _redirect() {
-		switch (this._runtimeLevel) {
+	#redirect() {
+		switch (this.#runtimeLevel) {
 			case RuntimeLevelModel.INSTALL:
 				history.replaceState(null, '', 'install');
 				break;
@@ -150,17 +148,17 @@ export class UmbAppElement extends UmbLitElement {
 			}
 
 			default:
-				throw new Error(`Unsupported runtime level: ${this._runtimeLevel}`);
+				throw new Error(`Unsupported runtime level: ${this.#runtimeLevel}`);
 		}
 	}
 
-	private _isAuthorized(): boolean {
+	#isAuthorized(): boolean {
 		return import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? true : this.authFlow.loggedIn();
 	}
 
-	private _isAuthorizedGuard(): Guard {
+	#isAuthorizedGuard(redirectTo?: string): Guard {
 		return () => {
-			if (this._isAuthorized()) {
+			if (this.#isAuthorized()) {
 				return true;
 			}
 
