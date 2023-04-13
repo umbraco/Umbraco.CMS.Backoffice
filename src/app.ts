@@ -65,32 +65,35 @@ export class UmbAppElement extends UmbLitElement {
 
 	constructor() {
 		super();
-		this._setup();
-	}
 
-	connectedCallback() {
-		super.connectedCallback();
-		this._redirect();
-	}
-
-	private async _setup() {
 		OpenAPI.BASE =
 			import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? '' : this.serverUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
 		OpenAPI.WITH_CREDENTIALS = true;
 
-		this.provideContext('UMBRACOBASE', OpenAPI.BASE);
-
 		this.authFlow = new AuthFlow(OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin, window.location.href);
 
-		window.addEventListener('auth-success', () => {
-			// TODO: What happens when the user is successfully logged in - persist in user service?
-			console.log('%cis logged in: ' + this.authFlow.loggedIn(), 'background: red; color: yellow; font-size: x-large');
-		});
+		this.provideContext('UMBRACOBASE', OpenAPI.BASE);
+
+		this._setup();
+	}
+
+	async connectedCallback() {
+		super.connectedCallback();
 
 		// TODO: Handle fallthrough if no cases were hit in setInitialState() - this should mean we need to perform an authorization request
 		await this.authFlow.setInitialState();
 
 		await this._setInitStatus();
+
+		this._redirect();
+	}
+
+	private async _setup() {
+		window.addEventListener('auth-success', () => {
+			// TODO: What happens when the user is successfully logged in - persist in user service?
+			console.log('%cis logged in: ' + this.authFlow.loggedIn(), 'background: red; color: yellow; font-size: x-large');
+		});
+
 		this._iconRegistry.attach(this);
 
 		// Listen for the debug event from the <umb-debug> component
