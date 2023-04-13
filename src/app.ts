@@ -84,8 +84,6 @@ export class UmbAppElement extends UmbLitElement {
 		await this.authFlow.setInitialState();
 
 		await this._setInitStatus();
-
-		this._redirect();
 	}
 
 	private async _setup() {
