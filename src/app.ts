@@ -67,7 +67,6 @@ export class UmbAppElement extends UmbLitElement {
 
 		OpenAPI.BASE =
 			import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? '' : this.serverUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
-		OpenAPI.WITH_CREDENTIALS = true;
 
 		this.authFlow = new AuthFlow(
 			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
@@ -94,6 +93,7 @@ export class UmbAppElement extends UmbLitElement {
 		// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
 		// since the token has been set by {AuthFlow.setInitialState}
 		OpenAPI.TOKEN = () => this.authFlow.performWithFreshTokens();
+		OpenAPI.WITH_CREDENTIALS = true;
 
 		this.#umbIconRegistry.attach(this);
 		this.#uuiIconRegistry.attach(this);
