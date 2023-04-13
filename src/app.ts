@@ -71,7 +71,7 @@ export class UmbAppElement extends UmbLitElement {
 
 		this.authFlow = new AuthFlow(
 			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
-			`${window.location.origin}/umbraco/login/callback/`
+			`${window.location.origin}/umbraco`
 		);
 
 		this.provideContext('UMBRACOBASE', OpenAPI.BASE);
@@ -80,12 +80,6 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	private async _setup() {
-		// Get service configuration from authentication server
-		await this.authFlow.setInitialState();
-
-		// Get the current runtime level and initialise router
-		await this.#setInitStatus();
-
 		window.addEventListener('auth-success', () => {
 			// TODO: What happens when the user is successfully logged in - persist in user service?
 			console.log('%cis logged in: ' + this.authFlow.loggedIn(), 'background: red; color: yellow; font-size: x-large');
@@ -93,6 +87,12 @@ export class UmbAppElement extends UmbLitElement {
 			// After succesful authentication, we need to update the OpenAPI.TOKEN function
 			OpenAPI.TOKEN = () => this.authFlow.performWithFreshTokens();
 		});
+
+		// Get service configuration from authentication server
+		await this.authFlow.setInitialState();
+
+		// Get the current runtime level and initialise router
+		await this.#setInitStatus();
 
 		this.#umbIconRegistry.attach(this);
 		this.#uuiIconRegistry.attach(this);
