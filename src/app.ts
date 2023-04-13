@@ -141,7 +141,13 @@ export class UmbAppElement extends UmbLitElement {
 
 				// If we are on the installer or upgrade page, redirect to the root
 				// but if not, keep the current path but replace state anyway to initialize the router
-				const finalPath = pathname === '/install' || pathname === '/upgrade' ? '/' : location.href;
+				let currentRoute = location.href;
+				const savedRoute = sessionStorage.getItem('umb:auth:redirect');
+				if (savedRoute) {
+					sessionStorage.removeItem('umb:auth:redirect');
+					currentRoute = savedRoute;
+				}
+				const finalPath = pathname === '/install' || pathname === '/upgrade' ? '/' : currentRoute;
 
 				history.replaceState(null, '', finalPath);
 				break;
@@ -156,11 +162,13 @@ export class UmbAppElement extends UmbLitElement {
 		return import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? true : this.authFlow.loggedIn();
 	}
 
-	#isAuthorizedGuard(redirectTo?: string): Guard {
+	#isAuthorizedGuard(): Guard {
 		return () => {
 			if (this.#isAuthorized()) {
 				return true;
 			}
+
+			window.sessionStorage.setItem('umb:auth:redirect', location.href);
 
 			// TODO: Handle the case to send a user back to where they came from after login
 			// TODO: How do we handle the case where the user is already logged in, but the session has expired?
