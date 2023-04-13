@@ -83,16 +83,17 @@ export class UmbAppElement extends UmbLitElement {
 		window.addEventListener('auth-success', () => {
 			// TODO: What happens when the user is successfully logged in - persist in user service?
 			console.log('%cis logged in: ' + this.authFlow.loggedIn(), 'background: red; color: yellow; font-size: x-large');
-
-			// After succesful authentication, we need to update the OpenAPI.TOKEN function
-			OpenAPI.TOKEN = () => this.authFlow.performWithFreshTokens();
 		});
 
 		// Get service configuration from authentication server
 		await this.authFlow.setInitialState();
 
-		// Get the current runtime level and initialise router
+		// Get the current runtime level and initialise the router
 		await this.#setInitStatus();
+
+		// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
+		// since the token has been set by {AuthFlow.setInitialState}
+		OpenAPI.TOKEN = () => this.authFlow.performWithFreshTokens();
 
 		this.#umbIconRegistry.attach(this);
 		this.#uuiIconRegistry.attach(this);
