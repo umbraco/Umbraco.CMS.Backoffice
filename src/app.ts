@@ -153,23 +153,15 @@ export class UmbAppElement extends UmbLitElement {
 		return import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? true : this.authFlow.loggedIn();
 	}
 
-	private _isAuthorizedGuard(redirectTo?: string): Guard {
+	private _isAuthorizedGuard(): Guard {
 		return () => {
 			if (this._isAuthorized()) {
 				return true;
 			}
 
-			// TODO: How do we preserve the redirectTo param - forward it to the login page?
 			// TODO: How do we handle the case where the user is already logged in, but the session has expired?
-			this.authFlow.makeAuthorizationRequest();
+			this.authFlow.makeAuthorizationRequest(undefined, window.location.href);
 
-			// let returnPath = '/login';
-
-			// if (redirectTo) {
-			// 	returnPath += `?redirectTo=${redirectTo}`;
-			// }
-
-			// history.replaceState(null, '', returnPath);
 			return false;
 		};
 	}
