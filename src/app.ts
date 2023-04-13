@@ -9,7 +9,7 @@ import './core/notification/layouts/default';
 import './core/modal/modal-element.element';
 
 import { UUIIconRegistryEssential } from '@umbraco-ui/uui';
-import { css, html } from 'lit';
+import { PropertyValueMap, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { AuthFlow } from './core/auth/auth-flow';
@@ -47,7 +47,7 @@ export class UmbAppElement extends UmbLitElement {
 		{
 			path: 'upgrade',
 			component: () => import('./upgrader/upgrader.element'),
-			guards: [this._isAuthorizedGuard('/upgrade')],
+			guards: [this._isAuthorizedGuard()],
 		},
 		{
 			path: '**',
@@ -77,8 +77,8 @@ export class UmbAppElement extends UmbLitElement {
 		this._setup();
 	}
 
-	async connectedCallback() {
-		super.connectedCallback();
+	async firstUpdated(props: PropertyValueMap<unknown>) {
+		super.firstUpdated(props);
 
 		// TODO: Handle fallthrough if no cases were hit in setInitialState() - this should mean we need to perform an authorization request
 		await this.authFlow.setInitialState();
