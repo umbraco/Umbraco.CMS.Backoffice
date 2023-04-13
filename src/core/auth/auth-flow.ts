@@ -134,7 +134,7 @@ export class AuthFlow {
 		this.configuration = response;
 	}
 
-	makeAuthorizationRequest(username?: string, redirectUri?: string) {
+	makeAuthorizationRequest(username?: string) {
 		if (!this.configuration) {
 			console.log('Unknown service configuration');
 			return;
@@ -149,7 +149,7 @@ export class AuthFlow {
 		const request = new AuthorizationRequest(
 			{
 				client_id: this.clientId,
-				redirect_uri: redirectUri || this.redirectUri,
+				redirect_uri: this.redirectUri,
 				scope: this.scope,
 				response_type: AuthorizationRequest.RESPONSE_TYPE_CODE,
 				state: undefined,

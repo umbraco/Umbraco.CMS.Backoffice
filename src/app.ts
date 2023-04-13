@@ -69,8 +69,12 @@ export class UmbAppElement extends UmbLitElement {
 		OpenAPI.BASE =
 			import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? '' : this.serverUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
 		OpenAPI.WITH_CREDENTIALS = true;
+		OpenAPI.TOKEN = () => this.authFlow.performWithFreshTokens();
 
-		this.authFlow = new AuthFlow(OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin, window.location.href);
+		this.authFlow = new AuthFlow(
+			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
+			`${window.location.origin}/umbraco/login/callback/`
+		);
 
 		this.provideContext('UMBRACOBASE', OpenAPI.BASE);
 
@@ -160,8 +164,9 @@ export class UmbAppElement extends UmbLitElement {
 				return true;
 			}
 
+			// TODO: Handle the case to send a user back to where they came from after login
 			// TODO: How do we handle the case where the user is already logged in, but the session has expired?
-			this.authFlow.makeAuthorizationRequest(undefined, window.location.href);
+			this.authFlow.makeAuthorizationRequest(undefined);
 
 			return false;
 		};
