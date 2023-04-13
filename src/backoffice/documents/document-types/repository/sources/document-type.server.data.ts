@@ -1,6 +1,10 @@
-import { RepositoryDetailDataSource } from '@umbraco-cms/backoffice/repository';
-import { DocumentTypeResource, ProblemDetailsModel, DocumentTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbControllerHostInterface } from '@umbraco-cms/backoffice/controller';
+import { UmbDataSource } from '@umbraco-cms/backoffice/repository';
+import {
+	DocumentTypeResource,
+	ProblemDetailsModel,
+	DocumentTypeResponseModel,
+} from '@umbraco-cms/backoffice/backend-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 /**
@@ -9,45 +13,45 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
  * @class UmbDocumentTypeServerDataSource
  * @implements {RepositoryDetailDataSource}
  */
-export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSource<DocumentTypeResponseModel> {
-	#host: UmbControllerHostInterface;
+export class UmbDocumentTypeServerDataSource implements UmbDataSource<any, any, DocumentTypeResponseModel> {
+	#host: UmbControllerHostElement;
 
 	/**
 	 * Creates an instance of UmbDocumentServerDataSource.
-	 * @param {UmbControllerHostInterface} host
+	 * @param {UmbControllerHostElement} host
 	 * @memberof UmbDocumentServerDataSource
 	 */
-	constructor(host: UmbControllerHostInterface) {
+	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
 
 	/**
-	 * Fetches a Document with the given key from the server
-	 * @param {string} key
+	 * Fetches a Document with the given id from the server
+	 * @param {string} id
 	 * @return {*}
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
-	async get(key: string) {
-		if (!key) {
-			const error: ProblemDetailsModel = { title: 'Key is missing' };
+	async get(id: string) {
+		if (!id) {
+			const error: ProblemDetailsModel = { title: 'Id is missing' };
 			return { error };
 		}
 
 		return tryExecuteAndNotify(
 			this.#host,
-			DocumentTypeResource.getDocumentTypeByKey({
-				key,
+			DocumentTypeResource.getDocumentTypeById({
+				id: id,
 			})
 		);
 	}
 
 	/**
 	 * Creates a new Document scaffold
-	 * @param {(string | null)} parentKey
+	 * @param {(string | null)} parentId
 	 * @return {*}
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
-	async createScaffold(parentKey: string | null) {
+	async createScaffold(parentId: string | null) {
 		const data: DocumentTypeResponseModel = {
 			properties: [],
 		};
@@ -62,11 +66,11 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
 	async insert(document: DocumentTypeResponseModel) {
-		if (!document.key) {
-			//const error: ProblemDetails = { title: 'Document key is missing' };
+		if (!document.id) {
+			//const error: ProblemDetails = { title: 'Document id is missing' };
 			return Promise.reject();
 		}
-		//const payload = { key: document.key, requestBody: document };
+		//const payload = { id: document.id, requestBody: document };
 
 		let body: string;
 
@@ -78,7 +82,7 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 		}
 		//return tryExecuteAndNotify(this.#host, DocumentTypeResource.postDocument(payload));
 		// TODO: use resources when end point is ready:
-		return tryExecuteAndNotify<DocumentTypeResponseModel>(
+		return tryExecuteAndNotify<string>(
 			this.#host,
 			fetch('/umbraco/management/api/v1/document-type', {
 				method: 'POST',
@@ -96,13 +100,8 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	 * @return {*}
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
-	// TODO: Error mistake in this:
-	async update(document: DocumentTypeResponseModel) {
-		if (!document.key) {
-			const error: ProblemDetailsModel = { title: 'Document key is missing' };
-			return { error };
-		}
-		//const payload = { key: document.key, requestBody: document };
+	async update(id: string, document: any) {
+		if (!id) throw new Error('Id is missing');
 
 		let body: string;
 
@@ -116,7 +115,7 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 		// TODO: use resources when end point is ready:
 		return tryExecuteAndNotify<DocumentTypeResponseModel>(
 			this.#host,
-			fetch(`/umbraco/management/api/v1/document-type/${document.key}`, {
+			fetch(`/umbraco/management/api/v1/document-type/${document.id}`, {
 				method: 'PUT',
 				body: body,
 				headers: {
@@ -127,39 +126,14 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	}
 
 	/**
-	 * Trash a Document on the server
-	 * @param {Document} Document
-	 * @return {*}
-	 * @memberof UmbDocumentTypeServerDataSource
-	 */
-	async trash(key: string) {
-		if (!key) {
-			const error: ProblemDetailsModel = { title: 'Key is missing' };
-			return { error };
-		}
-
-		// TODO: use resources when end point is ready:
-		return tryExecuteAndNotify<DocumentTypeResponseModel>(
-			this.#host,
-			fetch(`/umbraco/management/api/v1/document-type/${key}`, {
-				method: 'DELETE',
-				body: JSON.stringify([key]),
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}) as any
-		);
-	}
-
-	/**
 	 * Deletes a Template on the server
-	 * @param {string} key
+	 * @param {string} id
 	 * @return {*}
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
-	async delete(key: string) {
-		if (!key) {
-			const error: ProblemDetailsModel = { title: 'Key is missing' };
+	async delete(id: string) {
+		if (!id) {
+			const error: ProblemDetailsModel = { title: 'Id is missing' };
 			return { error };
 		}
 
@@ -168,7 +142,7 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 		try {
 			await fetch('/umbraco/management/api/v1/document-type/trash', {
 				method: 'POST',
-				body: JSON.stringify([key]),
+				body: JSON.stringify([id]),
 				headers: {
 					'Content-Type': 'application/json',
 				},
@@ -188,19 +162,19 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 	}
 
 	/**
-	 * Get the allowed document types for a given parent key
-	 * @param {string} key
+	 * Get the allowed document types for a given parent id
+	 * @param {string} id
 	 * @return {*}
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
-	async getAllowedChildrenOf(key: string) {
-		if (!key) throw new Error('Key is missing');
+	async getAllowedChildrenOf(id: string) {
+		if (!id) throw new Error('Id is missing');
 
 		let problemDetails: ProblemDetailsModel | undefined = undefined;
 		let data = undefined;
 
 		try {
-			const res = await fetch(`/umbraco/management/api/v1/document-type/allowed-children-of/${key}`, {
+			const res = await fetch(`/umbraco/management/api/v1/document-type/allowed-children-of/${id}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
@@ -208,7 +182,7 @@ export class UmbDocumentTypeServerDataSource implements RepositoryDetailDataSour
 			});
 			data = await res.json();
 		} catch (error) {
-			problemDetails = { title: `Get allowed children of ${key} failed` };
+			problemDetails = { title: `Get allowed children of ${id} failed` };
 		}
 
 		return { data, error: problemDetails };

@@ -11,7 +11,7 @@ import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
  * @element umb-upgrader
  */
 @customElement('umb-upgrader')
-export class UmbUpgrader extends UmbLitElement {
+export class UmbUpgraderElement extends UmbLitElement {
 	@state()
 	private upgradeSettings?: UpgradeSettingsResponseModel;
 
@@ -64,17 +64,17 @@ export class UmbUpgrader extends UmbLitElement {
 		if (error) {
 			this.errorMessage = error.detail || 'Unknown error, please try again';
 		} else {
-			history.pushState(null, '', '/');
+			history.pushState(null, '', 'section/content');
 		}
 
 		this.upgrading = false;
 	};
 }
 
-export default UmbUpgrader;
+export default UmbUpgraderElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-upgrader': UmbUpgrader;
+		'umb-upgrader': UmbUpgraderElement;
 	}
 }

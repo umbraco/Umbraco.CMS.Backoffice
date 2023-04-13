@@ -1,4 +1,4 @@
-import { handlers as dataTypeHandlers } from './domains/data-type.handlers';
+import { handlers as dataTypeHandlers } from './domains/data-type';
 import { handlers as relationTypeHandlers } from './domains/relation-type.handlers';
 import { handlers as documentTypeHandlers } from './domains/document-type.handlers';
 import { handlers as installHandlers } from './domains/install.handlers';
@@ -28,6 +28,7 @@ import { handlers as redirectManagementHandlers } from './domains/redirect-manag
 import { handlers as logViewerHandlers } from './domains/log-viewer.handlers';
 import { handlers as packageHandlers } from './domains/package.handlers';
 import { handlers as rteEmbedHandlers } from './domains/rte-embed.handlers';
+import { handlers as stylesheetHandlers } from './domains/stylesheet.handlers';
 
 const handlers = [
 	serverHandlers.serverVersionHandler,
@@ -59,6 +60,7 @@ const handlers = [
 	...logViewerHandlers,
 	...packageHandlers,
 	...rteEmbedHandlers,
+	...stylesheetHandlers,
 ];
 
 switch (import.meta.env.VITE_UMBRACO_INSTALL_STATUS) {

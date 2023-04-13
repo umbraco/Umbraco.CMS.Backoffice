@@ -2,16 +2,17 @@ import { defineElement } from '@umbraco-ui/uui-base/lib/registration';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { state } from 'lit/decorators.js';
+import { UmbSectionElement } from '../section/section.element';
+import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from '../section/section.context';
+import { UmbBackofficeContext, UMB_BACKOFFICE_CONTEXT_TOKEN } from './backoffice.context';
+import type { IRoute } from '@umbraco-cms/backoffice/router';
 import type { UmbRouterSlotChangeEvent } from '@umbraco-cms/internal/router';
 import type { ManifestSection } from '@umbraco-cms/backoffice/extensions-registry';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { createExtensionElementOrFallback } from '@umbraco-cms/backoffice/extensions-api';
-import { UmbSectionElement } from '../section/section.element';
-import { UmbSectionContext, UMB_SECTION_CONTEXT_TOKEN } from '../section/section.context';
-import { UmbBackofficeContext, UMB_BACKOFFICE_CONTEXT_TOKEN } from './backoffice.context';
 
 @defineElement('umb-backoffice-main')
-export class UmbBackofficeMain extends UmbLitElement {
+export class UmbBackofficeMainElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -24,7 +25,7 @@ export class UmbBackofficeMain extends UmbLitElement {
 	];
 
 	@state()
-	private _routes: Array<any> = [];
+	private _routes: Array<IRoute> = [];
 
 	@state()
 	private _sections: Array<ManifestSection> = [];
@@ -63,10 +64,8 @@ export class UmbBackofficeMain extends UmbLitElement {
 			return {
 				path: this._routePrefix + section.meta.pathname,
 				component: () => createExtensionElementOrFallback(section, 'umb-section'),
-				setup: (component: Promise<UmbSectionElement>) => {
-					component.then((element) => {
-						element.manifest = section;
-					});
+				setup: (component) => {
+					(component as UmbSectionElement).manifest = section;
 				},
 			};
 		});
@@ -101,6 +100,6 @@ export class UmbBackofficeMain extends UmbLitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-backoffice-main': UmbBackofficeMain;
+		'umb-backoffice-main': UmbBackofficeMainElement;
 	}
 }

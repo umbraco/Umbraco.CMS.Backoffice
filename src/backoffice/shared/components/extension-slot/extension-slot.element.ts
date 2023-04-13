@@ -4,7 +4,11 @@ import type { TemplateResult } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'rxjs';
 import { repeat } from 'lit/directives/repeat.js';
-import { createExtensionElement, isManifestElementableType, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
+import {
+	createExtensionElement,
+	isManifestElementableType,
+	umbExtensionsRegistry,
+} from '@umbraco-cms/backoffice/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 export type InitializedExtension = { alias: string; weight: number; component: HTMLElement | null };
@@ -33,6 +37,17 @@ export class UmbExtensionSlotElement extends UmbLitElement {
 
 	@property({ type: Object, attribute: false })
 	public filter: (manifest: any) => boolean = () => true;
+
+	private _props?: Record<string, any> = {};
+	@property({ type: Object, attribute: false })
+	get props() {
+		return this._props;
+	}
+	set props(newVal) {
+		this._props = newVal;
+		// TODO: we could optimize this so we only re-set the updated props.
+		this.#assignPropsToAllComponents();
+	}
 
 	@property({ type: String, attribute: 'default-element' })
 	public defaultElement = '';
@@ -77,12 +92,13 @@ export class UmbExtensionSlotElement extends UmbLitElement {
 							// TODO: Lets make an console.error in this case?
 						}
 						if (component) {
+							this.#assignProps(component);
 							(component as any).manifest = extension;
 							extensionObject.component = component;
 
 							// sort:
 							// TODO: Make sure its right to have highest last?
-							this._extensions.sort((a, b) => a.weight - b.weight);
+							this._extensions.sort((a, b) => b.weight - a.weight);
 						} else {
 							// Remove cause we could not get the component, so we will get rid of this.
 							//this._extensions.splice(this._extensions.indexOf(extensionObject), 1);
@@ -94,6 +110,18 @@ export class UmbExtensionSlotElement extends UmbLitElement {
 			}
 		);
 	}
+
+	#assignPropsToAllComponents() {
+		this._extensions.forEach((ext) => this.#assignProps(ext.component));
+	}
+
+	#assignProps = (component: HTMLElement | null) => {
+		if (!component || !this._props) return;
+
+		Object.keys(this._props).forEach((key) => {
+			(component as any)[key] = this._props?.[key];
+		});
+	};
 
 	render() {
 		// TODO: check if we can use repeat directly.

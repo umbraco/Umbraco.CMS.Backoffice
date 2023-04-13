@@ -2,10 +2,10 @@ import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { UmbCollectionContext, UMB_COLLECTION_CONTEXT_TOKEN } from '../../../shared/collection/collection.context';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 // TODO: this should be a lib import
-import { UmbCollectionContext, UMB_COLLECTION_CONTEXT_TOKEN } from '../../../shared/collection/collection.context';
 
 @customElement('umb-media-grid-collection-view')
 export class UmbMediaGridCollectionViewElement extends UmbLitElement {
@@ -118,24 +118,24 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 
 	private _handleOpenItem(mediaItem: EntityTreeItemResponseModel) {
 		//TODO: Fix when we have dynamic routing
-		history.pushState(null, '', 'section/media/media/edit/' + mediaItem.key);
+		history.pushState(null, '', 'section/media/media/edit/' + mediaItem.id);
 	}
 
 	private _handleSelect(mediaItem: EntityTreeItemResponseModel) {
-		if (mediaItem.key) {
-			this._collectionContext?.select(mediaItem.key);
+		if (mediaItem.id) {
+			this._collectionContext?.select(mediaItem.id);
 		}
 	}
 
 	private _handleDeselect(mediaItem: EntityTreeItemResponseModel) {
-		if (mediaItem.key) {
-			this._collectionContext?.deselect(mediaItem.key);
+		if (mediaItem.id) {
+			this._collectionContext?.deselect(mediaItem.id);
 		}
 	}
 
 	private _isSelected(mediaItem: EntityTreeItemResponseModel) {
-		if (mediaItem.key) {
-			return this._selection.includes(mediaItem.key);
+		if (mediaItem.id) {
+			return this._selection.includes(mediaItem.id);
 		}
 		return false;
 	}
@@ -167,7 +167,7 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 				${this._mediaItems
 					? repeat(
 							this._mediaItems,
-							(file, index) => (file.key || '') + index,
+							(file, index) => (file.id || '') + index,
 							(file) => this._renderMediaItem(file)
 					  )
 					: ''}
