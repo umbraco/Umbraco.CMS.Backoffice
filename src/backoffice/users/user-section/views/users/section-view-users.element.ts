@@ -67,8 +67,12 @@ export class UmbSectionViewUsersElement extends UmbLitElement {
 	private _createRoutes() {
 		const routes: IRoute[] = [
 			{
-				path: 'overview',
+				path: 'view',
 				component: () => import('./workspace-view-users-overview.element'),
+			},
+			{
+				path: 'user',
+				component: () => import('../../../users/workspace/user-workspace.element'),
 			},
 		];
 
@@ -91,7 +95,7 @@ export class UmbSectionViewUsersElement extends UmbLitElement {
 
 		routes.push({
 			path: '**',
-			redirectTo: 'overview',
+			redirectTo: 'view',
 		});
 		this._routes = routes;
 	}

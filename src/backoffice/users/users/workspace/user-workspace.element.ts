@@ -20,7 +20,7 @@ export class UmbUserWorkspaceElement extends UmbLitElement {
 	@state()
 	_routes: IRoute[] = [
 		{
-			path: 'edit/:id',
+			path: ':id',
 			component: () => this.#element,
 			setup: (component, info) => {
 				const id = info.match.params.id;
@@ -30,6 +30,8 @@ export class UmbUserWorkspaceElement extends UmbLitElement {
 	];
 
 	render() {
+		console.log('WHAT', this.#element);
+
 		return html`<umb-router-slot .routes=${this._routes}></umb-router-slot> `;
 	}
 }

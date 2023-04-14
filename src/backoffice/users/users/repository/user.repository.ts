@@ -37,6 +37,8 @@ export class UmbUserRepository
 		throw new Error('Method not implemented.');
 	}
 	requestById(id: string): Promise<UmbRepositoryResponse<UserResponseModel>> {
+		console.log('requestById', id);
+
 		throw new Error('Method not implemented.');
 	}
 	create(data: UserPresentationBaseModel): Promise<UmbRepositoryErrorResponse> {

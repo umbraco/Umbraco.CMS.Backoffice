@@ -1,55 +1,45 @@
-import { UMB_USER_STORE_CONTEXT_TOKEN } from '../repository/user.store';
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
-import { UmbEntityWorkspaceManager } from '../../../shared/components/workspace/workspace-context/entity-manager-controller';
 import { UmbUserRepository } from '../repository/user.repository';
 import { UmbEntityWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import { ObjectState } from '@umbraco-cms/backoffice/observable-api';
+import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 export class UmbUserWorkspaceContext
 	extends UmbWorkspaceContext<UmbUserRepository, UserDetails>
 	implements UmbEntityWorkspaceContextInterface<UserDetails | undefined>
 {
-	#manager = new UmbEntityWorkspaceManager<typeof UMB_USER_STORE_CONTEXT_TOKEN.TYPE>(
-		this.host,
-		'user',
-		UMB_USER_STORE_CONTEXT_TOKEN
-	);
-
-	public readonly data = this.#manager.state.asObservable();
-	public readonly name = this.#manager.state.getObservablePart((state) => state?.name);
-
-	// TODO: remove this magic connection, instead create the necessary methods to update parts.
-	update = this.#manager.state.update;
-
 	constructor(host: UmbControllerHostElement) {
 		super(host, new UmbUserRepository(host));
 	}
 
-	setName(name: string) {
-		this.#manager.state.update({ name: name });
-	}
-	getEntityType = this.#manager.getEntityType;
-	getUnique = this.#manager.getEntityKey;
-	getEntityId = this.#manager.getEntityKey;
-	getStore = this.#manager.getStore;
-	getData = this.#manager.getData as any; // TODO: fix type mismatch, this will mos likely be handled when switching to repositories.
-	load = this.#manager.load;
-	create = this.#manager.create;
-	save = this.#manager.save;
-	destroy = this.#manager.destroy;
+	#data = new ObjectState<UserResponseModel | undefined>(undefined);
+	data = this.#data.asObservable();
 
-	getName() {
-		throw new Error('getName is not implemented for UmbWorkspaceUserContext');
+	async load(id: string) {
+		console.log('load');
+
+		const { data } = await this.repository.requestById(id);
+		if (data) {
+			this.setIsNew(false);
+			this.#data.update(data);
+		}
 	}
 
-	propertyValueByAlias(alias: string) {
-		throw new Error('setPropertyValue is not implemented for UmbWorkspaceUserContext');
+	getEntityId(): string | undefined {
+		throw new Error('Method not implemented.');
 	}
-	getPropertyValue(alias: string) {
-		throw new Error('setPropertyValue is not implemented for UmbWorkspaceUserContext');
+	getEntityType(): string {
+		throw new Error('Method not implemented.');
 	}
-	setPropertyValue(alias: string, value: unknown) {
-		throw new Error('setPropertyValue is not implemented for UmbWorkspaceUserContext');
+	getData(): UserDetails | undefined {
+		throw new Error('Method not implemented.');
+	}
+	save(): Promise<void> {
+		throw new Error('Method not implemented.');
+	}
+	destroy(): void {
+		throw new Error('Method not implemented.');
 	}
 }
