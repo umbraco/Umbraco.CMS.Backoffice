@@ -167,8 +167,10 @@ export class UmbAppElement extends UmbLitElement {
 			// Save location.href so we can redirect to it after login
 			window.sessionStorage.setItem('umb:auth:redirect', location.href);
 
+			// Make a request to the auth server to start the auth flow
 			this.authFlow.makeAuthorizationRequest(undefined);
 
+			// Return false to prevent the route from being rendered
 			return false;
 		};
 	}
