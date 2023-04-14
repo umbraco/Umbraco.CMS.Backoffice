@@ -67,8 +67,9 @@ export class AuthFlow {
 
 		this.notifier = new AuthorizationNotifier();
 		this.tokenHandler = new BaseTokenRequestHandler(requestor);
+		this.storageBackend = new LocalStorageBackend();
 		this.authorizationHandler = new RedirectRequestHandler(
-			new LocalStorageBackend(),
+			this.storageBackend,
 			new NoHashQueryStringUtils(),
 			window.location
 		);
@@ -99,8 +100,8 @@ export class AuthFlow {
 	async setInitialState() {
 		// Ensure there is a connection to the server
 		await this.fetchServiceConfiguration();
+		const tokenResponseJson = await this.storageBackend.getItem('tokenResponse');
 		if (tokenResponseJson) {
-			console.log('found initial state', tokenResponseJson);
 			const response = new TokenResponse(JSON.parse(tokenResponseJson));
 			if (response.isValid()) {
 				this.accessTokenResponse = response;
@@ -116,9 +117,9 @@ export class AuthFlow {
 	/**
 	 * Save the current token response to local storage.
 	 */
-	private saveTokenState() {
+	private async saveTokenState() {
 		if (this.accessTokenResponse) {
-			localStorage.setItem('tokenResponse', JSON.stringify(this.accessTokenResponse.toJson()));
+			await this.storageBackend.setItem('tokenResponse', JSON.stringify(this.accessTokenResponse.toJson()));
 		}
 	}
 
@@ -194,9 +195,11 @@ export class AuthFlow {
 		return !!this.accessTokenResponse && this.accessTokenResponse.isValid();
 	}
 
-	signOut() {
+	async signOut() {
 		// forget all cached token state
 		this.accessTokenResponse = undefined;
+		this.refreshToken = undefined;
+		await this.storageBackend.removeItem('tokenResponse');
 	}
 
 	async performWithFreshTokens(): Promise<string> {
