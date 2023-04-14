@@ -86,7 +86,6 @@ export class AuthFlow {
 				this.makeRefreshTokenRequest(response.code, codeVerifier)
 					.then(() => this.performWithFreshTokens())
 					.then(() => {
-						window.dispatchEvent(new CustomEvent('auth-success'));
 						console.log('All Done.');
 						this.saveTokenState();
 					});
@@ -106,7 +105,6 @@ export class AuthFlow {
 			if (response.isValid()) {
 				this.accessTokenResponse = response;
 				this.refreshToken = this.accessTokenResponse.refreshToken;
-				window.dispatchEvent(new CustomEvent('auth-success'));
 				return;
 			}
 		}

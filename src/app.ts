@@ -79,11 +79,6 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	private async _setup() {
-		window.addEventListener('auth-success', () => {
-			// TODO: What happens when the user is successfully logged in - persist in user service?
-			console.log('%cis logged in: ' + this.authFlow.loggedIn(), 'background: red; color: yellow; font-size: x-large');
-		});
-
 		// Get service configuration from authentication server
 		await this.authFlow.setInitialState();
 
