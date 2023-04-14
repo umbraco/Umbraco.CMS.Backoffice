@@ -1,17 +1,14 @@
 import { rest } from 'msw';
 import { v4 as uuidv4 } from 'uuid';
+
 import { umbUsersData } from '../data/users.data';
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
+import { umbracoPath } from '@umbraco-cms/backoffice/utils';
 
 // TODO: add schema
 export const handlers = [
-	rest.get('/umbraco/backoffice/users/list/items', (req, res, ctx) => {
-		const items = umbUsersData.getAll();
-
-		const response = {
-			total: items.length,
-			items,
-		};
+	rest.get(umbracoPath('/users'), (req, res, ctx) => {
+		const response = umbUsersData.getAll();
 
 		return res(ctx.status(200), ctx.json(response));
 	}),

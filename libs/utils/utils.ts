@@ -1,14 +1,16 @@
 import { InterfaceColor, InterfaceLook } from '@umbraco-ui/uui-base/lib/types';
-import type { UserStatus } from '@umbraco-cms/backoffice/models';
+import { UserStateModel } from '../backend-api';
 
-export const getLookAndColorFromUserStatus = (status: UserStatus): { look: InterfaceLook; color: InterfaceColor } => {
+export const getLookAndColorFromUserStatus = (
+	status?: UserStateModel
+): { look: InterfaceLook; color: InterfaceColor } => {
 	switch ((status || '').toLowerCase()) {
-		case 'invited':
-		case 'inactive':
+		case UserStateModel.INACTIVE:
+		case UserStateModel.INVITED:
 			return { look: 'primary', color: 'warning' };
-		case 'enabled':
+		case UserStateModel.ACTIVE:
 			return { look: 'primary', color: 'positive' };
-		case 'disabled':
+		case UserStateModel.DISABLED:
 			return { look: 'primary', color: 'danger' };
 		default:
 			return { look: 'secondary', color: 'default' };

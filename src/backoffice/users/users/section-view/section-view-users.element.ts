@@ -12,7 +12,6 @@ import '../users/workspace-view-users-selection.element';
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DeepState } from '@umbraco-cms/backoffice/observable-api';
-import type { ManifestWorkspace } from '@umbraco-cms/backoffice/extensions-registry';
 
 @customElement('umb-section-view-users')
 export class UmbSectionViewUsersElement extends UmbLitElement {
@@ -29,16 +28,23 @@ export class UmbSectionViewUsersElement extends UmbLitElement {
 		`,
 	];
 
-	@state()
-	private _routes: IRoute[] = [];
-
-	private _workspaces: Array<ManifestWorkspace> = [];
+	#routes: IRoute[] = [
+		{
+			path: 'collection',
+			component: () => import('../collection/user-collection.element'),
+		},
+		{
+			path: 'user',
+			component: () => import('../workspace/user-workspace.element'),
+		},
+		{
+			path: '**',
+			redirectTo: 'collection',
+		},
+	];
 
 	// TODO: This must be turned into context api: Maybe its a Collection View (SectionView Collection View)?
 	private _userStore?: UmbUserStore;
-
-	#selection = new DeepState(<Array<string>>[]);
-	public readonly selection = this.#selection.asObservable();
 
 	#users = new DeepState(<Array<UserDetails>>[]);
 	public readonly users = this.#users.asObservable();
@@ -53,36 +59,6 @@ export class UmbSectionViewUsersElement extends UmbLitElement {
 			this._userStore = _instance;
 			this._observeUsers();
 		});
-
-		// TODO: consider this context name, is it to broad?
-		// TODO: Stop using it self as a context api.
-		this.provideContext('umbUsersContext', this);
-
-		this.observe(umbExtensionsRegistry?.extensionsOfType('workspace'), (workspaceExtensions) => {
-			this._workspaces = workspaceExtensions;
-			this._createRoutes();
-		});
-	}
-
-	//TODO: Kun routes her. Liste logik skal rykkes til overview elementet.
-
-	private _createRoutes() {
-		const routes: IRoute[] = [
-			{
-				path: 'collection',
-				component: () => import('../collection/user-collection.element'),
-			},
-			{
-				path: 'user',
-				component: () => import('../workspace/user-workspace.element'),
-			},
-		];
-
-		routes.push({
-			path: '**',
-			redirectTo: 'collection',
-		});
-		this._routes = routes;
 	}
 
 	private _observeUsers() {
@@ -101,28 +77,8 @@ export class UmbSectionViewUsersElement extends UmbLitElement {
 		this.requestUpdate('search');
 	}
 
-	public setSelection(value: Array<string>) {
-		if (!value) return;
-		this.#selection.next(value);
-		this.requestUpdate('selection');
-	}
-
-	public select(id: string) {
-		const oldSelection = this.#selection.getValue();
-		if (oldSelection.indexOf(id) !== -1) return;
-
-		this.#selection.next([...oldSelection, id]);
-		this.requestUpdate('selection');
-	}
-
-	public deselect(id: string) {
-		const selection = this.#selection.getValue();
-		this.#selection.next(selection.filter((k) => k !== id));
-		this.requestUpdate('selection');
-	}
-
 	render() {
-		return html`<umb-router-slot id="router-slot" .routes=${this._routes}></umb-router-slot>`;
+		return html`<umb-router-slot id="router-slot" .routes=${this.#routes}></umb-router-slot>`;
 	}
 }
 

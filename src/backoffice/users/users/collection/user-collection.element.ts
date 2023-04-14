@@ -4,6 +4,10 @@ import { customElement, state } from 'lit/decorators.js';
 import { UUIPopoverElement } from '@umbraco-ui/uui';
 import type { UmbSectionViewUsersElement } from '../section-view/section-view-users.element';
 import {
+	UMB_COLLECTION_CONTEXT_TOKEN,
+	UmbCollectionContext,
+} from '../../../shared/components/collection/collection.context';
+import {
 	UmbModalContext,
 	UMB_MODAL_CONTEXT_TOKEN,
 	UMB_INVITE_USER_MODAL,
@@ -16,6 +20,7 @@ import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import './views/table/user-table-collection-view.element';
 import './views/grid/user-grid-collection-view.element';
 import '../users/workspace-view-users-selection.element';
+import { USER_REPOSITORY_ALIAS } from '../repository/manifests';
 
 export type UsersViewType = 'list' | 'grid';
 @customElement('umb-user-collection')
@@ -82,6 +87,8 @@ export class UmbUserCollectionElement extends UmbLitElement {
 	@state()
 	private _selection: Array<string> = [];
 
+	#collectionContext = new UmbCollectionContext(this, 'user', USER_REPOSITORY_ALIAS);
+
 	@state()
 	private isCloud = false; //NOTE: Used to show either invite or create user buttons and views.
 
@@ -117,6 +124,8 @@ export class UmbUserCollectionElement extends UmbLitElement {
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
 			this._modalContext = instance;
 		});
+
+		this.provideContext(UMB_COLLECTION_CONTEXT_TOKEN, this.#collectionContext);
 	}
 
 	private _observeSelection() {

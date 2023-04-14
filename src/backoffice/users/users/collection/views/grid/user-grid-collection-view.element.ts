@@ -3,14 +3,18 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import type { UmbSectionViewUsersElement } from '../../../section-view/section-view-users.element';
 import {
 	UmbUserGroupStore,
 	UMB_USER_GROUP_STORE_CONTEXT_TOKEN,
 } from '../../../../user-groups/repository/user-group.store';
+import {
+	UMB_COLLECTION_CONTEXT_TOKEN,
+	UmbCollectionContext,
+} from '../../../../../shared/components/collection/collection.context';
 import { getLookAndColorFromUserStatus } from '@umbraco-cms/backoffice/utils';
 import type { UserDetails, UserEntity, UserGroupEntity } from '@umbraco-cms/backoffice/models';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-user-grid-collection-view')
 export class UmbUserGridCollectionViewElement extends UmbLitElement {
@@ -42,7 +46,7 @@ export class UmbUserGridCollectionViewElement extends UmbLitElement {
 	];
 
 	@state()
-	private _users: Array<UserDetails> = [];
+	private _users: Array<UserResponseModel> = [];
 
 	@state()
 	private _selection: Array<string> = [];
@@ -51,7 +55,8 @@ export class UmbUserGridCollectionViewElement extends UmbLitElement {
 	private _userGroups: Array<UserGroupEntity> = [];
 
 	private _userGroupStore?: UmbUserGroupStore;
-	private _usersContext?: UmbSectionViewUsersElement;
+
+	#collectionContext?: UmbCollectionContext<UserResponseModel>;
 
 	constructor() {
 		super();
@@ -61,28 +66,15 @@ export class UmbUserGridCollectionViewElement extends UmbLitElement {
 			this._observeUserGroups();
 		});
 
-		this.consumeContext<UmbSectionViewUsersElement>('umbUsersContext', (_instance) => {
-			this._usersContext = _instance;
-			this._observeUsers();
-			this._observeSelection();
-		});
-	}
-
-	private _observeUsers() {
-		if (!this._usersContext) return;
-		this.observe(this._usersContext.users, (users) => {
-			this._users = users;
+		this.consumeContext(UMB_COLLECTION_CONTEXT_TOKEN, (instance) => {
+			this.#collectionContext = instance;
+			this.observe(this.#collectionContext.selection, (selection) => (this._selection = selection));
+			this.observe(this.#collectionContext.items, (items) => (this._users = items));
 		});
 	}
 
 	private _observeUserGroups() {
 		if (!this._userGroupStore) return;
-		this.observe(this._userGroupStore.getAll(), (userGroups) => (this._userGroups = userGroups));
-	}
-
-	private _observeSelection() {
-		if (!this._usersContext) return;
-		this.observe(this._usersContext.selection, (selection) => (this._selection = selection));
 	}
 
 	private _isSelected(id: string) {
@@ -94,14 +86,15 @@ export class UmbUserGridCollectionViewElement extends UmbLitElement {
 		history.pushState(null, '', 'section/users/view/users/user/' + id); //TODO Change to a tag with href and make dynamic
 	}
 
-	private _selectRowHandler(user: UserEntity) {
-		this._usersContext?.select(user.id);
+	#onSelect(user: UserEntity) {
+		this.#collectionContext?.select(user.id);
 	}
 
-	private _deselectRowHandler(user: UserEntity) {
-		this._usersContext?.deselect(user.id);
+	#onDeselect(user: UserEntity) {
+		this.#collectionContext?.deselect(user.id);
 	}
 
+	//TODO: Use this in render
 	private _getUserGroupNames(ids: Array<string>) {
 		return ids
 			.map((id: string) => {
@@ -110,10 +103,8 @@ export class UmbUserGridCollectionViewElement extends UmbLitElement {
 			.join(', ');
 	}
 
-	private renderUserCard(user: UserDetails) {
-		if (!this._usersContext) return;
-
-		const statusLook = getLookAndColorFromUserStatus(user.status);
+	private renderUserCard(user: UserResponseModel) {
+		const statusLook = getLookAndColorFromUserStatus(user.state);
 
 		return html`
 			<uui-card-user
@@ -122,8 +113,8 @@ export class UmbUserGridCollectionViewElement extends UmbLitElement {
 				?select-only=${this._selection.length > 0}
 				?selected=${this._isSelected(user.id)}
 				@open=${() => this._handleOpenCard(user.id)}
-				@selected=${() => this._selectRowHandler(user)}
-				@unselected=${() => this._deselectRowHandler(user)}>
+				@selected=${() => this.#onSelect(user)}
+				@unselected=${() => this.#onDeselect(user)}>
 				${user.status && user.status !== 'enabled'
 					? html`<uui-tag
 							slot="tag"
@@ -133,7 +124,6 @@ export class UmbUserGridCollectionViewElement extends UmbLitElement {
 							${user.status}
 					  </uui-tag>`
 					: nothing}
-				<div>${this._getUserGroupNames(user.userGroups)}</div>
 				${user.lastLoginDate
 					? html`<div class="user-login-time">
 							<div>Last login</div>

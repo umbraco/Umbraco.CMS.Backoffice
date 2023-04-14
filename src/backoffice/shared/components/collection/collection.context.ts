@@ -1,27 +1,32 @@
 import { Observable } from 'rxjs';
 import type { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
-import { UmbContextToken, UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
-import { ArrayState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
+import {
+	UmbContextToken,
+	UmbContextConsumerController,
+	UmbContextProviderController,
+} from '@umbraco-cms/backoffice/context-api';
+import { ArrayState, NumberState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import { umbExtensionsRegistry, createExtensionClass } from '@umbraco-cms/backoffice/extensions-api';
-import { UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
+import { UmbCollectionRepository, UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
 
 // TODO: Clean up the need for store as Media has switched to use Repositories(repository).
-export class UmbCollectionContext<DataType extends EntityTreeItemResponseModel = EntityTreeItemResponseModel> {
+export class UmbCollectionContext<ItemType> {
 	private _host: UmbControllerHostElement;
 	private _entityType: string | null;
-	private _entityId: string | null;
 
-	#repository?: UmbTreeRepository<any>;
+	protected _dataObserver?: UmbObserverController<ItemType[]>;
 
-	private _store?: any;
-	protected _dataObserver?: UmbObserverController<DataType[]>;
+	#items = new ArrayState(<Array<ItemType>>[]);
+	public readonly items = this.#items.asObservable();
 
-	#data = new ArrayState(<Array<DataType>>[]);
-	public readonly data = this.#data.asObservable();
+	#total = new NumberState(0);
+	public readonly total = this.#total.asObservable();
 
 	#selection = new ArrayState(<Array<string>>[]);
 	public readonly selection = this.#selection.asObservable();
+
+	#repository?: UmbCollectionRepository;
 
 	/*
 	TODO:
@@ -29,123 +34,22 @@ export class UmbCollectionContext<DataType extends EntityTreeItemResponseModel =
 	public readonly search = this._search.asObservable();
 	*/
 
-	constructor(
-		host: UmbControllerHostElement,
-		entityType: string | null,
-		entityId: string | null,
-		storeAlias?: string,
-		repositoryAlias?: string
-	) {
+	constructor(host: UmbControllerHostElement, entityType: string | null, repositoryAlias: string) {
 		this._entityType = entityType;
 		this._host = host;
-		this._entityId = entityId;
 
-		if (storeAlias) {
-			new UmbContextConsumerController(this._host, storeAlias, (_instance) => {
-				this._store = _instance;
-				if (!this._store) {
-					// TODO: if we keep the type assumption of _store existing, then we should here make sure to break the application in a good way.
-					return;
+		new UmbObserverController(
+			this._host,
+			umbExtensionsRegistry.getByTypeAndAlias('repository', repositoryAlias),
+			async (repositoryManifest) => {
+				if (repositoryManifest) {
+					const result = await createExtensionClass<UmbCollectionRepository>(repositoryManifest, [this._host]);
+					this.#repository = result;
+					this._onRepositoryReady();
 				}
-				this._onStoreSubscription();
-			});
-		} else if (repositoryAlias) {
-			new UmbObserverController(
-				this._host,
-				umbExtensionsRegistry.getByTypeAndAlias('repository', repositoryAlias),
-				async (repositoryManifest) => {
-					if (repositoryManifest) {
-						// TODO: use the right interface here, we might need a collection repository interface.
-						const result = await createExtensionClass<UmbTreeRepository>(repositoryManifest, [this._host]);
-						this.#repository = result;
-						this._onRepositoryReady();
-					}
-				}
-			);
-		}
-	}
-
-	/*
-	public getData() {
-		return this.#data.getValue();
-	}
-	*/
-
-	/*
-	public update(data: Partial<DataType>) {
-		this._data.next({ ...this.getData(), ...data });
-	}
-	*/
-
-	public getEntityType() {
-		return this._entityType;
-	}
-
-	protected _onStoreSubscription(): void {
-		if (!this._store) {
-			return;
-		}
-
-		this._dataObserver?.destroy();
-
-		if (this._entityId) {
-			this._dataObserver = new UmbObserverController(
-				this._host,
-				this._store.getTreeItemChildren(this._entityId),
-				(nodes) => {
-					if (nodes) {
-						this.#data.next(nodes);
-					}
-				}
-			);
-		} else {
-			this._dataObserver = new UmbObserverController(this._host, this._store.getTreeRoot(), (nodes) => {
-				if (nodes) {
-					this.#data.next(nodes);
-				}
-			});
-		}
-	}
-
-	protected async _onRepositoryReady() {
-		if (!this.#repository) {
-			return;
-		}
-
-		this._dataObserver?.destroy();
-
-		if (this._entityId) {
-			// TODO: we should be able to get an observable from this call. either return a observable or a asObservable() method.
-			const observable = (await this.#repository.requestTreeItemsOf(this._entityId)).asObservable?.();
-
-			if (observable) {
-				this._dataObserver = new UmbObserverController(this._host, observable as Observable<DataType[]>, (nodes) => {
-					if (nodes) {
-						this.#data.next(nodes);
-					}
-				});
 			}
-		} else {
-			const observable = (await this.#repository.requestRootTreeItems()).asObservable?.();
-
-			if (observable) {
-				this._dataObserver = new UmbObserverController(this._host, observable as Observable<DataType[]>, (nodes) => {
-					if (nodes) {
-						this.#data.next(nodes);
-					}
-				});
-			}
-		}
+		);
 	}
-
-	/*
-	TODO:
-	public setSearch(value: string) {
-		if (!value) value = '';
-
-		this._search.next(value);
-	}
-	*/
 
 	public setSelection(value: Array<string>) {
 		if (!value) return;
@@ -166,8 +70,84 @@ export class UmbCollectionContext<DataType extends EntityTreeItemResponseModel =
 
 	// TODO: how can we make sure to call this.
 	public destroy(): void {
-		this.#data.unsubscribe();
+		this.#items.unsubscribe();
 	}
+
+	public getEntityType() {
+		return this._entityType;
+	}
+
+	/*
+	public getData() {
+		return this.#data.getValue();
+	}
+	*/
+
+	/*
+	public update(data: Partial<DataType>) {
+		this._data.next({ ...this.getData(), ...data });
+	}
+	*/
+
+	// protected _onStoreSubscription(): void {
+	// 	if (!this._store) {
+	// 		return;
+	// 	}
+
+	// 	this._dataObserver?.destroy();
+
+	// 	if (this._entityId) {
+	// 		this._dataObserver = new UmbObserverController(
+	// 			this._host,
+	// 			this._store.getTreeItemChildren(this._entityId),
+	// 			(nodes) => {
+	// 				if (nodes) {
+	// 					this.#data.next(nodes);
+	// 				}
+	// 			}
+	// 		);
+	// 	} else {
+	// 		this._dataObserver = new UmbObserverController(this._host, this._store.getTreeRoot(), (nodes) => {
+	// 			if (nodes) {
+	// 				this.#data.next(nodes);
+	// 			}
+	// 		});
+	// 	}
+	// }
+
+	protected async _onRepositoryReady() {
+		if (!this.#repository) {
+			return;
+		}
+
+		const { data } = await this.#repository.requestCollection();
+
+		if (data) {
+			this.#total.next(data.total);
+			this.#items.next(data.items);
+		}
+
+		// this._dataObserver?.destroy();
+
+		// const observable = (await this.#repository.requestCollection()).asObservable?.();
+
+		// if (observable) {
+		// 	this._dataObserver = new UmbObserverController(this._host, observable as Observable<DataType[]>, (nodes) => {
+		// 		if (nodes) {
+		// 			this.#data.next(nodes);
+		// 		}
+		// 	});
+		// }
+	}
+
+	/*
+	TODO:
+	public setSearch(value: string) {
+		if (!value) value = '';
+
+		this._search.next(value);
+	}
+	*/
 }
 
 export const UMB_COLLECTION_CONTEXT_TOKEN = new UmbContextToken<UmbCollectionContext<any>>('UmbCollectionContext');

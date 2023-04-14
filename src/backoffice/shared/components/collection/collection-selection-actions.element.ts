@@ -36,8 +36,7 @@ export class UmbCollectionSelectionActionsElement extends UmbLitElement {
 		`,
 	];
 
-	@property()
-	public entityType: string | null = null;
+	#entityType?: string;
 
 	@state()
 	private _nodesLength = 0;
@@ -55,9 +54,12 @@ export class UmbCollectionSelectionActionsElement extends UmbLitElement {
 		super();
 		this.consumeContext(UMB_COLLECTION_CONTEXT_TOKEN, (instance) => {
 			this._collectionContext = instance;
-			this.entityType = instance.getEntityType();
 			this._observeCollectionContext();
-			this.#observeEntityBulkActions();
+
+			if (instance.getEntityType()) {
+				this.#entityType = instance.getEntityType() ?? undefined;
+				this.#observeEntityBulkActions();
+			}
 		});
 	}
 
@@ -75,7 +77,7 @@ export class UmbCollectionSelectionActionsElement extends UmbLitElement {
 		if (!this._collectionContext) return;
 
 		// TODO: Make sure it only updates on length change.
-		this.observe(this._collectionContext.data, (mediaItems) => {
+		this.observe(this._collectionContext.items, (mediaItems) => {
 			this._nodesLength = mediaItems.length;
 		});
 
@@ -94,7 +96,7 @@ export class UmbCollectionSelectionActionsElement extends UmbLitElement {
 		this.observe(
 			umbExtensionsRegistry.extensionsOfType('entityBulkAction').pipe(
 				map((extensions) => {
-					return extensions.filter((extension) => extension.conditions.entityType === this.entityType);
+					return extensions.filter((extension) => extension.conditions.entityType === this.#entityType);
 				})
 			),
 			(bulkActions) => {
@@ -109,7 +111,7 @@ export class UmbCollectionSelectionActionsElement extends UmbLitElement {
 	}
 
 	render() {
-		if (this._selectionLength === 0) return nothing;
+		// if (this._selectionLength === 0) return nothing;
 
 		return html`<div id="selection-info">
 				<uui-button
