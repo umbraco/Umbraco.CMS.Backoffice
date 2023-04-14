@@ -10,16 +10,13 @@ import {
 	UmbTableItem,
 	UmbTableOrderedEvent,
 	UmbTableSelectedEvent,
-} from '../../../../shared/components/table';
-import {
-	UmbUserGroupStore,
-	UMB_USER_GROUP_STORE_CONTEXT_TOKEN,
-} from '../../../user-groups/repository/user-group.store';
+} from '../../../shared/components/table';
+import { UmbUserGroupStore, UMB_USER_GROUP_STORE_CONTEXT_TOKEN } from '../repository/user-group.store';
 
 import type { UserGroupDetails } from '@umbraco-cms/backoffice/models';
 
 import './user-group-table-name-column-layout.element';
-import './user-group-table-sections-column-layout.element';
+import '../../user-section/views/user-groups/user-group-table-sections-column-layout.element';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-workspace-view-user-groups')

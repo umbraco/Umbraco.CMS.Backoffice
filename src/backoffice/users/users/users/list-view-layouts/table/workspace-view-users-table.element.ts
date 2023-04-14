@@ -1,7 +1,7 @@
 import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
-import type { UmbSectionViewUsersElement } from '../../section-view-users.element';
+import type { UmbSectionViewUsersElement } from '../../../section-view/section-view-users.element';
 import {
 	UmbTableElement,
 	UmbTableColumn,
@@ -10,11 +10,11 @@ import {
 	UmbTableSelectedEvent,
 	UmbTableConfig,
 	UmbTableOrderedEvent,
-} from '../../../../../../shared/components/table/table.element';
+} from '../../../../../shared/components/table/table.element';
 import {
 	UmbUserGroupStore,
 	UMB_USER_GROUP_STORE_CONTEXT_TOKEN,
-} from '../../../../../user-groups/repository/user-group.store';
+} from '../../../../user-groups/repository/user-group.store';
 import type { UserDetails, UserGroupEntity } from '@umbraco-cms/backoffice/models';
 
 import './column-layouts/name/user-table-name-column-layout.element';

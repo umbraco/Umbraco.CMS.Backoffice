@@ -3,11 +3,11 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import type { UmbSectionViewUsersElement } from '../../section-view-users.element';
+import type { UmbSectionViewUsersElement } from '../../../section-view/section-view-users.element';
 import {
 	UmbUserGroupStore,
 	UMB_USER_GROUP_STORE_CONTEXT_TOKEN,
-} from '../../../../../user-groups/repository/user-group.store';
+} from '../../../../user-groups/repository/user-group.store';
 import { getLookAndColorFromUserStatus } from '@umbraco-cms/backoffice/utils';
 import type { UserDetails, UserEntity, UserGroupEntity } from '@umbraco-cms/backoffice/models';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';

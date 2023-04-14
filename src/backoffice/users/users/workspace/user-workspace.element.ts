@@ -30,8 +30,6 @@ export class UmbUserWorkspaceElement extends UmbLitElement {
 	];
 
 	render() {
-		console.log('WHAT', this.#element);
-
 		return html`<umb-router-slot .routes=${this._routes}></umb-router-slot> `;
 	}
 }

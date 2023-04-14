@@ -2,8 +2,9 @@ import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import './workspace-view-user-groups.element';
+import '../workspace/workspace-view-user-groups.element';
 
+//TODO: rename to user-groups-section-view
 @customElement('umb-section-view-user-groups')
 export class UmbSectionViewUserGroupsElement extends LitElement {
 	static styles = [

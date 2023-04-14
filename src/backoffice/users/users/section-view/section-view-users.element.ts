@@ -1,13 +1,13 @@
 import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
-import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../../users/repository/user.store';
+import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../repository/user.store';
 import type { IRoute } from '@umbraco-cms/backoffice/router';
 import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/backoffice/extensions-api';
 
-import './list-view-layouts/table/workspace-view-users-table.element';
-import './list-view-layouts/grid/workspace-view-users-grid.element';
-import './workspace-view-users-selection.element';
+import '../users/list-view-layouts/table/workspace-view-users-table.element';
+import '../users/list-view-layouts/grid/workspace-view-users-grid.element';
+import '../users/workspace-view-users-selection.element';
 
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
@@ -64,38 +64,23 @@ export class UmbSectionViewUsersElement extends UmbLitElement {
 		});
 	}
 
+	//TODO: Kun routes her. Liste logik skal rykkes til overview elementet.
+
 	private _createRoutes() {
 		const routes: IRoute[] = [
 			{
-				path: 'view',
-				component: () => import('./workspace-view-users-overview.element'),
+				path: 'collection',
+				component: () => import('../users/workspace-view-users-overview.element'),
 			},
 			{
 				path: 'user',
-				component: () => import('../../../users/workspace/user-workspace.element'),
+				component: () => import('../workspace/user-workspace.element'),
 			},
 		];
 
-		// TODO: find a way to make this reuseable across:
-		this._workspaces?.map((workspace: ManifestWorkspace) => {
-			routes.push({
-				path: `${workspace.meta.entityType}/:id`,
-				component: () => createExtensionElement(workspace),
-				setup: (component, info) => {
-					if (component) {
-						(component as any).entityId = info.match.params.id;
-					}
-				},
-			});
-			routes.push({
-				path: workspace.meta.entityType,
-				component: () => createExtensionElement(workspace),
-			});
-		});
-
 		routes.push({
 			path: '**',
-			redirectTo: 'view',
+			redirectTo: 'collection',
 		});
 		this._routes = routes;
 	}
