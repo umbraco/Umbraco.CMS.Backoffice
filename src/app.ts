@@ -164,10 +164,9 @@ export class UmbAppElement extends UmbLitElement {
 				return true;
 			}
 
+			// Save location.href so we can redirect to it after login
 			window.sessionStorage.setItem('umb:auth:redirect', location.href);
 
-			// TODO: Handle the case to send a user back to where they came from after login
-			// TODO: How do we handle the case where the user is already logged in, but the session has expired?
 			this.authFlow.makeAuthorizationRequest(undefined);
 
 			return false;
