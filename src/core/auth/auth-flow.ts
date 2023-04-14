@@ -33,6 +33,9 @@ import { LocationLike, StringMap } from '@openid/appauth/built/types';
 
 const requestor = new FetchRequestor();
 
+/**
+ * This class is needed to prevent the hash from being parsed as part of the query string.
+ */
 class NoHashQueryStringUtils extends BasicQueryStringUtils {
 	parse(input: LocationLike) {
 		return super.parse(input, false);
@@ -40,9 +43,10 @@ class NoHashQueryStringUtils extends BasicQueryStringUtils {
 }
 
 export class AuthFlow {
-	private notifier: AuthorizationNotifier;
-	private authorizationHandler: RedirectRequestHandler;
-	private tokenHandler: BaseTokenRequestHandler;
+	private readonly notifier: AuthorizationNotifier;
+	private readonly authorizationHandler: RedirectRequestHandler;
+	private readonly tokenHandler: BaseTokenRequestHandler;
+	private readonly storageBackend: LocalStorageBackend;
 
 	// state
 	private configuration: AuthorizationServiceConfiguration | undefined;
@@ -73,29 +77,42 @@ export class AuthFlow {
 			new NoHashQueryStringUtils(),
 			window.location
 		);
+
 		// set notifier to deliver responses
 		this.authorizationHandler.setAuthorizationNotifier(this.notifier);
+
 		// set a listener to listen for authorization responses
-		this.notifier.setAuthorizationListener((request, response, error) => {
-			console.log('Authorization request complete ', request, response, error);
+		this.notifier.setAuthorizationListener(async (request, response, error) => {
+			if (error) {
+				console.error('Authorization error', error);
+				throw error;
+			}
+
 			if (response) {
 				let codeVerifier: string | undefined;
 				if (request.internal && request.internal.code_verifier) {
 					codeVerifier = request.internal.code_verifier;
 				}
 
-				this.makeRefreshTokenRequest(response.code, codeVerifier)
-					.then(() => this.performWithFreshTokens())
-					.then(() => {
-						console.log('All Done.');
-						this.saveTokenState();
-					});
+				await this.makeRefreshTokenRequest(response.code, codeVerifier);
+				await this.performWithFreshTokens();
+				await this.saveTokenState();
 			}
 		});
 	}
 
 	/**
-	 * Read the token response from local storage and use it to set the current token
+	 * This method will initialize all the state needed for the auth flow.
+	 *
+	 * It will:
+	 * - Fetch the service configuration from the server
+	 * - Check if there is a token response in local storage
+	 * - If there is a token response, check if it is valid
+	 * - If it is not valid, check if there is a new authorization to be made
+	 * - If there is a new authorization to be made, complete it
+	 * - If there is no token response, check if there is a new authorization to be made
+	 * - If there is a new authorization to be made, complete it
+	 * - If there is no new authorization to be made, do nothing
 	 */
 	async setInitialState() {
 		// Ensure there is a connection to the server
@@ -140,6 +157,7 @@ export class AuthFlow {
 		}
 
 		const extras: StringMap = { prompt: 'consent', access_type: 'offline' };
+
 		if (username) {
 			extras['login_hint'] = username;
 		}
@@ -207,14 +225,17 @@ export class AuthFlow {
 			console.log('Unknown service configuration');
 			return Promise.reject('Unknown service configuration');
 		}
+
 		if (!this.refreshToken) {
 			console.log('Missing refreshToken.');
-			return Promise.resolve('Missing refreshToken.');
+			return Promise.reject('Missing refreshToken.');
 		}
+
 		if (this.accessTokenResponse && this.accessTokenResponse.isValid()) {
 			// do nothing
 			return Promise.resolve(this.accessTokenResponse.accessToken);
 		}
+
 		const request = new TokenRequest({
 			client_id: this.clientId,
 			redirect_uri: this.redirectUri,
