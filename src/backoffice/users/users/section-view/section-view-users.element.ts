@@ -5,8 +5,8 @@ import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../repository/user.s
 import type { IRoute } from '@umbraco-cms/backoffice/router';
 import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/backoffice/extensions-api';
 
-import '../users/list-view-layouts/table/workspace-view-users-table.element';
-import '../users/list-view-layouts/grid/workspace-view-users-grid.element';
+import '../collection/views/table/user-table-collection-view.element';
+import '../collection/views/grid/user-grid-collection-view.element';
 import '../users/workspace-view-users-selection.element';
 
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
@@ -70,7 +70,7 @@ export class UmbSectionViewUsersElement extends UmbLitElement {
 		const routes: IRoute[] = [
 			{
 				path: 'collection',
-				component: () => import('../users/workspace-view-users-overview.element'),
+				component: () => import('../collection/user-collection.element'),
 			},
 			{
 				path: 'user',

@@ -1,15 +1,15 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { UmbWorkspaceViewUsersGridElement } from './workspace-view-users-grid.element';
+import { UmbUserGridCollectionViewElement } from './user-grid-collection-view.element';
 import { defaultA11yConfig } from '@umbraco-cms/internal/test-utils';
 
 describe('UmbWorkspaceViewUsersCreateElement', () => {
-	let element: UmbWorkspaceViewUsersGridElement;
+	let element: UmbUserGridCollectionViewElement;
 	beforeEach(async () => {
 		element = await fixture(html`<umb-workspace-view-users-grid></umb-workspace-view-users-grid>`);
 	});
 
 	it('is defined with its own instance', () => {
-		expect(element).to.be.instanceOf(UmbWorkspaceViewUsersGridElement);
+		expect(element).to.be.instanceOf(UmbUserGridCollectionViewElement);
 	});
 
 	it('passes the a11y audit', async () => {

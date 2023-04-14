@@ -13,13 +13,13 @@ import type { IRoute } from '@umbraco-cms/backoffice/router';
 
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
-import './list-view-layouts/table/workspace-view-users-table.element';
-import './list-view-layouts/grid/workspace-view-users-grid.element';
-import './workspace-view-users-selection.element';
+import './views/table/user-table-collection-view.element';
+import './views/grid/user-grid-collection-view.element';
+import '../users/workspace-view-users-selection.element';
 
 export type UsersViewType = 'list' | 'grid';
-@customElement('umb-workspace-view-users-overview')
-export class UmbWorkspaceViewUsersOverviewElement extends UmbLitElement {
+@customElement('umb-user-collection')
+export class UmbUserCollectionElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -89,11 +89,11 @@ export class UmbWorkspaceViewUsersOverviewElement extends UmbLitElement {
 	private _routes: IRoute[] = [
 		{
 			path: 'grid',
-			component: () => import('./list-view-layouts/grid/workspace-view-users-grid.element'),
+			component: () => import('./views/grid/user-grid-collection-view.element'),
 		},
 		{
 			path: 'list',
-			component: () => import('./list-view-layouts/table/workspace-view-users-table.element'),
+			component: () => import('./views/table/user-table-collection-view.element'),
 		},
 		{
 			path: '**',
@@ -133,9 +133,9 @@ export class UmbWorkspaceViewUsersOverviewElement extends UmbLitElement {
 	}
 
 	private _renderSelection() {
-		if (this._selection.length === 0) return nothing;
+		// if (this._selection.length === 0) return nothing;
 
-		return html`<umb-workspace-view-users-selection></umb-workspace-view-users-selection>`;
+		return html`<umb-collection-selection-actions></umb-collection-selection-actions>`;
 	}
 
 	private _handleTogglePopover(event: PointerEvent) {
@@ -231,10 +231,10 @@ export class UmbWorkspaceViewUsersOverviewElement extends UmbLitElement {
 	}
 }
 
-export default UmbWorkspaceViewUsersOverviewElement;
+export default UmbUserCollectionElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-workspace-view-users-overview': UmbWorkspaceViewUsersOverviewElement;
+		'umb-user-collection': UmbUserCollectionElement;
 	}
 }

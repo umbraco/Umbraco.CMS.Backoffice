@@ -12,8 +12,8 @@ import { getLookAndColorFromUserStatus } from '@umbraco-cms/backoffice/utils';
 import type { UserDetails, UserEntity, UserGroupEntity } from '@umbraco-cms/backoffice/models';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
-@customElement('umb-workspace-view-users-grid')
-export class UmbWorkspaceViewUsersGridElement extends UmbLitElement {
+@customElement('umb-user-grid-collection-view')
+export class UmbUserGridCollectionViewElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -157,10 +157,10 @@ export class UmbWorkspaceViewUsersGridElement extends UmbLitElement {
 	}
 }
 
-export default UmbWorkspaceViewUsersGridElement;
+export default UmbUserGridCollectionViewElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-workspace-view-users-grid': UmbWorkspaceViewUsersGridElement;
+		'umb-user-grid-collection-view': UmbUserGridCollectionViewElement;
 	}
 }

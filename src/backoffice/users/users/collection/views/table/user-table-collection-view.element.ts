@@ -21,8 +21,8 @@ import './column-layouts/name/user-table-name-column-layout.element';
 import './column-layouts/status/user-table-status-column-layout.element';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
-@customElement('umb-workspace-view-users-table')
-export class UmbWorkspaceViewUsersTableElement extends UmbLitElement {
+@customElement('umb-user-table-collection-view')
+export class UmbUserTableCollectionViewElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
@@ -193,10 +193,10 @@ export class UmbWorkspaceViewUsersTableElement extends UmbLitElement {
 	}
 }
 
-export default UmbWorkspaceViewUsersTableElement;
+export default UmbUserTableCollectionViewElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-workspace-view-users-table': UmbWorkspaceViewUsersTableElement;
+		'umb-workspace-view-users-table': UmbUserTableCollectionViewElement;
 	}
 }
