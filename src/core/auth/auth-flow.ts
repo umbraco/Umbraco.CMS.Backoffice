@@ -97,7 +97,8 @@ export class AuthFlow {
 	 * Read the token response from local storage and use it to set the current token
 	 */
 	async setInitialState() {
-		const tokenResponseJson = localStorage.getItem('tokenResponse');
+		// Ensure there is a connection to the server
+		await this.fetchServiceConfiguration();
 		if (tokenResponseJson) {
 			console.log('found initial state', tokenResponseJson);
 			const response = new TokenResponse(JSON.parse(tokenResponseJson));
@@ -121,8 +122,7 @@ export class AuthFlow {
 		}
 	}
 
-	async completeAuthorizationIfPossible() {
-		await this.fetchServiceConfiguration();
+	completeAuthorizationIfPossible() {
 		return this.authorizationHandler.completeAuthorizationRequestIfPossible();
 	}
 
