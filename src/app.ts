@@ -45,6 +45,14 @@ export class UmbAppElement extends UmbLitElement {
 	@property({ type: String })
 	private serverUrl?: string;
 
+	/**
+	 * The base path of the backoffice.
+	 *
+	 * @attr
+	 */
+	@property({ type: String })
+	private backofficePath = '/umbraco';
+
 	private _routes: IRoute[] = [
 		{
 			path: 'install',
@@ -76,7 +84,7 @@ export class UmbAppElement extends UmbLitElement {
 
 		this.authFlow = new AuthFlow(
 			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
-			`${window.location.origin}/umbraco`
+			`${window.location.origin}${this.backofficePath}}`
 		);
 
 		this.provideContext(UMB_SERVER_URL, OpenAPI.BASE);
