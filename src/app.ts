@@ -17,7 +17,7 @@ import { UmbIconStore } from './core/stores/icon/icon.store';
 import type { Guard, IRoute } from '@umbraco-cms/backoffice/router';
 import { pathWithoutBasePath } from '@umbraco-cms/backoffice/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { UMB_SERVER_URL, tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import { OpenAPI, RuntimeLevelModel, ServerResource } from '@umbraco-cms/backoffice/backend-api';
 import { contextData, umbDebugContextEventType } from '@umbraco-cms/backoffice/context-api';
 
