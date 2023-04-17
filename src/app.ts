@@ -73,7 +73,7 @@ export class UmbAppElement extends UmbLitElement {
 			`${window.location.origin}/umbraco`
 		);
 
-		this.provideContext('UMBRACOBASE', OpenAPI.BASE);
+		this.provideContext(UMB_SERVER_URL, OpenAPI.BASE);
 
 		this._setup();
 	}
