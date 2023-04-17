@@ -70,11 +70,10 @@ export class UmbAppElement extends UmbLitElement {
 		},
 	];
 
+	#authFlow: AuthFlow;
 	#umbIconRegistry = new UmbIconStore();
 	#uuiIconRegistry = new UUIIconRegistryEssential();
 	#runtimeLevel = RuntimeLevelModel.UNKNOWN;
-
-	private authFlow: AuthFlow;
 
 	constructor() {
 		super();
@@ -82,7 +81,7 @@ export class UmbAppElement extends UmbLitElement {
 		OpenAPI.BASE =
 			import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? '' : this.serverUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
 
-		this.authFlow = new AuthFlow(
+		this.#authFlow = new AuthFlow(
 			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
 			`${window.location.origin}${this.backofficePath}}`
 		);
@@ -94,14 +93,14 @@ export class UmbAppElement extends UmbLitElement {
 
 	private async _setup() {
 		// Get service configuration from authentication server
-		await this.authFlow.setInitialState();
+		await this.#authFlow.setInitialState();
 
 		// Get the current runtime level and initialise the router
 		await this.#setInitStatus();
 
 		// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
 		// since the token has been set by {AuthFlow.setInitialState}
-		OpenAPI.TOKEN = () => this.authFlow.performWithFreshTokens();
+		OpenAPI.TOKEN = () => this.#authFlow.performWithFreshTokens();
 		OpenAPI.WITH_CREDENTIALS = true;
 
 		this.#umbIconRegistry.attach(this);
@@ -169,7 +168,7 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	#isAuthorized(): boolean {
-		return import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? true : this.authFlow.loggedIn();
+		return import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? true : this.#authFlow.loggedIn();
 	}
 
 	#isAuthorizedGuard(): Guard {
@@ -182,7 +181,7 @@ export class UmbAppElement extends UmbLitElement {
 			window.sessionStorage.setItem('umb:auth:redirect', location.href);
 
 			// Make a request to the auth server to start the auth flow
-			this.authFlow.makeAuthorizationRequest();
+			this.#authFlow.makeAuthorizationRequest();
 
 			// Return false to prevent the route from being rendered
 			return false;
