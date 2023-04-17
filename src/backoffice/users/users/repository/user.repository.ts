@@ -1,5 +1,6 @@
 import { UMB_USER_STORE_CONTEXT_TOKEN, UmbUserStore } from './user.store';
 import { UmbUserServerDataSource } from './sources/user.server.data';
+import { UmbUserCollectionServerDataSource } from './sources/user-collection.server.data';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import {
 	UmbCollectionDataSource,
@@ -16,7 +17,6 @@ import {
 	UserResponseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
-import { UmbUserCollectionServerDataSource } from './sources/user-collection.server.data';
 
 // TODO: implement
 export class UmbUserRepository
@@ -50,10 +50,8 @@ export class UmbUserRepository
 	createScaffold(parentId: string | null): Promise<UmbRepositoryResponse<UserPresentationBaseModel>> {
 		throw new Error('Method not implemented.');
 	}
-	requestById(id: string): Promise<UmbRepositoryResponse<UserResponseModel>> {
-		console.log('requestById', id);
-
-		throw new Error('Method not implemented.');
+	async requestById(id: string) {
+		return this.#detailSource.get(id);
 	}
 	create(data: UserPresentationBaseModel): Promise<UmbRepositoryErrorResponse> {
 		throw new Error('Method not implemented.');

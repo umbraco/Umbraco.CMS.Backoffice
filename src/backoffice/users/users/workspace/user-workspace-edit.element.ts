@@ -16,6 +16,8 @@ import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import '../../../shared/components/input-user-group/input-user-group.element';
 import '../../../shared/property-editors/uis/document-picker/property-editor-ui-document-picker.element';
 import '../../../shared/components/workspace/workspace-layout/workspace-layout.element';
+import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
+import { UserResponseModel, UserStateModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-user-workspace-edit')
 export class UmbUserWorkspaceEditElement extends UmbLitElement {
@@ -86,10 +88,10 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 
 	private _languages = []; //TODO Add languages
 
-	private _workspaceContext: UmbUserWorkspaceContext = new UmbUserWorkspaceContext(this);
+	#workspaceContext?: UmbUserWorkspaceContext;
 
 	@state()
-	private _user?: UserDetails;
+	private _user?: UserResponseModel;
 
 	@state()
 	private _userName = '';
@@ -102,12 +104,17 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 			this._observeCurrentUser();
 		});
 
-		this.observe(this._workspaceContext.data, (user) => {
-			// TODO: fix type mismatch:
-			this._user = user as any;
-			if (user && user.name !== this._userName) {
-				this._userName = user.name || '';
-			}
+		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (workspaceContext) => {
+			this.#workspaceContext = workspaceContext as UmbUserWorkspaceContext;
+			this.#observeUser();
+		});
+	}
+
+	#observeUser() {
+		if (!this.#workspaceContext) return;
+
+		this.#workspaceContext.data.subscribe((user) => {
+			this._user = user;
 		});
 	}
 
@@ -121,24 +128,11 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 	}
 
 	private _updateUserStatus() {
-		if (!this._user || !this._workspaceContext) return;
-
-		const isDisabled = this._user.status === 'disabled';
-		// TODO: make sure we use the workspace for this:
-		/*
-		isDisabled
-			? this._workspaceContext.getStore()?.enableUsers([this._user.id])
-			: this._workspaceContext.getStore()?.disableUsers([this._user.id]);
-			*/
+		//TODO: Update user status
 	}
 
 	private _deleteUser() {
-		if (!this._user || !this._workspaceContext) return;
-
-		// TODO: make sure we use the workspace for this:
-		//this._workspaceContext.getStore()?.deleteUsers([this._user.id]);
-
-		history.pushState(null, '', 'section/users/view/users/overview');
+		//TODO: Delete user and redirect to user list.
 	}
 
 	// TODO. find a way where we don't have to do this for all workspaces.
@@ -153,13 +147,13 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 	}
 
 	private _updateProperty(propertyName: string, value: unknown) {
-		this._workspaceContext?.update({ [propertyName]: value });
+		// this._workspaceContext?.update({ [propertyName]: value });
 	}
 
 	private _renderContentStartNodes() {
-		if (!this._user) return;
+		if (!this._user || !this._user.contentStartNodeIds) return;
 
-		if (this._user.contentStartNodes.length < 1)
+		if (this._user.contentStartNodeIds.length < 1)
 			return html`
 				<uui-ref-node name="Content Root">
 					<uui-icon slot="icon" name="folder"></uui-icon>
@@ -168,7 +162,7 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 
 		//TODO Render the name of the content start node instead of it's id.
 		return repeat(
-			this._user.contentStartNodes,
+			this._user.contentStartNodeIds,
 			(node) => node,
 			(node) => {
 				return html`
@@ -193,14 +187,14 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 
 		if (this._currentUserStore?.isAdmin === false) return nothing;
 
-		if (this._user?.status !== 'invited')
+		if (this._user?.state !== UserStateModel.INVITED)
 			buttons.push(
 				html`
 					<uui-button
 						@click=${this._updateUserStatus}
 						look="primary"
-						color="${this._user.status === 'disabled' ? 'positive' : 'warning'}"
-						label="${this._user.status === 'disabled' ? 'Enable' : 'Disable'}"></uui-button>
+						color="${this._user.state === UserStateModel.DISABLED ? 'positive' : 'warning'}"
+						label="${this._user.state === UserStateModel.DISABLED ? 'Enable' : 'Disable'}"></uui-button>
 				`
 			);
 
@@ -236,14 +230,14 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 					<umb-workspace-property-layout label="Groups" description="Add groups to assign access and permissions">
 						<umb-input-user-group
 							slot="editor"
-							.value=${this._user.userGroups}
+							.value=${this._user.userGroupIds}
 							@change=${(e: any) => this._updateProperty('userGroups', e.target.value)}></umb-input-user-group>
 					</umb-workspace-property-layout>
 					<umb-workspace-property-layout
 						label="Content start node"
 						description="Limit the content tree to specific start nodes">
 						<umb-property-editor-ui-document-picker
-							.value=${this._user.contentStartNodes}
+							.value=${this._user.contentStartNodeIds}
 							@property-editor-change=${(e: any) => this._updateProperty('contentStartNodes', e.target.value)}
 							slot="editor"></umb-property-editor-ui-document-picker>
 					</umb-workspace-property-layout>
@@ -270,9 +264,9 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 	}
 
 	private _renderRightColumn() {
-		if (!this._user || !this._workspaceContext) return nothing;
+		if (!this._user || !this.#workspaceContext) return nothing;
 
-		const statusLook = getLookAndColorFromUserStatus(this._user.status);
+		const statusLook = getLookAndColorFromUserStatus(this._user.state);
 
 		return html` <uui-box>
 			<div id="user-info">
@@ -283,10 +277,10 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 				<div>
 					<b>Status:</b>
 					<uui-tag look="${ifDefined(statusLook?.look)}" color="${ifDefined(statusLook?.color)}">
-						${this._user.status}
+						${this._user.state}
 					</uui-tag>
 				</div>
-				${this._user?.status === 'invited'
+				${this._user?.state === UserStateModel.INVITED
 					? html`
 							<uui-textarea placeholder="Enter a message..."> </uui-textarea>
 							<uui-button look="primary" label="Resend invitation"></uui-button>
@@ -302,7 +296,7 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 				</div>
 				<div>
 					<b>Last lockout date:</b>
-					<span>${this._user.lastLockoutDate || `${this._user.name} has not been locked out`}</span>
+					<span>${this._user.lastlockoutDate || `${this._user.name} has not been locked out`}</span>
 				</div>
 				<div>
 					<b>Password last changed:</b>

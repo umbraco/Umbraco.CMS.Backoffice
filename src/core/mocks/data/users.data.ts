@@ -14,6 +14,10 @@ class UmbUsersData extends UmbData<UserResponseModel> {
 		};
 	}
 
+	getById(id: string): UserResponseModel | undefined {
+		return this.data.find((user) => user.id === id);
+	}
+
 	// updateUserGroup(ids: string[], userGroup: string) {
 	// 	this.data.forEach((user) => {
 	// 		if (ids.includes(user.id)) {

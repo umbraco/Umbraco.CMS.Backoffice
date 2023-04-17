@@ -32,8 +32,8 @@ export class UmbUserServerDataSource
 	createScaffold(parentId: string | null): Promise<DataSourceResponse<UserPresentationBaseModel>> {
 		throw new Error('Method not implemented.');
 	}
-	get(unique: string): Promise<DataSourceResponse<UserResponseModel>> {
-		throw new Error('Method not implemented.');
+	get(unique: string) {
+		return tryExecuteAndNotify(this.#host, UsersResource.getUsersById({ id: unique }));
 	}
 	insert(data: UserPresentationBaseModel): Promise<any> {
 		throw new Error('Method not implemented.');
