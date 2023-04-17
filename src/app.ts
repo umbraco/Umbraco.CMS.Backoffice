@@ -18,7 +18,7 @@ import type { UmbErrorElement } from './error/error.element';
 import type { Guard, IRoute } from '@umbraco-cms/backoffice/router';
 import { pathWithoutBasePath } from '@umbraco-cms/backoffice/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import { UMB_SERVER_URL, tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { UMB_SERVER_URL, tryExecute } from '@umbraco-cms/backoffice/resources';
 import { OpenAPI, RuntimeLevelModel, ServerResource } from '@umbraco-cms/backoffice/backend-api';
 import { contextData, umbDebugContextEventType } from '@umbraco-cms/backoffice/context-api';
 
@@ -167,7 +167,10 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	async #setInitStatus() {
-		const { data } = await tryExecuteAndNotify(this, ServerResource.getServerStatus());
+		const { data, error } = await tryExecute(ServerResource.getServerStatus());
+		if (error) {
+			throw error;
+		}
 		this.#runtimeLevel = data?.serverStatus ?? RuntimeLevelModel.UNKNOWN;
 		this.#redirect();
 	}
