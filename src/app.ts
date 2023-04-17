@@ -12,7 +12,7 @@ import { UUIIconRegistryEssential } from '@umbraco-ui/uui';
 import { css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import { AuthFlow } from './core/auth/auth-flow';
+import { UmbAuthFlow } from './core/auth/auth-flow';
 import { UmbIconStore } from './core/stores/icon/icon.store';
 import type { UmbErrorElement } from './error/error.element';
 import type { Guard, IRoute } from '@umbraco-cms/backoffice/router';
@@ -71,7 +71,7 @@ export class UmbAppElement extends UmbLitElement {
 		},
 	];
 
-	#authFlow: AuthFlow;
+	#authFlow: UmbAuthFlow;
 	#umbIconRegistry = new UmbIconStore();
 	#uuiIconRegistry = new UUIIconRegistryEssential();
 	#runtimeLevel = RuntimeLevelModel.UNKNOWN;
@@ -82,7 +82,7 @@ export class UmbAppElement extends UmbLitElement {
 		OpenAPI.BASE =
 			import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? '' : this.serverUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
 
-		this.#authFlow = new AuthFlow(
+		this.#authFlow = new UmbAuthFlow(
 			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
 			`${window.location.origin}${this.backofficePath}}`
 		);

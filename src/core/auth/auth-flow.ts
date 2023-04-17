@@ -79,7 +79,7 @@ class NoHashQueryStringUtils extends BasicQueryStringUtils {
  *   a. This will redirect the user to the authorization endpoint of the server
  * 4. After login, get the latest token before each request to the server by calling the `performWithFreshTokens` method
  */
-export class AuthFlow {
+export class UmbAuthFlow {
 	// handlers
 	readonly #notifier: AuthorizationNotifier;
 	readonly #authorizationHandler: RedirectRequestHandler;
