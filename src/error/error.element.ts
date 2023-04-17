@@ -63,6 +63,11 @@ export class UmbErrorElement extends UmbLitElement {
 			padding: var(--uui-size-space-6) var(--uui-size-space-5) var(--uui-size-space-5) var(--uui-size-space-5);
 		}
 
+		details {
+			padding: var(--uui-size-space-2) var(--uui-size-space-3);
+			background: var(--uui-color-surface-alt);
+		}
+
 		pre {
 			width: 100%;
 			overflow: auto;
@@ -84,8 +89,7 @@ export class UmbErrorElement extends UmbLitElement {
 					? html`
 							<details>
 								<summary>Details</summary>
-								<p><strong>Name:</strong> ${this.error.name}</p>
-								<p><strong>Stack:</strong></p>
+								<h2>${this.error.name}</h2>
 								<pre>${this.error?.stack}</pre>
 							</details>
 					  `
