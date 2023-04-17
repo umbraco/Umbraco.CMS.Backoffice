@@ -7,6 +7,7 @@ import {
 	UMB_COLLECTION_CONTEXT_TOKEN,
 	UmbCollectionContext,
 } from '../../../shared/components/collection/collection.context';
+import { USER_REPOSITORY_ALIAS } from '../repository/manifests';
 import {
 	UmbModalContext,
 	UMB_MODAL_CONTEXT_TOKEN,
@@ -20,7 +21,6 @@ import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import './views/table/user-table-collection-view.element';
 import './views/grid/user-grid-collection-view.element';
 import '../users/workspace-view-users-selection.element';
-import { USER_REPOSITORY_ALIAS } from '../repository/manifests';
 
 export type UsersViewType = 'list' | 'grid';
 @customElement('umb-user-collection')
@@ -84,9 +84,6 @@ export class UmbUserCollectionElement extends UmbLitElement {
 		`,
 	];
 
-	@state()
-	private _selection: Array<string> = [];
-
 	#collectionContext = new UmbCollectionContext(this, 'user', USER_REPOSITORY_ALIAS);
 
 	@state()
@@ -108,7 +105,6 @@ export class UmbUserCollectionElement extends UmbLitElement {
 		},
 	];
 
-	private _usersContext?: UmbSectionViewUsersElement;
 	private _modalContext?: UmbModalContext;
 	private _inputTimer?: NodeJS.Timeout;
 	private _inputTimerAmount = 500;
@@ -116,21 +112,11 @@ export class UmbUserCollectionElement extends UmbLitElement {
 	connectedCallback(): void {
 		super.connectedCallback();
 
-		this.consumeContext('umbUsersContext', (usersContext: UmbSectionViewUsersElement) => {
-			this._usersContext = usersContext;
-			this._observeSelection();
-		});
-
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
 			this._modalContext = instance;
 		});
 
 		this.provideContext(UMB_COLLECTION_CONTEXT_TOKEN, this.#collectionContext);
-	}
-
-	private _observeSelection() {
-		if (!this._usersContext) return;
-		this.observe(this._usersContext.selection, (selection) => (this._selection = selection));
 	}
 
 	private _toggleViewType() {
@@ -157,15 +143,15 @@ export class UmbUserCollectionElement extends UmbLitElement {
 	}
 
 	private _updateSearch(event: InputEvent) {
-		const target = event.target as HTMLInputElement;
-		const search = target.value || '';
-		clearTimeout(this._inputTimer);
-		this._inputTimer = setTimeout(() => this._refreshUsers(search), this._inputTimerAmount);
+		// const target = event.target as HTMLInputElement;
+		// const search = target.value || '';
+		// clearTimeout(this._inputTimer);
+		// this._inputTimer = setTimeout(() => this._refreshUsers(search), this._inputTimerAmount);
 	}
 
 	private _refreshUsers(search: string) {
-		if (!this._usersContext) return;
-		this._usersContext.setSearch(search);
+		// if (!this._usersContext) return;
+		// this._usersContext.setSearch(search);
 	}
 
 	private _showInviteOrCreate() {

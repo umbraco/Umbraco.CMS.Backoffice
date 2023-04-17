@@ -1,6 +1,5 @@
-import { PagedUserResponseModel, UserResponseModel, UserStateModel } from 'libs/backend-api/src';
-import { UmbEntityData } from './entity.data';
 import { UmbData } from './data';
+import { PagedUserResponseModel, UserResponseModel, UserStateModel } from '@umbraco-cms/backoffice/backend-api';
 
 // Temp mocked database
 class UmbUsersData extends UmbData<UserResponseModel> {
