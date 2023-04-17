@@ -46,6 +46,10 @@ class NoHashQueryStringUtils extends BasicQueryStringUtils {
  * This class is used to handle the auth flow through any backend supporting OpenID Connect.
  * It needs to know the server url, the client id, the redirect uri and the scope.
  *
+ * For a default Umbraco installation, the server url is the base url of the Umbraco server.
+ * and the client id is "umbraco-back-office"
+ * and the scope is "offline_access"
+ *
  * It will:
  * - Fetch the service configuration from the server
  * - Check if there is a token response in local storage
