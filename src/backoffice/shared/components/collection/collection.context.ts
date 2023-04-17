@@ -6,7 +6,7 @@ import {
 	UmbContextConsumerController,
 	UmbContextProviderController,
 } from '@umbraco-cms/backoffice/context-api';
-import { ArrayState, NumberState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
+import { ArrayState, NumberState, StringState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import { umbExtensionsRegistry, createExtensionClass } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbCollectionRepository, UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
 
@@ -49,6 +49,10 @@ export class UmbCollectionContext<ItemType> {
 				}
 			}
 		);
+	}
+
+	public isSelected(id: string) {
+		return this.#selection.getValue().includes(id);
 	}
 
 	public setSelection(value: Array<string>) {
