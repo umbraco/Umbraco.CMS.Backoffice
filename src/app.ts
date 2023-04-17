@@ -14,6 +14,7 @@ import { customElement, property } from 'lit/decorators.js';
 
 import { AuthFlow } from './core/auth/auth-flow';
 import { UmbIconStore } from './core/stores/icon/icon.store';
+import type { UmbErrorElement } from './error/error.element';
 import type { Guard, IRoute } from '@umbraco-cms/backoffice/router';
 import { pathWithoutBasePath } from '@umbraco-cms/backoffice/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
@@ -92,16 +93,52 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	private async _setup() {
-		// Get service configuration from authentication server
-		await this.#authFlow.setInitialState();
+		// Try to initialise the auth flow and get the runtime status
+		try {
+			// Get service configuration from authentication server
+			await this.#authFlow.setInitialState();
 
-		// Get the current runtime level and initialise the router
-		await this.#setInitStatus();
+			// Get the current runtime level and initialise the router
+			await this.#setInitStatus();
 
-		// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
-		// since the token has been set by {AuthFlow.setInitialState}
-		OpenAPI.TOKEN = () => this.#authFlow.performWithFreshTokens();
-		OpenAPI.WITH_CREDENTIALS = true;
+			// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
+			// since the token has been set by {AuthFlow.setInitialState}
+			OpenAPI.TOKEN = () => this.#authFlow.performWithFreshTokens();
+			OpenAPI.WITH_CREDENTIALS = true;
+		} catch (error) {
+			// If the auth flow fails, there is most likely something wrong with the connection to the backend server
+			// and we should redirect to the error page
+			let errorMsg =
+				'An error occured while trying to initialise the connection to the Umbraco server (check console for details)';
+
+			// Get the type of the error and check http status codes
+			if (error instanceof Error) {
+				// If the error is a "TypeError" it means that the server is not reachable
+				if (error.name === 'TypeError') {
+					errorMsg = 'The Umbraco server is unreachable (check console for details)';
+				}
+			}
+
+			// Redirect to the error page
+			this._routes = [
+				{
+					path: '**',
+					component: () => import('./error/error.element'),
+					setup: (component) => {
+						(component as UmbErrorElement).errorMessage = errorMsg;
+						if (error instanceof Error) {
+							(component as UmbErrorElement).error = error;
+						}
+					},
+				},
+			];
+
+			// Re-render the router
+			this.requestUpdate();
+
+			// Log the error
+			console.error(errorMsg, error);
+		}
 
 		this.#umbIconRegistry.attach(this);
 		this.#uuiIconRegistry.attach(this);
