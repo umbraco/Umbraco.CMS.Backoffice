@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-	UmbNotificationOptions,
-	UmbNotificationContext,
-	UMB_NOTIFICATION_CONTEXT_TOKEN,
-} from '@umbraco-cms/backoffice/notification';
+import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 import { ApiError, CancelError, CancelablePromise } from '@umbraco-cms/backoffice/backend-api';
 import { UmbController, UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
@@ -72,13 +68,29 @@ export class UmbResourceController extends UmbController {
 					case 401:
 						// Unauthorized
 						console.log('Unauthorized');
+
+						// TODO: Show a modal dialog to login either by bubbling an event to UmbAppElement or by showing a modal directly
+						this.#notificationContext?.peek('warning', {
+							data: {
+								headline: 'Session Expired',
+								message: 'Your session has expired. Please refresh the page.',
+							},
+						});
 						break;
 					default:
 						// Other errors
-						this.#notifications$.next({
-							headline: error.body.title ?? error.name ?? 'Server Error',
-							message: error.body.detail ?? error.message ?? 'Something went wrong',
-						});
+						if (this.#notificationContext) {
+							this.#notificationContext.peek('danger', {
+								data: {
+									headline: error.body.title ?? error.name ?? 'Server Error',
+									message: error.body.detail ?? error.message ?? 'Something went wrong',
+								},
+							});
+						} else {
+							console.group('UmbResourceController');
+							console.error(error);
+							console.groupEnd();
+						}
 				}
 			}
 		}
