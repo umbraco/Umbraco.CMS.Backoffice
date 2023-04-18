@@ -44,7 +44,7 @@ export class UmbAppElement extends UmbLitElement {
 	 * @remarks This is the base URL of the Umbraco server, not the base URL of the backoffice.
 	 */
 	@property({ type: String })
-	private serverUrl?: string;
+	private serverUrl = import.meta.env.VITE_UMBRACO_API_URL ?? '';
 
 	/**
 	 * The base path of the backoffice.
@@ -75,12 +75,12 @@ export class UmbAppElement extends UmbLitElement {
 	#umbIconRegistry = new UmbIconStore();
 	#uuiIconRegistry = new UUIIconRegistryEssential();
 	#runtimeLevel = RuntimeLevelModel.UNKNOWN;
+	#isMocking = import.meta.env.VITE_UMBRACO_USE_MSW === 'on';
 
 	constructor() {
 		super();
 
-		OpenAPI.BASE =
-			import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? '' : this.serverUrl ?? import.meta.env.VITE_UMBRACO_API_URL ?? '';
+		OpenAPI.BASE = this.#isMocking ? '' : this.serverUrl;
 
 		this.#authFlow = new UmbAuthFlow(
 			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
@@ -95,16 +95,21 @@ export class UmbAppElement extends UmbLitElement {
 	private async _setup() {
 		// Try to initialise the auth flow and get the runtime status
 		try {
-			// Get service configuration from authentication server
-			await this.#authFlow.setInitialState();
-
-			// Get the current runtime level and initialise the router
+			// Get the current runtime level
 			await this.#setInitStatus();
 
-			// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
-			// since the token has been set by {AuthFlow.setInitialState}
-			OpenAPI.TOKEN = () => this.#authFlow.performWithFreshTokens();
-			OpenAPI.WITH_CREDENTIALS = true;
+			// If we are not mocking, we need to initialise the connection to the Umbraco authentication server
+			if (!this.#isMocking) {
+				// Get service configuration from authentication server
+				await this.#authFlow.setInitialState();
+
+				// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
+				OpenAPI.TOKEN = () => this.#authFlow.performWithFreshTokens();
+				OpenAPI.WITH_CREDENTIALS = true;
+			}
+
+			// Initialise the router
+			this.#redirect();
 		} catch (error) {
 			// If the auth flow fails, there is most likely something wrong with the connection to the backend server
 			// and we should redirect to the error page
@@ -158,7 +163,6 @@ export class UmbAppElement extends UmbLitElement {
 			throw error;
 		}
 		this.#runtimeLevel = data?.serverStatus ?? RuntimeLevelModel.UNKNOWN;
-		this.#redirect();
 	}
 
 	#redirect() {
@@ -199,7 +203,7 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	#isAuthorized(): boolean {
-		return import.meta.env.VITE_UMBRACO_USE_MSW === 'on' ? true : this.#authFlow.loggedIn();
+		return this.#isMocking ? true : this.#authFlow.loggedIn();
 	}
 
 	#isAuthorizedGuard(): Guard {
