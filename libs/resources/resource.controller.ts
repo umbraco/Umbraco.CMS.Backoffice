@@ -59,6 +59,7 @@ export class UmbResourceController extends UmbController {
 			 */
 			if (error instanceof CancelError) {
 				// Cancelled - do nothing
+				return {};
 			} else {
 				// ApiError - body could hold a ProblemDetailsModel from the server
 				(error as any).body = typeof error.body === 'string' ? JSON.parse(error.body) : error.body;
