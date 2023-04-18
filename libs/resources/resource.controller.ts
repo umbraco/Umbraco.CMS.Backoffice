@@ -33,49 +33,6 @@ export class UmbResourceController extends UmbController {
 	}
 
 	/**
-	 * Extract the ProblemDetailsModel object from an ApiError.
-	 *
-	 * This assumes that all ApiErrors contain a ProblemDetailsModel object in their body.
-	 */
-	static toProblemDetailsModel(error: unknown): ProblemDetailsModel | undefined {
-		if (error instanceof ApiError) {
-			try {
-				if (error.body) {
-					const errorDetails = (
-						typeof error.body === 'string' ? JSON.parse(error.body) : error.body
-					) as ProblemDetailsModel;
-					return { status: 0, ...errorDetails };
-				} else {
-					// Generic error
-					return {
-						title: error.name,
-						detail: error.message,
-						status: error.status,
-						statusText: error.statusText,
-						request: error.request,
-						stack: error.stack,
-					} as ProblemDetailsModel;
-				}
-			} catch {
-				return {
-					title: error.name,
-					detail: error.message,
-					status: 0,
-				};
-			}
-		} else if (error instanceof Error) {
-			return {
-				title: error.name,
-				detail: error.message,
-				stack: error.stack,
-				status: 0,
-			};
-		}
-
-		return undefined;
-	}
-
-	/**
 	 * Base execute function with a try/catch block and return a tuple with the result and the error.
 	 */
 	static async tryExecute<T>(promise: Promise<T>): Promise<DataSourceResponse<T>> {
