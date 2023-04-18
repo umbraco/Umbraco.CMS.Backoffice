@@ -1,6 +1,6 @@
-import type { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
+import type { ApiError, CancelError } from '@umbraco-cms/backoffice/backend-api';
 
 export interface DataSourceResponse<T = undefined> {
 	data?: T;
-	error?: ProblemDetailsModel;
+	error?: ApiError | CancelError;
 }

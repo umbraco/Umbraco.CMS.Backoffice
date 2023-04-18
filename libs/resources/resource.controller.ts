@@ -4,7 +4,7 @@ import {
 	UmbNotificationContext,
 	UMB_NOTIFICATION_CONTEXT_TOKEN,
 } from '@umbraco-cms/backoffice/notification';
-import { ApiError, CancelablePromise, ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
+import { ApiError, CancelError, CancelablePromise } from '@umbraco-cms/backoffice/backend-api';
 import { UmbController, UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import type { DataSourceResponse } from '@umbraco-cms/backoffice/repository';
@@ -81,31 +81,48 @@ export class UmbResourceController extends UmbController {
 	static async tryExecute<T>(promise: Promise<T>): Promise<DataSourceResponse<T>> {
 		try {
 			return { data: await promise };
-		} catch (e) {
-			return { error: UmbResourceController.toProblemDetailsModel(e) };
+		} catch (error) {
+			if (error instanceof ApiError || error instanceof CancelError) {
+				return { error };
+			}
+
+			console.error('Unknown error', error);
+			throw new Error('Unknown error');
 		}
 	}
 
 	/**
-	 * Wrap the {execute} function in a try/catch block and return the result.
+	 * Wrap the {tryExecute} function in a try/catch block and return the result.
 	 * If the executor function throws an error, then show the details in a notification.
 	 */
-	async tryExecuteAndNotify<T>(options?: UmbNotificationOptions): Promise<DataSourceResponse<T>> {
+	async tryExecuteAndNotify<T>(): Promise<DataSourceResponse<T>> {
 		const { data, error } = await UmbResourceController.tryExecute<T>(this.#promise);
 
 		if (error) {
-			if (this.#notificationContext) {
-				this.#notificationContext?.peek('danger', {
-					data: {
-						headline: error.title ?? 'Server Error',
-						message: error.detail ?? 'Something went wrong',
-					},
-					...options,
-				});
+			/**
+			 * Determine if we want to show a notification or just log the error to the console.
+			 * If the error is not a recognizable system error (i.e. a HttpError), then we will show a notification
+			 * with the error details using the default notification options.
+			 */
+			if (error instanceof CancelError) {
+				// Cancelled - do nothing
 			} else {
-				console.group('UmbResourceController');
-				console.error(error);
-				console.groupEnd();
+				// ApiError - body could hold a ProblemDetailsModel from the server
+				(error as any).body = typeof error.body === 'string' ? JSON.parse(error.body) : error.body;
+
+				// Go through the error status codes and act accordingly
+				switch (error.status ?? 0) {
+					case 401:
+						// Unauthorized
+						console.log('Unauthorized');
+						break;
+					default:
+						// Other errors
+						this.#notifications$.next({
+							headline: error.body.title ?? error.name ?? 'Server Error',
+							message: error.body.detail ?? error.message ?? 'Something went wrong',
+						});
+				}
 			}
 		}
 
