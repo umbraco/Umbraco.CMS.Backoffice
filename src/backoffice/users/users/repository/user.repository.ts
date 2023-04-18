@@ -17,6 +17,7 @@ import {
 	UserResponseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
+import { UMB_NOTIFICATION_CONTEXT_TOKEN, UmbNotificationContext } from '@umbraco-cms/backoffice/notification';
 
 // TODO: implement
 export class UmbUserRepository
@@ -29,6 +30,7 @@ export class UmbUserRepository
 	#detailSource: UmbDataSource<CreateUserRequestModel, UpdateUserRequestModel, UserResponseModel>;
 	#detailStore?: UmbUserStore;
 	#collectionSource: UmbCollectionDataSource<UserResponseModel>;
+	#notificationContext?: UmbNotificationContext;
 
 	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
@@ -39,6 +41,10 @@ export class UmbUserRepository
 
 		new UmbContextConsumerController(this.#host, UMB_USER_STORE_CONTEXT_TOKEN, (instance) => {
 			this.#detailStore = instance;
+		});
+
+		new UmbContextConsumerController(this.#host, UMB_NOTIFICATION_CONTEXT_TOKEN, (instance) => {
+			this.#notificationContext = instance;
 		});
 	}
 
@@ -56,8 +62,20 @@ export class UmbUserRepository
 	create(data: UserPresentationBaseModel): Promise<UmbRepositoryErrorResponse> {
 		throw new Error('Method not implemented.');
 	}
-	save(id: string, data: UpdateUserRequestModel): Promise<UmbRepositoryErrorResponse> {
-		throw new Error('Method not implemented.');
+	async save(id: string, user: UpdateUserRequestModel): Promise<UmbRepositoryErrorResponse> {
+		if (!id) throw new Error('User id is missing');
+		if (!user) throw new Error('User is missing');
+
+		const { data, error } = await this.#detailSource.update(id, user);
+
+		if (!error && data) {
+			this.#detailStore?.append(data);
+
+			const notification = { data: { message: `User saved` } };
+			this.#notificationContext?.peek('positive', notification);
+		}
+
+		return { error };
 	}
 	delete(id: string): Promise<UmbRepositoryErrorResponse> {
 		throw new Error('Method not implemented.');

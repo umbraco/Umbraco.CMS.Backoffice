@@ -39,7 +39,15 @@ export class UmbUserServerDataSource
 		throw new Error('Method not implemented.');
 	}
 	update(unique: string, data: UpdateUserRequestModel): Promise<DataSourceResponse<UserResponseModel>> {
-		throw new Error('Method not implemented.');
+		if (!unique) throw new Error('Key is missing');
+
+		return tryExecuteAndNotify(
+			this.#host,
+			UsersResource.putUsersById({
+				id: unique,
+				requestBody: data,
+			})
+		);
 	}
 	delete(unique: string): Promise<DataSourceResponse<undefined>> {
 		throw new Error('Method not implemented.');

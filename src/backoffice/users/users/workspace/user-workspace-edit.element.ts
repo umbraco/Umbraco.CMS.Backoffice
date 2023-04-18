@@ -154,7 +154,7 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 	}
 
 	private _updateProperty(propertyName: string, value: unknown) {
-		// this._workspaceContext?.update({ [propertyName]: value });
+		this.#workspaceContext?.updateProperty(propertyName, value);
 	}
 
 	private _renderContentStartNodes() {

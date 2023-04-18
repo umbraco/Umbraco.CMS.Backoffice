@@ -1,14 +1,13 @@
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
 import { UmbUserRepository } from '../repository/user.repository';
 import { UmbEntityWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
-import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { ObjectState } from '@umbraco-cms/backoffice/observable-api';
 import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 export class UmbUserWorkspaceContext
-	extends UmbWorkspaceContext<UmbUserRepository, UserDetails>
-	implements UmbEntityWorkspaceContextInterface<UserDetails | undefined>
+	extends UmbWorkspaceContext<UmbUserRepository, UserResponseModel>
+	implements UmbEntityWorkspaceContextInterface<UserResponseModel | undefined>
 {
 	constructor(host: UmbControllerHostElement) {
 		super(host, new UmbUserRepository(host));
@@ -28,18 +27,33 @@ export class UmbUserWorkspaceContext
 	}
 
 	getEntityId(): string | undefined {
-		throw new Error('Method not implemented.');
+		return this.getData()?.id || '';
 	}
 	getEntityType(): string {
-		throw new Error('Method not implemented.');
+		return 'user';
 	}
-	getData(): UserDetails | undefined {
-		throw new Error('Method not implemented.');
+	getData() {
+		return this.#data.getValue();
 	}
-	save(): Promise<void> {
-		throw new Error('Method not implemented.');
+	updateProperty(key: string, value: unknown) {
+		this.#data.update({ [key]: value });
+	}
+	async save() {
+		if (!this.#data.value) return;
+		if (!this.#data.value.id) return;
+
+		console.log('save', this.#data.value, this.getIsNew());
+
+		if (this.getIsNew()) {
+			await this.repository.create(this.#data.value);
+		} else {
+			//TODO: why does the response model allow for nulls but not the request model?
+			await this.repository.save(this.#data.value.id, this.#data.value);
+		}
+		// If it went well, then its not new anymore?.
+		this.setIsNew(false);
 	}
 	destroy(): void {
-		throw new Error('Method not implemented.');
+		this.#data.complete();
 	}
 }

@@ -18,6 +18,46 @@ class UmbUsersData extends UmbData<UserResponseModel> {
 		return this.data.find((user) => user.id === id);
 	}
 
+	save(saveItem: UserResponseModel) {
+		const foundIndex = this.data.findIndex((item) => item.id === saveItem.id);
+		if (foundIndex !== -1) {
+			// update
+			this.data[foundIndex] = saveItem;
+			this.updateData(saveItem);
+		} else {
+			// new
+			this.data.push(saveItem);
+		}
+
+		return saveItem;
+	}
+
+	protected updateData(updateItem: UserResponseModel) {
+		const itemIndex = this.data.findIndex((item) => item.id === updateItem.id);
+		const item = this.data[itemIndex];
+
+		console.log('updateData', updateItem, itemIndex, item);
+
+		if (!item) return;
+
+		const itemKeys = Object.keys(item);
+		const newItem = {};
+
+		for (const [key] of Object.entries(updateItem)) {
+			if (itemKeys.indexOf(key) !== -1) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				newItem[key] = updateItem[key];
+			}
+		}
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		this.data[itemIndex] = newItem;
+
+		console.log('updateData', this.data[itemIndex]);
+	}
+
 	// updateUserGroup(ids: string[], userGroup: string) {
 	// 	this.data.forEach((user) => {
 	// 		if (ids.includes(user.id)) {

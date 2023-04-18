@@ -4,20 +4,30 @@ import { v4 as uuidv4 } from 'uuid';
 import { umbUsersData } from '../data/users.data';
 import { umbracoPath } from '@umbraco-cms/backoffice/utils';
 
-// TODO: add schema
+const slug = '/users';
+
 export const handlers = [
-	rest.get(umbracoPath('/users'), (req, res, ctx) => {
+	rest.get(umbracoPath(`${slug}`), (req, res, ctx) => {
 		const response = umbUsersData.getAll();
 
 		return res(ctx.status(200), ctx.json(response));
 	}),
 
-	rest.get(umbracoPath('/users/:id'), (req, res, ctx) => {
+	rest.get(umbracoPath(`${slug}/:id`), (req, res, ctx) => {
 		const id = req.params.id as string;
 		if (!id) return;
 		const user = umbUsersData.getById(id);
 
 		return res(ctx.status(200), ctx.json(user));
+	}),
+
+	rest.put(umbracoPath(`${slug}/:id`), async (req, res, ctx) => {
+		const data = await req.json();
+		if (!data) return;
+
+		const saved = umbUsersData.save(data);
+
+		return res(ctx.status(200), ctx.json(saved));
 	}),
 
 	// rest.get('/umbraco/backoffice/users/getByKeys', (req, res, ctx) => {
