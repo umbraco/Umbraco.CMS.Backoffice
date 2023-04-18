@@ -90,6 +90,9 @@ export class UmbAppElement extends UmbLitElement {
 		this.provideContext(UMB_SERVER_URL, OpenAPI.BASE);
 
 		this._setup();
+
+		this.#umbIconRegistry.attach(this);
+		this.#uuiIconRegistry.attach(this);
 	}
 
 	private async _setup() {
@@ -130,9 +133,6 @@ export class UmbAppElement extends UmbLitElement {
 			// Redirect to the error page
 			this.#errorPage(errorMsg, error);
 		}
-
-		this.#umbIconRegistry.attach(this);
-		this.#uuiIconRegistry.attach(this);
 
 		// Listen for the debug event from the <umb-debug> component
 		this.addEventListener(umbDebugContextEventType, (event: any) => {
