@@ -119,23 +119,11 @@ export class UmbAppElement extends UmbLitElement {
 				}
 			}
 
-			// Redirect to the error page
-			this._routes = [
-				{
-					path: '**',
-					component: () => import('./error/error.element'),
-					setup: (component) => {
-						(component as UmbErrorElement).errorMessage = errorMsg;
-						(component as UmbErrorElement).error = error;
-					},
-				},
-			];
-
-			// Re-render the router
-			this.requestUpdate();
-
 			// Log the error
 			console.error(errorMsg, error);
+
+			// Redirect to the error page
+			this.#errorPage(errorMsg, error);
 		}
 
 		this.#umbIconRegistry.attach(this);
@@ -224,6 +212,23 @@ export class UmbAppElement extends UmbLitElement {
 			// Return false to prevent the route from being rendered
 			return false;
 		};
+	}
+
+	#errorPage(errorMsg: string, error?: unknown) {
+		// Redirect to the error page
+		this._routes = [
+			{
+				path: '**',
+				component: () => import('./error/error.element'),
+				setup: (component) => {
+					(component as UmbErrorElement).errorMessage = errorMsg;
+					(component as UmbErrorElement).error = error;
+				},
+			},
+		];
+
+		// Re-render the router
+		this.requestUpdate();
 	}
 
 	render() {
