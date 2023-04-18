@@ -256,7 +256,7 @@ export class UmbAuthFlow {
 
 		if (!this.#refreshToken) {
 			console.log('Missing refreshToken.');
-			return Promise.reject('Missing refreshToken.');
+			return Promise.resolve('Missing refreshToken.');
 		}
 
 		if (this.#accessTokenResponse && this.#accessTokenResponse.isValid()) {
