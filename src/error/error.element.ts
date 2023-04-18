@@ -4,7 +4,7 @@ import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
 
 import logoImg from '/umbraco_logomark_white.svg';
-import loginImg from '/login.jpeg';
+import backgroundImg from '/umbraco_background.jpg';
 
 /**
  * A full page error element that can be used either solo or for instance as the error 500 page and BootFailed
@@ -34,7 +34,7 @@ export class UmbErrorElement extends UmbLitElement {
 			background-position: 50%;
 			background-repeat: no-repeat;
 			background-size: cover;
-			background-image: url('${unsafeCSS(loginImg)}');
+			background-image: url('${unsafeCSS(backgroundImg)}');
 			width: 100vw;
 			height: 100vh;
 		}
