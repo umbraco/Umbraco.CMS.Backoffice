@@ -29,6 +29,13 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 				height: 100%;
 			}
 
+			#header {
+				width: 100%;
+				display: grid;
+				grid-template-columns: var(--uui-size-layout-1) 1fr;
+				padding: var(--uui-size-layout-1);
+			}
+
 			#main {
 				display: grid;
 				grid-template-columns: 1fr 350px;
@@ -230,7 +237,7 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 					<umb-workspace-property-layout label="Groups" description="Add groups to assign access and permissions">
 						<umb-input-user-group
 							slot="editor"
-							.value=${this._user.userGroupIds}
+							.value=${this._user.userGroupIds ?? []}
 							@change=${(e: any) => this._updateProperty('userGroups', e.target.value)}></umb-input-user-group>
 					</umb-workspace-property-layout>
 					<umb-workspace-property-layout
@@ -318,12 +325,23 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 		</uui-box>`;
 	}
 
+	#renderHeader() {
+		return html`
+			<div id="header" slot="header">
+				<a href="/section/users">
+					<uui-icon name="umb:arrow-left"></uui-icon>
+				</a>
+				<uui-input id="name" .value=${this._user?.name ?? ''} @input="${this._handleInput}"></uui-input>
+			</div>
+		`;
+	}
+
 	render() {
 		if (!this._user) return html`User not found`;
 
 		return html`
 			<umb-workspace-layout alias="Umb.Workspace.User">
-				<uui-input id="name" slot="name" .value=${this._userName} @input="${this._handleInput}"></uui-input>
+				${this.#renderHeader()}
 				<div id="main">
 					<div id="left-column">${this._renderLeftColumn()}</div>
 					<div id="right-column">${this._renderRightColumn()}</div>
