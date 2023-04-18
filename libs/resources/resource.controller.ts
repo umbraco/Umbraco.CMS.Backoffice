@@ -74,6 +74,9 @@ export class UmbResourceController extends UmbController {
 						// Unauthorized
 						console.log('Unauthorized');
 
+						// TODO: Do not remove the token here but instead let whatever is listening to the event decide what to do
+						localStorage.removeItem('tokenResponse');
+
 						// TODO: Show a modal dialog to login either by bubbling an event to UmbAppElement or by showing a modal directly
 						this.#notificationContext?.peek('warning', {
 							data: {
