@@ -1,6 +1,7 @@
 import { css, html, nothing, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import type { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
 
 import logoImg from '/umbraco_logomark_white.svg';
 import loginImg from '/login.jpeg';
@@ -24,7 +25,7 @@ export class UmbErrorElement extends UmbLitElement {
 	 * @attr
 	 */
 	@property()
-	error?: Error;
+	error?: unknown;
 
 	static styles = css`
 		#background {
@@ -74,6 +75,24 @@ export class UmbErrorElement extends UmbLitElement {
 		}
 	`;
 
+	private renderProblemDetails = (problemDetails: ProblemDetailsModel) => html`
+		<h2>${problemDetails.title}</h2>
+		<p>${problemDetails.detail}</p>
+		<pre>${problemDetails.stack}</pre>
+	`;
+
+	private isProblemDetails(error: unknown): error is ProblemDetailsModel {
+		return typeof error === 'object' && error !== null && 'detail' in error && 'title' in error;
+	}
+
+	private renderError(error: unknown) {
+		if (this.isProblemDetails(error)) {
+			return this.renderProblemDetails(error);
+		}
+
+		return nothing;
+	}
+
 	render = () => html`
 		<div id="background"></div>
 
@@ -89,8 +108,7 @@ export class UmbErrorElement extends UmbLitElement {
 					? html`
 							<details>
 								<summary>Details</summary>
-								<h2>${this.error.name}</h2>
-								<pre>${this.error?.stack}</pre>
+								${this.renderError(this.error)}
 							</details>
 					  `
 					: nothing}
