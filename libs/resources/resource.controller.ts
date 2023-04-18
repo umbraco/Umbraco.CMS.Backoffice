@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
+import {
+	UmbNotificationContext,
+	UMB_NOTIFICATION_CONTEXT_TOKEN,
+	UmbNotificationOptions,
+} from '@umbraco-cms/backoffice/notification';
 import { ApiError, CancelError, CancelablePromise } from '@umbraco-cms/backoffice/backend-api';
 import { UmbController, UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
@@ -48,7 +52,7 @@ export class UmbResourceController extends UmbController {
 	 * Wrap the {tryExecute} function in a try/catch block and return the result.
 	 * If the executor function throws an error, then show the details in a notification.
 	 */
-	async tryExecuteAndNotify<T>(): Promise<DataSourceResponse<T>> {
+	async tryExecuteAndNotify<T>(options?: UmbNotificationOptions): Promise<DataSourceResponse<T>> {
 		const { data, error } = await UmbResourceController.tryExecute<T>(this.#promise);
 
 		if (error) {
@@ -86,6 +90,7 @@ export class UmbResourceController extends UmbController {
 									headline: error.body.title ?? error.name ?? 'Server Error',
 									message: error.body.detail ?? error.message ?? 'Something went wrong',
 								},
+								...options,
 							});
 						} else {
 							console.group('UmbResourceController');
