@@ -126,9 +126,7 @@ export class UmbAppElement extends UmbLitElement {
 					component: () => import('./error/error.element'),
 					setup: (component) => {
 						(component as UmbErrorElement).errorMessage = errorMsg;
-						if (error instanceof Error) {
-							(component as UmbErrorElement).error = error;
-						}
+						(component as UmbErrorElement).error = error;
 					},
 				},
 			];
