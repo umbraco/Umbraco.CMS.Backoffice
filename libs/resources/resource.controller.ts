@@ -54,6 +54,7 @@ export class UmbResourceController extends UmbController {
 			return {
 				title: error.name,
 				detail: error.message,
+				stack: error.stack,
 			};
 		}
 
