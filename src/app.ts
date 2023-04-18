@@ -84,7 +84,7 @@ export class UmbAppElement extends UmbLitElement {
 
 		this.#authFlow = new UmbAuthFlow(
 			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
-			`${window.location.origin}${this.backofficePath}}`
+			`${window.location.origin}${this.backofficePath}`
 		);
 
 		this.provideContext(UMB_SERVER_URL, OpenAPI.BASE);
