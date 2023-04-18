@@ -171,6 +171,10 @@ export class UmbAppElement extends UmbLitElement {
 				history.replaceState(null, '', 'upgrade');
 				break;
 
+			case RuntimeLevelModel.BOOT_FAILED:
+				this.#errorPage('The Umbraco server failed to boot');
+				break;
+
 			case RuntimeLevelModel.RUN: {
 				const pathname = pathWithoutBasePath({ start: true, end: false });
 
@@ -189,7 +193,8 @@ export class UmbAppElement extends UmbLitElement {
 			}
 
 			default:
-				throw new Error(`Unsupported runtime level: ${this.#runtimeLevel}`);
+				// Redirect to the error page
+				this.#errorPage(`Unsupported runtime level: ${this.#runtimeLevel}`);
 		}
 	}
 
