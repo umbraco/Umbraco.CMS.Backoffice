@@ -78,6 +78,9 @@ export class UmbEntityData<T extends Entity> extends UmbData<T> {
 		copyItems.forEach((copyItem) => this.insert(copyItem));
 		const newIds = copyItems.map((item) => item.id);
 
+		destinationItem.hasChildren = true;
+		this.updateData(destinationItem);
+
 		return newIds;
 	}
 
