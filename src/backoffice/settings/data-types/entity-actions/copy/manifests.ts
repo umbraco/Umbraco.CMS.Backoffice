@@ -10,7 +10,7 @@ const entityActions: Array<ManifestTypes> = [
 		name: 'Copy Data Type Entity Action',
 		weight: 900,
 		meta: {
-			icon: 'umb:enter',
+			icon: 'umb:documents',
 			label: 'Copy to...',
 			repositoryAlias: DATA_TYPE_REPOSITORY_ALIAS,
 			api: UmbCopyDataTypeEntityAction,
