@@ -318,6 +318,9 @@ export class UmbDataTypeRepository
 			if (!dataTypeCopy) throw new Error('Could not find copied data type');
 			this.#treeStore?.appendItems([dataTypeCopy]);
 			this.#treeStore?.updateItem(targetId, { hasChildren: true });
+
+			const notification = { data: { message: `Data type copied` } };
+			this.#notificationContext?.peek('positive', notification);
 		}
 
 		return { data: dataTypeCopyId };
