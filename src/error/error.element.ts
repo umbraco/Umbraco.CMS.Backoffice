@@ -81,13 +81,25 @@ export class UmbErrorElement extends UmbLitElement {
 		<pre>${problemDetails.stack}</pre>
 	`;
 
+	private renderErrorObj = (error: Error) => html`
+		<h2>${error.name}</h2>
+		<p>${error.message}</p>
+		<pre>${error.stack}</pre>
+	`;
+
 	private isProblemDetails(error: unknown): error is ProblemDetailsModel {
 		return typeof error === 'object' && error !== null && 'detail' in error && 'title' in error;
+	}
+
+	private isError(error: unknown): error is Error {
+		return typeof error === 'object' && error !== null && error instanceof Error;
 	}
 
 	private renderError(error: unknown) {
 		if (this.isProblemDetails(error)) {
 			return this.renderProblemDetails(error);
+		} else if (this.isError(error)) {
+			return this.renderErrorObj(error);
 		}
 
 		return nothing;
