@@ -65,6 +65,7 @@ export class UmbEntityData<T extends Entity> extends UmbData<T> {
 		const destinationItem = this.getById(destinationKey);
 		if (!destinationItem) throw new Error(`Destination item with key ${destinationKey} not found`);
 
+		// TODO: Notice we don't add numbers to the 'copy' name.
 		const items = this.getByIds(ids);
 		const copyItems = items.map((item) => {
 			return {
