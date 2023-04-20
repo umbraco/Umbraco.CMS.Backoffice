@@ -36,7 +36,7 @@ const requestor = new FetchRequestor();
 /**
  * This class is needed to prevent the hash from being parsed as part of the query string.
  */
-class NoHashQueryStringUtils extends BasicQueryStringUtils {
+class UmbNoHashQueryStringUtils extends BasicQueryStringUtils {
 	parse(input: LocationLike) {
 		return super.parse(input, false);
 	}
@@ -113,7 +113,7 @@ export class UmbAuthFlow {
 		this.#storageBackend = new LocalStorageBackend();
 		this.#authorizationHandler = new RedirectRequestHandler(
 			this.#storageBackend,
-			new NoHashQueryStringUtils(),
+			new UmbNoHashQueryStringUtils(),
 			window.location
 		);
 
