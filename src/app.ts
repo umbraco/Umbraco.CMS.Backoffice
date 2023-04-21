@@ -24,18 +24,7 @@ import { contextData, umbDebugContextEventType } from '@umbraco-cms/backoffice/c
 
 @customElement('umb-app')
 export class UmbAppElement extends UmbLitElement {
-	static styles = css`
-		:host {
-			overflow: hidden;
-		}
-
-		:host,
-		#router-slot {
-			display: block;
-			width: 100%;
-			height: 100vh;
-		}
-	`;
+	
 
 	/**
 	 * The base URL of the configured Umbraco server.
@@ -243,6 +232,19 @@ export class UmbAppElement extends UmbLitElement {
 	render() {
 		return html`<umb-router-slot id="router-slot" .routes=${this._routes}></umb-router-slot>`;
 	}
+	
+	static styles = css`
+		:host {
+			overflow: hidden;
+		}
+
+		:host,
+		#router-slot {
+			display: block;
+			width: 100%;
+			height: 100vh;
+		}
+	`;
 }
 
 declare global {
