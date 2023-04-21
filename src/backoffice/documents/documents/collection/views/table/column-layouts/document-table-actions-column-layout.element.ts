@@ -35,7 +35,7 @@ export class UmbDocumentTableActionColumnLayoutElement extends LitElement {
 	item!: UmbTableItem;
 
 	@property({ attribute: false })
-	value!: { entityType?: undefined };
+	value!: any;
 
 	@state()
 	private _actionMenuIsOpen = false;
