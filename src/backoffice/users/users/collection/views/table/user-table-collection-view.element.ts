@@ -1,7 +1,6 @@
 import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
-import type { UmbSectionViewUsersElement } from '../../../section-view/users-section-view.element';
 import {
 	UmbTableElement,
 	UmbTableColumn,
@@ -15,11 +14,16 @@ import {
 	UmbUserGroupStore,
 	UMB_USER_GROUP_STORE_CONTEXT_TOKEN,
 } from '../../../../user-groups/repository/user-group.store';
-import type { UserDetails, UserGroupEntity } from '@umbraco-cms/backoffice/models';
+import {
+	UMB_COLLECTION_CONTEXT_TOKEN,
+	UmbCollectionContext,
+} from '../../../../../shared/components/collection/collection.context';
+import type { UserGroupEntity } from '@umbraco-cms/backoffice/models';
 
 import './column-layouts/name/user-table-name-column-layout.element';
 import './column-layouts/status/user-table-status-column-layout.element';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-user-table-collection-view')
 export class UmbUserTableCollectionViewElement extends UmbLitElement {
@@ -37,9 +41,6 @@ export class UmbUserTableCollectionViewElement extends UmbLitElement {
 			}
 		`,
 	];
-
-	@state()
-	private _users: Array<UserDetails> = [];
 
 	@state()
 	private _tableConfig: UmbTableConfig = {
@@ -72,13 +73,17 @@ export class UmbUserTableCollectionViewElement extends UmbLitElement {
 	private _tableItems: Array<UmbTableItem> = [];
 
 	@state()
-	private _selection: Array<string> = [];
-
-	@state()
 	private _userGroups: Array<UserGroupEntity> = [];
 
 	private _userGroupStore?: UmbUserGroupStore;
-	private _usersContext?: UmbSectionViewUsersElement;
+
+	@state()
+	private _users: Array<UserResponseModel> = [];
+
+	@state()
+	private _selection: Array<string> = [];
+
+	#collectionContext?: UmbCollectionContext<UserResponseModel>;
 
 	constructor() {
 		super();
@@ -88,26 +93,10 @@ export class UmbUserTableCollectionViewElement extends UmbLitElement {
 			this._observeUserGroups();
 		});
 
-		this.consumeContext<UmbSectionViewUsersElement>('umbUsersContext', (_instance) => {
-			this._usersContext = _instance;
-			this._observeUsers();
-			this._observeSelection();
-		});
-	}
-
-	private _observeUsers() {
-		if (!this._usersContext) return;
-		this.observe(this._usersContext.users, (users) => {
-			this._users = users;
-			this._createTableItems(this._users);
-		});
-	}
-
-	private _observeSelection() {
-		if (!this._usersContext) return;
-		this.observe(this._usersContext.selection, (selection) => {
-			if (this._selection === selection) return;
-			this._selection = selection;
+		this.consumeContext(UMB_COLLECTION_CONTEXT_TOKEN, (instance) => {
+			this.#collectionContext = instance;
+			this.observe(this.#collectionContext.selection, (selection) => (this._selection = selection));
+			this.observe(this.#collectionContext.items, (items) => (this._users = items));
 		});
 	}
 
@@ -127,10 +116,10 @@ export class UmbUserTableCollectionViewElement extends UmbLitElement {
 			.join(', ');
 	}
 
-	private _createTableItems(users: Array<UserDetails>) {
+	private _createTableItems(users: Array<UserResponseModel>) {
 		this._tableItems = users.map((user) => {
 			return {
-				id: user.id,
+				id: user.id ?? '',
 				icon: 'umb:user',
 				data: [
 					{
@@ -141,7 +130,7 @@ export class UmbUserTableCollectionViewElement extends UmbLitElement {
 					},
 					{
 						columnAlias: 'userGroup',
-						value: this._getUserGroupNames(user.userGroups),
+						value: this._getUserGroupNames(user.userGroupIds ?? []),
 					},
 					{
 						columnAlias: 'userLastLogin',
@@ -150,7 +139,7 @@ export class UmbUserTableCollectionViewElement extends UmbLitElement {
 					{
 						columnAlias: 'userStatus',
 						value: {
-							status: user.status,
+							status: user.state,
 						},
 					},
 				],
@@ -162,14 +151,14 @@ export class UmbUserTableCollectionViewElement extends UmbLitElement {
 		event.stopPropagation();
 		const table = event.target as UmbTableElement;
 		const selection = table.selection;
-		this._usersContext?.setSelection(selection);
+		this.#collectionContext?.setSelection(selection);
 	}
 
 	private _handleDeselected(event: UmbTableDeselectedEvent) {
 		event.stopPropagation();
 		const table = event.target as UmbTableElement;
 		const selection = table.selection;
-		this._usersContext?.setSelection(selection);
+		this.#collectionContext?.setSelection(selection);
 	}
 
 	private _handleOrdering(event: UmbTableOrderedEvent) {
