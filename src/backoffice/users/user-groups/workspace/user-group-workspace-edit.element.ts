@@ -206,23 +206,23 @@ export class UmbUserGroupWorkspaceEditElement extends UmbLitElement {
 		this.observe(this.#workspaceContext.data, (userGroup) => (this._userGroup = userGroup as any));
 	}
 
-	private _observeUsers() {
-		if (!this._userStore) return;
+	// private _observeUsers() {
+	// 	if (!this._userStore) return;
 
-		// TODO: Create method to only get users from this userGroup
-		// TODO: Find a better way to only call this once at the start
-		this.observe(this._userStore.getAll(), (users) => {
-			// TODO: handle if there is no users.
-			if (!this._userKeys && users.length > 0) {
-				const entityId = this.#workspaceContext?.getEntityId();
-				if (!entityId) return;
-				this._userKeys = users.filter((user) => user.userGroups.includes(entityId)).map((user) => user.id);
-				//this._updateProperty('users', this._userKeys);
-				// TODO: make a method on the UmbWorkspaceUserGroupContext:
-				//this._workspaceContext.setUsers();
-			}
-		});
-	}
+	// 	// TODO: Create method to only get users from this userGroup
+	// 	// TODO: Find a better way to only call this once at the start
+	// 	this.observe(this._userStore.getAll(), (users) => {
+	// 		// TODO: handle if there is no users.
+	// 		if (!this._userKeys && users.length > 0) {
+	// 			const entityId = this.#workspaceContext?.getEntityId();
+	// 			if (!entityId) return;
+	// 			this._userKeys = users.filter((user) => user.userGroups.includes(entityId)).map((user) => user.id);
+	// 			//this._updateProperty('users', this._userKeys);
+	// 			// TODO: make a method on the UmbWorkspaceUserGroupContext:
+	// 			//this._workspaceContext.setUsers();
+	// 		}
+	// 	});
+	// }
 
 	private _updateUserKeys(userKeys: Array<string>) {
 		this._userKeys = userKeys;
