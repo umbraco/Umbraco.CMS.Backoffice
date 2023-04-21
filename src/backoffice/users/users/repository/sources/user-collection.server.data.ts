@@ -1,4 +1,4 @@
-import { DataSourceResponse, UmbCollectionDataSource, UmbPagedData } from '@umbraco-cms/backoffice/repository';
+import { UmbCollectionDataSource } from '@umbraco-cms/backoffice/repository';
 import { UserResponseModel, UsersResource } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';

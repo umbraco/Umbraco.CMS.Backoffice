@@ -1,13 +1,10 @@
 import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
-import { customElement, state } from 'lit/decorators.js';
-import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../repository/user.store';
+import { customElement } from 'lit/decorators.js';
 import type { IRoute } from '@umbraco-cms/backoffice/router';
-import { umbExtensionsRegistry, createExtensionElement } from '@umbraco-cms/backoffice/extensions-api';
 
 import '../collection/views/table/user-table-collection-view.element';
 import '../collection/views/grid/user-grid-collection-view.element';
-import '../users/workspace-view-users-selection.element';
 
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 

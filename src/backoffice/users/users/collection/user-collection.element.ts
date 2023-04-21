@@ -2,7 +2,6 @@ import { css, html, nothing } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { UUIPopoverElement } from '@umbraco-ui/uui';
-import type { UmbSectionViewUsersElement } from '../section-view/users-section-view.element';
 import {
 	UMB_COLLECTION_CONTEXT_TOKEN,
 	UmbCollectionContext,
@@ -20,7 +19,6 @@ import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 import './views/table/user-table-collection-view.element';
 import './views/grid/user-grid-collection-view.element';
-import '../users/workspace-view-users-selection.element';
 
 export type UsersViewType = 'list' | 'grid';
 @customElement('umb-user-collection')
