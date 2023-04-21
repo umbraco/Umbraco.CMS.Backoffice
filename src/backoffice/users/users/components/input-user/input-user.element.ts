@@ -1,15 +1,13 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html, nothing, PropertyValueMap } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { UmbInputListBaseElement } from '../input-list-base/input-list-base';
-import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../../users/users/repository/user.store';
+import { UmbInputListBaseElement } from '../../../../shared/components/input-list-base/input-list-base';
+import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../repository/user.store';
 import { UMB_USER_PICKER_MODAL } from '@umbraco-cms/backoffice/modal';
 import type { UserEntity } from '@umbraco-cms/backoffice/models';
 
 @customElement('umb-input-user')
 export class UmbPickerUserElement extends UmbInputListBaseElement {
-	
-
 	@state()
 	private _users: Array<UserEntity> = [];
 
@@ -64,7 +62,7 @@ export class UmbPickerUserElement extends UmbInputListBaseElement {
 	renderContent() {
 		return html`${this._renderUserList()}`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`

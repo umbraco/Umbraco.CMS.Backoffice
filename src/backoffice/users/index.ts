@@ -11,6 +11,8 @@ import {
 import { UmbEntrypointOnInit } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbContextProviderController } from '@umbraco-cms/backoffice/context-api';
 
+import './users/components';
+
 export const manifests = [...userGroupManifests, ...userManifests, ...userSectionManifests, ...currentUserManifests];
 
 export const onInit: UmbEntrypointOnInit = (host, extensionRegistry) => {

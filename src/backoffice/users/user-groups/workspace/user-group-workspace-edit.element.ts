@@ -8,14 +8,12 @@ import { UmbUserGroupWorkspaceContext } from './user-group-workspace.context';
 import type { UserGroupDetails } from '@umbraco-cms/backoffice/models';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
-import '../../../shared/components/input-user/input-user.element';
+import '../../users/components/input-user/input-user.element';
 import '../../../shared/components/input-section/input-section.element';
 import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 
 @customElement('umb-user-group-workspace-edit')
 export class UmbUserGroupWorkspaceEditElement extends UmbLitElement {
-	
-
 	defaultPermissions: Array<{
 		name: string;
 		permissions: Array<{ name: string; description: string; value: boolean }>;
@@ -306,7 +304,7 @@ export class UmbUserGroupWorkspaceEditElement extends UmbLitElement {
 			</umb-workspace-layout>
 		`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`
