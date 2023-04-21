@@ -16,13 +16,11 @@ import { UmbUserGroupStore, UMB_USER_GROUP_STORE_CONTEXT_TOKEN } from '../reposi
 import type { UserGroupDetails } from '@umbraco-cms/backoffice/models';
 
 import './user-group-table-name-column-layout.element';
-import '../../user-section/views/user-groups/user-group-table-sections-column-layout.element';
+//import '../../user-section/views/user-groups/user-group-table-sections-column-layout.element';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-workspace-view-user-groups')
 export class UmbWorkspaceViewUserGroupsElement extends UmbLitElement {
-	
-
 	@state()
 	private _userGroups: Array<UserGroupDetails> = [];
 
@@ -137,7 +135,7 @@ export class UmbWorkspaceViewUserGroupsElement extends UmbLitElement {
 				@ordered="${this._handleOrdering}"></umb-table>
 		`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`
