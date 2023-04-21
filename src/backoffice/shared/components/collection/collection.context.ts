@@ -6,9 +6,9 @@ import {
 	UmbContextConsumerController,
 	UmbContextProviderController,
 } from '@umbraco-cms/backoffice/context-api';
-import { ArrayState, NumberState, StringState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
+import { UmbArrayState, UmbNumberState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import { umbExtensionsRegistry, createExtensionClass } from '@umbraco-cms/backoffice/extensions-api';
-import { UmbCollectionRepository, UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
+import { UmbCollectionRepository } from '@umbraco-cms/backoffice/repository';
 
 // TODO: Clean up the need for store as Media has switched to use Repositories(repository).
 export class UmbCollectionContext<ItemType> {
@@ -17,13 +17,13 @@ export class UmbCollectionContext<ItemType> {
 
 	protected _dataObserver?: UmbObserverController<ItemType[]>;
 
-	#items = new ArrayState(<Array<ItemType>>[]);
+	#items = new UmbArrayState(<Array<ItemType>>[]);
 	public readonly items = this.#items.asObservable();
 
-	#total = new NumberState(0);
+	#total = new UmbNumberState(0);
 	public readonly total = this.#total.asObservable();
 
-	#selection = new ArrayState(<Array<string>>[]);
+	#selection = new UmbArrayState(<Array<string>>[]);
 	public readonly selection = this.#selection.asObservable();
 
 	#repository?: UmbCollectionRepository;

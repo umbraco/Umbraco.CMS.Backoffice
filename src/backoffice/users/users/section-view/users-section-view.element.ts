@@ -9,9 +9,7 @@ import '../collection/views/table/user-table-collection-view.element';
 import '../collection/views/grid/user-grid-collection-view.element';
 import '../users/workspace-view-users-selection.element';
 
-import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import { DeepState } from '@umbraco-cms/backoffice/observable-api';
 
 @customElement('umb-section-view-users')
 export class UmbSectionViewUsersElement extends UmbLitElement {

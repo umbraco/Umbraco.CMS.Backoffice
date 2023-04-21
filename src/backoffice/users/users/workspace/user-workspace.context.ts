@@ -2,8 +2,8 @@ import { UmbWorkspaceContext } from '../../../shared/components/workspace/worksp
 import { UmbUserRepository } from '../repository/user.repository';
 import { UmbEntityWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
-import { ObjectState } from '@umbraco-cms/backoffice/observable-api';
 import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 
 export class UmbUserWorkspaceContext
 	extends UmbWorkspaceContext<UmbUserRepository, UserResponseModel>
@@ -13,7 +13,7 @@ export class UmbUserWorkspaceContext
 		super(host, new UmbUserRepository(host));
 	}
 
-	#data = new ObjectState<UserResponseModel | undefined>(undefined);
+	#data = new UmbObjectState<UserResponseModel | undefined>(undefined);
 	data = this.#data.asObservable();
 
 	async load(id: string) {
