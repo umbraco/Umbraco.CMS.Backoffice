@@ -6,8 +6,8 @@ import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../repository/use
 import { UMB_USER_PICKER_MODAL } from '@umbraco-cms/backoffice/modal';
 import type { UserEntity } from '@umbraco-cms/backoffice/models';
 
-@customElement('umb-input-user')
-export class UmbPickerUserElement extends UmbInputListBaseElement {
+@customElement('umb-user-input')
+export class UmbUserInputElement extends UmbInputListBaseElement {
 	@state()
 	private _users: Array<UserEntity> = [];
 
@@ -90,6 +90,6 @@ export class UmbPickerUserElement extends UmbInputListBaseElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-input-user': UmbPickerUserElement;
+		'umb-user-input': UmbUserInputElement;
 	}
 }

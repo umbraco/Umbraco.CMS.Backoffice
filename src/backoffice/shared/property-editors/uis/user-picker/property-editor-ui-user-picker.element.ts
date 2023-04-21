@@ -17,7 +17,7 @@ export class UmbPropertyEditorUIUserPickerElement extends UmbLitElement implemen
 
 	// TODO: implement config
 	render() {
-		return html` <umb-input-user></umb-input-user>`;
+		return html` <umb-user-input></umb-user-input>`;
 	}
 
 	static styles = [UUITextStyles];
