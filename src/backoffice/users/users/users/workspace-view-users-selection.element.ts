@@ -2,7 +2,7 @@ import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../repository/user.store';
-import { UmbSectionViewUsersElement } from '../section-view/section-view-users.element';
+import { UmbSectionViewUsersElement } from '../section-view/users-section-view.element';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-workspace-view-users-selection')

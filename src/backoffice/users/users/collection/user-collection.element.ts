@@ -2,7 +2,7 @@ import { css, html, nothing } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { UUIPopoverElement } from '@umbraco-ui/uui';
-import type { UmbSectionViewUsersElement } from '../section-view/section-view-users.element';
+import type { UmbSectionViewUsersElement } from '../section-view/users-section-view.element';
 import {
 	UMB_COLLECTION_CONTEXT_TOKEN,
 	UmbCollectionContext,

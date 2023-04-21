@@ -6,8 +6,8 @@ import { UmbUserWorkspaceContext } from '../user-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 
-@customElement('umb-workspace-action-user-save')
-export class UmbWorkspaceActionUserSaveElement extends UmbLitElement {
+@customElement('umb-user-workspace-action-save')
+export class UmbUserWorkspaceActionSaveElement extends UmbLitElement {
 	static styles = [UUITextStyles, css``];
 
 	@state()
@@ -47,10 +47,10 @@ export class UmbWorkspaceActionUserSaveElement extends UmbLitElement {
 	}
 }
 
-export default UmbWorkspaceActionUserSaveElement;
+export default UmbUserWorkspaceActionSaveElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-workspace-action-user-save': UmbWorkspaceActionUserSaveElement;
+		'umb-user-workspace-action-save': UmbUserWorkspaceActionSaveElement;
 	}
 }
