@@ -5,7 +5,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import {
 	UmbCollectionContext,
 	UMB_COLLECTION_CONTEXT_TOKEN,
-} from '../../../../../../shared/collection/collection.context';
+} from '../../../../../../shared/components/collection/collection.context';
 
 import '../../../../../../shared/collection/dashboards/dashboard-collection.element';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';

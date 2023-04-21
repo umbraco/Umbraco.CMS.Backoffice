@@ -11,7 +11,10 @@ import type {
 	UmbTableSelectedEvent,
 } from '../../../shared/components/table';
 import type { MediaDetails } from '../';
-import { UmbCollectionContext, UMB_COLLECTION_CONTEXT_TOKEN } from '../../../shared/collection/collection.context';
+import {
+	UmbCollectionContext,
+	UMB_COLLECTION_CONTEXT_TOKEN,
+} from '../../../shared/components/collection/collection.context';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
@@ -70,7 +73,7 @@ export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 	private _observeCollectionContext() {
 		if (!this._collectionContext) return;
 
-		this.observe(this._collectionContext.data, (nodes) => {
+		this.observe(this._collectionContext.items, (nodes) => {
 			this._mediaItems = nodes;
 			this._createTableItems(this._mediaItems);
 		});

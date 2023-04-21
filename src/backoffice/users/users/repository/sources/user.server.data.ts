@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { DataSourceResponse, UmbDataSource } from '@umbraco-cms/backoffice/repository';
 import {
 	UserResponseModel,
