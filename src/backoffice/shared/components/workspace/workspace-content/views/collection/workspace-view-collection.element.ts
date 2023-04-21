@@ -15,8 +15,6 @@ import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-ap
 
 @customElement('umb-workspace-view-collection')
 export class UmbWorkspaceViewCollectionElement extends UmbLitElement {
-	
-
 	public manifest!: ManifestWorkspaceViewCollection;
 
 	private _workspaceContext?: typeof UMB_ENTITY_WORKSPACE_CONTEXT.TYPE;
@@ -40,13 +38,7 @@ export class UmbWorkspaceViewCollectionElement extends UmbLitElement {
 		if (entityId != null && entityType != null) {
 			const manifestMeta = this.manifest.meta;
 
-			this._collectionContext = new UmbCollectionContext(
-				this,
-				entityType,
-				entityId,
-				manifestMeta.storeAlias,
-				manifestMeta.repositoryAlias
-			);
+			this._collectionContext = new UmbCollectionContext(this, entityType, manifestMeta.repositoryAlias);
 			this.provideContext(UMB_COLLECTION_CONTEXT_TOKEN, this._collectionContext);
 		}
 	}
@@ -54,7 +46,7 @@ export class UmbWorkspaceViewCollectionElement extends UmbLitElement {
 	render() {
 		return html`<umb-collection entity-type=${ifDefined(this._workspaceContext?.getEntityType())}></umb-collection>`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`

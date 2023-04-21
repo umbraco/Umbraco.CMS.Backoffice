@@ -29,15 +29,19 @@ export class UmbUserWorkspaceContext
 	getEntityId(): string | undefined {
 		return this.getData()?.id || '';
 	}
+
 	getEntityType(): string {
 		return 'user';
 	}
+
 	getData() {
 		return this.#data.getValue();
 	}
+
 	updateProperty(key: string, value: unknown) {
 		this.#data.update({ [key]: value });
 	}
+
 	async save() {
 		if (!this.#data.value) return;
 		if (!this.#data.value.id) return;
