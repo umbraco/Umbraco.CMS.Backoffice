@@ -19,6 +19,9 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 export class UmbUserServerDataSource
 	implements UmbDataSource<CreateUserRequestModel, UpdateUserRequestModel, UserResponseModel>
 {
+	//TODO: Add the entity type here
+	//TODO: Add a UserModel that extends the UserResponseModel and adds the entity type and put it in the root of the users folder and export it in the index file
+
 	#host: UmbControllerHostElement;
 
 	/**
