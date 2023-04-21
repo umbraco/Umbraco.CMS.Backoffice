@@ -2,10 +2,7 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import {
-	UmbCollectionContext,
-	UMB_COLLECTION_CONTEXT_TOKEN,
-} from '../../../shared/components/collection/collection.context';
+import { UMB_COLLECTION_CONTEXT_TOKEN, UmbCollectionContext } from '../collection.context';
 import type { ManifestDashboardCollection } from '@umbraco-cms/backoffice/extensions-registry';
 import type { FolderTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
@@ -41,7 +38,7 @@ export class UmbDashboardCollectionElement extends UmbLitElement {
 		if (!this._collectionContext) {
 			const repositoryAlias = this.manifest.meta.repositoryAlias;
 			this._entityType = this.manifest.conditions.entityType;
-			this._collectionContext = new UmbCollectionContext(this, this._entityType, null, '', repositoryAlias);
+			this._collectionContext = new UmbCollectionContext(this, this._entityType, repositoryAlias);
 			this.provideContext(UMB_COLLECTION_CONTEXT_TOKEN, this._collectionContext);
 		}
 	}

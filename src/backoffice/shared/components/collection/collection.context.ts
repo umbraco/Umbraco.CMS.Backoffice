@@ -1,11 +1,5 @@
-import { Observable } from 'rxjs';
-import type { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
-import {
-	UmbContextToken,
-	UmbContextConsumerController,
-	UmbContextProviderController,
-} from '@umbraco-cms/backoffice/context-api';
+import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbArrayState, UmbNumberState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import { umbExtensionsRegistry, createExtensionClass } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbCollectionRepository } from '@umbraco-cms/backoffice/repository';

@@ -36,7 +36,7 @@ export class UmbCollectionElement extends UmbLitElement {
 	@state()
 	private _selection?: Array<string> | null;
 
-	private _collectionContext?: UmbCollectionContext;
+	private _collectionContext?: UmbCollectionContext<any>;
 
 	private _entityType!: string;
 	@property({ type: String, attribute: 'entity-type' })

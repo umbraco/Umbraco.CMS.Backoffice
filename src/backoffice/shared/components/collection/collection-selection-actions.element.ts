@@ -1,8 +1,8 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
-import { css, html, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { map } from 'rxjs';
-import { UmbCollectionContext, UMB_COLLECTION_CONTEXT_TOKEN } from './collection.context';
+import { UMB_COLLECTION_CONTEXT_TOKEN, UmbCollectionContext } from './collection.context';
 import type { ManifestEntityBulkAction } from '@umbraco-cms/backoffice/extensions-registry';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
@@ -47,7 +47,7 @@ export class UmbCollectionSelectionActionsElement extends UmbLitElement {
 	@state()
 	private _entityBulkActions: Array<ManifestEntityBulkAction> = [];
 
-	private _collectionContext?: UmbCollectionContext;
+	private _collectionContext?: UmbCollectionContext<any>;
 	private _selection: Array<string> = [];
 
 	constructor() {
