@@ -27,21 +27,6 @@ import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-user-table-collection-view')
 export class UmbUserTableCollectionViewElement extends UmbLitElement {
-	static styles = [
-		UUITextStyles,
-		css`
-			:host {
-				display: flex;
-				flex-direction: column;
-			}
-
-			umb-table {
-				padding: 0;
-				margin: 0 var(--uui-size-layout-1) var(--uui-size-layout-1);
-			}
-		`,
-	];
-
 	@state()
 	private _tableConfig: UmbTableConfig = {
 		allowSelection: true,
@@ -180,6 +165,21 @@ export class UmbUserTableCollectionViewElement extends UmbLitElement {
 				@ordered="${this._handleOrdering}"></umb-table>
 		`;
 	}
+
+	static styles = [
+		UUITextStyles,
+		css`
+			:host {
+				display: flex;
+				flex-direction: column;
+			}
+
+			umb-table {
+				padding: 0;
+				margin: 0 var(--uui-size-layout-1) var(--uui-size-layout-1);
+			}
+		`,
+	];
 }
 
 export default UmbUserTableCollectionViewElement;

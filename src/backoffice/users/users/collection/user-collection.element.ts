@@ -23,65 +23,6 @@ import './views/grid/user-grid-collection-view.element';
 export type UsersViewType = 'list' | 'grid';
 @customElement('umb-user-collection')
 export class UmbUserCollectionElement extends UmbLitElement {
-	static styles = [
-		UUITextStyles,
-		css`
-			:host {
-				height: 100%;
-				display: flex;
-				flex-direction: column;
-			}
-
-			#sticky-top {
-				position: sticky;
-				top: 0px;
-				z-index: 1;
-				box-shadow: 0 1px 3px rgba(0, 0, 0, 0), 0 1px 2px rgba(0, 0, 0, 0);
-				transition: 250ms box-shadow ease-in-out;
-			}
-
-			#sticky-top.header-shadow {
-				box-shadow: var(--uui-shadow-depth-2);
-			}
-
-			#user-list-top-bar {
-				padding: var(--uui-size-space-4) var(--uui-size-layout-1);
-				background-color: var(--uui-color-background);
-				display: flex;
-				justify-content: space-between;
-				white-space: nowrap;
-				gap: var(--uui-size-space-5);
-				align-items: center;
-			}
-			#user-list {
-				padding: var(--uui-size-layout-1);
-				padding-top: var(--uui-size-space-2);
-			}
-			#input-search {
-				width: 100%;
-			}
-
-			uui-popover {
-				width: unset;
-			}
-
-			.filter-dropdown {
-				display: flex;
-				gap: var(--uui-size-space-3);
-				flex-direction: column;
-				background-color: var(--uui-color-surface);
-				padding: var(--uui-size-space-4);
-				border-radius: var(--uui-size-border-radius);
-				box-shadow: var(--uui-shadow-depth-2);
-				width: fit-content;
-			}
-			a {
-				color: inherit;
-				text-decoration: none;
-			}
-		`,
-	];
-
 	#collectionContext = new UmbCollectionContext(this, 'user', USER_REPOSITORY_ALIAS);
 
 	@state()
@@ -222,6 +163,65 @@ export class UmbUserCollectionElement extends UmbLitElement {
 			${this._renderSelection()}
 		`;
 	}
+
+	static styles = [
+		UUITextStyles,
+		css`
+			:host {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+			}
+
+			#sticky-top {
+				position: sticky;
+				top: 0px;
+				z-index: 1;
+				box-shadow: 0 1px 3px rgba(0, 0, 0, 0), 0 1px 2px rgba(0, 0, 0, 0);
+				transition: 250ms box-shadow ease-in-out;
+			}
+
+			#sticky-top.header-shadow {
+				box-shadow: var(--uui-shadow-depth-2);
+			}
+
+			#user-list-top-bar {
+				padding: var(--uui-size-space-4) var(--uui-size-layout-1);
+				background-color: var(--uui-color-background);
+				display: flex;
+				justify-content: space-between;
+				white-space: nowrap;
+				gap: var(--uui-size-space-5);
+				align-items: center;
+			}
+			#user-list {
+				padding: var(--uui-size-layout-1);
+				padding-top: var(--uui-size-space-2);
+			}
+			#input-search {
+				width: 100%;
+			}
+
+			uui-popover {
+				width: unset;
+			}
+
+			.filter-dropdown {
+				display: flex;
+				gap: var(--uui-size-space-3);
+				flex-direction: column;
+				background-color: var(--uui-color-surface);
+				padding: var(--uui-size-space-4);
+				border-radius: var(--uui-size-border-radius);
+				box-shadow: var(--uui-shadow-depth-2);
+				width: fit-content;
+			}
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+		`,
+	];
 }
 
 export default UmbUserCollectionElement;

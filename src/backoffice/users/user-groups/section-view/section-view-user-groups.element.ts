@@ -7,6 +7,12 @@ import '../workspace/workspace-view-user-groups.element';
 //TODO: rename to user-groups-section-view
 @customElement('umb-section-view-user-groups')
 export class UmbSectionViewUserGroupsElement extends LitElement {
+	
+
+	render() {
+		return html`<umb-workspace-view-user-groups></umb-workspace-view-user-groups>`;
+	}
+	
 	static styles = [
 		UUITextStyles,
 		css`
@@ -19,10 +25,6 @@ export class UmbSectionViewUserGroupsElement extends LitElement {
 			}
 		`,
 	];
-
-	render() {
-		return html`<umb-workspace-view-user-groups></umb-workspace-view-user-groups>`;
-	}
 }
 
 export default UmbSectionViewUserGroupsElement;
