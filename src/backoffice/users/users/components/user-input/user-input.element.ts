@@ -1,92 +1,133 @@
-import { UUITextStyles } from '@umbraco-ui/uui-css';
-import { css, html, nothing, PropertyValueMap } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
-import { UmbInputListBaseElement } from '../../../../shared/components/input-list-base/input-list-base';
-import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../repository/user.store';
-import { UMB_USER_PICKER_MODAL } from '@umbraco-cms/backoffice/modal';
-import type { UserEntity } from '@umbraco-cms/backoffice/models';
+import { css, html } from 'lit';
+import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
+import { customElement, property, state } from 'lit/decorators.js';
+import { FormControlMixin } from '@umbraco-ui/uui-base/lib/mixins';
+import { UmbUserPickerContext } from './user-input.context';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import type { UserItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-user-input')
-export class UmbUserInputElement extends UmbInputListBaseElement {
+export class UmbUserInputElement extends FormControlMixin(UmbLitElement) {
+	/**
+	 * This is a minimum amount of selected items in this input.
+	 * @type {number}
+	 * @attr
+	 * @default 0
+	 */
+	@property({ type: Number })
+	public get min(): number {
+		return this.#pickerContext.min;
+	}
+	public set min(value: number) {
+		this.#pickerContext.min = value;
+	}
+
+	/**
+	 * Min validation message.
+	 * @type {boolean}
+	 * @attr
+	 * @default
+	 */
+	@property({ type: String, attribute: 'min-message' })
+	minMessage = 'This field need more items';
+
+	/**
+	 * This is a maximum amount of selected items in this input.
+	 * @type {number}
+	 * @attr
+	 * @default Infinity
+	 */
+	@property({ type: Number })
+	public get max(): number {
+		return this.#pickerContext.max;
+	}
+	public set max(value: number) {
+		this.#pickerContext.max = value;
+	}
+
+	/**
+	 * Max validation message.
+	 * @type {boolean}
+	 * @attr
+	 * @default
+	 */
+	@property({ type: String, attribute: 'min-message' })
+	maxMessage = 'This field exceeds the allowed amount of items';
+
+	public get selectedIds(): Array<string> {
+		return this.#pickerContext.getSelection();
+	}
+	public set selectedIds(ids: Array<string>) {
+		this.#pickerContext.setSelection(ids);
+	}
+
+	@property()
+	public set value(idsString: string) {
+		// Its with full purpose we don't call super.value, as thats being handled by the observation of the context selection.
+		this.selectedIds = idsString.split(/[ ,]+/);
+	}
+
 	@state()
-	private _users: Array<UserEntity> = [];
+	private _items?: Array<UserItemResponseModel>;
 
-	private _userStore?: UmbUserStore;
+	#pickerContext = new UmbUserPickerContext(this);
 
-	connectedCallback(): void {
-		super.connectedCallback();
-		this.pickerToken = UMB_USER_PICKER_MODAL;
-		this.consumeContext(UMB_USER_STORE_CONTEXT_TOKEN, (userStore) => {
-			this._userStore = userStore;
-			this._observeUser();
-		});
+	constructor() {
+		super();
+
+		this.addValidator(
+			'rangeUnderflow',
+			() => this.minMessage,
+			() => !!this.min && this.#pickerContext.getSelection().length < this.min
+		);
+
+		this.addValidator(
+			'rangeOverflow',
+			() => this.maxMessage,
+			() => !!this.max && this.#pickerContext.getSelection().length > this.max
+		);
+
+		this.observe(this.#pickerContext.selection, (selection) => (super.value = selection.join(',')));
+		this.observe(this.#pickerContext.selectedItems, (selectedItems) => (this._items = selectedItems));
 	}
 
-	protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-		super.updated(_changedProperties);
-		if (_changedProperties.has('value')) {
-			this._observeUser(); // TODO: This works, but it makes the value change twice.
-		}
+	protected getFormElement() {
+		return undefined;
 	}
 
-	private _observeUser() {
-		if (!this._userStore) return;
-
-		// TODO: Fix type mismatch:
-		this.observe<Array<UserEntity>>(this._userStore.getByKeys(this.value), (users) => {
-			this._users = users;
-		});
+	render() {
+		return html`
+			<uui-ref-list>${this._items?.map((item) => this._renderItem(item))}</uui-ref-list>
+			<uui-button id="add-button" look="placeholder" @click=${() => this.#pickerContext.openPicker()} label="open"
+				>Add</uui-button
+			>
+		`;
 	}
 
-	selectionUpdated() {
-		this._observeUser();
-		this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true }));
-	}
-
-	private _renderUserList() {
-		if (this._users.length === 0) return nothing;
-
-		return html`<div id="user-list">
-			${this._users.map(
-				(user) => html`
-					<div class="user">
-						<uui-avatar .name=${user.name}></uui-avatar>
-						<div>${user.name}</div>
-						<uui-button @click=${() => this.removeFromSelection(user.id)} label="remove" color="danger"></uui-button>
-					</div>
-				`
-			)}
-		</div> `;
-	}
-
-	renderContent() {
-		return html`${this._renderUserList()}`;
+	private _renderItem(item: UserItemResponseModel) {
+		if (!item.id) return;
+		return html`
+			<uui-ref-node-user name=${item.name}>
+				<uui-action-bar slot="actions">
+					<uui-button @click=${() => this.#pickerContext.requestRemoveItem(item.id!)} label="Remove ${item.name}"
+						>Remove</uui-button
+					>
+				</uui-action-bar>
+			</uui-ref-node-user>
+		`;
 	}
 
 	static styles = [
 		UUITextStyles,
 		css`
-			:host {
-				display: flex;
-				flex-direction: column;
-				gap: var(--uui-size-space-4);
-			}
-			#user-list {
-				display: flex;
-				flex-direction: column;
-				gap: var(--uui-size-space-4);
-			}
-			.user {
-				display: flex;
-				align-items: center;
-				gap: var(--uui-size-space-2);
-			}
-			.user uui-button {
-				margin-left: auto;
+			#add-button {
+				width: 100%;
 			}
 		`,
 	];
 }
+
+export default UmbUserInputElement;
 
 declare global {
 	interface HTMLElementTagNameMap {
