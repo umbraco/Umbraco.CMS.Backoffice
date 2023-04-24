@@ -97,7 +97,7 @@ export class UmbDataTypeRepository
 			icon: 'umb:folder',
 			isFolder: false,
 			isContainer: false,
-			hasChildren: false,
+			hasChildren: true,
 		};
 
 		return { data };

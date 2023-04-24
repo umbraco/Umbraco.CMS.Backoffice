@@ -158,7 +158,7 @@ export class UmbTreeElement extends UmbLitElement {
 				entity-type=${this._treeRoot.type}
 				@show-children=${this._onShowChildren}
 				@hide-children=${this._onHideChildren}
-				has-children>
+				?has-children=${this._treeRoot.hasChildren}>
 				${this.#renderRootItems()}
 			</umb-menu-item-base>
 		`;
