@@ -106,6 +106,11 @@ export class UmbTreeContextBase implements UmbTreeContext {
 		this.#selection.next(newSelection);
 	}
 
+	public async requestTreeRoot() {
+		await this.#init;
+		return this.repository!.requestTreeRoot();
+	}
+
 	public async requestRootItems() {
 		await this.#init;
 		return this.repository!.requestRootTreeItems();
