@@ -5,6 +5,7 @@ import { UmbBooleanState, UmbArrayState, UmbObserverController } from '@umbraco-
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { createExtensionClass, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 
+// TODO: update interface
 export interface UmbTreeContext {
 	treeManifest: ManifestTree;
 	readonly selectable: Observable<boolean>;
