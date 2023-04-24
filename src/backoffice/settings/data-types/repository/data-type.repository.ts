@@ -84,6 +84,25 @@ export class UmbDataTypeRepository
 	}
 
 	// TREE:
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: 'FolderTreeItemResponseModel',
+			id: undefined,
+			parentId: null,
+			type: 'data-type',
+			name: 'Data Types',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: false,
+		};
+
+		return { data };
+	}
+
 	async requestRootTreeItems() {
 		await this.#init;
 
