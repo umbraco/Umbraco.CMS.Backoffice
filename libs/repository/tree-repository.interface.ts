@@ -8,26 +8,26 @@ export interface UmbPagedData<T> {
 
 export interface UmbTreeRepository<ItemType = any, PagedItemType = UmbPagedData<ItemType>> {
 	requestTreeRoot: () => Promise<{
-		data?: ItemType | undefined;
-		error?: ProblemDetailsModel | undefined;
+		data?: ItemType;
+		error?: ProblemDetailsModel;
 	}>;
 
 	requestRootTreeItems: () => Promise<{
-		data?: PagedItemType | undefined;
-		error?: ProblemDetailsModel | undefined;
+		data?: PagedItemType;
+		error?: ProblemDetailsModel;
 		asObservable?: () => Observable<ItemType[]>;
 	}>;
 
 	requestTreeItemsOf: (parentUnique: string | null) => Promise<{
-		data?: PagedItemType | undefined;
-		error?: ProblemDetailsModel | undefined;
+		data?: PagedItemType;
+		error?: ProblemDetailsModel;
 		asObservable?: () => Observable<ItemType[]>;
 	}>;
 
 	// TODO: remove this when all repositories are migrated to the new interface items interface
 	requestItemsLegacy?: (uniques: string[]) => Promise<{
-		data?: Array<ItemType> | undefined;
-		error?: ProblemDetailsModel | undefined;
+		data?: Array<ItemType>;
+		error?: ProblemDetailsModel;
 		asObservable?: () => Observable<ItemType[]>;
 	}>;
 
