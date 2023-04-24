@@ -121,34 +121,35 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 		});
 	}
 
-	private _renderActionButtons() {
-		if (!this._user) return;
+	#renderActionButtons() {
+		if (!this._user) return nothing;
+
+		//TODO: Find out if the current user is an admin. If not, show no buttons.
+		// if (this._currentUserStore?.isAdmin === false) return nothing;
 
 		const buttons: TemplateResult[] = [];
 
-		if (this._currentUserStore?.isAdmin === false) return nothing;
+		if (this._user.state !== UserStateModel.INVITED) {
+			const button = html`
+				<uui-button
+					@click=${this._updateUserStatus}
+					look="primary"
+					color="${this._user.state === UserStateModel.DISABLED ? 'positive' : 'warning'}"
+					label="${this._user.state === UserStateModel.DISABLED ? 'Enable' : 'Disable'}"></uui-button>
+			`;
 
-		if (this._user?.state !== UserStateModel.INVITED)
-			buttons.push(
-				html`
-					<uui-button
-						@click=${this._updateUserStatus}
-						look="primary"
-						color="${this._user.state === UserStateModel.DISABLED ? 'positive' : 'warning'}"
-						label="${this._user.state === UserStateModel.DISABLED ? 'Enable' : 'Disable'}"></uui-button>
-				`
-			);
+			buttons.push(button);
+		}
 
-		if (this._currentUser?.id !== this._user?.id)
-			buttons.push(html` <uui-button
-				@click=${this._deleteUser}
-				look="primary"
-				color="danger"
-				label="Delete User"></uui-button>`);
+		if (this._currentUser?.id !== this._user?.id) {
+			const button = html`
+				<uui-button @click=${this._deleteUser} look="primary" color="danger" label="Delete User"></uui-button>
+			`;
 
-		buttons.push(
-			html` <uui-button @click=${this._changePassword} look="primary" label="Change password"></uui-button> `
-		);
+			buttons.push(button);
+		}
+
+		buttons.push(html`<uui-button @click=${this._changePassword} look="primary" label="Change password"></uui-button>`);
 
 		return buttons;
 	}
@@ -214,7 +215,7 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 				<uui-avatar .name=${this._user?.name || ''}></uui-avatar>
 				<uui-button label="Change photo"></uui-button>
 				<hr />
-				${this._renderActionButtons()}
+				${this.#renderActionButtons()}
 				<div>
 					<b>Status:</b>
 					<uui-tag look="${ifDefined(statusLook?.look)}" color="${ifDefined(statusLook?.color)}">
