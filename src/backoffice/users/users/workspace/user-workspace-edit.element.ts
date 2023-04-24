@@ -24,25 +24,20 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 	@state()
 	private _currentUser?: UserDetails;
 
-	private _currentUserStore?: UmbCurrentUserStore;
-	private _modalContext?: UmbModalContext;
-
-	private _languages = []; //TODO Add languages
-
-	#workspaceContext?: UmbUserWorkspaceContext;
-
 	@state()
 	private _user?: UserResponseModel;
 
-	@state()
-	private _userName = '';
+	#currentUserStore?: UmbCurrentUserStore;
+	#modalContext?: UmbModalContext;
+	#languages = []; //TODO Add languages
+	#workspaceContext?: UmbUserWorkspaceContext;
 
 	constructor() {
 		super();
 
 		this.consumeContext(UMB_CURRENT_USER_STORE_CONTEXT_TOKEN, (store) => {
-			this._currentUserStore = store;
-			this._observeCurrentUser();
+			this.#currentUserStore = store;
+			this.#observeCurrentUser();
 		});
 
 		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (workspaceContext) => {
@@ -59,25 +54,25 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 		});
 	}
 
-	private async _observeCurrentUser() {
-		if (!this._currentUserStore) return;
+	#observeCurrentUser() {
+		if (!this.#currentUserStore) return;
 
 		// TODO: do not have static current user service, we need to make a ContextAPI for this.
-		this.observe(this._currentUserStore.currentUser, (currentUser) => {
+		this.observe(this.#currentUserStore.currentUser, (currentUser) => {
 			this._currentUser = currentUser;
 		});
 	}
 
-	private _updateUserStatus() {
+	#onUserStatusChange() {
 		//TODO: Update user status
 	}
 
-	private _deleteUser() {
+	#onUserDelete() {
 		//TODO: Delete user and redirect to user list.
 	}
 
 	// TODO. find a way where we don't have to do this for all workspaces.
-	private _handleInput(event: UUIInputEvent) {
+	#onNameChange(event: UUIInputEvent) {
 		if (event instanceof UUIInputEvent) {
 			const target = event.composedPath()[0] as UUIInputElement;
 
@@ -87,70 +82,38 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 		}
 	}
 
-	private _renderContentStartNodes() {
-		if (!this._user || !this._user.contentStartNodeIds) return;
-
-		if (this._user.contentStartNodeIds.length < 1)
-			return html`
-				<uui-ref-node name="Content Root">
-					<uui-icon slot="icon" name="folder"></uui-icon>
-				</uui-ref-node>
-			`;
-
-		//TODO Render the name of the content start node instead of it's id.
-		return repeat(
-			this._user.contentStartNodeIds,
-			(node) => node,
-			(node) => {
-				return html`
-					<uui-ref-node name=${node}>
-						<uui-icon slot="icon" name="folder"></uui-icon>
-					</uui-ref-node>
-				`;
-			}
-		);
-	}
-
-	private _changePassword() {
-		this._modalContext?.open(UMB_CHANGE_PASSWORD_MODAL, {
-			requireOldPassword: this._currentUserStore?.isAdmin === false,
+	#onPasswordChange() {
+		this.#modalContext?.open(UMB_CHANGE_PASSWORD_MODAL, {
+			requireOldPassword: this.#currentUserStore?.isAdmin === false,
 		});
 	}
 
-	#renderActionButtons() {
-		if (!this._user) return nothing;
+	render() {
+		if (!this._user) return html`User not found`;
 
-		//TODO: Find out if the current user is an admin. If not, show no buttons.
-		// if (this._currentUserStore?.isAdmin === false) return nothing;
-
-		const buttons: TemplateResult[] = [];
-
-		if (this._user.state !== UserStateModel.INVITED) {
-			const button = html`
-				<uui-button
-					@click=${this._updateUserStatus}
-					look="primary"
-					color="${this._user.state === UserStateModel.DISABLED ? 'positive' : 'warning'}"
-					label="${this._user.state === UserStateModel.DISABLED ? 'Enable' : 'Disable'}"></uui-button>
-			`;
-
-			buttons.push(button);
-		}
-
-		if (this._currentUser?.id !== this._user?.id) {
-			const button = html`
-				<uui-button @click=${this._deleteUser} look="primary" color="danger" label="Delete User"></uui-button>
-			`;
-
-			buttons.push(button);
-		}
-
-		buttons.push(html`<uui-button @click=${this._changePassword} look="primary" label="Change password"></uui-button>`);
-
-		return buttons;
+		return html`
+			<umb-workspace-layout alias="Umb.Workspace.User">
+				${this.#renderHeader()}
+				<div id="main">
+					<div id="left-column">${this.#renderLeftColumn()}</div>
+					<div id="right-column">${this.#renderRightColumn()}</div>
+				</div>
+			</umb-workspace-layout>
+		`;
 	}
 
-	private _renderLeftColumn() {
+	#renderHeader() {
+		return html`
+			<div id="header" slot="header">
+				<a href="/section/users">
+					<uui-icon name="umb:arrow-left"></uui-icon>
+				</a>
+				<uui-input id="name" .value=${this._user?.name ?? ''} @input="${this.#onNameChange}"></uui-input>
+			</div>
+		`;
+	}
+
+	#renderLeftColumn() {
 		if (!this._user) return nothing;
 
 		return html` <uui-box>
@@ -159,7 +122,7 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 					<uui-input slot="editor" name="email" label="email" readonly value=${this._user.email}></uui-input>
 				</umb-workspace-property-layout>
 				<umb-workspace-property-layout label="Language">
-					<uui-select slot="editor" name="language" label="language" .options=${this._languages}> </uui-select>
+					<uui-select slot="editor" name="language" label="language" .options=${this.#languages}> </uui-select>
 				</umb-workspace-property-layout>
 			</uui-box>
 			<uui-box>
@@ -194,7 +157,7 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 				</div>
 
 				<b>Content</b>
-				${this._renderContentStartNodes()}
+				${this.#renderContentStartNodes()}
 				<hr />
 				<b>Media</b>
 				<uui-ref-node name="Media Root">
@@ -203,7 +166,7 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 			</uui-box>`;
 	}
 
-	private _renderRightColumn() {
+	#renderRightColumn() {
 		if (!this._user || !this.#workspaceContext) return nothing;
 
 		const statusLook = getLookAndColorFromUserStatus(this._user.state);
@@ -258,29 +221,63 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 		</uui-box>`;
 	}
 
-	#renderHeader() {
-		return html`
-			<div id="header" slot="header">
-				<a href="/section/users">
-					<uui-icon name="umb:arrow-left"></uui-icon>
-				</a>
-				<uui-input id="name" .value=${this._user?.name ?? ''} @input="${this._handleInput}"></uui-input>
-			</div>
-		`;
+	#renderActionButtons() {
+		if (!this._user) return nothing;
+
+		//TODO: Find out if the current user is an admin. If not, show no buttons.
+		// if (this._currentUserStore?.isAdmin === false) return nothing;
+
+		const buttons: TemplateResult[] = [];
+
+		if (this._user.state !== UserStateModel.INVITED) {
+			const button = html`
+				<uui-button
+					@click=${this.#onUserStatusChange}
+					look="primary"
+					color="${this._user.state === UserStateModel.DISABLED ? 'positive' : 'warning'}"
+					label="${this._user.state === UserStateModel.DISABLED ? 'Enable' : 'Disable'}"></uui-button>
+			`;
+
+			buttons.push(button);
+		}
+
+		if (this._currentUser?.id !== this._user?.id) {
+			const button = html`
+				<uui-button @click=${this.#onUserDelete} look="primary" color="danger" label="Delete User"></uui-button>
+			`;
+
+			buttons.push(button);
+		}
+
+		buttons.push(
+			html`<uui-button @click=${this.#onPasswordChange} look="primary" label="Change password"></uui-button>`
+		);
+
+		return buttons;
 	}
 
-	render() {
-		if (!this._user) return html`User not found`;
+	#renderContentStartNodes() {
+		if (!this._user || !this._user.contentStartNodeIds) return;
 
-		return html`
-			<umb-workspace-layout alias="Umb.Workspace.User">
-				${this.#renderHeader()}
-				<div id="main">
-					<div id="left-column">${this._renderLeftColumn()}</div>
-					<div id="right-column">${this._renderRightColumn()}</div>
-				</div>
-			</umb-workspace-layout>
-		`;
+		if (this._user.contentStartNodeIds.length < 1)
+			return html`
+				<uui-ref-node name="Content Root">
+					<uui-icon slot="icon" name="folder"></uui-icon>
+				</uui-ref-node>
+			`;
+
+		//TODO Render the name of the content start node instead of it's id.
+		return repeat(
+			this._user.contentStartNodeIds,
+			(node) => node,
+			(node) => {
+				return html`
+					<uui-ref-node name=${node}>
+						<uui-icon slot="icon" name="folder"></uui-icon>
+					</uui-ref-node>
+				`;
+			}
+		);
 	}
 
 	static styles = [
