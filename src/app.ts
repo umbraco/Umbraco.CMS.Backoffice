@@ -122,6 +122,7 @@ export class UmbAppElement extends UmbLitElement {
 			this.#errorPage(errorMsg, error);
 		}
 
+		// TODO: wrap all debugging logic in a separate class
 		// Listen for the debug event from the <umb-debug> component
 		this.addEventListener(umbDebugContextEventType, (event: any) => {
 			// Once we got to the outter most component <umb-app>
