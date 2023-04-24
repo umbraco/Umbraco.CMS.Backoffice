@@ -6,7 +6,7 @@ import { UmbTreeContextBase } from './tree.context';
 import type { ManifestTree } from '@umbraco-cms/backoffice/extensions-registry';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import { TreeItemPresentationModel } from '@umbraco-cms/backoffice/backend-api';
 
 import './tree-item/tree-item.element';
 import './tree-item-base/tree-item-base.element';
@@ -64,10 +64,13 @@ export class UmbTreeElement extends UmbLitElement {
 	}
 
 	@state()
-	private _tree?: ManifestTree;
+	private _treeManifest?: ManifestTree;
 
 	@state()
-	private _items: EntityTreeItemResponseModel[] = [];
+	private _items: TreeItemPresentationModel[] = [];
+
+	@state()
+	private _treeRoot?: TreeItemPresentationModel;
 
 	private _treeContext?: UmbTreeContextBase;
 
@@ -81,21 +84,20 @@ export class UmbTreeElement extends UmbLitElement {
 		this.observe(
 			umbExtensionsRegistry
 				.extensionsOfType('tree')
-				.pipe(map((trees) => trees.find((tree) => tree.alias === this.alias))),
-			async (tree) => {
-				if (this._tree?.alias === tree?.alias) return;
-
-				this._tree = tree;
+				.pipe(map((treeManifests) => treeManifests.find((treeManifest) => treeManifest.alias === this.alias))),
+			async (treeManifest) => {
+				if (this._treeManifest?.alias === treeManifest?.alias) return;
+				this._treeManifest = treeManifest;
 				this.#provideTreeContext();
 			}
 		);
 	}
 
 	#provideTreeContext() {
-		if (!this._tree || this._treeContext) return;
+		if (!this._treeManifest || this._treeContext) return;
 
 		// TODO: if a new tree comes around, which is different, then we should clean up and re provide.
-		this._treeContext = new UmbTreeContextBase(this, this._tree);
+		this._treeContext = new UmbTreeContextBase(this, this._treeManifest);
 		this._treeContext.setSelectable(this.selectable);
 		this._treeContext.setSelection(this.selection);
 		this._treeContext.setMultiple(this.multiple);
@@ -130,7 +132,6 @@ export class UmbTreeElement extends UmbLitElement {
 		return html`
 			${repeat(
 				this._items,
-				// TODO: add getUnique to a repository interface
 				(item, index) => index,
 				(item) => html`<umb-tree-item .item=${item}></umb-tree-item>`
 			)}
