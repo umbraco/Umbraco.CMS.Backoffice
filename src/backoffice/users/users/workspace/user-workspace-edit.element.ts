@@ -13,9 +13,6 @@ import { getLookAndColorFromUserStatus } from '@umbraco-cms/backoffice/utils';
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
-import '../../../shared/components/input-user-group/input-user-group.element';
-import '../../../shared/property-editors/uis/document-picker/property-editor-ui-document-picker.element';
-import '../../../shared/components/workspace/workspace-layout/workspace-layout.element';
 import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 import { UserResponseModel, UserStateModel } from '@umbraco-cms/backoffice/backend-api';
 
@@ -64,7 +61,17 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 	}
 
 	#onUserStatusChange() {
-		//TODO: Update user status
+		if (!this._user) return;
+
+		if (this._user.state === UserStateModel.ACTIVE) {
+			//TODO: This should go directly to the user repository instead of the context so that the request is send immediately.
+			this.#workspaceContext?.updateProperty('state', UserStateModel.DISABLED);
+		}
+
+		if (this._user.state === UserStateModel.DISABLED) {
+			//TODO: This should go directly to the user repository instead of the context so that the request is send immediately.
+			this.#workspaceContext?.updateProperty('state', UserStateModel.ACTIVE);
+		}
 	}
 
 	#onUserDelete() {
