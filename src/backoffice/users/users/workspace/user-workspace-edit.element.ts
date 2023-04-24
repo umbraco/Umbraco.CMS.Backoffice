@@ -82,13 +82,9 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 			const target = event.composedPath()[0] as UUIInputElement;
 
 			if (typeof target?.value === 'string') {
-				this._updateProperty('name', target.value);
+				this.#workspaceContext?.updateProperty('name', target.value);
 			}
 		}
-	}
-
-	private _updateProperty(propertyName: string, value: unknown) {
-		this.#workspaceContext?.updateProperty(propertyName, value);
 	}
 
 	private _renderContentStartNodes() {
@@ -173,14 +169,16 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 						<umb-input-user-group
 							slot="editor"
 							.value=${this._user.userGroupIds ?? []}
-							@change=${(e: any) => this._updateProperty('userGroups', e.target.value)}></umb-input-user-group>
+							@change=${(e: any) =>
+								this.#workspaceContext?.updateProperty('userGroupIds', e.target.value)}></umb-input-user-group>
 					</umb-workspace-property-layout>
 					<umb-workspace-property-layout
 						label="Content start node"
 						description="Limit the content tree to specific start nodes">
 						<umb-property-editor-ui-document-picker
 							.value=${this._user.contentStartNodeIds}
-							@property-editor-change=${(e: any) => this._updateProperty('contentStartNodes', e.target.value)}
+							@property-value-change=${(e: any) =>
+								this.#workspaceContext?.updateProperty('contentStartNodeIds', e.target.value)}
 							slot="editor"></umb-property-editor-ui-document-picker>
 					</umb-workspace-property-layout>
 					<umb-workspace-property-layout

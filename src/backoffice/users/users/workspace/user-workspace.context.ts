@@ -38,8 +38,11 @@ export class UmbUserWorkspaceContext
 		return this.#data.getValue();
 	}
 
-	updateProperty(key: string, value: unknown) {
-		this.#data.update({ [key]: value });
+	updateProperty<PropertyName extends keyof UserResponseModel>(
+		propertyName: PropertyName,
+		value: UserResponseModel[PropertyName]
+	) {
+		this.#data.update({ [propertyName]: value });
 	}
 
 	async save() {
