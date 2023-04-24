@@ -90,8 +90,9 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 	}
 
 	#onPasswordChange() {
+		// TODO: check if current user is admin
 		this.#modalContext?.open(UMB_CHANGE_PASSWORD_MODAL, {
-			requireOldPassword: this.#currentUserStore?.isAdmin === false,
+			requireOldPassword: false,
 		});
 	}
 
