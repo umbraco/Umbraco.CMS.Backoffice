@@ -1,12 +1,14 @@
-import { html } from 'lit';
+import { html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'rxjs';
 import { repeat } from 'lit/directives/repeat.js';
+import { UUIMenuItemEvent } from '@umbraco-ui/uui';
 import { UmbTreeContextBase } from './tree.context';
 import type { ManifestTree } from '@umbraco-cms/backoffice/extensions-registry';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { TreeItemPresentationModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 
 import './tree-item/tree-item.element';
 import './tree-item-base/tree-item-base.element';
@@ -74,6 +76,8 @@ export class UmbTreeElement extends UmbLitElement {
 
 	private _treeContext?: UmbTreeContextBase;
 
+	#rootItemsObserver?: UmbObserverController<Array<any>>;
+
 	private _observeTree() {
 		if (!this.alias) return;
 
@@ -89,7 +93,7 @@ export class UmbTreeElement extends UmbLitElement {
 		);
 	}
 
-	#provideTreeContext() {
+	async #provideTreeContext() {
 		if (!this._treeManifest || this._treeContext) return;
 
 		// TODO: if a new tree comes around, which is different, then we should clean up and re provide.
@@ -99,19 +103,23 @@ export class UmbTreeElement extends UmbLitElement {
 		this._treeContext.setMultiple(this.multiple);
 
 		this.#observeSelection();
-		this.#observeTreeRoot();
+
+		const { data } = await this._treeContext.requestTreeRoot();
+		this._treeRoot = data;
 
 		this.provideContext('umbTreeContext', this._treeContext);
 	}
 
-	async #observeTreeRoot() {
+	async #observeRootItems() {
 		if (!this._treeContext?.requestRootItems) return;
 
-		this._treeContext.requestRootItems();
+		const { asObservable } = await this._treeContext.requestRootItems();
 
-		this.observe(await this._treeContext.rootItems(), (rootItems) => {
-			this._items = rootItems;
-		});
+		if (asObservable) {
+			this.#rootItemsObserver = this.observe(asObservable(), (rootItems) => {
+				this._items = rootItems;
+			});
+		}
 	}
 
 	#observeSelection() {
@@ -125,6 +133,38 @@ export class UmbTreeElement extends UmbLitElement {
 	}
 
 	render() {
+		return html` ${this.#renderTreeRoot()} `;
+	}
+
+	private _onShowChildren(event: UUIMenuItemEvent) {
+		event.stopPropagation();
+		this.#rootItemsObserver?.destroy();
+		this.#observeRootItems();
+	}
+
+	private _onHideChildren(event: UUIMenuItemEvent) {
+		event.stopPropagation();
+		this.#rootItemsObserver?.destroy();
+	}
+
+	// TODO: check if root has children before settings the has-children attribute
+	// TODO: how do we want to cache the tree? (do we want to rerender every time the user opens the tree)?
+	#renderTreeRoot() {
+		if (!this._treeRoot) return nothing;
+		return html`
+			<umb-menu-item-base
+				label=${this._treeRoot.name}
+				icon-name=${this._treeRoot.icon}
+				entity-type=${this._treeRoot.type}
+				@show-children=${this._onShowChildren}
+				@hide-children=${this._onHideChildren}
+				has-children>
+				${this.#renderRootItems()}
+			</umb-menu-item-base>
+		`;
+	}
+
+	#renderRootItems() {
 		return html`
 			${repeat(
 				this._items,
