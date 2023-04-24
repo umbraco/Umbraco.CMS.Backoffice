@@ -24,8 +24,6 @@ import { contextData, umbDebugContextEventType } from '@umbraco-cms/backoffice/c
 
 @customElement('umb-app')
 export class UmbAppElement extends UmbLitElement {
-	
-
 	/**
 	 * The base URL of the configured Umbraco server.
 	 *
@@ -69,6 +67,7 @@ export class UmbAppElement extends UmbLitElement {
 	constructor() {
 		super();
 
+		// TODO: get all mocking logic out of this element. The app element doesn't need to know who is serving the data.
 		OpenAPI.BASE = this.#isMocking ? '' : this.serverUrl;
 
 		this.#authFlow = new UmbAuthFlow(
@@ -232,7 +231,7 @@ export class UmbAppElement extends UmbLitElement {
 	render() {
 		return html`<umb-router-slot id="router-slot" .routes=${this._routes}></umb-router-slot>`;
 	}
-	
+
 	static styles = css`
 		:host {
 			overflow: hidden;
