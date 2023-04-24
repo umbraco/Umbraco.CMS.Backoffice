@@ -184,48 +184,44 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 				<uui-button label="Change photo"></uui-button>
 				<hr />
 				${this.#renderActionButtons()}
+
 				<div>
 					<b>Status:</b>
 					<uui-tag look="${ifDefined(statusLook?.look)}" color="${ifDefined(statusLook?.color)}">
 						${this._user.state}
 					</uui-tag>
 				</div>
+
 				${this._user?.state === UserStateModel.INVITED
 					? html`
 							<uui-textarea placeholder="Enter a message..."> </uui-textarea>
 							<uui-button look="primary" label="Resend invitation"></uui-button>
 					  `
 					: nothing}
-				<div>
-					<b>Last login:</b>
-					<span>${this._user.lastLoginDate || `${this._user.name} has not logged in yet`}</span>
-				</div>
-				<div>
-					<b>Failed login attempts</b>
-					<span>${this._user.failedLoginAttempts}</span>
-				</div>
-				<div>
-					<b>Last lockout date:</b>
-					<span>${this._user.lastlockoutDate || `${this._user.name} has not been locked out`}</span>
-				</div>
-				<div>
-					<b>Password last changed:</b>
-					<span>${this._user.lastLoginDate || `${this._user.name} has not changed password`}</span>
-				</div>
-				<div>
-					<b>User created:</b>
-					<span>${this._user.createDate}</span>
-				</div>
-				<div>
-					<b>User last updated:</b>
-					<span>${this._user.updateDate}</span>
-				</div>
-				<div>
-					<b>Key:</b>
-					<span>${this._user.id}</span>
-				</div>
+				${this.#renderInfoItem('Last login', this._user.lastLoginDate || `${this._user.name} has not logged in yet`)}
+				${this.#renderInfoItem('Failed login attempts', this._user.failedLoginAttempts)}
+				${this.#renderInfoItem(
+					'Last lockout date',
+					this._user.lastlockoutDate || `${this._user.name} has not been locked out`
+				)}
+				${this.#renderInfoItem(
+					'Password last changed',
+					this._user.lastLoginDate || `${this._user.name} has not changed password`
+				)}
+				${this.#renderInfoItem('User created', this._user.createDate)}
+				${this.#renderInfoItem('User last updated', this._user.updateDate)}
+				${this.#renderInfoItem('Key', this._user.id)}
 			</div>
 		</uui-box>`;
+	}
+
+	#renderInfoItem(label: string, value?: string | number) {
+		return html`
+			<div>
+				<b>${label}</b>
+				<span>${value}</span>
+			</div>
+		`;
 	}
 
 	#renderActionButtons() {
