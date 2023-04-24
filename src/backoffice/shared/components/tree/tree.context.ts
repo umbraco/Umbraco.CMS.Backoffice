@@ -6,7 +6,7 @@ import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { createExtensionClass, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 
 export interface UmbTreeContext {
-	tree: ManifestTree;
+	treeManifest: ManifestTree;
 	readonly selectable: Observable<boolean>;
 	readonly selection: Observable<Array<string>>;
 	setSelectable(value: boolean): void;
@@ -16,8 +16,8 @@ export interface UmbTreeContext {
 }
 
 export class UmbTreeContextBase implements UmbTreeContext {
-	host: UmbControllerHostElement;
-	public tree: ManifestTree;
+	public host: UmbControllerHostElement;
+	public treeManifest: ManifestTree;
 
 	#selectable = new UmbBooleanState(false);
 	public readonly selectable = this.#selectable.asObservable();
@@ -39,14 +39,14 @@ export class UmbTreeContextBase implements UmbTreeContext {
 
 	constructor(host: UmbControllerHostElement, tree: ManifestTree) {
 		this.host = host;
-		this.tree = tree;
+		this.treeManifest = tree;
 
-		const repositoryAlias = this.tree.meta.repositoryAlias;
+		const repositoryAlias = this.treeManifest.meta.repositoryAlias;
 		if (!repositoryAlias) throw new Error('Tree must have a repository alias.');
 
 		new UmbObserverController(
 			this.host,
-			umbExtensionsRegistry.getByTypeAndAlias('repository', this.tree.meta.repositoryAlias),
+			umbExtensionsRegistry.getByTypeAndAlias('repository', this.treeManifest.meta.repositoryAlias),
 			async (repositoryManifest) => {
 				if (!repositoryManifest) return;
 
