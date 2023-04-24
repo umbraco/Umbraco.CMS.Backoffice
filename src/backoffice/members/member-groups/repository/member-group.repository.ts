@@ -7,9 +7,12 @@ import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import type { MemberGroupDetails } from '@umbraco-cms/backoffice/models';
 import type { UmbTreeDataSource, UmbDetailRepository, UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
+import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 // TODO => Update type when backend updated
-export class UmbMemberGroupRepository implements UmbTreeRepository, UmbDetailRepository<any, any, any> {
+export class UmbMemberGroupRepository
+	implements UmbTreeRepository<EntityTreeItemResponseModel>, UmbDetailRepository<any, any, any>
+{
 	#init!: Promise<unknown>;
 
 	#host: UmbControllerHostElement;
@@ -39,6 +42,26 @@ export class UmbMemberGroupRepository implements UmbTreeRepository, UmbDetailRep
 		new UmbContextConsumerController(this.#host, UMB_NOTIFICATION_CONTEXT_TOKEN, (instance) => {
 			this.#notificationContext = instance;
 		});
+	}
+
+	// TREE:
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: 'EntityTreeItemResponseModel',
+			id: undefined,
+			parentId: null,
+			type: 'member-group-root',
+			name: 'Member Groups',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: true,
+		};
+
+		return { data };
 	}
 
 	async requestRootTreeItems() {

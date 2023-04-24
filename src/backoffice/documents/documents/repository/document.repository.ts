@@ -9,12 +9,15 @@ import {
 	DocumentResponseModel,
 	CreateDocumentRequestModel,
 	UpdateDocumentRequestModel,
+	DocumentTreeItemResponseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 
 type ItemType = DocumentResponseModel;
 
-export class UmbDocumentRepository implements UmbTreeRepository<ItemType>, UmbDetailRepository<ItemType> {
+export class UmbDocumentRepository
+	implements UmbTreeRepository<DocumentTreeItemResponseModel>, UmbDetailRepository<ItemType>
+{
 	#init!: Promise<unknown>;
 
 	#host: UmbControllerHostElement;
@@ -51,6 +54,26 @@ export class UmbDocumentRepository implements UmbTreeRepository<ItemType>, UmbDe
 
 	// TODO: Trash
 	// TODO: Move
+
+	// TREE:
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: 'DocumentTreeItemResponseModel',
+			id: undefined,
+			parentId: null,
+			type: 'document-root',
+			name: 'Documents',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: true,
+		};
+
+		return { data };
+	}
 
 	async requestRootTreeItems() {
 		await this.#init;

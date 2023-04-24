@@ -40,6 +40,26 @@ export class UmbMemberRepository implements UmbTreeRepository {
 		}
 	}
 
+	// TREE:
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: '',
+			id: undefined,
+			parentId: null,
+			type: 'member-root',
+			name: 'Members',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: true,
+		};
+
+		return { data };
+	}
+
 	async requestRootTreeItems() {
 		await this.#init;
 

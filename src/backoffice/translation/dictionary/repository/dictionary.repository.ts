@@ -8,6 +8,7 @@ import { UmbTreeDataSource, UmbDetailRepository, UmbTreeRepository } from '@umbr
 import {
 	CreateDictionaryItemRequestModel,
 	DictionaryOverviewResponseModel,
+	EntityTreeItemResponseModel,
 	ImportDictionaryRequestModel,
 	UpdateDictionaryItemRequestModel,
 } from '@umbraco-cms/backoffice/backend-api';
@@ -15,7 +16,7 @@ import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco
 
 export class UmbDictionaryRepository
 	implements
-		UmbTreeRepository,
+		UmbTreeRepository<EntityTreeItemResponseModel>,
 		UmbDetailRepository<
 			CreateDictionaryItemRequestModel,
 			UpdateDictionaryItemRequestModel,
@@ -54,6 +55,26 @@ export class UmbDictionaryRepository
 				this.#notificationContext = instance;
 			}),
 		]);
+	}
+
+	// TREE:
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: 'EntityTreeItemResponseModel',
+			id: undefined,
+			parentId: null,
+			type: 'dictionary-root',
+			name: 'Dictionary',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: true,
+		};
+
+		return { data };
 	}
 
 	async requestRootTreeItems() {

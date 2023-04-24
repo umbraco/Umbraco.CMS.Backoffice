@@ -8,13 +8,14 @@ import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import {
 	CreateTemplateRequestModel,
+	EntityTreeItemResponseModel,
 	TemplateResponseModel,
 	UpdateTemplateRequestModel,
 } from '@umbraco-cms/backoffice/backend-api';
 
 export class UmbTemplateRepository
 	implements
-		UmbTreeRepository<any>,
+		UmbTreeRepository<EntityTreeItemResponseModel>,
 		UmbDetailRepository<CreateTemplateRequestModel, UpdateTemplateRequestModel, TemplateResponseModel>
 {
 	#init;
@@ -51,6 +52,24 @@ export class UmbTemplateRepository
 	}
 
 	// TREE:
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: 'EntityTreeItemResponseModel',
+			id: undefined,
+			parentId: null,
+			type: 'template-root',
+			name: 'Templates',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: true,
+		};
+
+		return { data };
+	}
 
 	async requestRootTreeItems() {
 		await this.#init;

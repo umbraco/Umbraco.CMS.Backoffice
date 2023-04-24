@@ -7,10 +7,11 @@ import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-ap
 import { UmbTreeDataSource, UmbDetailRepository, UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 import type { MemberTypeDetails } from '@umbraco-cms/backoffice/models';
+import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 // TODO => use correct type when available
 type ItemType = any;
-type TreeItemType = any;
+type TreeItemType = EntityTreeItemResponseModel;
 
 export class UmbMemberTypeRepository implements UmbTreeRepository<TreeItemType>, UmbDetailRepository<ItemType> {
 	#init!: Promise<unknown>;
@@ -45,6 +46,26 @@ export class UmbMemberTypeRepository implements UmbTreeRepository<TreeItemType>,
 				this.#notificationContext = instance;
 			}),
 		]);
+	}
+
+	// TREE:
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: 'EntityTreeItemResponseModel',
+			id: undefined,
+			parentId: null,
+			type: 'member-type-root',
+			name: 'Member Types',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: true,
+		};
+
+		return { data };
 	}
 
 	async requestRootTreeItems() {

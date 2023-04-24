@@ -6,14 +6,20 @@ import { UmbMediaDetailServerDataSource } from './sources/media.detail.server.da
 import type { UmbTreeRepository, UmbTreeDataSource } from '@umbraco-cms/backoffice/repository';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
-import { CreateMediaRequestModel, UpdateMediaRequestModel } from '@umbraco-cms/backoffice/backend-api';
+import {
+	CreateMediaRequestModel,
+	EntityTreeItemResponseModel,
+	UpdateMediaRequestModel,
+} from '@umbraco-cms/backoffice/backend-api';
 import { UmbDetailRepository } from '@umbraco-cms/backoffice/repository';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 
 type ItemDetailType = MediaDetails;
 
 export class UmbMediaRepository
-	implements UmbTreeRepository, UmbDetailRepository<CreateMediaRequestModel, UpdateMediaRequestModel, MediaDetails>
+	implements
+		UmbTreeRepository<EntityTreeItemResponseModel>,
+		UmbDetailRepository<CreateMediaRequestModel, UpdateMediaRequestModel, MediaDetails>
 {
 	#host: UmbControllerHostElement;
 
@@ -61,6 +67,26 @@ export class UmbMediaRepository
 			this.#initialized = true;
 			this.#initResolver?.();
 		}
+	}
+
+	// TREE:
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: 'EntityTreeItemResponseModel',
+			id: undefined,
+			parentId: null,
+			type: 'media-root',
+			name: 'Media',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: true,
+		};
+
+		return { data };
 	}
 
 	async requestRootTreeItems() {

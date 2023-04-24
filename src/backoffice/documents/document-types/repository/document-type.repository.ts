@@ -5,12 +5,18 @@ import { UmbDocumentTypeStore, UMB_DOCUMENT_TYPE_STORE_CONTEXT_TOKEN } from './d
 import type { UmbTreeDataSource, UmbTreeRepository, UmbDetailRepository } from '@umbraco-cms/backoffice/repository';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
-import { DocumentTypeResponseModel, FolderTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import {
+	DocumentTypeResponseModel,
+	EntityTreeItemResponseModel,
+	FolderTreeItemResponseModel,
+} from '@umbraco-cms/backoffice/backend-api';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 
 type ItemType = DocumentTypeResponseModel;
 
-export class UmbDocumentTypeRepository implements UmbTreeRepository<ItemType>, UmbDetailRepository<ItemType> {
+export class UmbDocumentTypeRepository
+	implements UmbTreeRepository<EntityTreeItemResponseModel>, UmbDetailRepository<ItemType>
+{
 	#init!: Promise<unknown>;
 
 	#host: UmbControllerHostElement;
@@ -47,6 +53,25 @@ export class UmbDocumentTypeRepository implements UmbTreeRepository<ItemType>, U
 
 	// TODO: Trash
 	// TODO: Move
+
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: 'EntityTreeItemResponseModel',
+			id: undefined,
+			parentId: null,
+			type: 'document-type-root',
+			name: 'Document Types',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: true,
+		};
+
+		return { data };
+	}
 
 	async requestRootTreeItems() {
 		await this.#init;

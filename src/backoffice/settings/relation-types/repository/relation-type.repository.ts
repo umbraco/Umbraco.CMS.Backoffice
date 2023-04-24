@@ -55,6 +55,26 @@ export class UmbRelationTypeRepository
 	// TODO: Trash
 	// TODO: Move
 
+	// TREE:
+	async requestTreeRoot() {
+		await this.#init;
+
+		// TODO; we nee our own model for tree items
+		const data = {
+			$type: '',
+			id: undefined,
+			parentId: null,
+			type: 'relation-type-root',
+			name: 'Relation Types',
+			icon: 'umb:folder',
+			isFolder: false,
+			isContainer: false,
+			hasChildren: true,
+		};
+
+		return { data };
+	}
+
 	async requestRootTreeItems() {
 		await this.#init;
 
