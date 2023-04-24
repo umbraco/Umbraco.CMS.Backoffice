@@ -74,10 +74,6 @@ export class UmbTreeElement extends UmbLitElement {
 
 	private _treeContext?: UmbTreeContextBase;
 
-	protected firstUpdated(): void {
-		this._observeTree();
-	}
-
 	private _observeTree() {
 		if (!this.alias) return;
 
