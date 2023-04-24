@@ -92,7 +92,7 @@ export class UmbDataTypeRepository
 			$type: 'FolderTreeItemResponseModel',
 			id: undefined,
 			parentId: null,
-			type: 'data-type',
+			type: 'data-type-root',
 			name: 'Data Types',
 			icon: 'umb:folder',
 			isFolder: false,
