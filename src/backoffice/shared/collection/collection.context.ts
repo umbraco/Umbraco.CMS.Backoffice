@@ -56,7 +56,7 @@ export class UmbCollectionContext<DataType extends EntityTreeItemResponseModel =
 				async (repositoryManifest) => {
 					if (repositoryManifest) {
 						// TODO: use the right interface here, we might need a collection repository interface.
-						const result = await createExtensionClass<UmbTreeRepository>(repositoryManifest, [this._host]);
+						const result = await createExtensionClass<UmbTreeRepository<any>>(repositoryManifest, [this._host]);
 						this.#repository = result;
 						this._onRepositoryReady();
 					}

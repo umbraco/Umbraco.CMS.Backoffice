@@ -2,7 +2,12 @@ import { UmbTemplateDetailServerDataSource } from './sources/template.detail.ser
 import { UmbTemplateTreeServerDataSource } from './sources/template.tree.server.data';
 import { UmbTemplateStore, UMB_TEMPLATE_STORE_CONTEXT_TOKEN } from './template.store';
 import { UmbTemplateTreeStore, UMB_TEMPLATE_TREE_STORE_CONTEXT_TOKEN } from './template.tree.store';
-import type { UmbDetailRepository, UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
+import type {
+	UmbDataSource,
+	UmbDetailRepository,
+	UmbTreeDataSource,
+	UmbTreeRepository,
+} from '@umbraco-cms/backoffice/repository';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
@@ -21,8 +26,8 @@ export class UmbTemplateRepository
 	#init;
 	#host: UmbControllerHostElement;
 
-	#treeDataSource: UmbTemplateTreeServerDataSource;
-	#detailDataSource: UmbTemplateDetailServerDataSource;
+	#treeDataSource: UmbTreeDataSource<EntityTreeItemResponseModel>;
+	#detailDataSource: UmbDataSource<CreateTemplateRequestModel, UpdateTemplateRequestModel, TemplateResponseModel>;
 
 	#treeStore?: UmbTemplateTreeStore;
 	#store?: UmbTemplateStore;
@@ -134,9 +139,7 @@ export class UmbTemplateRepository
 		if (!parentId) {
 			throw new Error('Parent id is missing');
 		}
-
-		// TODO: add parent id to create scaffold
-		return this.#detailDataSource.createScaffold();
+		return this.#detailDataSource.createScaffold(parentId) as any;
 	}
 
 	async requestById(id: string) {

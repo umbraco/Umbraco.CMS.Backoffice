@@ -23,16 +23,18 @@ import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
 import type { TreeItemPresentationModel } from '@umbraco-cms/backoffice/backend-api';
 
 // add type for unique function
-export type UmbTreeItemUniqueFunction<T extends TreeItemPresentationModel> = (x: T) => string | null | undefined;
+export type UmbTreeItemUniqueFunction<TreeItemType extends TreeItemPresentationModel> = (
+	x: TreeItemType
+) => string | null | undefined;
 
-export class UmbTreeItemContextBase<T extends TreeItemPresentationModel = TreeItemPresentationModel>
-	implements UmbTreeItemContext<T>
+export class UmbTreeItemContextBase<TreeItemType extends TreeItemPresentationModel>
+	implements UmbTreeItemContext<TreeItemType>
 {
 	public host: UmbControllerHostElement;
 	public unique?: string;
 	public type?: string;
 
-	#treeItem = new UmbDeepState<T | undefined>(undefined);
+	#treeItem = new UmbDeepState<TreeItemType | undefined>(undefined);
 	treeItem = this.#treeItem.asObservable();
 
 	#hasChildren = new UmbBooleanState(false);
@@ -56,20 +58,20 @@ export class UmbTreeItemContextBase<T extends TreeItemPresentationModel = TreeIt
 	#path = new UmbStringState('');
 	path = this.#path.asObservable();
 
-	treeContext?: UmbTreeContextBase;
+	treeContext?: UmbTreeContextBase<TreeItemType>;
 	#sectionContext?: UmbSectionContext;
 	#sectionSidebarContext?: UmbSectionSidebarContext;
-	#getUniqueFunction: UmbTreeItemUniqueFunction<T>;
+	#getUniqueFunction: UmbTreeItemUniqueFunction<TreeItemType>;
 	#actionObserver?: UmbObserverController<ManifestEntityAction[]>;
 
-	constructor(host: UmbControllerHostElement, getUniqueFunction: UmbTreeItemUniqueFunction<T>) {
+	constructor(host: UmbControllerHostElement, getUniqueFunction: UmbTreeItemUniqueFunction<TreeItemType>) {
 		this.host = host;
 		this.#getUniqueFunction = getUniqueFunction;
 		this.#consumeContexts();
 		new UmbContextProviderController(host, UMB_TREE_ITEM_CONTEXT_TOKEN, this);
 	}
 
-	public setTreeItem(treeItem: T | undefined) {
+	public setTreeItem(treeItem: TreeItemType | undefined) {
 		if (!treeItem) {
 			this.#treeItem.next(undefined);
 			return;
@@ -125,7 +127,7 @@ export class UmbTreeItemContextBase<T extends TreeItemPresentationModel = TreeIt
 			this.#sectionSidebarContext = instance;
 		});
 
-		new UmbContextConsumerController(this.host, 'umbTreeContext', (treeContext: UmbTreeContextBase) => {
+		new UmbContextConsumerController(this.host, 'umbTreeContext', (treeContext: UmbTreeContextBase<TreeItemType>) => {
 			this.treeContext = treeContext;
 			this.#observeIsSelectable();
 			this.#observeIsSelected();
@@ -187,4 +189,4 @@ export class UmbTreeItemContextBase<T extends TreeItemPresentationModel = TreeIt
 	}
 }
 
-export const UMB_TREE_ITEM_CONTEXT_TOKEN = new UmbContextToken<UmbTreeItemContext>('UmbTreeItemContext');
+export const UMB_TREE_ITEM_CONTEXT_TOKEN = new UmbContextToken<UmbTreeItemContext<any>>('UmbTreeItemContext');

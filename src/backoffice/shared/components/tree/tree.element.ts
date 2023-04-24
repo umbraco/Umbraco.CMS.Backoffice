@@ -74,9 +74,9 @@ export class UmbTreeElement extends UmbLitElement {
 	@state()
 	private _treeRoot?: TreeItemPresentationModel;
 
-	private _treeContext?: UmbTreeContextBase;
+	private _treeContext?: UmbTreeContextBase<TreeItemPresentationModel>;
 
-	#rootItemsObserver?: UmbObserverController<Array<any>>;
+	#rootItemsObserver?: UmbObserverController<Array<TreeItemPresentationModel>>;
 
 	private _observeTree() {
 		if (!this.alias) return;

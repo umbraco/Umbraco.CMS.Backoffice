@@ -5,7 +5,7 @@ import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import type { UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
 
-export class UmbMemberRepository implements UmbTreeRepository {
+export class UmbMemberRepository implements UmbTreeRepository<any> {
 	#host: UmbControllerHostElement;
 	#dataSource: UmbMemberTreeServerDataSource;
 	#treeStore?: UmbMemberTreeStore;

@@ -1,8 +1,4 @@
-import {
-	FileSystemTreeItemPresentationModel,
-	PagedFileSystemTreeItemPresentationModel,
-	StylesheetResource,
-} from '@umbraco-cms/backoffice/backend-api';
+import { FileSystemTreeItemPresentationModel, StylesheetResource } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import { UmbTreeDataSource } from '@umbraco-cms/backoffice/repository';
@@ -13,9 +9,7 @@ import { UmbTreeDataSource } from '@umbraco-cms/backoffice/repository';
  * @class UmbStylesheetTreeServerDataSource
  * @implements {UmbTreeDataSource}
  */
-export class UmbStylesheetTreeServerDataSource
-	implements UmbTreeDataSource<PagedFileSystemTreeItemPresentationModel, FileSystemTreeItemPresentationModel>
-{
+export class UmbStylesheetTreeServerDataSource implements UmbTreeDataSource<FileSystemTreeItemPresentationModel> {
 	#host: UmbControllerHostElement;
 
 	/**

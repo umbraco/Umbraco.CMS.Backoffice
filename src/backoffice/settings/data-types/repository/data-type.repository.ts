@@ -14,6 +14,12 @@ import type {
 	UmbFolderRepository,
 	UmbMoveRepository,
 	UmbCopyRepository,
+	UmbTreeDataSource,
+	UmbDataSource,
+	UmbFolderDataSource,
+	UmbItemDataSource,
+	UmbMoveDataSource,
+	UmbCopyDataSource,
 } from '@umbraco-cms/backoffice/repository';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
@@ -40,12 +46,12 @@ export class UmbDataTypeRepository
 
 	#host: UmbControllerHostElement;
 
-	#treeSource: UmbDataTypeTreeServerDataSource;
-	#detailSource: UmbDataTypeServerDataSource;
-	#folderSource: UmbDataTypeFolderServerDataSource;
-	#itemSource: UmbDataTypeItemServerDataSource;
-	#moveSource: UmbDataTypeMoveServerDataSource;
-	#copySource: UmbDataTypeCopyServerDataSource;
+	#treeSource: UmbTreeDataSource<FolderTreeItemResponseModel>;
+	#detailSource: UmbDataSource<CreateDataTypeRequestModel, UpdateDataTypeRequestModel, DataTypeResponseModel>;
+	#folderSource: UmbFolderDataSource;
+	#itemSource: UmbItemDataSource<DataTypeItemResponseModel>;
+	#moveSource: UmbMoveDataSource;
+	#copySource: UmbCopyDataSource;
 
 	#detailStore?: UmbDataTypeStore;
 	#treeStore?: UmbDataTypeTreeStore;

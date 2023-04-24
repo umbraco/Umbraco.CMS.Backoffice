@@ -1,40 +1,43 @@
 import type { Observable } from 'rxjs';
-import { ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
+import { ProblemDetailsModel, TreeItemPresentationModel } from '@umbraco-cms/backoffice/backend-api';
 
 export interface UmbPagedData<T> {
 	total: number;
 	items: Array<T>;
 }
 
-export interface UmbTreeRepository<ItemType = any, PagedItemType = UmbPagedData<ItemType>> {
+export interface UmbTreeRepository<
+	TreeItemType extends TreeItemPresentationModel,
+	PagedItemType = UmbPagedData<TreeItemType>
+> {
 	requestTreeRoot: () => Promise<{
-		data?: ItemType;
+		data?: TreeItemType;
 		error?: ProblemDetailsModel;
 	}>;
 
 	requestRootTreeItems: () => Promise<{
 		data?: PagedItemType;
 		error?: ProblemDetailsModel;
-		asObservable?: () => Observable<ItemType[]>;
+		asObservable?: () => Observable<TreeItemType[]>;
 	}>;
 
 	requestTreeItemsOf: (parentUnique: string | null) => Promise<{
 		data?: PagedItemType;
 		error?: ProblemDetailsModel;
-		asObservable?: () => Observable<ItemType[]>;
+		asObservable?: () => Observable<TreeItemType[]>;
 	}>;
 
 	// TODO: remove this when all repositories are migrated to the new interface items interface
 	requestItemsLegacy?: (uniques: string[]) => Promise<{
-		data?: Array<ItemType>;
+		data?: Array<TreeItemType>;
 		error?: ProblemDetailsModel;
-		asObservable?: () => Observable<ItemType[]>;
+		asObservable?: () => Observable<any[]>;
 	}>;
 
-	rootTreeItems: () => Promise<Observable<ItemType[]>>;
+	rootTreeItems: () => Promise<Observable<TreeItemType[]>>;
 
-	treeItemsOf: (parentUnique: string | null) => Promise<Observable<ItemType[]>>;
+	treeItemsOf: (parentUnique: string | null) => Promise<Observable<TreeItemType[]>>;
 
 	// TODO: remove this when all repositories are migrated to the new items interface
-	itemsLegacy?: (uniques: string[]) => Promise<Observable<ItemType[]>>;
+	itemsLegacy?: (uniques: string[]) => Promise<Observable<any[]>>;
 }
