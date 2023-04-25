@@ -13,7 +13,6 @@ describe('UmbUserExtensions', () => {
 		];
 
 		testCases.forEach((testCase) => {
-			console.log('testCase', testCase.status);
 			const { look, color } = getLookAndColorFromUserStatus(testCase.status);
 			expect(look).to.equal(testCase.look);
 			expect(color).to.equal(testCase.color);

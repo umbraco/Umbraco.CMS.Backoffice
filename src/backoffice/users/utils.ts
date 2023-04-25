@@ -4,7 +4,7 @@ import { UserStateModel } from '@umbraco-cms/backoffice/backend-api';
 export const getLookAndColorFromUserStatus = (
 	status?: UserStateModel
 ): { look: InterfaceLook; color: InterfaceColor } => {
-	switch ((status || '').toLowerCase()) {
+	switch (status) {
 		case UserStateModel.INACTIVE:
 		case UserStateModel.INVITED:
 			return { look: 'primary', color: 'warning' };
