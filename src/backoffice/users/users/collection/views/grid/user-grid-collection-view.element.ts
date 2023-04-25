@@ -10,6 +10,7 @@ import {
 import { getLookAndColorFromUserStatus } from '@umbraco-cms/backoffice/utils';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UserResponseModel, UserStateModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbUserCollectionContext } from '../../user-collection.context';
 
 @customElement('umb-user-grid-collection-view')
 export class UmbUserGridCollectionViewElement extends UmbLitElement {
@@ -46,7 +47,7 @@ export class UmbUserGridCollectionViewElement extends UmbLitElement {
 	@state()
 	private _selection: Array<string> = [];
 
-	#collectionContext?: UmbCollectionContext<UserResponseModel>;
+	#collectionContext?: UmbUserCollectionContext;
 
 	constructor() {
 		super();
