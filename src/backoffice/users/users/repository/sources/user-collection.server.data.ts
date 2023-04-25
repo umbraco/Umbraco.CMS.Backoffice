@@ -2,6 +2,7 @@ import { UmbCollectionDataSource } from '@umbraco-cms/backoffice/repository';
 import { UserResponseModel, UserResource } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import type { UmbUserCollectionFilter } from '../../types';
 
 /**
  * A data source for the User that fetches data from the server
@@ -23,5 +24,9 @@ export class UmbUserCollectionServerDataSource implements UmbCollectionDataSourc
 
 	getCollection() {
 		return tryExecuteAndNotify(this.#host, UserResource.getUser({}));
+	}
+
+	filterCollection(filter: UmbUserCollectionFilter) {
+		return tryExecuteAndNotify(this.#host, UserResource.getUserFilter(filter));
 	}
 }

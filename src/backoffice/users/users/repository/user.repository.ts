@@ -13,6 +13,7 @@ import {
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import { UMB_NOTIFICATION_CONTEXT_TOKEN, UmbNotificationContext } from '@umbraco-cms/backoffice/notification';
+import { UmbUserCollectionFilter } from '../types';
 import { UMB_USER_STORE_CONTEXT_TOKEN, UmbUserStore } from './user.store';
 import { UmbUserServerDataSource } from './sources/user.server.data';
 import { UmbUserCollectionServerDataSource } from './sources/user-collection.server.data';
@@ -57,11 +58,17 @@ export class UmbUserRepository
 		});
 	}
 
+	// COLLECTION
 	async requestCollection() {
 		//TODO: missing observable
 		return this.#collectionSource.getCollection();
 	}
 
+	async filterCollection(filter: UmbUserCollectionFilter) {
+		return this.#collectionSource.filterCollection(filter);
+	}
+
+	// DETAILS
 	createScaffold(parentId: string | null) {
 		if (parentId === undefined) throw new Error('Parent id is missing');
 		return this.#detailSource.createScaffold(parentId);
