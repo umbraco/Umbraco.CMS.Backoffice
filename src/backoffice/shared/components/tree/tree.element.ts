@@ -41,12 +41,12 @@ export class UmbTreeElement extends UmbLitElement {
 		this._treeContext?.setSelectable(newVal);
 	}
 
-	private _selection: Array<string> = [];
+	private _selection: Array<string | null> = [];
 	@property({ type: Array })
 	get selection() {
 		return this._selection;
 	}
-	set selection(newVal: Array<string>) {
+	set selection(newVal: Array<string | null>) {
 		const oldVal = this._selection;
 		this._selection = newVal;
 		this.requestUpdate('selection', oldVal);
@@ -151,17 +151,7 @@ export class UmbTreeElement extends UmbLitElement {
 	// TODO: how do we want to cache the tree? (do we want to rerender every time the user opens the tree)?
 	#renderTreeRoot() {
 		if (!this._treeRoot) return nothing;
-		return html`
-			<umb-menu-item-base
-				label=${this._treeRoot.name}
-				icon-name=${this._treeRoot.icon}
-				entity-type=${this._treeRoot.type}
-				@show-children=${this._onShowChildren}
-				@hide-children=${this._onHideChildren}
-				?has-children=${this._treeRoot.hasChildren}>
-				${this.#renderRootItems()}
-			</umb-menu-item-base>
-		`;
+		return html` <umb-tree-item .item=${this._treeRoot}></umb-tree-item> `;
 	}
 
 	#renderRootItems() {

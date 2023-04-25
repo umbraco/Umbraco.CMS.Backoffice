@@ -89,11 +89,8 @@ export class UmbTemplateRepository
 	}
 
 	async requestTreeItemsOf(parentId: string | null) {
+		if (parentId === undefined) throw new Error('Parent id is missing');
 		await this.#init;
-
-		if (!parentId) {
-			throw new Error('Parent id is missing');
-		}
 
 		const { data, error } = await this.#treeDataSource.getChildrenOf(parentId);
 
@@ -126,7 +123,7 @@ export class UmbTemplateRepository
 		return this.#treeStore!.childrenOf(parentId);
 	}
 
-	async itemsLegacy(ids: Array<string>) {
+	async itemsLegacy(ids: Array<string | null>) {
 		await this.#init;
 		return this.#treeStore!.items(ids);
 	}

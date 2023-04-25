@@ -10,11 +10,12 @@ import { ProblemDetailsModel, TreeItemPresentationModel } from '@umbraco-cms/bac
 export interface UmbTreeContext<TreeItemType extends TreeItemPresentationModel> {
 	treeManifest: ManifestTree;
 	readonly selectable: Observable<boolean>;
-	readonly selection: Observable<Array<string>>;
+	readonly selection: Observable<Array<string | null>>;
 	setSelectable(value: boolean): void;
 	setMultiple(value: boolean): void;
-	setSelection(value: Array<string>): void;
-	select(id: string): void;
+	setSelection(value: Array<string | null>): void;
+	select(unique: string | null): void;
+	deselect(unique: string | null): void;
 	requestChildrenOf: (parentUnique: string | null) => Promise<{
 		data?: UmbPagedData<TreeItemType>;
 		error?: ProblemDetailsModel;
@@ -34,7 +35,7 @@ export class UmbTreeContextBase<TreeItemType extends TreeItemPresentationModel>
 	#multiple = new UmbBooleanState(false);
 	public readonly multiple = this.#multiple.asObservable();
 
-	#selection = new UmbArrayState(<Array<string>>[]);
+	#selection = new UmbArrayState(<Array<string | null>>[]);
 	public readonly selection = this.#selection.asObservable();
 
 	repository?: UmbTreeRepository<TreeItemType>;
@@ -94,7 +95,7 @@ export class UmbTreeContextBase<TreeItemType extends TreeItemPresentationModel>
 		return this.#multiple.getValue();
 	}
 
-	public setSelection(value: Array<string>) {
+	public setSelection(value: Array<string | null>) {
 		if (!value) return;
 		this.#selection.next(value);
 	}
@@ -103,13 +104,13 @@ export class UmbTreeContextBase<TreeItemType extends TreeItemPresentationModel>
 		return this.#selection.getValue();
 	}
 
-	public select(unique: string) {
+	public select(unique: string | null) {
 		if (!this.getSelectable()) return;
 		const newSelection = this.getMultiple() ? [...this.getSelection(), unique] : [unique];
 		this.#selection.next(newSelection);
 	}
 
-	public deselect(unique: string) {
+	public deselect(unique: string | null) {
 		const newSelection = this.getSelection().filter((x) => x !== unique);
 		this.#selection.next(newSelection);
 	}
@@ -126,6 +127,7 @@ export class UmbTreeContextBase<TreeItemType extends TreeItemPresentationModel>
 
 	public async requestChildrenOf(parentUnique: string | null) {
 		await this.#init;
+		if (parentUnique === undefined) throw new Error('Parent unique cannot be undefined.');
 		return this.repository!.requestTreeItemsOf(parentUnique);
 	}
 

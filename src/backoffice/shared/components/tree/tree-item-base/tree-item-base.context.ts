@@ -31,7 +31,7 @@ export class UmbTreeItemContextBase<TreeItemType extends TreeItemPresentationMod
 	implements UmbTreeItemContext<TreeItemType>
 {
 	public host: UmbControllerHostElement;
-	public unique?: string;
+	public unique?: string | null;
 	public type?: string;
 
 	#treeItem = new UmbDeepState<TreeItemType | undefined>(undefined);
@@ -78,7 +78,8 @@ export class UmbTreeItemContextBase<TreeItemType extends TreeItemPresentationMod
 		}
 
 		const unique = this.#getUniqueFunction(treeItem);
-		if (!unique) throw new Error('Could not create tree item context, unique key is missing');
+		// Only check for undefined. The tree root has null as unique
+		if (unique === undefined) throw new Error('Could not create tree item context, unique key is missing');
 		this.unique = unique;
 
 		if (!treeItem.type) throw new Error('Could not create tree item context, tree item type is missing');
@@ -90,7 +91,7 @@ export class UmbTreeItemContextBase<TreeItemType extends TreeItemPresentationMod
 	}
 
 	public async requestChildren() {
-		if (!this.unique) throw new Error('Could not request children, unique key is missing');
+		if (this.unique === undefined) throw new Error('Could not request children, unique key is missing');
 
 		// TODO: wait for tree context to be ready
 		this.#isLoading.next(true);
@@ -108,12 +109,12 @@ export class UmbTreeItemContextBase<TreeItemType extends TreeItemPresentationMod
 	}
 
 	public select() {
-		if (!this.unique) throw new Error('Could not request children, unique key is missing');
+		if (this.unique === undefined) throw new Error('Could not request children, unique key is missing');
 		this.treeContext?.select(this.unique);
 	}
 
 	public deselect() {
-		if (!this.unique) throw new Error('Could not request children, unique key is missing');
+		if (this.unique === undefined) throw new Error('Could not request children, unique key is missing');
 		this.treeContext?.deselect(this.unique);
 	}
 
@@ -145,7 +146,7 @@ export class UmbTreeItemContextBase<TreeItemType extends TreeItemPresentationMod
 
 	#observeIsSelected() {
 		if (!this.treeContext) throw new Error('Could not request children, tree context is missing');
-		if (!this.unique) throw new Error('Could not request children, unique key is missing');
+		if (this.unique === undefined) throw new Error('Could not request children, unique key is missing');
 
 		new UmbObserverController(
 			this.host,
@@ -162,8 +163,7 @@ export class UmbTreeItemContextBase<TreeItemType extends TreeItemPresentationMod
 		new UmbObserverController(this.host, this.#sectionContext.pathname, (pathname) => {
 			if (!pathname) return;
 			if (!this.type) throw new Error('Cant construct path, entity type is missing');
-			if (!this.unique) throw new Error('Cant construct path, unique is missing');
-
+			if (this.unique === undefined) throw new Error('Cant construct path, unique is missing');
 			const path = this.constructPath(pathname, this.type, this.unique);
 			this.#path.next(path);
 		});
@@ -184,7 +184,7 @@ export class UmbTreeItemContextBase<TreeItemType extends TreeItemPresentationMod
 	}
 
 	// TODO: use router context
-	constructPath(pathname: string, entityType: string, unique: string) {
+	constructPath(pathname: string, entityType: string, unique: string | null) {
 		return `section/${pathname}/workspace/${entityType}/edit/${unique}`;
 	}
 }

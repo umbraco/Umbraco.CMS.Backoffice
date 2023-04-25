@@ -78,10 +78,7 @@ export class UmbMediaTypeRepository implements UmbTreeRepository<EntityTreeItemR
 
 	async requestTreeItemsOf(parentId: string | null) {
 		await this.#init;
-
-		if (!parentId) {
-			throw new Error('Parent id is missing');
-		}
+		if (parentId === undefined) throw new Error('Parent id is missing');
 
 		const { data, error } = await this.#treeSource.getChildrenOf(parentId);
 

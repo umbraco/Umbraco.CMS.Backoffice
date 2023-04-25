@@ -26,7 +26,7 @@ export class UmbDataTypeMoveServerDataSource implements UmbMoveDataSource {
 	 * @return {*}
 	 * @memberof UmbDataTypeMoveServerDataSource
 	 */
-	async move(id: string, targetId: string) {
+	async move(id: string, targetId: string | null) {
 		if (!id) throw new Error('Id is missing');
 		if (!targetId) throw new Error('Target Id is missing');
 

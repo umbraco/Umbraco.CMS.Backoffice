@@ -20,4 +20,14 @@ const treeItem: ManifestTreeItem = {
 	},
 };
 
-export const manifests = [tree, treeItem];
+const rootTreeItem: ManifestTreeItem = {
+	type: 'treeItem',
+	kind: 'entity',
+	alias: 'Umb.TreeItem.DataTypeRoot',
+	name: 'Data Type Root Tree Item',
+	conditions: {
+		entityType: 'data-type-root',
+	},
+};
+
+export const manifests = [tree, treeItem, rootTreeItem];

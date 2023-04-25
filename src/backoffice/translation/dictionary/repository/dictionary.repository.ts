@@ -90,11 +90,8 @@ export class UmbDictionaryRepository
 	}
 
 	async requestTreeItemsOf(parentId: string | null) {
+		if (parentId === undefined) throw new Error('Parent id is missing');
 		await this.#init;
-
-		if (!parentId) {
-			throw new Error('Parent id is missing');
-		}
 
 		const { data, error } = await this.#treeSource.getChildrenOf(parentId);
 

@@ -96,8 +96,7 @@ export class UmbDataTypeRepository
 		// TODO; we nee our own model for tree items
 		const data = {
 			$type: 'FolderTreeItemResponseModel',
-			id: undefined,
-			parentId: null,
+			id: null,
 			type: 'data-type-root',
 			name: 'Data Types',
 			icon: 'umb:folder',
@@ -122,8 +121,8 @@ export class UmbDataTypeRepository
 	}
 
 	async requestTreeItemsOf(parentId: string | null) {
-		if (!parentId) throw new Error('Parent id is missing');
 		await this.#init;
+		if (parentId === undefined) throw new Error('Parent id is missing');
 
 		const { data, error } = await this.#treeSource.getChildrenOf(parentId);
 
@@ -311,7 +310,7 @@ export class UmbDataTypeRepository
 	}
 
 	// Actions
-	async move(id: string, targetId: string) {
+	async move(id: string, targetId: string | null) {
 		await this.#init;
 		const { error } = await this.#moveSource.move(id, targetId);
 
