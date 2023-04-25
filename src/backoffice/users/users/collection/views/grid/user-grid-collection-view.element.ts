@@ -3,44 +3,14 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import {
-	UMB_COLLECTION_CONTEXT_TOKEN,
-	UmbCollectionContext,
-} from '../../../../../shared/components/collection/collection.context';
-import { getLookAndColorFromUserStatus } from '@umbraco-cms/backoffice/utils';
+import { UMB_COLLECTION_CONTEXT_TOKEN } from '../../../../../shared/components/collection/collection.context';
+import { getLookAndColorFromUserStatus } from '../../../../utils';
+import { UmbUserCollectionContext } from '../../user-collection.context';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UserResponseModel, UserStateModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbUserCollectionContext } from '../../user-collection.context';
 
 @customElement('umb-user-grid-collection-view')
 export class UmbUserGridCollectionViewElement extends UmbLitElement {
-	static styles = [
-		UUITextStyles,
-		css`
-			:host {
-				display: flex;
-				flex-direction: column;
-			}
-
-			#user-grid {
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-				gap: var(--uui-size-space-4);
-				margin: var(--uui-size-layout-1);
-				margin-top: var(--uui-size-space-2);
-			}
-
-			uui-card-user {
-				width: 100%;
-				height: 180px;
-			}
-
-			.user-login-time {
-				margin-top: auto;
-			}
-		`,
-	];
-
 	@state()
 	private _users: Array<UserResponseModel> = [];
 
@@ -127,6 +97,33 @@ export class UmbUserGridCollectionViewElement extends UmbLitElement {
 			</div>
 		`;
 	}
+
+	static styles = [
+		UUITextStyles,
+		css`
+			:host {
+				display: flex;
+				flex-direction: column;
+			}
+
+			#user-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+				gap: var(--uui-size-space-4);
+				margin: var(--uui-size-layout-1);
+				margin-top: var(--uui-size-space-2);
+			}
+
+			uui-card-user {
+				width: 100%;
+				height: 180px;
+			}
+
+			.user-login-time {
+				margin-top: auto;
+			}
+		`,
+	];
 }
 
 export default UmbUserGridCollectionViewElement;

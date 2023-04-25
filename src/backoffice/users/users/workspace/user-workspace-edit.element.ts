@@ -5,16 +5,16 @@ import { customElement, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { repeat } from 'lit/directives/repeat.js';
 
+import { UmbCurrentUserStore, UMB_CURRENT_USER_STORE_CONTEXT_TOKEN } from '../../current-user/current-user.store';
+import { getLookAndColorFromUserStatus } from '../../utils';
+import { UmbUserWorkspaceContext } from './user-workspace.context';
 import { UMB_CHANGE_PASSWORD_MODAL } from '@umbraco-cms/backoffice/modal';
 import type { UmbModalContext } from '@umbraco-cms/backoffice/modal';
-import { getLookAndColorFromUserStatus } from '@umbraco-cms/backoffice/utils';
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 import { UserResponseModel, UserStateModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbCurrentUserStore, UMB_CURRENT_USER_STORE_CONTEXT_TOKEN } from '../../current-user/current-user.store';
-import { UmbUserWorkspaceContext } from './user-workspace.context';
 
 @customElement('umb-user-workspace-edit')
 export class UmbUserWorkspaceEditElement extends UmbLitElement {
