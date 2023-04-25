@@ -8,6 +8,7 @@ import {
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { UmbUserDetailDataSource } from '../user.repository';
 
 /**
  * A data source for the User that fetches data from the server
@@ -15,9 +16,7 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
  * @class UmbUserServerDataSource
  * @implements {RepositoryDetailDataSource}
  */
-export class UmbUserServerDataSource
-	implements UmbDataSource<CreateUserRequestModel, UpdateUserRequestModel, UserResponseModel>
-{
+export class UmbUserServerDataSource implements UmbUserDetailDataSource {
 	//TODO: Add the entity type here
 	//TODO: Add a UserModel that extends the UserResponseModel and adds the entity type and put it in the root of the users folder and export it in the index file
 
