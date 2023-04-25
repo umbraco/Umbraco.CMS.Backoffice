@@ -17,7 +17,6 @@ export const manifests = [...userGroupManifests, ...userManifests, ...userSectio
 
 export const onInit: UmbEntrypointOnInit = (host, extensionRegistry) => {
 	extensionRegistry.registerMany(manifests);
-	debugger;
 
 	new UmbContextProviderController(host, UMB_CURRENT_USER_STORE_CONTEXT_TOKEN, new UmbCurrentUserStore());
 	new UmbContextProviderController(
