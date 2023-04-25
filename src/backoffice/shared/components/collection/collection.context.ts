@@ -8,9 +8,10 @@ import {
 } from '@umbraco-cms/backoffice/observable-api';
 import { umbExtensionsRegistry, createExtensionClass } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbCollectionRepository } from '@umbraco-cms/backoffice/repository';
+import type { UmbFilterModel } from '@umbraco-cms/backoffice/models';
 
 // TODO: Clean up the need for store as Media has switched to use Repositories(repository).
-export class UmbCollectionContext<ItemType, FilterModelType> {
+export class UmbCollectionContext<ItemType, FilterModelType extends UmbFilterModel> {
 	private _host: UmbControllerHostElement;
 	private _entityType: string | null;
 
@@ -25,7 +26,7 @@ export class UmbCollectionContext<ItemType, FilterModelType> {
 	#selection = new UmbArrayState<string>([]);
 	public readonly selection = this.#selection.asObservable();
 
-	#filter = new UmbObjectState<FilterModelType>({ skip: 0, take: 100 });
+	#filter = new UmbObjectState<FilterModelType | object>({});
 	public readonly filter = this.#filter.asObservable();
 
 	repository?: UmbCollectionRepository;
