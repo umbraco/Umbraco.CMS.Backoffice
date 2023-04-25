@@ -12,8 +12,6 @@ import '../entity-bulk-action/entity-bulk-action.element';
 
 @customElement('umb-collection-selection-actions')
 export class UmbCollectionSelectionActionsElement extends UmbLitElement {
-	
-
 	#entityType?: string;
 
 	@state()
@@ -25,7 +23,7 @@ export class UmbCollectionSelectionActionsElement extends UmbLitElement {
 	@state()
 	private _entityBulkActions: Array<ManifestEntityBulkAction> = [];
 
-	private _collectionContext?: UmbCollectionContext<any>;
+	private _collectionContext?: UmbCollectionContext<any, any>;
 	private _selection: Array<string> = [];
 
 	constructor() {
@@ -110,7 +108,7 @@ export class UmbCollectionSelectionActionsElement extends UmbLitElement {
 				)}
 			</div>`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`

@@ -20,7 +20,7 @@ export class UmbWorkspaceViewCollectionElement extends UmbLitElement {
 	private _workspaceContext?: typeof UMB_ENTITY_WORKSPACE_CONTEXT.TYPE;
 
 	// TODO: add type for the collection context.
-	private _collectionContext?: UmbCollectionContext<FolderTreeItemResponseModel>;
+	private _collectionContext?: UmbCollectionContext<FolderTreeItemResponseModel, any>;
 
 	constructor() {
 		super();
