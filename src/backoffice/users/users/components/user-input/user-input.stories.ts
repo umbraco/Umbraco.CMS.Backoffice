@@ -6,6 +6,7 @@ const meta: Meta<UmbUserInputElement> = {
 	title: 'Components/Inputs/User',
 	component: 'umb-user-input',
 	argTypes: {
+		/*
 		modalType: {
 			control: 'inline-radio',
 			options: ['dialog', 'sidebar'],
@@ -18,6 +19,7 @@ const meta: Meta<UmbUserInputElement> = {
 			defaultValue: 'small',
 			description: 'The size of the modal to use when selecting users, only applicable to sidebar not dialog',
 		},
+		*/
 	},
 };
 
