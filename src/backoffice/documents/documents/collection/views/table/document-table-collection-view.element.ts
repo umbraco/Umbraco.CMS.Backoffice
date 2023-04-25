@@ -24,8 +24,6 @@ type EntityType = DocumentTreeItemResponseModel;
 
 @customElement('umb-document-table-collection-view')
 export class UmbDocumentTableCollectionViewElement extends UmbLitElement {
-	
-
 	@state()
 	private _items?: Array<EntityTreeItemResponseModel>;
 
@@ -56,7 +54,7 @@ export class UmbDocumentTableCollectionViewElement extends UmbLitElement {
 	@state()
 	private _selection: Array<string> = [];
 
-	private _collectionContext?: UmbCollectionContext<EntityType>;
+	private _collectionContext?: UmbCollectionContext<EntityType, any>;
 
 	constructor() {
 		super();
@@ -135,7 +133,7 @@ export class UmbDocumentTableCollectionViewElement extends UmbLitElement {
 				@ordered="${this._handleOrdering}"></umb-table>
 		`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`

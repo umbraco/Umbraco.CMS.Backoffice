@@ -12,15 +12,13 @@ import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api
 
 @customElement('umb-media-grid-collection-view')
 export class UmbMediaGridCollectionViewElement extends UmbLitElement {
-	
-
 	@state()
 	private _mediaItems?: Array<EntityTreeItemResponseModel>;
 
 	@state()
 	private _selection: Array<string> = [];
 
-	private _collectionContext?: UmbCollectionContext<EntityTreeItemResponseModel>;
+	private _collectionContext?: UmbCollectionContext<EntityTreeItemResponseModel, any>;
 
 	constructor() {
 		super();
@@ -123,7 +121,7 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 			</div>
 		`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`
