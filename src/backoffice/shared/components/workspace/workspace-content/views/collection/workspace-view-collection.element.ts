@@ -7,11 +7,12 @@ import {
 	UMB_COLLECTION_CONTEXT_TOKEN,
 } from '../../../../../../shared/components/collection/collection.context';
 
-import '../../../../../../shared/collection/dashboards/dashboard-collection.element';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { FolderTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import type { ManifestWorkspaceViewCollection } from '@umbraco-cms/backoffice/extensions-registry';
 import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
+
+import '../../../../../../shared/components/collection/dashboards/dashboard-collection.element';
 
 @customElement('umb-workspace-view-collection')
 export class UmbWorkspaceViewCollectionElement extends UmbLitElement {
