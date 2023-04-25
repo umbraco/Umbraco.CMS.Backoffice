@@ -24,6 +24,7 @@ import './column-layouts/name/user-table-name-column-layout.element';
 import './column-layouts/status/user-table-status-column-layout.element';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbUserCollectionContext } from '../../user-collection.context';
 
 @customElement('umb-user-table-collection-view')
 export class UmbUserTableCollectionViewElement extends UmbLitElement {
@@ -68,7 +69,7 @@ export class UmbUserTableCollectionViewElement extends UmbLitElement {
 	@state()
 	private _selection: Array<string> = [];
 
-	#collectionContext?: UmbCollectionContext<UserResponseModel>;
+	#collectionContext?: UmbUserCollectionContext;
 
 	constructor() {
 		super();
