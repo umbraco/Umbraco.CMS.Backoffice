@@ -2,7 +2,11 @@ import { UmbWorkspaceContext } from '../../../shared/components/workspace/worksp
 import { UmbUserRepository } from '../repository/user.repository';
 import { UmbEntityWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
-import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import {
+	UpdateUserGroupRequestModel,
+	UpdateUserRequestModel,
+	UserResponseModel,
+} from '@umbraco-cms/backoffice/backend-api';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 
 export class UmbUserWorkspaceContext
@@ -54,8 +58,8 @@ export class UmbUserWorkspaceContext
 		if (this.getIsNew()) {
 			await this.repository.create(this.#data.value);
 		} else {
-			//TODO: why does the response model allow for nulls but not the request model?
-			await this.repository.save(this.#data.value.id, this.#data.value);
+			//TODO: temp hack: why does the response model allow for nulls but not the request model?
+			await this.repository.save(this.#data.value.id, this.#data.value as UpdateUserRequestModel);
 		}
 		// If it went well, then its not new anymore?.
 		this.setIsNew(false);
