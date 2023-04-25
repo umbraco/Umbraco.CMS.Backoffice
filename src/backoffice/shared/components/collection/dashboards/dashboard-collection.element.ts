@@ -11,10 +11,8 @@ import '../collection.element';
 
 @customElement('umb-dashboard-collection')
 export class UmbDashboardCollectionElement extends UmbLitElement {
-	
-
 	// TODO: Use the right type here:
-	private _collectionContext?: UmbCollectionContext<FolderTreeItemResponseModel>;
+	private _collectionContext?: UmbCollectionContext<FolderTreeItemResponseModel, any>;
 
 	public manifest!: ManifestDashboardCollection;
 
@@ -35,7 +33,7 @@ export class UmbDashboardCollectionElement extends UmbLitElement {
 	render() {
 		return html`<umb-collection entity-type=${ifDefined(this._entityType)}></umb-collection>`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`

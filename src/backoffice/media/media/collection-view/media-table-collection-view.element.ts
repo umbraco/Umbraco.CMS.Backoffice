@@ -20,8 +20,6 @@ import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api
 
 @customElement('umb-media-table-collection-view')
 export class UmbMediaTableCollectionViewElement extends UmbLitElement {
-	
-
 	@state()
 	private _mediaItems?: Array<EntityTreeItemResponseModel>;
 
@@ -44,7 +42,7 @@ export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 	@state()
 	private _selection: Array<string> = [];
 
-	private _collectionContext?: UmbCollectionContext<MediaDetails>;
+	private _collectionContext?: UmbCollectionContext<MediaDetails, any>;
 
 	constructor() {
 		super();
@@ -117,7 +115,7 @@ export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 				@ordered="${this._handleOrdering}"></umb-table>
 		`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`
