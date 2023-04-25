@@ -13,6 +13,7 @@ import type { SetAvatarRequestModel } from '../models/SetAvatarRequestModel';
 import type { UnlockUsersRequestModel } from '../models/UnlockUsersRequestModel';
 import type { UpdateUserGroupsOnUserRequestModel } from '../models/UpdateUserGroupsOnUserRequestModel';
 import type { UpdateUserRequestModel } from '../models/UpdateUserRequestModel';
+import type { UserItemResponseModel } from '../models/UserItemResponseModel';
 import type { UserOrderModel } from '../models/UserOrderModel';
 import type { UserResponseModel } from '../models/UserResponseModel';
 import type { UserStateModel } from '../models/UserStateModel';
@@ -21,19 +22,19 @@ import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 
-export class UsersResource {
+export class UserResource {
 	/**
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static postUsers({
+	public static postUser({
 		requestBody,
 	}: {
 		requestBody?: CreateUserRequestModel | InviteUserRequestModel;
 	}): CancelablePromise<CreateUserResponseModel> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/umbraco/management/api/v1/users',
+			url: '/umbraco/management/api/v1/user',
 			body: requestBody,
 			mediaType: 'application/json',
 			errors: {
@@ -46,7 +47,7 @@ export class UsersResource {
 	 * @returns PagedUserResponseModel Success
 	 * @throws ApiError
 	 */
-	public static getUsers({
+	public static getUser({
 		skip,
 		take = 100,
 	}: {
@@ -55,7 +56,7 @@ export class UsersResource {
 	}): CancelablePromise<PagedUserResponseModel> {
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/umbraco/management/api/v1/users',
+			url: '/umbraco/management/api/v1/user',
 			query: {
 				skip: skip,
 				take: take,
@@ -67,10 +68,10 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static getUsersById({ id }: { id: string }): CancelablePromise<UserResponseModel> {
+	public static getUserById({ id }: { id: string }): CancelablePromise<UserResponseModel> {
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/umbraco/management/api/v1/users/{id}',
+			url: '/umbraco/management/api/v1/user/{id}',
 			path: {
 				id: id,
 			},
@@ -84,10 +85,10 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static deleteUsersById({ id }: { id: string }): CancelablePromise<any> {
+	public static deleteUserById({ id }: { id: string }): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/umbraco/management/api/v1/users/{id}',
+			url: '/umbraco/management/api/v1/user/{id}',
 			path: {
 				id: id,
 			},
@@ -98,7 +99,7 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static putUsersById({
+	public static putUserById({
 		id,
 		requestBody,
 	}: {
@@ -107,7 +108,7 @@ export class UsersResource {
 	}): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'PUT',
-			url: '/umbraco/management/api/v1/users/{id}',
+			url: '/umbraco/management/api/v1/user/{id}',
 			path: {
 				id: id,
 			},
@@ -120,10 +121,10 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static deleteUsersAvatarById({ id }: { id: string }): CancelablePromise<any> {
+	public static deleteUserAvatarById({ id }: { id: string }): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'DELETE',
-			url: '/umbraco/management/api/v1/users/avatar/{id}',
+			url: '/umbraco/management/api/v1/user/avatar/{id}',
 			path: {
 				id: id,
 			},
@@ -134,7 +135,7 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static postUsersAvatarById({
+	public static postUserAvatarById({
 		id,
 		requestBody,
 	}: {
@@ -143,7 +144,7 @@ export class UsersResource {
 	}): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/umbraco/management/api/v1/users/avatar/{id}',
+			url: '/umbraco/management/api/v1/user/avatar/{id}',
 			path: {
 				id: id,
 			},
@@ -159,7 +160,7 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static postUsersChangePasswordById({
+	public static postUserChangePasswordById({
 		id,
 		requestBody,
 	}: {
@@ -168,7 +169,7 @@ export class UsersResource {
 	}): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/umbraco/management/api/v1/users/change-password/{id}',
+			url: '/umbraco/management/api/v1/user/change-password/{id}',
 			path: {
 				id: id,
 			},
@@ -181,10 +182,10 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static postUsersDisable({ requestBody }: { requestBody?: DisableUserRequestModel }): CancelablePromise<any> {
+	public static postUserDisable({ requestBody }: { requestBody?: DisableUserRequestModel }): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/umbraco/management/api/v1/users/disable',
+			url: '/umbraco/management/api/v1/user/disable',
 			body: requestBody,
 			mediaType: 'application/json',
 			errors: {
@@ -197,10 +198,10 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static postUsersEnable({ requestBody }: { requestBody?: EnableUserRequestModel }): CancelablePromise<any> {
+	public static postUserEnable({ requestBody }: { requestBody?: EnableUserRequestModel }): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/umbraco/management/api/v1/users/enable',
+			url: '/umbraco/management/api/v1/user/enable',
 			body: requestBody,
 			mediaType: 'application/json',
 			errors: {
@@ -213,7 +214,7 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static getUsersFilter({
+	public static getUserFilter({
 		skip,
 		take = 100,
 		orderBy,
@@ -232,7 +233,7 @@ export class UsersResource {
 	}): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/umbraco/management/api/v1/users/filter',
+			url: '/umbraco/management/api/v1/user/filter',
 			query: {
 				skip: skip,
 				take: take,
@@ -249,10 +250,10 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static postUsersInvite({ requestBody }: { requestBody?: InviteUserRequestModel }): CancelablePromise<any> {
+	public static postUserInvite({ requestBody }: { requestBody?: InviteUserRequestModel }): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/umbraco/management/api/v1/users/invite',
+			url: '/umbraco/management/api/v1/user/invite',
 			body: requestBody,
 			mediaType: 'application/json',
 		});
@@ -262,16 +263,46 @@ export class UsersResource {
 	 * @returns any Success
 	 * @throws ApiError
 	 */
-	public static postUsersSetUserGroups({
+	public static getUserItem({ id }: { id?: Array<string> }): CancelablePromise<Array<UserItemResponseModel>> {
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/umbraco/management/api/v1/user/item',
+			query: {
+				id: id,
+			},
+		});
+	}
+
+	/**
+	 * @returns any Success
+	 * @throws ApiError
+	 */
+	public static postUserSetUserGroups({
 		requestBody,
 	}: {
 		requestBody?: UpdateUserGroupsOnUserRequestModel;
 	}): CancelablePromise<any> {
 		return __request(OpenAPI, {
 			method: 'POST',
-			url: '/umbraco/management/api/v1/users/set-user-groups',
+			url: '/umbraco/management/api/v1/user/set-user-groups',
 			body: requestBody,
 			mediaType: 'application/json',
+		});
+	}
+
+	/**
+	 * @returns any Success
+	 * @throws ApiError
+	 */
+	public static postUserUnlock({ requestBody }: { requestBody?: UnlockUsersRequestModel }): CancelablePromise<any> {
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/umbraco/management/api/v1/user/unlock',
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				400: `Bad Request`,
+			},
 		});
 	}
 
