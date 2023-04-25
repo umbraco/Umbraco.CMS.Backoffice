@@ -1,14 +1,14 @@
-import { DataSourceResponse, UmbDataSource } from '@umbraco-cms/backoffice/repository';
+import { UmbUserDetailDataSource } from '../user.repository';
+import { DataSourceResponse } from '@umbraco-cms/backoffice/repository';
 import {
-	UserResponseModel,
 	CreateUserRequestModel,
 	UpdateUserRequestModel,
 	UserPresentationBaseModel,
 	UserResource,
+	InviteUserRequestModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
-import { UmbUserDetailDataSource } from '../user.repository';
 
 /**
  * A data source for the User that fetches data from the server
@@ -17,9 +17,6 @@ import { UmbUserDetailDataSource } from '../user.repository';
  * @implements {RepositoryDetailDataSource}
  */
 export class UmbUserServerDataSource implements UmbUserDetailDataSource {
-	//TODO: Add the entity type here
-	//TODO: Add a UserModel that extends the UserResponseModel and adds the entity type and put it in the root of the users folder and export it in the index file
-
 	#host: UmbControllerHostElement;
 
 	/**
@@ -60,5 +57,11 @@ export class UmbUserServerDataSource implements UmbUserDetailDataSource {
 	delete(id: string) {
 		if (!id) throw new Error('Id is missing');
 		return tryExecuteAndNotify(this.#host, UserResource.deleteUserById({ id }));
+	}
+
+	// Invite
+	invite(data: InviteUserRequestModel) {
+		if (!data) throw new Error('Invite data is missing');
+		return tryExecuteAndNotify(this.#host, UserResource.postUserInvite({ requestBody: data }));
 	}
 }

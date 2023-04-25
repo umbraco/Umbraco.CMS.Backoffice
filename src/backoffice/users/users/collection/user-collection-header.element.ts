@@ -15,7 +15,7 @@ import { UMB_COLLECTION_CONTEXT_TOKEN } from 'src/backoffice/shared/components/c
 @customElement('umb-user-collection-header')
 export class UmbUserCollectionHeaderElement extends UmbLitElement {
 	@state()
-	private isCloud = false; //NOTE: Used to show either invite or create user buttons and views.
+	private isCloud = true; //NOTE: Used to show either invite or create user buttons and views.
 
 	#modalContext?: UmbModalContext;
 	#collectionContext?: UmbUserCollectionContext;

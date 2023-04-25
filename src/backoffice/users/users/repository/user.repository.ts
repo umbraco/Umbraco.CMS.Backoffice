@@ -1,46 +1,27 @@
+import { UmbUserCollectionFilterModel, UmbUserDetailDataSource, UmbUserDetailRepository } from '../types';
+import { UMB_USER_STORE_CONTEXT_TOKEN, UmbUserStore } from './user.store';
+import { UmbUserServerDataSource } from './sources/user.server.data';
+import { UmbUserCollectionServerDataSource } from './sources/user-collection.server.data';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
-import {
-	UmbCollectionDataSource,
-	UmbCollectionRepository,
-	UmbDataSource,
-	UmbDetailRepository,
-} from '@umbraco-cms/backoffice/repository';
+import { UmbCollectionDataSource, UmbCollectionRepository } from '@umbraco-cms/backoffice/repository';
 import {
 	CreateUserRequestModel,
-	CreateUserResponseModel,
+	InviteUserRequestModel,
 	UpdateUserRequestModel,
 	UserResponseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import { UMB_NOTIFICATION_CONTEXT_TOKEN, UmbNotificationContext } from '@umbraco-cms/backoffice/notification';
-import { UmbUserCollectionFilterModel } from '../types';
-import { UMB_USER_STORE_CONTEXT_TOKEN, UmbUserStore } from './user.store';
-import { UmbUserServerDataSource } from './sources/user.server.data';
-import { UmbUserCollectionServerDataSource } from './sources/user-collection.server.data';
-
-export interface UmbCreateUserBLahBlah {
-	user: UserResponseModel;
-	createData: CreateUserResponseModel;
-}
-
-export type UmbUserDetailDataSource = UmbDataSource<
-	CreateUserRequestModel,
-	CreateUserResponseModel,
-	UpdateUserRequestModel,
-	UserResponseModel
->;
 
 // TODO: implement
-export class UmbUserRepository
-	implements
-		UmbDetailRepository<CreateUserRequestModel, UmbCreateUserBLahBlah, UpdateUserRequestModel, UserResponseModel>,
-		UmbCollectionRepository
-{
+export class UmbUserRepository implements UmbUserDetailRepository, UmbCollectionRepository {
 	#host: UmbControllerHostElement;
 
 	#detailSource: UmbUserDetailDataSource;
 	#detailStore?: UmbUserStore;
+
 	#collectionSource: UmbCollectionDataSource<UserResponseModel>;
+
 	#notificationContext?: UmbNotificationContext;
 
 	constructor(host: UmbControllerHostElement) {
@@ -110,6 +91,11 @@ export class UmbUserRepository
 		}
 
 		return { error };
+	}
+
+	async invite(inviteRequestData: InviteUserRequestModel) {
+		if (!inviteRequestData) throw new Error('Data is missing');
+		const { data, error } = await this.#detailSource.invite(inviteRequestData);
 	}
 
 	async save(id: string, user: UpdateUserRequestModel) {

@@ -27,6 +27,7 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 
 	#notificationContext?: UmbNotificationContext;
 
+	// TODO: get from extension registry
 	#userRepository = new UmbUserRepository(this);
 
 	connectedCallback(): void {
@@ -55,6 +56,7 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 		const userGroupPicker = form.querySelector('#userGroups') as UmbInputPickerUserGroupElement;
 		const userGroups = userGroupPicker?.value || ['e5e7f6c8-7f9c-4b5b-8d5d-9e1e5a4f7e4d'];
 
+		// TODO: figure out when to use email or username
 		const { data } = await this.#userRepository.create({
 			name,
 			email,
