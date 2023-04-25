@@ -2,6 +2,9 @@ import { css, html, nothing } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, query, state } from 'lit/decorators.js';
 import { UUIInputPasswordElement } from '@umbraco-ui/uui';
+import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../repository/user.store';
+import { UmbInputPickerUserGroupElement } from '../../../../shared/components/input-user-group/input-user-group.element';
+import { UmbUserRepository } from '../../repository/user.repository';
 import { UmbModalBaseElement } from '@umbraco-cms/internal/modal';
 import {
 	UmbNotificationDefaultData,
@@ -9,9 +12,6 @@ import {
 	UMB_NOTIFICATION_CONTEXT_TOKEN,
 } from '@umbraco-cms/backoffice/notification';
 import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
-import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../repository/user.store';
-import { UmbInputPickerUserGroupElement } from '../../../../shared/components/input-user-group/input-user-group.element';
-import { UmbUserRepository } from '../../repository/user.repository';
 
 export type UsersViewType = 'list' | 'grid';
 @customElement('umb-create-user-modal')
@@ -25,8 +25,7 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 	@state()
 	private _createdUserInitialPassword?: string | null;
 
-	protected _userStore?: UmbUserStore;
-	private _notificationContext?: UmbNotificationContext;
+	#notificationContext?: UmbNotificationContext;
 
 	#userRepository = new UmbUserRepository(this);
 
@@ -34,11 +33,7 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 		super.connectedCallback();
 
 		this.consumeContext(UMB_NOTIFICATION_CONTEXT_TOKEN, (_instance) => {
-			this._notificationContext = _instance;
-		});
-
-		this.consumeContext(UMB_USER_STORE_CONTEXT_TOKEN, (_instance) => {
-			this._userStore = _instance;
+			this.#notificationContext = _instance;
 		});
 	}
 
@@ -79,7 +74,7 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 
 		navigator.clipboard.writeText(passwordInput.value);
 		const data: UmbNotificationDefaultData = { message: 'Password copied' };
-		this._notificationContext?.peek('positive', { data });
+		this.#notificationContext?.peek('positive', { data });
 	}
 
 	private _submitForm() {
