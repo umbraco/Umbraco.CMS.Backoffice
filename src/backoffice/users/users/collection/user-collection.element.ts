@@ -3,11 +3,8 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import type { IRoute } from '@umbraco-cms/backoffice/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import {
-	UMB_COLLECTION_CONTEXT_TOKEN,
-	UmbCollectionContext,
-} from '../../../shared/components/collection/collection.context';
-import { USER_REPOSITORY_ALIAS } from '../repository/manifests';
+import { UMB_COLLECTION_CONTEXT_TOKEN } from '../../../shared/components/collection/collection.context';
+import { UmbUserCollectionContext } from './user-collection.context';
 
 import './views/table/user-table-collection-view.element';
 import './views/grid/user-grid-collection-view.element';
@@ -16,7 +13,7 @@ import './user-collection-header.element';
 export type UsersViewType = 'list' | 'grid';
 @customElement('umb-user-collection')
 export class UmbUserCollectionElement extends UmbLitElement {
-	#collectionContext = new UmbCollectionContext(this, 'user', USER_REPOSITORY_ALIAS);
+	#collectionContext = new UmbUserCollectionContext(this);
 
 	@state()
 	private _routes: IRoute[] = [

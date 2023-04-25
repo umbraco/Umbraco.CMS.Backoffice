@@ -9,6 +9,8 @@ import {
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { UUIPopoverElement } from '@umbraco-ui/uui';
+import { UmbUserCollectionContext } from './user-collection.context';
+import { UMB_COLLECTION_CONTEXT_TOKEN } from 'src/backoffice/shared/components/collection/collection.context';
 
 @customElement('umb-user-collection-header')
 export class UmbUserCollectionHeaderElement extends UmbLitElement {
@@ -16,6 +18,7 @@ export class UmbUserCollectionHeaderElement extends UmbLitElement {
 	private isCloud = false; //NOTE: Used to show either invite or create user buttons and views.
 
 	#modalContext?: UmbModalContext;
+	#collectionContext?: UmbUserCollectionContext;
 	#inputTimer?: NodeJS.Timeout;
 	#inputTimerAmount = 500;
 
@@ -24,6 +27,10 @@ export class UmbUserCollectionHeaderElement extends UmbLitElement {
 
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => {
 			this.#modalContext = instance;
+		});
+
+		this.consumeContext(UMB_COLLECTION_CONTEXT_TOKEN, (instance) => {
+			this.#collectionContext = instance;
 		});
 	}
 
@@ -45,15 +52,10 @@ export class UmbUserCollectionHeaderElement extends UmbLitElement {
 	}
 
 	private _updateSearch(event: InputEvent) {
-		// const target = event.target as HTMLInputElement;
-		// const search = target.value || '';
-		// clearTimeout(this._inputTimer);
-		// this._inputTimer = setTimeout(() => this._refreshUsers(search), this._inputTimerAmount);
-	}
-
-	private _refreshUsers(search: string) {
-		// if (!this._usersContext) return;
-		// this._usersContext.setSearch(search);
+		const target = event.target as HTMLInputElement;
+		const filter = target.value || '';
+		clearTimeout(this.#inputTimer);
+		this.#inputTimer = setTimeout(() => this.#collectionContext?.setFilter({ filter }), this.#inputTimerAmount);
 	}
 
 	private _showInviteOrCreate() {

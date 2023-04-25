@@ -1,3 +1,3 @@
 export interface UmbCollectionRepository {
-	requestCollection(): Promise<any>;
+	requestCollection(filter?: any): Promise<any>;
 }

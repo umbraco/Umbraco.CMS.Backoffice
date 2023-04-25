@@ -1,26 +1,34 @@
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
-import { UmbArrayState, UmbNumberState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
+import {
+	UmbArrayState,
+	UmbNumberState,
+	UmbObjectState,
+	UmbObserverController,
+} from '@umbraco-cms/backoffice/observable-api';
 import { umbExtensionsRegistry, createExtensionClass } from '@umbraco-cms/backoffice/extensions-api';
 import { UmbCollectionRepository } from '@umbraco-cms/backoffice/repository';
 
 // TODO: Clean up the need for store as Media has switched to use Repositories(repository).
-export class UmbCollectionContext<ItemType> {
+export class UmbCollectionContext<ItemType, FilterModelType> {
 	private _host: UmbControllerHostElement;
 	private _entityType: string | null;
 
 	protected _dataObserver?: UmbObserverController<ItemType[]>;
 
-	#items = new UmbArrayState(<Array<ItemType>>[]);
+	#items = new UmbArrayState<ItemType>([]);
 	public readonly items = this.#items.asObservable();
 
 	#total = new UmbNumberState(0);
 	public readonly total = this.#total.asObservable();
 
-	#selection = new UmbArrayState(<Array<string>>[]);
+	#selection = new UmbArrayState<string>([]);
 	public readonly selection = this.#selection.asObservable();
 
-	#repository?: UmbCollectionRepository;
+	#filter = new UmbObjectState<FilterModelType>({ skip: 0, take: 100 });
+	public readonly filter = this.#filter.asObservable();
+
+	repository?: UmbCollectionRepository;
 
 	/*
 	TODO:
@@ -38,7 +46,7 @@ export class UmbCollectionContext<ItemType> {
 			async (repositoryManifest) => {
 				if (repositoryManifest) {
 					const result = await createExtensionClass<UmbCollectionRepository>(repositoryManifest, [this._host]);
-					this.#repository = result;
+					this.repository = result;
 					this._onRepositoryReady();
 				}
 			}
@@ -114,38 +122,27 @@ export class UmbCollectionContext<ItemType> {
 	// }
 
 	protected async _onRepositoryReady() {
-		if (!this.#repository) {
-			return;
-		}
+		if (!this.repository) return;
+		this.requestCollection();
+	}
 
-		const { data } = await this.#repository.requestCollection();
+	public async requestCollection() {
+		if (!this.repository) return;
+
+		const filter = this.#filter.getValue();
+		const { data } = await this.repository.requestCollection(filter);
 
 		if (data) {
 			this.#total.next(data.total);
 			this.#items.next(data.items);
 		}
-
-		// this._dataObserver?.destroy();
-
-		// const observable = (await this.#repository.requestCollection()).asObservable?.();
-
-		// if (observable) {
-		// 	this._dataObserver = new UmbObserverController(this._host, observable as Observable<DataType[]>, (nodes) => {
-		// 		if (nodes) {
-		// 			this.#data.next(nodes);
-		// 		}
-		// 	});
-		// }
 	}
 
-	/*
-	TODO:
-	public setSearch(value: string) {
-		if (!value) value = '';
-
-		this._search.next(value);
+	// TODO: find better name
+	setFilter(filter: Partial<FilterModelType>) {
+		this.#filter.next({ ...this.#filter.getValue(), ...filter });
+		this.requestCollection();
 	}
-	*/
 }
 
-export const UMB_COLLECTION_CONTEXT_TOKEN = new UmbContextToken<UmbCollectionContext<any>>('UmbCollectionContext');
+export const UMB_COLLECTION_CONTEXT_TOKEN = new UmbContextToken<UmbCollectionContext<any, any>>('UmbCollectionContext');

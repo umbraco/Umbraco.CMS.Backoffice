@@ -13,7 +13,7 @@ import {
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import { UMB_NOTIFICATION_CONTEXT_TOKEN, UmbNotificationContext } from '@umbraco-cms/backoffice/notification';
-import { UmbUserCollectionFilter } from '../types';
+import { UmbUserCollectionFilterModel } from '../types';
 import { UMB_USER_STORE_CONTEXT_TOKEN, UmbUserStore } from './user.store';
 import { UmbUserServerDataSource } from './sources/user.server.data';
 import { UmbUserCollectionServerDataSource } from './sources/user-collection.server.data';
@@ -59,12 +59,12 @@ export class UmbUserRepository
 	}
 
 	// COLLECTION
-	async requestCollection() {
+	async requestCollection(filter: UmbUserCollectionFilterModel) {
 		//TODO: missing observable
-		return this.#collectionSource.getCollection();
+		return this.#collectionSource.filterCollection(filter);
 	}
 
-	async filterCollection(filter: UmbUserCollectionFilter) {
+	async filterCollection(filter: UmbUserCollectionFilterModel) {
 		return this.#collectionSource.filterCollection(filter);
 	}
 

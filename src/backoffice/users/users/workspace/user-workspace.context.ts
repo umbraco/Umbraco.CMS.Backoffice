@@ -60,6 +60,7 @@ export class UmbUserWorkspaceContext
 		// If it went well, then its not new anymore?.
 		this.setIsNew(false);
 	}
+
 	destroy(): void {
 		this.#data.complete();
 	}
