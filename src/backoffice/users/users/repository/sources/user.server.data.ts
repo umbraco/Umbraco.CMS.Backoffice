@@ -4,7 +4,7 @@ import {
 	CreateUserRequestModel,
 	UpdateUserRequestModel,
 	UserPresentationBaseModel,
-	UsersResource,
+	UserResource,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
@@ -31,27 +31,35 @@ export class UmbUserServerDataSource
 	constructor(host: UmbControllerHostElement) {
 		this.#host = host;
 	}
+
+	// Details
 	createScaffold(parentId: string | null): Promise<DataSourceResponse<UserPresentationBaseModel>> {
 		throw new Error('Method not implemented.');
 	}
-	get(unique: string) {
-		return tryExecuteAndNotify(this.#host, UsersResource.getUsersById({ id: unique }));
+
+	get(id: string) {
+		if (!id) throw new Error('Id is missing');
+		return tryExecuteAndNotify(this.#host, UserResource.getUserById({ id }));
 	}
-	insert(data: UserPresentationBaseModel): Promise<any> {
-		throw new Error('Method not implemented.');
+
+	insert(data: CreateUserRequestModel) {
+		return tryExecuteAndNotify(this.#host, UserResource.postUser({ requestBody: data }));
 	}
-	update(unique: string, data: UpdateUserRequestModel): Promise<DataSourceResponse<UserResponseModel>> {
-		if (!unique) throw new Error('Key is missing');
+
+	update(id: string, data: UpdateUserRequestModel) {
+		if (!id) throw new Error('Id is missing');
 
 		return tryExecuteAndNotify(
 			this.#host,
-			UsersResource.putUsersById({
-				id: unique,
+			UserResource.putUserById({
+				id,
 				requestBody: data,
 			})
 		);
 	}
-	delete(unique: string): Promise<DataSourceResponse<undefined>> {
-		throw new Error('Method not implemented.');
+
+	delete(id: string) {
+		if (!id) throw new Error('Id is missing');
+		return tryExecuteAndNotify(this.#host, UserResource.deleteUserById({ id }));
 	}
 }
