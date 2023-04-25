@@ -1,5 +1,5 @@
 import { UmbCollectionDataSource } from '@umbraco-cms/backoffice/repository';
-import { UserResponseModel, UsersResource } from '@umbraco-cms/backoffice/backend-api';
+import { UserResponseModel, UserResource } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
@@ -22,6 +22,6 @@ export class UmbUserCollectionServerDataSource implements UmbCollectionDataSourc
 	}
 
 	getCollection() {
-		return tryExecuteAndNotify(this.#host, UsersResource.getUsers({}));
+		return tryExecuteAndNotify(this.#host, UserResource.getUser({}));
 	}
 }

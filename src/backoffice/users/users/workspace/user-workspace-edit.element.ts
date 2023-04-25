@@ -5,8 +5,6 @@ import { customElement, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import { UmbCurrentUserStore, UMB_CURRENT_USER_STORE_CONTEXT_TOKEN } from '../../current-user/current-user.store';
-import { UmbUserWorkspaceContext } from './user-workspace.context';
 import { UMB_CHANGE_PASSWORD_MODAL } from '@umbraco-cms/backoffice/modal';
 import type { UmbModalContext } from '@umbraco-cms/backoffice/modal';
 import { getLookAndColorFromUserStatus } from '@umbraco-cms/backoffice/utils';
@@ -15,6 +13,8 @@ import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 import { UserResponseModel, UserStateModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbCurrentUserStore, UMB_CURRENT_USER_STORE_CONTEXT_TOKEN } from '../../current-user/current-user.store';
+import { UmbUserWorkspaceContext } from './user-workspace.context';
 
 @customElement('umb-user-workspace-edit')
 export class UmbUserWorkspaceEditElement extends UmbLitElement {
@@ -45,19 +45,12 @@ export class UmbUserWorkspaceEditElement extends UmbLitElement {
 
 	#observeUser() {
 		if (!this.#workspaceContext) return;
-
-		this.#workspaceContext.data.subscribe((user) => {
-			this._user = user;
-		});
+		this.observe(this.#workspaceContext.data, (user) => (this._user = user));
 	}
 
 	#observeCurrentUser() {
 		if (!this.#currentUserStore) return;
-
-		// TODO: do not have static current user service, we need to make a ContextAPI for this.
-		this.observe(this.#currentUserStore.currentUser, (currentUser) => {
-			this._currentUser = currentUser;
-		});
+		this.observe(this.#currentUserStore.currentUser, (currentUser) => (this._currentUser = currentUser));
 	}
 
 	#onUserStatusChange() {
