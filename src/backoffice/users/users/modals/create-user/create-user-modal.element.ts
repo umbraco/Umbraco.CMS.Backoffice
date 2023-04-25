@@ -2,8 +2,6 @@ import { css, html, nothing } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, query, state } from 'lit/decorators.js';
 import { UUIInputPasswordElement } from '@umbraco-ui/uui';
-import { UmbInputPickerUserGroupElement } from '../../../../shared/components/input-user-group/input-user-group.element';
-import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../repository/user.store';
 import { UmbModalBaseElement } from '@umbraco-cms/internal/modal';
 import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import {
@@ -11,12 +9,12 @@ import {
 	UmbNotificationContext,
 	UMB_NOTIFICATION_CONTEXT_TOKEN,
 } from '@umbraco-cms/backoffice/notification';
+import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../repository/user.store';
+import { UmbInputPickerUserGroupElement } from '../../../../shared/components/input-user-group/input-user-group.element';
 
 export type UsersViewType = 'list' | 'grid';
 @customElement('umb-create-user-modal')
 export class UmbCreateUserModalElement extends UmbModalBaseElement {
-	
-
 	@query('#form')
 	private _form!: HTMLFormElement;
 
@@ -171,7 +169,7 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 				  `}
 		</uui-dialog-layout>`;
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`
