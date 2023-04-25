@@ -1,16 +1,16 @@
-import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UUITextStyles } from '@umbraco-ui/uui-css';
+import { css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { UUIPopoverElement } from '@umbraco-ui/uui';
+import { UMB_COLLECTION_CONTEXT_TOKEN } from '../../../shared/components/collection/collection.context';
+import { UmbUserCollectionContext } from './user-collection.context';
 import {
 	UMB_CREATE_USER_MODAL,
 	UMB_INVITE_USER_MODAL,
 	UMB_MODAL_CONTEXT_TOKEN,
 	UmbModalContext,
 } from '@umbraco-cms/backoffice/modal';
-import { css, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
-import { UUIPopoverElement } from '@umbraco-ui/uui';
-import { UmbUserCollectionContext } from './user-collection.context';
-import { UMB_COLLECTION_CONTEXT_TOKEN } from 'src/backoffice/shared/components/collection/collection.context';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-user-collection-header')
 export class UmbUserCollectionHeaderElement extends UmbLitElement {
