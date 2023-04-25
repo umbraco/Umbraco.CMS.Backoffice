@@ -3,14 +3,15 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, query, state } from 'lit/decorators.js';
 import { UUIInputPasswordElement } from '@umbraco-ui/uui';
 import { UmbModalBaseElement } from '@umbraco-cms/internal/modal';
-import type { UserDetails } from '@umbraco-cms/backoffice/models';
 import {
 	UmbNotificationDefaultData,
 	UmbNotificationContext,
 	UMB_NOTIFICATION_CONTEXT_TOKEN,
 } from '@umbraco-cms/backoffice/notification';
+import { UserResponseModel } from '@umbraco-cms/backoffice/backend-api';
 import { UmbUserStore, UMB_USER_STORE_CONTEXT_TOKEN } from '../../repository/user.store';
 import { UmbInputPickerUserGroupElement } from '../../../../shared/components/input-user-group/input-user-group.element';
+import { UmbUserRepository } from '../../repository/user.repository';
 
 export type UsersViewType = 'list' | 'grid';
 @customElement('umb-create-user-modal')
@@ -19,10 +20,15 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 	private _form!: HTMLFormElement;
 
 	@state()
-	private _createdUser?: UserDetails;
+	private _createdUser?: UserResponseModel;
+
+	@state()
+	private _createdUserInitialPassword?: string | null;
 
 	protected _userStore?: UmbUserStore;
 	private _notificationContext?: UmbNotificationContext;
+
+	#userRepository = new UmbUserRepository(this);
 
 	connectedCallback(): void {
 		super.connectedCallback();
@@ -36,7 +42,7 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 		});
 	}
 
-	private _handleSubmit(e: Event) {
+	async #onSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
 		const form = e.target as HTMLFormElement;
@@ -47,22 +53,27 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 
 		const formData = new FormData(form);
 
-		console.log('formData', formData);
-
 		const name = formData.get('name') as string;
 		const email = formData.get('email') as string;
+
 		//TODO: How should we handle pickers forms?
 		const userGroupPicker = form.querySelector('#userGroups') as UmbInputPickerUserGroupElement;
-		const userGroups = userGroupPicker?.value || [];
+		const userGroups = userGroupPicker?.value || ['e5e7f6c8-7f9c-4b5b-8d5d-9e1e5a4f7e4d'];
 
-		this._userStore?.invite(name, email, '', userGroups).then((user) => {
-			if (user) {
-				this._createdUser = user;
-			}
+		const { data } = await this.#userRepository.create({
+			name,
+			email,
+			userName: email,
+			userGroupIds: userGroups,
 		});
+
+		if (data) {
+			this._createdUser = data.user;
+			this._createdUserInitialPassword = data.createData.initialPassword;
+		}
 	}
 
-	private _copyPassword() {
+	#copyPassword() {
 		const passwordInput = this.shadowRoot?.querySelector('#password') as UUIInputPasswordElement;
 		if (!passwordInput || typeof passwordInput.value !== 'string') return;
 
@@ -97,7 +108,7 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 				can share with the user.
 			</p>
 			<uui-form>
-				<form id="form" name="form" @submit="${this._handleSubmit}">
+				<form id="form" name="form" @submit="${this.#onSubmit}">
 					<uui-form-layout-item>
 						<uui-label id="nameLabel" slot="label" for="name" required>Name</uui-label>
 						<uui-input id="name" label="name" type="text" name="name" required></uui-input>
@@ -127,10 +138,10 @@ export class UmbCreateUserModalElement extends UmbModalBaseElement {
 				id="password"
 				label="password"
 				name="password"
-				value="${'PUT GENERATED PASSWORD HERE'}"
+				value="${this._createdUserInitialPassword}"
 				readonly>
 				<!-- The button should be placed in the append part of the input, but that doesn't work with password inputs for now. -->
-				<uui-button slot="prepend" compact label="copy" @click=${this._copyPassword}></uui-button>
+				<uui-button slot="prepend" compact label="copy" @click=${this.#copyPassword}></uui-button>
 			</uui-input-password>
 		</div>`;
 	}

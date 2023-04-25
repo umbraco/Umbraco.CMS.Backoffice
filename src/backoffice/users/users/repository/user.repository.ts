@@ -17,6 +17,11 @@ import { UMB_USER_STORE_CONTEXT_TOKEN, UmbUserStore } from './user.store';
 import { UmbUserServerDataSource } from './sources/user.server.data';
 import { UmbUserCollectionServerDataSource } from './sources/user-collection.server.data';
 
+export interface UmbCreateUserBLahBlah {
+	user: UserResponseModel;
+	createData: CreateUserResponseModel;
+}
+
 export type UmbUserDetailDataSource = UmbDataSource<
 	CreateUserRequestModel,
 	CreateUserResponseModel,
@@ -27,7 +32,7 @@ export type UmbUserDetailDataSource = UmbDataSource<
 // TODO: implement
 export class UmbUserRepository
 	implements
-		UmbDetailRepository<CreateUserRequestModel, UpdateUserRequestModel, UserResponseModel>,
+		UmbDetailRepository<CreateUserRequestModel, UmbCreateUserBLahBlah, UpdateUserRequestModel, UserResponseModel>,
 		UmbCollectionRepository
 {
 	#host: UmbControllerHostElement;
@@ -80,17 +85,24 @@ export class UmbUserRepository
 		const { data: createdData, error } = await this.#detailSource.insert(userRequestData);
 
 		if (createdData && createdData.userId) {
-			const { data: user } = await this.#detailSource.get(createdData?.userId);
+			const { data: user, error } = await this.#detailSource.get(createdData?.userId);
 
 			if (user) {
 				this.#detailStore?.append(user);
-			}
 
-			const notification = { data: { message: `User created` } };
-			this.#notificationContext?.peek('positive', notification);
+				const notification = { data: { message: `User created` } };
+				this.#notificationContext?.peek('positive', notification);
+
+				const hello = {
+					user,
+					createData: createdData,
+				};
+
+				return { data: hello, error };
+			}
 		}
 
-		return { data: createdData, error };
+		return { error };
 	}
 
 	async save(id: string, user: UpdateUserRequestModel) {
