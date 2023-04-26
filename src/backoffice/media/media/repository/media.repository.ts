@@ -232,7 +232,7 @@ export class UmbMediaRepository
 		alert('implement trash');
 	}
 
-	async move(ids: Array<string>, destination: string) {
+	async move(ids: Array<string>, destination: string | null) {
 		// TODO: use backend cli when available.
 		const res = await fetch('/umbraco/management/api/v1/media/move', {
 			method: 'POST',

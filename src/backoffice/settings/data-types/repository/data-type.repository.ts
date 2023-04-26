@@ -313,7 +313,10 @@ export class UmbDataTypeRepository
 		if (!error) {
 			// TODO: Be aware about this responsibility.
 			this.#treeStore?.updateItem(id, { parentId: targetId });
-			this.#treeStore?.updateItem(targetId, { hasChildren: true });
+			// only update the target if its not the root
+			if (targetId) {
+				this.#treeStore?.updateItem(targetId, { hasChildren: true });
+			}
 
 			const notification = { data: { message: `Data type moved` } };
 			this.#notificationContext?.peek('positive', notification);
@@ -322,7 +325,7 @@ export class UmbDataTypeRepository
 		return { error };
 	}
 
-	async copy(id: string, targetId: string) {
+	async copy(id: string, targetId: string | null) {
 		await this.#init;
 		const { data: dataTypeCopyId, error } = await this.#copySource.copy(id, targetId);
 		if (error) return { error };
@@ -330,8 +333,13 @@ export class UmbDataTypeRepository
 		if (dataTypeCopyId) {
 			const { data: dataTypeCopy } = await this.requestById(dataTypeCopyId);
 			if (!dataTypeCopy) throw new Error('Could not find copied data type');
+
+			// TODO: Be aware about this responsibility.
 			this.#treeStore?.appendItems([dataTypeCopy]);
-			this.#treeStore?.updateItem(targetId, { hasChildren: true });
+			// only update the target if its not the root
+			if (targetId) {
+				this.#treeStore?.updateItem(targetId, { hasChildren: true });
+			}
 
 			const notification = { data: { message: `Data type copied` } };
 			this.#notificationContext?.peek('positive', notification);
