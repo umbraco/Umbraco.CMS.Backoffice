@@ -54,7 +54,10 @@ export class UmbTreeElement extends UmbLitElement {
 	set hideTreeRoot(newVal: boolean) {
 		const oldVal = this._hideTreeRoot;
 		this._hideTreeRoot = newVal;
-		if (newVal === true) this.#observeRootItems();
+		if (newVal === true) {
+			this.#observeRootItems();
+		}
+
 		this.requestUpdate('hideTreeRoot', oldVal);
 	}
 
@@ -87,20 +90,24 @@ export class UmbTreeElement extends UmbLitElement {
 		const { asObservable } = await this.#treeContext.requestRootItems();
 
 		if (asObservable) {
-			this.#rootItemsObserver = this.observe(asObservable(), (rootItems) => (this._items = rootItems));
+			this.#rootItemsObserver = this.observe(asObservable(), (rootItems) => {
+				this._items = rootItems;
+				this.requestUpdate();
+			});
 		}
 	}
 
 	render() {
-		return html` ${this.hideTreeRoot ? this.#renderRootItems() : this.#renderTreeRoot()}`;
+		return html` ${this.#renderTreeRoot()} ${this.#renderRootItems()}`;
 	}
 
 	#renderTreeRoot() {
-		if (!this._treeRoot) return nothing;
+		if (this.hideTreeRoot || this._treeRoot === undefined) return nothing;
 		return html` <umb-tree-item .item=${this._treeRoot}></umb-tree-item> `;
 	}
 
 	#renderRootItems() {
+		if (this._items?.length === 0) return nothing;
 		return html`
 			${repeat(
 				this._items,
