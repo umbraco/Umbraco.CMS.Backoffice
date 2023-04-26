@@ -10,12 +10,12 @@ const entityActions: Array<ManifestTypes> = [
 		weight: 1000,
 		meta: {
 			icon: 'umb:add',
-			label: 'Create',
+			label: 'Create...',
 			repositoryAlias: DATA_TYPE_REPOSITORY_ALIAS,
 			api: UmbCreateDataTypeEntityAction,
 		},
 		conditions: {
-			entityTypes: ['data-type'],
+			entityTypes: ['data-type-root', 'data-type'],
 		},
 	},
 	{
