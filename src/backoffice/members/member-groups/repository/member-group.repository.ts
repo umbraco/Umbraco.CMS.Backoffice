@@ -48,16 +48,11 @@ export class UmbMemberGroupRepository
 	async requestTreeRoot() {
 		await this.#init;
 
-		// TODO; we nee our own model for tree items
 		const data = {
-			$type: 'EntityTreeItemResponseModel',
-			id: undefined,
-			parentId: null,
+			id: null,
 			type: 'member-group-root',
 			name: 'Member Groups',
 			icon: 'umb:folder',
-			isFolder: false,
-			isContainer: false,
 			hasChildren: true,
 		};
 

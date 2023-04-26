@@ -73,16 +73,11 @@ export class UmbMediaRepository
 	async requestTreeRoot() {
 		await this.#init;
 
-		// TODO; we nee our own model for tree items
 		const data = {
-			$type: 'EntityTreeItemResponseModel',
-			id: undefined,
-			parentId: null,
+			id: null,
 			type: 'media-root',
 			name: 'Media',
 			icon: 'umb:folder',
-			isFolder: false,
-			isContainer: false,
 			hasChildren: true,
 		};
 

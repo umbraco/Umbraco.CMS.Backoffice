@@ -54,13 +54,11 @@ export class UmbStylesheetRepository
 	async requestTreeRoot() {
 		await this.#init;
 
-		// TODO; we nee our own model for tree items
 		const data = {
-			$type: 'FileSystemTreeItemPresentationModel',
+			path: null,
 			type: 'stylesheet-root',
 			name: 'Stylesheets',
 			icon: 'umb:folder',
-			isFolder: false,
 			hasChildren: true,
 		};
 

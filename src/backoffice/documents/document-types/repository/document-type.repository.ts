@@ -57,16 +57,11 @@ export class UmbDocumentTypeRepository
 	async requestTreeRoot() {
 		await this.#init;
 
-		// TODO; we nee our own model for tree items
 		const data = {
-			$type: 'EntityTreeItemResponseModel',
-			id: undefined,
-			parentId: null,
+			id: null,
 			type: 'document-type-root',
 			name: 'Document Types',
 			icon: 'umb:folder',
-			isFolder: false,
-			isContainer: false,
 			hasChildren: true,
 		};
 

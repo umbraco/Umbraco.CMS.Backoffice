@@ -47,7 +47,7 @@ export class UmbDataTypeRepository
 	#host: UmbControllerHostElement;
 
 	#treeSource: UmbTreeDataSource<FolderTreeItemResponseModel>;
-	#detailSource: UmbDataSource<CreateDataTypeRequestModel, UpdateDataTypeRequestModel, DataTypeResponseModel>;
+	#detailSource: UmbDataSource<CreateDataTypeRequestModel, any, UpdateDataTypeRequestModel, DataTypeResponseModel>;
 	#folderSource: UmbFolderDataSource;
 	#itemSource: UmbItemDataSource<DataTypeItemResponseModel>;
 	#moveSource: UmbMoveDataSource;
@@ -93,15 +93,11 @@ export class UmbDataTypeRepository
 	async requestTreeRoot() {
 		await this.#init;
 
-		// TODO; we nee our own model for tree items
 		const data = {
-			$type: 'FolderTreeItemResponseModel',
 			id: null,
 			type: 'data-type-root',
 			name: 'Data Types',
 			icon: 'umb:folder',
-			isFolder: false,
-			isContainer: false,
 			hasChildren: true,
 		};
 

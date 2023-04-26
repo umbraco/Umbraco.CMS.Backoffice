@@ -60,16 +60,11 @@ export class UmbTemplateRepository
 	async requestTreeRoot() {
 		await this.#init;
 
-		// TODO; we nee our own model for tree items
 		const data = {
-			$type: 'EntityTreeItemResponseModel',
-			id: undefined,
-			parentId: null,
+			id: null,
 			type: 'template-root',
 			name: 'Templates',
 			icon: 'umb:folder',
-			isFolder: false,
-			isContainer: false,
 			hasChildren: true,
 		};
 
