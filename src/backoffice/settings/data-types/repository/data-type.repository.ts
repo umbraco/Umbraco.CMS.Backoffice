@@ -1,4 +1,4 @@
-import { DATA_TYPE_TREE_ROOT_ENTITY_TYPE } from '..';
+import { DATA_TYPE_ROOT_ENTITY_TYPE } from '..';
 import { UmbDataTypeTreeServerDataSource } from './sources/data-type.tree.server.data';
 import { UmbDataTypeMoveServerDataSource } from './sources/data-type-move.server.data';
 import { UmbDataTypeStore, UMB_DATA_TYPE_STORE_CONTEXT_TOKEN } from './data-type.store';
@@ -96,7 +96,7 @@ export class UmbDataTypeRepository
 
 		const data = {
 			id: null,
-			type: DATA_TYPE_TREE_ROOT_ENTITY_TYPE,
+			type: DATA_TYPE_ROOT_ENTITY_TYPE,
 			name: 'Data Types',
 			icon: 'umb:folder',
 			hasChildren: true,
