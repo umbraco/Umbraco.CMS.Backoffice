@@ -176,7 +176,7 @@ export class UmbTreeItemContextBase<TreeItemType extends TreeItemPresentationMod
 			this.host,
 			umbExtensionsRegistry
 				.extensionsOfType('entityAction')
-				.pipe(map((actions) => actions.filter((action) => action.conditions.entityType === this.type))),
+				.pipe(map((actions) => actions.filter((action) => action.conditions.entityTypes.includes(this.type!)))),
 			(actions) => {
 				this.#hasActions.next(actions.length > 0);
 			}

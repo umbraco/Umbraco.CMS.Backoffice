@@ -24,7 +24,7 @@ const entityActions: Array<ManifestEntityAction> = [
 			api: UmbDeleteEntityAction,
 		},
 		conditions: {
-			entityType: DATA_TYPE_ENTITY_TYPE,
+			entityTypes: [DATA_TYPE_ENTITY_TYPE],
 		},
 	},
 	{
@@ -39,7 +39,7 @@ const entityActions: Array<ManifestEntityAction> = [
 			api: UmbDeleteFolderEntityAction,
 		},
 		conditions: {
-			entityType: DATA_TYPE_ENTITY_TYPE,
+			entityTypes: [DATA_TYPE_ENTITY_TYPE],
 		},
 	},
 	{
@@ -54,7 +54,7 @@ const entityActions: Array<ManifestEntityAction> = [
 			api: UmbFolderUpdateEntityAction,
 		},
 		conditions: {
-			entityType: DATA_TYPE_ENTITY_TYPE,
+			entityTypes: [DATA_TYPE_ENTITY_TYPE],
 		},
 	},
 ];

@@ -15,7 +15,7 @@ const entityActions: Array<ManifestTypes> = [
 			api: UmbCreateDataTypeEntityAction,
 		},
 		conditions: {
-			entityType: 'data-type',
+			entityTypes: ['data-type'],
 		},
 	},
 	{
