@@ -14,7 +14,7 @@ export class UmbTreeItemElement extends UmbLitElement {
 		if (!this.item) return nothing;
 		return html`<umb-extension-slot
 			type="treeItem"
-			.filter=${(manifests: ManifestTreeItem) => manifests.conditions.entityType === this.item?.type}
+			.filter=${(manifests: ManifestTreeItem) => manifests.conditions.entityTypes.includes(this.item!.type!)}
 			.props=${{
 				item: this.item,
 			}}></umb-extension-slot>`;

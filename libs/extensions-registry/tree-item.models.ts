@@ -6,5 +6,5 @@ export interface ManifestTreeItem extends ManifestElement {
 }
 
 export interface ConditionsTreeItem {
-	entityType: string;
+	entityTypes: Array<string>;
 }

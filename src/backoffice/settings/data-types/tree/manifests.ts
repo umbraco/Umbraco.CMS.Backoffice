@@ -16,18 +16,8 @@ const treeItem: ManifestTreeItem = {
 	alias: 'Umb.TreeItem.DataType',
 	name: 'Data Type Tree Item',
 	conditions: {
-		entityType: 'data-type',
+		entityTypes: ['data-type-root', 'data-type'],
 	},
 };
 
-const rootTreeItem: ManifestTreeItem = {
-	type: 'treeItem',
-	kind: 'entity',
-	alias: 'Umb.TreeItem.DataTypeRoot',
-	name: 'Data Type Root Tree Item',
-	conditions: {
-		entityType: 'data-type-root',
-	},
-};
-
-export const manifests = [tree, treeItem, rootTreeItem];
+export const manifests = [tree, treeItem];
