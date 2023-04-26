@@ -114,3 +114,11 @@ export interface UmbFilterModel {
 	take?: number;
 	filter?: string;
 }
+
+export interface UmbTreeRootModel {
+	type: string;
+	name: string;
+	id: string | null;
+	hasChildren: boolean;
+	icon?: string;
+}

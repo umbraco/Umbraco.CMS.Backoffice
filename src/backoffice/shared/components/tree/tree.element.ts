@@ -29,6 +29,10 @@ export class UmbTreeElement extends UmbLitElement {
 		this._observeTree();
 	}
 
+	// TODO: what is the best name for this functionatliy?
+	@property({ type: Boolean, reflect: true })
+	hideTreeRoot = false;
+
 	private _selectable = false;
 	@property({ type: Boolean, reflect: true })
 	get selectable() {
@@ -104,8 +108,12 @@ export class UmbTreeElement extends UmbLitElement {
 
 		this.#observeSelection();
 
-		const { data } = await this._treeContext.requestTreeRoot();
-		this._treeRoot = data;
+		if (this.hideTreeRoot) {
+			this.#observeRootItems();
+		} else {
+			const { data } = await this._treeContext.requestTreeRoot();
+			this._treeRoot = data;
+		}
 
 		this.provideContext('umbTreeContext', this._treeContext);
 	}
@@ -133,22 +141,9 @@ export class UmbTreeElement extends UmbLitElement {
 	}
 
 	render() {
-		return html` ${this.#renderTreeRoot()} `;
+		return html` ${this.hideTreeRoot ? this.#renderRootItems() : this.#renderTreeRoot()}`;
 	}
 
-	private _onShowChildren(event: UUIMenuItemEvent) {
-		event.stopPropagation();
-		this.#rootItemsObserver?.destroy();
-		this.#observeRootItems();
-	}
-
-	private _onHideChildren(event: UUIMenuItemEvent) {
-		event.stopPropagation();
-		this.#rootItemsObserver?.destroy();
-	}
-
-	// TODO: check if root has children before settings the has-children attribute
-	// TODO: how do we want to cache the tree? (do we want to rerender every time the user opens the tree)?
 	#renderTreeRoot() {
 		if (!this._treeRoot) return nothing;
 		return html` <umb-tree-item .item=${this._treeRoot}></umb-tree-item> `;

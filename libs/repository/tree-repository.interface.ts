@@ -1,5 +1,6 @@
 import type { Observable } from 'rxjs';
 import { ProblemDetailsModel, TreeItemPresentationModel } from '@umbraco-cms/backoffice/backend-api';
+import type { UmbTreeRootModel } from '@umbraco-cms/backoffice/models';
 
 export interface UmbPagedData<T> {
 	total: number;
@@ -8,10 +9,11 @@ export interface UmbPagedData<T> {
 
 export interface UmbTreeRepository<
 	TreeItemType extends TreeItemPresentationModel,
-	PagedItemType = UmbPagedData<TreeItemType>
+	PagedItemType = UmbPagedData<TreeItemType>,
+	TreeRootType = UmbTreeRootModel
 > {
 	requestTreeRoot: () => Promise<{
-		data?: TreeItemType;
+		data?: TreeRootType;
 		error?: ProblemDetailsModel;
 	}>;
 
