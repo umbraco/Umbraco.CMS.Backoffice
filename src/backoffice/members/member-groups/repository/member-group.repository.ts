@@ -11,7 +11,7 @@ import { EntityTreeItemResponseModel } from '@umbraco-cms/backoffice/backend-api
 
 // TODO => Update type when backend updated
 export class UmbMemberGroupRepository
-	implements UmbTreeRepository<EntityTreeItemResponseModel>, UmbDetailRepository<any, any, any>
+	implements UmbTreeRepository<EntityTreeItemResponseModel>, UmbDetailRepository<any, any, any, any>
 {
 	#init!: Promise<unknown>;
 
