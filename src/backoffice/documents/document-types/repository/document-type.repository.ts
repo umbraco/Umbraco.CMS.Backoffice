@@ -128,7 +128,7 @@ export class UmbDocumentTypeRepository
 	// DETAILS:
 
 	async createScaffold(parentId: string | null) {
-		if (!parentId) throw new Error('Parent id is missing');
+		if (parentId === undefined) throw new Error('Parent id is missing');
 		await this.#init;
 		return this.#detailDataSource.createScaffold(parentId);
 	}

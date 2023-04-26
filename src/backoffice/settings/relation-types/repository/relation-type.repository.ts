@@ -119,12 +119,8 @@ export class UmbRelationTypeRepository
 	// DETAILS:
 
 	async createScaffold(parentId: string | null) {
+		if (parentId === undefined) throw new Error('Parent id is missing');
 		await this.#init;
-
-		if (!parentId) {
-			throw new Error('Parent id is missing');
-		}
-
 		return this.#detailDataSource.createScaffold(parentId);
 	}
 

@@ -32,17 +32,25 @@ export class UmbStylesheetTreeServerDataSource implements UmbTreeDataSource<File
 
 	/**
 	 * Fetches the children of a given stylesheet path from the server
-	 * @param {(string | undefined)} path
+	 * @param {(string | null)} path
 	 * @return {*}
 	 * @memberof UmbStylesheetTreeServerDataSource
 	 */
-	async getChildrenOf(path: string | undefined) {
-		return tryExecuteAndNotify(
-			this.#host,
-			StylesheetResource.getTreeStylesheetChildren({
-				path,
-			})
-		);
+	async getChildrenOf(path: string | null) {
+		if (path === undefined) throw new Error('Path is missing');
+
+		/* TODO: should we make getRootItems() internal 
+		so it only is a server concern that there are two endpoints? */
+		if (path === null) {
+			return this.getRootItems();
+		} else {
+			return tryExecuteAndNotify(
+				this.#host,
+				StylesheetResource.getTreeStylesheetChildren({
+					path,
+				})
+			);
+		}
 	}
 
 	/**
