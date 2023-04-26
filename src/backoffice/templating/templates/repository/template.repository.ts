@@ -21,13 +21,13 @@ import {
 export class UmbTemplateRepository
 	implements
 		UmbTreeRepository<EntityTreeItemResponseModel>,
-		UmbDetailRepository<CreateTemplateRequestModel, UpdateTemplateRequestModel, TemplateResponseModel>
+		UmbDetailRepository<CreateTemplateRequestModel, any, UpdateTemplateRequestModel, TemplateResponseModel>
 {
 	#init;
 	#host: UmbControllerHostElement;
 
 	#treeDataSource: UmbTreeDataSource<EntityTreeItemResponseModel>;
-	#detailDataSource: UmbDataSource<CreateTemplateRequestModel, UpdateTemplateRequestModel, TemplateResponseModel>;
+	#detailDataSource: UmbDataSource<CreateTemplateRequestModel, any, UpdateTemplateRequestModel, TemplateResponseModel>;
 
 	#treeStore?: UmbTemplateTreeStore;
 	#store?: UmbTemplateStore;
