@@ -16,7 +16,7 @@ import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco
 export class UmbRelationTypeRepository
 	implements
 		UmbTreeRepository<any>,
-		UmbDetailRepository<CreateRelationTypeRequestModel, UpdateRelationTypeRequestModel, RelationTypeResponseModel>
+		UmbDetailRepository<CreateRelationTypeRequestModel, any, UpdateRelationTypeRequestModel, RelationTypeResponseModel>
 {
 	#init!: Promise<unknown>;
 

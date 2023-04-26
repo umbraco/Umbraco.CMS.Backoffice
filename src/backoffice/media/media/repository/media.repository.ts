@@ -19,7 +19,7 @@ type ItemDetailType = MediaDetails;
 export class UmbMediaRepository
 	implements
 		UmbTreeRepository<EntityTreeItemResponseModel>,
-		UmbDetailRepository<CreateMediaRequestModel, UpdateMediaRequestModel, MediaDetails>
+		UmbDetailRepository<CreateMediaRequestModel, any, UpdateMediaRequestModel, MediaDetails>
 {
 	#host: UmbControllerHostElement;
 

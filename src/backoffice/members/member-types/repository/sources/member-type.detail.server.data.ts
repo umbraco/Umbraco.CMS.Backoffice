@@ -9,7 +9,7 @@ import { UmbDetailRepository } from '@umbraco-cms/backoffice/repository';
  * @class UmbMemberTypeDetailServerDataSource
  * @implements {MemberTypeDetailDataSource}
  */
-export class UmbMemberTypeDetailServerDataSource implements UmbDetailRepository<any, any, any> {
+export class UmbMemberTypeDetailServerDataSource implements UmbDetailRepository<any, any, any, any> {
 	#host: UmbControllerHostElement;
 
 	constructor(host: UmbControllerHostElement) {
