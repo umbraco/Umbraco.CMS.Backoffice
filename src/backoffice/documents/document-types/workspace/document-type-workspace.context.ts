@@ -1,5 +1,5 @@
+import { UmbContentTypePropertyStructureManager } from '@umbraco-cms/backoffice/content-type';
 import { UmbDocumentTypeRepository } from '../repository/document-type.repository';
-import { UmbWorkspacePropertyStructureManager } from '../../../shared/components/workspace/workspace-context/workspace-structure-manager.class';
 import { UmbEntityWorkspaceContextInterface, UmbWorkspaceContext } from '@umbraco-cms/backoffice/workspace';
 import type {
 	ContentTypeCompositionModel,
@@ -39,7 +39,7 @@ export class UmbDocumentTypeWorkspaceContext
 	constructor(host: UmbControllerHostElement) {
 		super(host, new UmbDocumentTypeRepository(host));
 
-		this.structure = new UmbWorkspacePropertyStructureManager(this.host, this.repository);
+		this.structure = new UmbContentTypePropertyStructureManager(this.host, this.repository);
 
 		// General for content types:
 		this.data = this.structure.rootDocumentType;
