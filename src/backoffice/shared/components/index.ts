@@ -42,8 +42,6 @@ import './input-template/input-template.element';
 
 import './property-type-based-property/property-type-based-property.element';
 
-import './ref-property-editor-ui/ref-property-editor-ui.element';
-
 import './section/section-main/section-main.element';
 import './section/section-sidebar/section-sidebar.element';
 import './section/section.element';
@@ -72,5 +70,6 @@ import './template-card/template-card.element';
 import './code-editor';
 
 import './property-editor-config/property-editor-config.element';
+import './ref-property-editor-ui/ref-property-editor-ui.element';
 
 export const manifests = [...debugManifests];
