@@ -52,6 +52,8 @@ import './tree/tree.element';
 import './tree/entity-tree-item/entity-tree-item.element';
 import './tree/tree-menu-item/tree-menu-item.element';
 
+import './entity-bulk-action/entity-bulk-action.element';
+
 import './menu/menu-item-base/menu-item-base.element';
 
 import './variantable-property/variantable-property.element';
@@ -71,5 +73,7 @@ import './code-editor';
 
 import './property-editor-config/property-editor-config.element';
 import './ref-property-editor-ui/ref-property-editor-ui.element';
+
+import './tooltip-menu/tooltip-menu.element';
 
 export const manifests = [...debugManifests];
