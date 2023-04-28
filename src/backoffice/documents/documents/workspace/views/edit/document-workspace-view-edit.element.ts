@@ -2,8 +2,8 @@ import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { UmbContentTypeContainerStructureHelper } from '@umbraco-cms/backoffice/content-type';
 import { UmbDocumentWorkspaceContext } from '../../document-workspace.context';
-import { UmbWorkspaceContainerStructureHelper } from '../../../../../shared/components/workspace/workspace-context/workspace-container-structure-helper.class';
 import type { UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from '@umbraco-cms/internal/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { PropertyTypeContainerResponseModelBaseModel } from '@umbraco-cms/backoffice/backend-api';
@@ -33,7 +33,7 @@ export class UmbDocumentWorkspaceViewEditElement
 
 	private _workspaceContext?: UmbDocumentWorkspaceContext;
 
-	private _tabsStructureHelper = new UmbWorkspaceContainerStructureHelper(this);
+	private _tabsStructureHelper = new UmbContentTypeContainerStructureHelper(this);
 
 	constructor() {
 		super();

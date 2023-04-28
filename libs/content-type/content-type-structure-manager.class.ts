@@ -22,8 +22,8 @@ export type PropertyContainerTypes = 'Group' | 'Tab';
 // TODO: get this type from the repository, or use some generic type.
 type T = DocumentTypeResponseModel;
 
-// TODO: make general interface for NodeTypeRepository, to replace UmbDocumentTypeRepository:
-export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepository = UmbDocumentTypeRepository> {
+// TODO: make general interface for ContentTypeRepository, to replace UmbDocumentTypeRepository:
+export class UmbContentTypePropertyStructureManager<R extends UmbDocumentTypeRepository = UmbDocumentTypeRepository> {
 	#host: UmbControllerHostElement;
 	#init!: Promise<unknown>;
 

@@ -2,15 +2,13 @@ import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { UmbWorkspacePropertyStructureHelper } from '../../../../../shared/components/workspace/workspace-context/workspace-property-structure-helper.class';
+import { UmbContentTypePropertyStructureHelper } from '../../../../../../../libs/workspace/content-type-property-structure-helper.class';
 import { PropertyContainerTypes } from '../../../../../shared/components/workspace/workspace-context/workspace-structure-manager.class';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DocumentTypePropertyTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
 
 @customElement('umb-document-workspace-view-edit-properties')
 export class UmbDocumentWorkspaceViewEditPropertiesElement extends UmbLitElement {
-	
-
 	@property({ type: String, attribute: 'container-name', reflect: false })
 	public get containerName(): string | undefined {
 		return this._propertyStructureHelper.getContainerName();
@@ -27,7 +25,7 @@ export class UmbDocumentWorkspaceViewEditPropertiesElement extends UmbLitElement
 		this._propertyStructureHelper.setContainerType(value);
 	}
 
-	_propertyStructureHelper = new UmbWorkspacePropertyStructureHelper(this);
+	_propertyStructureHelper = new UmbContentTypePropertyStructureHelper(this);
 
 	@state()
 	_propertyStructure: Array<DocumentTypePropertyTypeResponseModel> = [];
@@ -47,7 +45,7 @@ export class UmbDocumentWorkspaceViewEditPropertiesElement extends UmbLitElement
 			(property) => html`<umb-variantable-property class="property" .property=${property}></umb-variantable-property> `
 		);
 	}
-	
+
 	static styles = [
 		UUITextStyles,
 		css`

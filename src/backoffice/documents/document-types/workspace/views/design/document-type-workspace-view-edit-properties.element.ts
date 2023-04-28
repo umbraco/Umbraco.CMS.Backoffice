@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { UmbSorterController, UmbSorterConfig } from '@umbraco-cms/backoffice/sorter';
-import { UmbWorkspacePropertyStructureHelper } from '../../../../../shared/components/workspace/workspace-context/workspace-property-structure-helper.class';
+import { UmbContentTypePropertyStructureHelper } from '../../../../../../../libs/workspace/content-type-property-structure-helper.class';
 import { PropertyContainerTypes } from '../../../../../shared/components/workspace/workspace-context/workspace-structure-manager.class';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { DocumentTypePropertyTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
@@ -75,7 +75,7 @@ export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitEle
 		this._propertyStructureHelper.setContainerType(value);
 	}
 
-	_propertyStructureHelper = new UmbWorkspacePropertyStructureHelper(this);
+	_propertyStructureHelper = new UmbContentTypePropertyStructureHelper(this);
 
 	@state()
 	_propertyStructure: Array<DocumentTypePropertyTypeResponseModel> = [];
