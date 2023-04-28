@@ -3,7 +3,7 @@ import pluginJson from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { readdirSync, lstatSync } from 'fs';
 
-const exclude = ['shared', 'themes'];
+const exclude = ['shared'];
 
 const corePackages = readdirSync('./src/backoffice').filter((corePackage) =>
 	lstatSync(`src/backoffice/${corePackage}`).isDirectory()
