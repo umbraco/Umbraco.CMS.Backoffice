@@ -1,11 +1,10 @@
+import { UmbDetailRepository } from '../repository';
 import { UmbId } from '@umbraco-cms/backoffice/id';
-import { UmbDocumentTypeRepository } from '../../../../documents/document-types/repository/document-type.repository';
 import {
-	DocumentTypeResponseModel,
 	DocumentTypePropertyTypeResponseModel,
 	PropertyTypeContainerResponseModelBaseModel,
-	ContentTypeResponseModelBaseDocumentTypePropertyTypeResponseModelDocumentTypePropertyTypeContainerResponseModel,
 	PropertyTypeResponseModelBaseModel,
+	DocumentTypeResponseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement, UmbControllerInterface } from '@umbraco-cms/backoffice/controller';
 import {
@@ -19,15 +18,14 @@ import {
 
 export type PropertyContainerTypes = 'Group' | 'Tab';
 
-// TODO: get this type from the repository, or use some generic type.
 type T = DocumentTypeResponseModel;
 
-// TODO: make general interface for NodeTypeRepository, to replace UmbDocumentTypeRepository:
-export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepository = UmbDocumentTypeRepository> {
+// TODO: get this type from the repository, or use some generic type.
+export class UmbContentTypePropertyStructureManager<R extends UmbDetailRepository<T> = UmbDetailRepository<T>> {
 	#host: UmbControllerHostElement;
 	#init!: Promise<unknown>;
 
-	#documentTypeRepository: R;
+	#contentTypeRepository: R;
 
 	#rootDocumentTypeId?: string;
 	#documentTypeObservers = new Array<UmbControllerInterface>();
@@ -41,14 +39,10 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 
 	constructor(host: UmbControllerHostElement, typeRepository: R) {
 		this.#host = host;
-		this.#documentTypeRepository = typeRepository;
+		this.#contentTypeRepository = typeRepository;
 
 		new UmbObserverController(host, this.documentTypes, (documentTypes) => {
 			documentTypes.forEach((documentType) => {
-				// We could cache by docType Key?
-				// TODO: how do we ensure a container goes away?
-
-				//this._initDocumentTypeContainers(documentType);
 				this._loadDocumentTypeCompositions(documentType);
 			});
 		});
@@ -77,7 +71,7 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 
 		if (!parentId) return {};
 
-		const { data } = await this.#documentTypeRepository.createScaffold(parentId);
+		const { data } = await this.#contentTypeRepository.createScaffold(parentId);
 		if (!data) return {};
 
 		this.#rootDocumentTypeId = data.id;
@@ -96,25 +90,23 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 	private async _loadType(id?: string) {
 		if (!id) return {};
 
-		const { data } = await this.#documentTypeRepository.requestById(id);
+		const { data } = await this.#contentTypeRepository.requestById(id);
 		if (!data) return {};
 
 		await this._observeDocumentType(data);
 		return { data };
 	}
 
-	public async _observeDocumentType(
-		data: ContentTypeResponseModelBaseDocumentTypePropertyTypeResponseModelDocumentTypePropertyTypeContainerResponseModel
-	) {
+	public async _observeDocumentType(data: T) {
 		if (!data.id) return;
 
 		// Load inherited and composed types:
 		this._loadDocumentTypeCompositions(data);
 
 		this.#documentTypeObservers.push(
-			new UmbObserverController(this.#host, await this.#documentTypeRepository.byId(data.id), (docType) => {
+			new UmbObserverController(this.#host, await this.#contentTypeRepository.byId(data.id), (docType) => {
 				if (docType) {
-					// TODO: Handle if there was changes made to the specific document type in this context.
+					// TODO: Handle if there was changes made to the owner document type in this context.
 					/*
 					possible easy solutions could be to notify user wether they want to update(Discard the changes to accept the new ones).
 					 */
@@ -153,13 +145,13 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 	// We could move the actions to another class?
 
 	async createContainer(
-		documentTypeKey: string | null,
+		contentTypeId: string | null,
 		parentId: string | null = null,
 		type: PropertyContainerTypes = 'Group',
 		sortOrder?: number
 	) {
 		await this.#init;
-		documentTypeKey = documentTypeKey ?? this.#rootDocumentTypeId!;
+		contentTypeId = contentTypeId ?? this.#rootDocumentTypeId!;
 
 		const container: PropertyTypeContainerResponseModelBaseModel = {
 			id: UmbId.new(),
@@ -169,10 +161,10 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 			sortOrder: sortOrder ?? 0,
 		};
 
-		const containers = [...(this.#documentTypes.getValue().find((x) => x.id === documentTypeKey)?.containers ?? [])];
+		const containers = [...(this.#documentTypes.getValue().find((x) => x.id === contentTypeId)?.containers ?? [])];
 		containers.push(container);
 
-		this.#documentTypes.updateOne(documentTypeKey, { containers });
+		this.#documentTypes.updateOne(contentTypeId, { containers });
 
 		return container;
 	}
@@ -328,7 +320,7 @@ export class UmbWorkspacePropertyStructureManager<R extends UmbDocumentTypeRepos
 		});
 	}
 
-	// TODO: Maybe this must take parentId into account as well?
+	// In future this might need to take parentName(parentId lookup) into account as well? otherwise containers that share same name and type will always be merged, but their position might be different and they should nto be merged.
 	containersByNameAndType(name: string, containerType: PropertyContainerTypes) {
 		return this.#containers.getObservablePart((data) => {
 			return data.filter((x) => x.name === name && x.type === containerType);
