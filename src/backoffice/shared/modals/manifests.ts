@@ -55,6 +55,12 @@ const modals: Array<ManifestModal> = [
 		name: 'Embedded Media Modal',
 		loader: () => import('./embedded-media/embedded-media-modal.element'),
 	},
+	{
+		type: 'modal',
+		alias: 'Umb.Modal.PropertyEditorUIPicker',
+		name: 'Property Editor UI Picker Modal',
+		loader: () => import('./property-editor-ui-picker/property-editor-ui-picker-modal.element'),
+	},
 ];
 
 export const manifests = [...modals];
