@@ -6,8 +6,8 @@ import { UmbContentTypeContainerStructureHelper } from '@umbraco-cms/backoffice/
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { PropertyTypeContainerResponseModelBaseModel } from '@umbraco-cms/backoffice/backend-api';
 import './document-type-workspace-view-edit-properties.element';
-import { UmbEntityWorkspaceManager } from 'src/backoffice/shared/components/workspace/workspace-context/entity-manager-controller';
 import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
+import { UmbDocumentTypeWorkspaceContext } from '../../document-type-workspace.context';
 
 @customElement('umb-document-type-workspace-view-edit-tab')
 export class UmbDocumentTypeWorkspaceViewEditTabElement extends UmbLitElement {
@@ -57,9 +57,9 @@ export class UmbDocumentTypeWorkspaceViewEditTabElement extends UmbLitElement {
 	constructor() {
 		super();
 
-		this.consumeContext(this, UMB_ENTITY_WORKSPACE_CONTEXT, (context) => {
-			this._groupStructureHelper.setStructureManager(context.structure);
-		}
+		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (context) => {
+			this._groupStructureHelper.setStructureManager((context as UmbDocumentTypeWorkspaceContext).structure);
+		});
 		this.observe(this._groupStructureHelper.containers, (groups) => {
 			this._groups = groups;
 		});

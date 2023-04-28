@@ -50,6 +50,7 @@ export class UmbDocumentTypeWorkspaceViewEditElement
 
 		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (workspaceContext) => {
 			this._workspaceContext = workspaceContext as UmbDocumentTypeWorkspaceContext;
+			this._tabsStructureHelper.setStructureManager((workspaceContext as UmbDocumentTypeWorkspaceContext).structure);
 			this._observeRootGroups();
 		});
 	}

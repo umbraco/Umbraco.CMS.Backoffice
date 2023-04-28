@@ -3,9 +3,11 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { UmbContentTypeContainerStructureHelper } from '@umbraco-cms/backoffice/content-type';
+import { UmbDocumentWorkspaceContext } from '../../document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { PropertyTypeContainerResponseModelBaseModel } from '@umbraco-cms/backoffice/backend-api';
 import './document-workspace-view-edit-properties.element';
+import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 
 @customElement('umb-document-workspace-view-edit-tab')
 export class UmbDocumentWorkspaceViewEditTabElement extends UmbLitElement {
@@ -42,6 +44,9 @@ export class UmbDocumentWorkspaceViewEditTabElement extends UmbLitElement {
 	constructor() {
 		super();
 
+		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (workspaceContext) => {
+			this._groupStructureHelper.setStructureManager((workspaceContext as UmbDocumentWorkspaceContext).structure);
+		});
 		this.observe(this._groupStructureHelper.containers, (groups) => {
 			this._groups = groups;
 		});

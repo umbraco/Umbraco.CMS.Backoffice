@@ -2,10 +2,11 @@ import { css, html } from 'lit';
 import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { UmbContentTypePropertyStructureHelper } from '../../../../../../../libs/workspace/content-type-property-structure-helper.class';
-import { PropertyContainerTypes } from '../../../../../shared/components/workspace/workspace-context/workspace-structure-manager.class';
+import { UmbContentTypePropertyStructureHelper, PropertyContainerTypes } from '@umbraco-cms/backoffice/content-type';
+import { UmbDocumentWorkspaceContext } from '../../document-workspace.context';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import { DocumentTypePropertyTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import { PropertyTypeResponseModelBaseModel } from '@umbraco-cms/backoffice/backend-api';
+import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 
 @customElement('umb-document-workspace-view-edit-properties')
 export class UmbDocumentWorkspaceViewEditPropertiesElement extends UmbLitElement {
@@ -28,11 +29,14 @@ export class UmbDocumentWorkspaceViewEditPropertiesElement extends UmbLitElement
 	_propertyStructureHelper = new UmbContentTypePropertyStructureHelper(this);
 
 	@state()
-	_propertyStructure: Array<DocumentTypePropertyTypeResponseModel> = [];
+	_propertyStructure: Array<PropertyTypeResponseModelBaseModel> = [];
 
 	constructor() {
 		super();
 
+		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (workspaceContext) => {
+			this._propertyStructureHelper.setStructureManager((workspaceContext as UmbDocumentWorkspaceContext).structure);
+		});
 		this.observe(this._propertyStructureHelper.propertyStructure, (propertyStructure) => {
 			this._propertyStructure = propertyStructure;
 		});

@@ -3,13 +3,17 @@ import { UUITextStyles } from '@umbraco-ui/uui-css/lib';
 import { customElement, property, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { UmbContentTypePropertyStructureHelper, PropertyContainerTypes } from '@umbraco-cms/backoffice/content-type';
+import { UmbDocumentTypeWorkspaceContext } from '../../document-type-workspace.context';
 import { UmbSorterController, UmbSorterConfig } from '@umbraco-cms/backoffice/sorter';
-import { UmbContentTypePropertyStructureHelper } from '../../../../../../../libs/workspace/content-type-property-structure-helper.class';
-import { PropertyContainerTypes } from '../../../../../shared/components/workspace/workspace-context/workspace-structure-manager.class';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import { DocumentTypePropertyTypeResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import {
+	DocumentTypePropertyTypeResponseModel,
+	PropertyTypeResponseModelBaseModel,
+} from '@umbraco-cms/backoffice/backend-api';
 import { UMB_MODAL_CONTEXT_TOKEN, UMB_PROPERTY_SETTINGS_MODAL } from '@umbraco-cms/backoffice/modal';
 import './document-type-workspace-view-edit-property.element';
+import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/context-api';
 
 const SORTER_CONFIG: UmbSorterConfig<DocumentTypePropertyTypeResponseModel> = {
 	compareElementToModel: (element: HTMLElement, model: DocumentTypePropertyTypeResponseModel) => {
@@ -78,13 +82,18 @@ export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitEle
 	_propertyStructureHelper = new UmbContentTypePropertyStructureHelper(this);
 
 	@state()
-	_propertyStructure: Array<DocumentTypePropertyTypeResponseModel> = [];
+	_propertyStructure: Array<PropertyTypeResponseModelBaseModel> = [];
 
 	#modalContext?: typeof UMB_MODAL_CONTEXT_TOKEN.TYPE;
 
 	constructor() {
 		super();
 
+		this.consumeContext(UMB_ENTITY_WORKSPACE_CONTEXT, (workspaceContext) => {
+			this._propertyStructureHelper.setStructureManager(
+				(workspaceContext as UmbDocumentTypeWorkspaceContext).structure
+			);
+		});
 		this.consumeContext(UMB_MODAL_CONTEXT_TOKEN, (instance) => (this.#modalContext = instance));
 		this.observe(this._propertyStructureHelper.propertyStructure, (propertyStructure) => {
 			this._propertyStructure = propertyStructure;
