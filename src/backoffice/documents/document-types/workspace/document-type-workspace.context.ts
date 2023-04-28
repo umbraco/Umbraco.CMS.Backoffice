@@ -1,10 +1,6 @@
 import { UmbContentTypePropertyStructureManager } from '@umbraco-cms/backoffice/content-type';
 import { UmbDocumentTypeRepository } from '../repository/document-type.repository';
-import {
-	UmbEntityWorkspaceContextInterface,
-	UmbWorkspaceContext,
-	UmbEntityWorkspaceContextInterface,
-} from '@umbraco-cms/backoffice/workspace';
+import { UmbWorkspaceContext, UmbEntityWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
 import type {
 	ContentTypeCompositionModel,
 	ContentTypeSortModel,
