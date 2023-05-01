@@ -1,7 +1,7 @@
 import { UmbWorkspaceContext } from '../../../shared/components/workspace/workspace-context/workspace-context';
 import { UmbMemberRepository } from '../repository/member.repository';
+import type { MemberDetails } from '../types';
 import { UmbEntityWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
-import type { MemberDetails } from '@umbraco-cms/backoffice/models';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 
 export class UmbMemberWorkspaceContext

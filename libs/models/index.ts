@@ -44,10 +44,6 @@ export interface MemberGroupDetails extends EntityTreeItemResponseModel {
 	id: string; // TODO: Remove this when the backend is fixed
 }
 
-export interface MemberDetails extends EntityTreeItemResponseModel {
-	id: string; // TODO: Remove this when the backend is fixed
-}
-
 export interface SwatchDetails {
 	label: string;
 	value: string;
