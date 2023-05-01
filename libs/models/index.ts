@@ -19,7 +19,7 @@ export type BaseEntity = {
 	name?: string;
 };
 
-export interface SwatchDetails {
+export interface UmbSwatchDetails {
 	label: string;
 	value: string;
 }
