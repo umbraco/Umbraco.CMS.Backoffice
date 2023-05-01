@@ -54,13 +54,6 @@ export interface UserGroupEntity extends Entity {
 	type: 'user-group';
 }
 
-export interface UserGroupDetails extends UserGroupEntity {
-	sections: Array<string>;
-	contentStartNode?: string;
-	mediaStartNode?: string;
-	permissions: Array<string>;
-}
-
 // Media Types
 
 export interface MediaTypeDetails extends FolderTreeItemResponseModel {

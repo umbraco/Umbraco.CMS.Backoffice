@@ -13,7 +13,7 @@ import {
 } from '../../../shared/components/table';
 import { UmbUserGroupStore, UMB_USER_GROUP_STORE_CONTEXT_TOKEN } from '../repository/user-group.store';
 
-import type { UserGroupDetails } from '@umbraco-cms/backoffice/models';
+import type { UserGroupDetails } from 'src/backoffice/users/user-groups/types';
 
 import './user-group-table-name-column-layout.element';
 //import '../../user-section/views/user-groups/user-group-table-sections-column-layout.element';
