@@ -48,17 +48,6 @@ export interface MemberDetails extends EntityTreeItemResponseModel {
 	id: string; // TODO: Remove this when the backend is fixed
 }
 
-// Document Blueprint
-export interface DocumentBlueprintDetails {
-	id: string;
-	name: string;
-	type: 'document-blueprint';
-	properties: Array<any>;
-	data: Array<any>;
-	icon: string;
-	documentTypeKey: string;
-}
-
 export interface SwatchDetails {
 	label: string;
 	value: string;
