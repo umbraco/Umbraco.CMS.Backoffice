@@ -28,15 +28,17 @@ export class UmbModalElementPickerBase<T> extends UmbModalBaseElement<UmbPickerM
 	}
 
 	/* TODO: Write test for this select/deselect method. */
-	handleSelection(key: string) {
+	handleSelection(id: string | undefined) {
+		if (!id) throw new Error('No key provided');
+
 		if (this.data?.multiple) {
-			if (this.isSelected(key)) {
-				this.selection = this.selection.filter((selectedKey) => selectedKey !== key);
+			if (this.isSelected(id)) {
+				this.selection = this.selection.filter((selectedKey) => selectedKey !== id);
 			} else {
-				this.selection.push(key);
+				this.selection.push(id);
 			}
 		} else {
-			this.selection = [key];
+			this.selection = [id];
 		}
 
 		this.requestUpdate('_selection');
