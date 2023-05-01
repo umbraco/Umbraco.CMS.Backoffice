@@ -1,4 +1,4 @@
-import { UserGroupEntity } from '../../../../libs/models';
+import type { UserGroupEntity } from '@umbraco-cms/backoffice/models';
 
 export interface UserGroupDetails extends UserGroupEntity {
 	sections: Array<string>;

@@ -1,4 +1,4 @@
-import type { DocumentBlueprintDetails } from 'src/backoffice/documents/document-blueprints/types';
+import type { DocumentBlueprintDetails } from './types';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbArrayState } from '@umbraco-cms/backoffice/observable-api';
 import { UmbStoreBase } from '@umbraco-cms/backoffice/store';

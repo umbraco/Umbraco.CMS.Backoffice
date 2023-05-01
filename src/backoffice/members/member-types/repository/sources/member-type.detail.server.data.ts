@@ -1,6 +1,6 @@
+import type { MemberTypeDetails } from '../../types';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
-import type { MemberTypeDetails } from 'src/backoffice/members/member-types/types';
 import { UmbDataSource } from '@umbraco-cms/backoffice/repository';
 
 /**
