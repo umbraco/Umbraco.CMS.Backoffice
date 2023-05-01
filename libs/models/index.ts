@@ -61,13 +61,6 @@ export interface UserGroupDetails extends UserGroupEntity {
 	permissions: Array<string>;
 }
 
-// TODO: Make sure Entity Type/interface.
-export interface MemberTypeDetails extends EntityTreeItemResponseModel {
-	id: string; // TODO: Remove this when the backend is fixed
-	alias: string;
-	properties: [];
-}
-
 // Media Types
 
 export interface MediaTypeDetails extends FolderTreeItemResponseModel {

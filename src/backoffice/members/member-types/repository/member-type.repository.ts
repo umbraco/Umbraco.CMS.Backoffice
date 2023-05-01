@@ -6,7 +6,7 @@ import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import { UmbTreeDataSource, UmbDetailRepository, UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
-import type { MemberTypeDetails } from '@umbraco-cms/backoffice/models';
+import type { MemberTypeDetails } from 'src/backoffice/members/member-types/types';
 
 // TODO => use correct type when available
 type ItemType = any;

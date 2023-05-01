@@ -2,7 +2,7 @@ import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbStoreBase } from '@umbraco-cms/backoffice/store';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
 import { UmbArrayState } from '@umbraco-cms/backoffice/observable-api';
-import type { MemberTypeDetails } from '@umbraco-cms/backoffice/models';
+import type { MemberTypeDetails } from 'src/backoffice/members/member-types/types';
 
 /**
  * @export
