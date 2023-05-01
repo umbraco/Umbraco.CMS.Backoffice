@@ -23,14 +23,6 @@ export const handlers = [
 		return res(ctx.status(200), ctx.json(userGroup));
 	}),
 
-	rest.get('/umbraco/backoffice/user-groups/getByKeys', (req, res, ctx) => {
-		const ids = req.url.searchParams.getAll('id');
-		if (ids.length === 0) return;
-		const userGroups = umbUserGroupsData.getByIds(ids);
-
-		return res(ctx.status(200), ctx.json(userGroups));
-	}),
-
 	rest.post<Array<UserGroupDetails>>('/umbraco/backoffice/user-groups/save', async (req, res, ctx) => {
 		const data = await req.json();
 		if (!data) return;

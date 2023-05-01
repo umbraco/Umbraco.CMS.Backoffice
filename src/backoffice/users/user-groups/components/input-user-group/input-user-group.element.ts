@@ -18,10 +18,11 @@ export class UmbInputPickerUserGroupElement extends UmbInputListBaseElement {
 		this.pickerToken = UMB_USER_GROUP_PICKER_MODAL;
 		this.consumeContext(UMB_USER_GROUP_STORE_CONTEXT_TOKEN, (usersContext) => {
 			this._userGroupStore = usersContext;
-			this._observeUserGroups();
+			//this._observeUserGroups();
 		});
 	}
 
+	/*
 	private _observeUserGroups() {
 		if (this.value.length > 0 && this._userGroupStore) {
 			this.observe(this._userGroupStore.getByKeys(this.value), (userGroups) => (this._userGroups = userGroups));
@@ -29,9 +30,10 @@ export class UmbInputPickerUserGroupElement extends UmbInputListBaseElement {
 			this._userGroups = [];
 		}
 	}
+	*/
 
 	selectionUpdated() {
-		this._observeUserGroups();
+		//this._observeUserGroups();
 		this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true }));
 	}
 
