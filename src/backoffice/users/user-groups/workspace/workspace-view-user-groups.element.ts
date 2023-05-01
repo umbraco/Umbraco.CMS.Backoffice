@@ -1,7 +1,6 @@
 import { UUITextStyles } from '@umbraco-ui/uui-css';
 import { css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-
 import {
 	UmbTableColumn,
 	UmbTableConfig,
@@ -12,12 +11,11 @@ import {
 	UmbTableSelectedEvent,
 } from '../../../shared/components/table';
 import { UmbUserGroupStore, UMB_USER_GROUP_STORE_CONTEXT_TOKEN } from '../repository/user-group.store';
-
-import type { UserGroupDetails } from 'src/backoffice/users/user-groups/types';
+import type { UserGroupDetails } from '../types';
+import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 import './user-group-table-name-column-layout.element';
 //import '../../user-section/views/user-groups/user-group-table-sections-column-layout.element';
-import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
 @customElement('umb-workspace-view-user-groups')
 export class UmbWorkspaceViewUserGroupsElement extends UmbLitElement {
