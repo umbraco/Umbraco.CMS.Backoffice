@@ -1,7 +1,8 @@
-import type { Entity } from '@umbraco-cms/backoffice/models';
+import type { UmbEntityBase } from '@umbraco-cms/backoffice/models';
 
-export interface UserGroupEntity extends Entity {
+export interface UserGroupEntity extends UmbEntityBase {
 	type: 'user-group';
+	icon?: string;
 }
 
 export interface UserGroupDetails extends UserGroupEntity {

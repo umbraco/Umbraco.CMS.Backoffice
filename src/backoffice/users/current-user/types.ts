@@ -1,6 +1,6 @@
-import type { Entity } from '@umbraco-cms/backoffice/models';
+import type { UmbEntityBase } from '@umbraco-cms/backoffice/models';
 
-export interface UserEntity extends Entity {
+export interface UserEntity extends UmbEntityBase {
 	type: 'user';
 }
 
