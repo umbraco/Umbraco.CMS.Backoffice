@@ -24,31 +24,8 @@ export interface Entity {
 /** Tried to find a common base of our entities — used by Entity Workspace Context */
 export type BaseEntity = {
 	id?: string;
-	//alias?: string;
 	name?: string;
-	//icon?: string;
-	//properties?: Array<PropertyTypeResponseModelBaseModel>;
 };
-
-export interface UserEntity extends Entity {
-	type: 'user';
-}
-
-export type UserStatus = 'enabled' | 'inactive' | 'invited' | 'disabled';
-export interface UserDetails extends UserEntity {
-	email: string;
-	status: UserStatus;
-	language: string;
-	lastLoginDate?: string;
-	lastLockoutDate?: string;
-	lastPasswordChangeDate?: string;
-	updateDate: string;
-	createDate: string;
-	failedLoginAttempts: number;
-	userGroups: Array<string>;
-	contentStartNodes: Array<string>;
-	mediaStartNodes: Array<string>;
-}
 
 export interface UserGroupEntity extends Entity {
 	type: 'user-group';
