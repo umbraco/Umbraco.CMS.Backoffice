@@ -2,7 +2,11 @@ import { html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import { ManifestKind, ManifestMenuItemTreeKind } from '@umbraco-cms/backoffice/extensions-registry';
+import {
+	ManifestKind,
+	ManifestMenuItemTreeKind,
+	UmbMenuItemExtensionElement,
+} from '@umbraco-cms/backoffice/extensions-registry';
 
 // TODO: Move to separate file:
 const manifest: ManifestKind = {
@@ -18,12 +22,10 @@ const manifest: ManifestKind = {
 umbExtensionsRegistry.register(manifest);
 
 @customElement('umb-menu-item-tree')
-export class UmbMenuItemTreeElement extends UmbLitElement {
+export class UmbMenuItemTreeElement extends UmbLitElement implements UmbMenuItemExtensionElement {
 	@property({ type: Object })
 	manifest?: ManifestMenuItemTreeKind;
 
-	// TODO: check if root has children before settings the has-children attribute
-	// TODO: how do we want to cache the tree? (do we want to rerender every time the user opens the tree)?
 	render() {
 		return this.manifest ? html` <umb-tree alias=${this.manifest?.meta.treeAlias}></umb-tree> ` : nothing;
 	}

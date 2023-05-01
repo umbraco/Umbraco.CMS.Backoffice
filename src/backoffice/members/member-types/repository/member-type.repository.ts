@@ -137,6 +137,11 @@ export class UmbMemberTypeRepository implements UmbTreeRepository<TreeItemType>,
 		}
 		return { data, error };
 	}
+	async byId(id: string) {
+		if (!id) throw new Error('Id is missing');
+		await this.#init;
+		return this.#store!.byId(id);
+	}
 
 	async delete(id: string) {
 		await this.#init;
@@ -168,7 +173,7 @@ export class UmbMemberTypeRepository implements UmbTreeRepository<TreeItemType>,
 
 		await this.#init;
 
-		const { error } = await this.#detailSource.save(id, updatedMemberType);
+		const { error } = await this.#detailSource.update(id, updatedMemberType);
 
 		if (!error) {
 			// TODO: we currently don't use the detail store for anything.
@@ -192,7 +197,7 @@ export class UmbMemberTypeRepository implements UmbTreeRepository<TreeItemType>,
 			throw new Error('Name is missing');
 		}
 
-		const { data, error } = await this.#detailSource.create(detail);
+		const { data, error } = await this.#detailSource.insert(detail);
 
 		if (!error) {
 			const notification = { data: { message: `Member type '${detail.name}' created` } };

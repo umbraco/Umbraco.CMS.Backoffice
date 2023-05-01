@@ -148,6 +148,12 @@ export class UmbDocumentRepository
 		return { data, error };
 	}
 
+	async byId(id: string) {
+		if (!id) throw new Error('Id is missing');
+		await this.#init;
+		return this.#store!.byId(id);
+	}
+
 	// Could potentially be general methods:
 	async create(item: CreateDocumentRequestModel & { id: string }) {
 		await this.#init;
