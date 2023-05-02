@@ -64,7 +64,7 @@ export class UmbMenuItemBaseElement extends UmbLitElement {
 		this.#actionObserver = this.observe(
 			umbExtensionsRegistry
 				.extensionsOfType('entityAction')
-				.pipe(map((actions) => actions.filter((action) => action.conditions.entityType === this.entityType))),
+				.pipe(map((actions) => actions.filter((action) => action.conditions.entityTypes.includes(this.entityType!)))),
 			(actions) => {
 				this._hasActions = actions.length > 0;
 			},
