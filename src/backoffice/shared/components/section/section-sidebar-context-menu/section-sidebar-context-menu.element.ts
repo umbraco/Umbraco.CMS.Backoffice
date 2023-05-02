@@ -16,7 +16,7 @@ export class UmbSectionSidebarContextMenuElement extends UmbLitElement {
 	private _entityType?: string;
 
 	@state()
-	private _unique?: string;
+	private _unique?: string | null;
 
 	@state()
 	private _headline?: string;
