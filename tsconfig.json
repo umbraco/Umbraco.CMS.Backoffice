@@ -45,6 +45,7 @@
 			"@umbraco-cms/backoffice/id": ["libs/id"],
 			"@umbraco-cms/backoffice/collection": ["libs/collection"],
 			"@umbraco-cms/backoffice/tree": ["libs/tree"],
+			"@umbraco-cms/backoffice/section": ["libs/section"],
 
 			"@umbraco-cms/backoffice/user-group": ["src/backoffice/users/user-groups"],
 
