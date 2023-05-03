@@ -8,7 +8,6 @@ import {
 } from './core/components/backoffice-frame/backoffice.context';
 import { UmbExtensionInitializer } from './packages/repository/server-extension.controller';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extensions-api';
-import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
 import { UmbEntryPointExtensionInitializer } from '@umbraco-cms/backoffice/extensions-registry';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
