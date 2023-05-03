@@ -2,7 +2,10 @@ import { manifests as componentManifests } from './components';
 import { manifests as propertyActionManifests } from './property-actions/manifests';
 import { manifests as propertyEditorManifests } from './property-editors/manifests';
 import { manifests as modalManifests } from './modals/manifests';
+
 import { UmbBackofficeNotificationContainerElement } from './components/backoffice-frame/backoffice-notification-container.element';
+import { UmbBackofficeModalContainerElement } from './components/backoffice-frame/backoffice-modal-container.element';
+
 import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
 import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
 import { UmbContextProviderController } from '@umbraco-cms/backoffice/context-api';
@@ -23,6 +26,9 @@ export const onInit: UmbEntrypointOnInit = (host, extensionRegistry) => {
 	const notificationContainerElement = new UmbBackofficeNotificationContainerElement();
 	host.appendChild(notificationContainerElement);
 
-	new UmbContextProviderController(host, UMB_MODAL_CONTEXT_TOKEN, new UmbModalContext(host));
+	const modalContainerElement = new UmbBackofficeModalContainerElement();
+	host.appendChild(modalContainerElement);
+
 	new UmbContextProviderController(host, UMB_NOTIFICATION_CONTEXT_TOKEN, new UmbNotificationContext());
+	new UmbContextProviderController(host, UMB_MODAL_CONTEXT_TOKEN, new UmbModalContext(host));
 };
