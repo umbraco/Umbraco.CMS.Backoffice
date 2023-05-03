@@ -30,7 +30,6 @@ const CORE_PACKAGES = [
 export class UmbBackofficeElement extends UmbLitElement {
 	constructor() {
 		super();
-		this.provideContext(UMB_MODAL_CONTEXT_TOKEN, new UmbModalContext(this));
 		this.provideContext(UMB_BACKOFFICE_CONTEXT_TOKEN, new UmbBackofficeContext());
 		new UmbEntryPointExtensionInitializer(this, umbExtensionsRegistry);
 		new UmbStoreExtensionInitializer(this);
