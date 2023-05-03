@@ -3,18 +3,18 @@ import './core/css/custom-properties.css';
 
 import 'element-internals-polyfill';
 
-import './core/router/router-slot.element';
-import './core/router/variant-router-slot.element';
-import './core/notification/layouts/default';
-import './core/modal/modal-element.element';
+import '../core/router/router-slot.element';
+import '../core/router/variant-router-slot.element';
+import '../core/notification/layouts/default';
+import '../core/modal/modal-element.element';
 
 import { UUIIconRegistryEssential } from '@umbraco-ui/uui';
 import { css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-import { UmbAuthFlow } from './core/auth/auth-flow';
-import { UmbIconStore } from './core/stores/icon/icon.store';
-import type { UmbErrorElement } from './error/error.element';
+import { UmbAuthFlow } from '../core/auth/auth-flow';
+import { UmbIconStore } from '../core/stores/icon/icon.store';
+import type { UmbErrorElement } from '../error/error.element';
 import type { Guard, UmbRoute } from '@umbraco-cms/backoffice/router';
 import { pathWithoutBasePath } from '@umbraco-cms/backoffice/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
@@ -44,16 +44,16 @@ export class UmbAppElement extends UmbLitElement {
 	private _routes: UmbRoute[] = [
 		{
 			path: 'install',
-			component: () => import('./installer/installer.element'),
+			component: () => import('../installer/installer.element'),
 		},
 		{
 			path: 'upgrade',
-			component: () => import('./upgrader/upgrader.element'),
+			component: () => import('../upgrader/upgrader.element'),
 			guards: [this.#isAuthorizedGuard()],
 		},
 		{
 			path: '**',
-			component: () => import('./backoffice/backoffice.element'),
+			component: () => import('../backoffice/backoffice.element'),
 			guards: [this.#isAuthorizedGuard()],
 		},
 	];
@@ -217,7 +217,7 @@ export class UmbAppElement extends UmbLitElement {
 		this._routes = [
 			{
 				path: '**',
-				component: () => import('./error/error.element'),
+				component: () => import('../error/error.element'),
 				setup: (component) => {
 					(component as UmbErrorElement).errorMessage = errorMsg;
 					(component as UmbErrorElement).error = error;
