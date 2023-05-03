@@ -41,8 +41,8 @@ export class UmbBackofficeElement extends UmbLitElement {
 		return html`
 			<umb-backoffice-header></umb-backoffice-header>
 			<umb-backoffice-main></umb-backoffice-main>
-			<umb-backoffice-notification-container></umb-backoffice-notification-container>
 			<umb-backoffice-modal-container></umb-backoffice-modal-container>
+			<slot></slot>
 		`;
 	}
 
