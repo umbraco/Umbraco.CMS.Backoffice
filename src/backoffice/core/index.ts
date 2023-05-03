@@ -7,6 +7,8 @@ import { UmbModalContext, UMB_MODAL_CONTEXT_TOKEN } from '@umbraco-cms/backoffic
 import { UmbContextProviderController } from '@umbraco-cms/backoffice/context-api';
 import type { UmbEntrypointOnInit } from '@umbraco-cms/backoffice/extensions-api';
 
+import './notification';
+
 export const manifests = [
 	...componentManifests,
 	...propertyActionManifests,
