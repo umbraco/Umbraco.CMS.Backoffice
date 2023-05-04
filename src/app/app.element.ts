@@ -1,8 +1,7 @@
 import '@umbraco-ui/uui-css/dist/uui-css.css';
-import './core/css/custom-properties.css';
-
 import 'element-internals-polyfill';
 
+import '../core/css/custom-properties.css';
 import '../core/router/router-slot.element';
 import '../core/router/variant-router-slot.element';
 import '../core/notification/layouts/default';
@@ -15,6 +14,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { UmbAuthFlow } from '../core/auth/auth-flow';
 import { UmbIconStore } from '../core/stores/icon/icon.store';
 import type { UmbErrorElement } from '../error/error.element';
+import { UmbAppConfig } from './app-config.interface';
 import type { Guard, UmbRoute } from '@umbraco-cms/backoffice/router';
 import { pathWithoutBasePath } from '@umbraco-cms/backoffice/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
@@ -41,6 +41,21 @@ export class UmbAppElement extends UmbLitElement {
 	@property({ type: String })
 	private backofficePath = '/umbraco';
 
+	#config: UmbAppConfig = {
+		serverUrl: '',
+		backofficePath: '/umbraco',
+		bypassAuth: false,
+	};
+
+	@property({ type: Object, attribute: false })
+	set config(value: UmbAppConfig) {
+		this.#config = value;
+
+		if (value) {
+			this.#setup();
+		}
+	}
+
 	private _routes: UmbRoute[] = [
 		{
 			path: 'install',
@@ -58,39 +73,37 @@ export class UmbAppElement extends UmbLitElement {
 		},
 	];
 
-	#authFlow: UmbAuthFlow;
+	#authFlow?: UmbAuthFlow;
 	#umbIconRegistry = new UmbIconStore();
 	#uuiIconRegistry = new UUIIconRegistryEssential();
 	#runtimeLevel = RuntimeLevelModel.UNKNOWN;
-	#isMocking = import.meta.env.VITE_UMBRACO_USE_MSW === 'on';
 
 	constructor() {
 		super();
 
-		// TODO: get all mocking logic out of this element. The app element doesn't need to know who is serving the data.
-		OpenAPI.BASE = this.#isMocking ? '' : this.serverUrl;
-
-		this.#authFlow = new UmbAuthFlow(
-			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
-			`${window.location.origin}${this.backofficePath}`
-		);
-
 		this.provideContext(UMB_SERVER_URL, OpenAPI.BASE);
-
-		this._setup();
 
 		this.#umbIconRegistry.attach(this);
 		this.#uuiIconRegistry.attach(this);
 	}
 
-	private async _setup() {
+	async #setup() {
+		if (!this.#config) throw new Error('No config provided');
+		if (!this.#config.serverUrl) throw new Error('No serverUrl provided');
+
+		OpenAPI.BASE = this.#config.serverUrl;
+
+		this.#authFlow = new UmbAuthFlow(
+			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
+			`${window.location.origin}${this.#config.backofficePath}`
+		);
+
 		// Try to initialise the auth flow and get the runtime status
 		try {
 			// Get the current runtime level
 			await this.#setInitStatus();
 
-			// If we are not mocking, we need to initialise the connection to the Umbraco authentication server
-			if (!this.#isMocking) {
+			if (!this.#config.bypassAuth) {
 				// Get service configuration from authentication server
 				await this.#authFlow.setInitialState();
 
@@ -192,7 +205,7 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	#isAuthorized(): boolean {
-		return this.#isMocking ? true : this.#authFlow.loggedIn();
+		return this.config?.bypassAuth ? true : this.#authFlow.loggedIn();
 	}
 
 	#isAuthorizedGuard(): Guard {
