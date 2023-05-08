@@ -22,7 +22,6 @@ import { UmbLitElement } from '../src/core/lit-element';
 
 import { umbExtensionsRegistry } from '../libs/extensions-api';
 
-import '../src/core/context-provider/context-provider.element';
 import '../src/core/controller-host/controller-host-test.element';
 import '../src/backoffice/core/components';
 
