@@ -2,12 +2,13 @@ import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller';
+import type { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 
 @customElement('umb-context-provider')
 export class UmbContextProviderElement extends UmbLitElement {
 	/**
 	 * The value to provide to the context.
-	 * @required
+	 * @optional
 	 */
 	@property({ type: Object, attribute: false })
 	create?: (host: UmbControllerHostElement) => unknown;
@@ -24,7 +25,7 @@ export class UmbContextProviderElement extends UmbLitElement {
 	 * @required
 	 */
 	@property({ type: String })
-	key!: string;
+	key!: string | UmbContextToken;
 
 	connectedCallback() {
 		super.connectedCallback();
