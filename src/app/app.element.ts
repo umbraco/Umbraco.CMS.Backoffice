@@ -1,11 +1,9 @@
 import '@umbraco-ui/uui-css/dist/uui-css.css';
 import 'element-internals-polyfill';
 
-import '../core/css/custom-properties.css';
-import '../core/router/router-slot.element';
-import '../core/router/variant-router-slot.element';
-import '../core/notification/layouts/default';
-import '../core/modal/modal-element.element';
+import './core/router/router-slot.element';
+import './core/router/variant-router-slot.element';
+import './core/context-provider/context-provider.element';
 
 import { UUIIconRegistryEssential } from '@umbraco-ui/uui';
 import { css, html } from 'lit';
@@ -13,6 +11,7 @@ import { customElement, property } from 'lit/decorators.js';
 
 import { UmbAuthFlow } from '../core/auth/auth-flow';
 import { UmbIconStore } from '../core/stores/icon/icon.store';
+import { UMB_APP, UmbAppContext } from '../app.context';
 import type { UmbErrorElement } from '../error/error.element';
 import { UmbAppConfig } from './app-config.interface';
 import type { Guard, UmbRoute } from '@umbraco-cms/backoffice/router';
@@ -39,7 +38,8 @@ export class UmbAppElement extends UmbLitElement {
 	 * @attr
 	 */
 	@property({ type: String })
-	private backofficePath = '/umbraco';
+	// TODO: get from server config
+	private backofficePath = import.meta.env.DEV ? '' : '/umbraco';
 
 	#config: UmbAppConfig = {
 		serverUrl: '',
@@ -81,6 +81,15 @@ export class UmbAppElement extends UmbLitElement {
 	constructor() {
 		super();
 
+		OpenAPI.BASE = this.serverUrl;
+
+		this.#authFlow = new UmbAuthFlow(
+			OpenAPI.BASE !== '' ? OpenAPI.BASE : window.location.origin,
+			`${window.location.origin}${this.backofficePath}`
+		);
+
+		// TODO: Make a combined App Context
+		this.provideContext(UMB_APP, new UmbAppContext(this.config));
 		this.provideContext(UMB_SERVER_URL, OpenAPI.BASE);
 
 		this.#umbIconRegistry.attach(this);
@@ -108,7 +117,7 @@ export class UmbAppElement extends UmbLitElement {
 				await this.#authFlow.setInitialState();
 
 				// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
-				OpenAPI.TOKEN = () => this.#authFlow.performWithFreshTokens();
+				OpenAPI.TOKEN = () => this.#authFlow!.performWithFreshTokens();
 				OpenAPI.WITH_CREDENTIALS = true;
 			}
 
@@ -205,6 +214,7 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	#isAuthorized(): boolean {
+		if (!this.#authFlow) return false;
 		return this.config?.bypassAuth ? true : this.#authFlow.loggedIn();
 	}
 
@@ -218,7 +228,7 @@ export class UmbAppElement extends UmbLitElement {
 			window.sessionStorage.setItem('umb:auth:redirect', location.href);
 
 			// Make a request to the auth server to start the auth flow
-			this.#authFlow.makeAuthorizationRequest();
+			this.#authFlow!.makeAuthorizationRequest();
 
 			// Return false to prevent the route from being rendered
 			return false;
