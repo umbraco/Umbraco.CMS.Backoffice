@@ -9,19 +9,20 @@ export interface UmbAppConfig {
 	 * @type {string}
 	 * @memberof UmbAppConfig
 	 */
-	serverUrl: string;
+	serverUrl?: string;
 
 	/**
 	 * The base path of the backoffice.
 	 * @type {string}
 	 * @memberof UmbAppConfig
 	 */
-	backofficePath: string;
+	backofficePath?: string;
 
 	/**
-	 * Bypass authentication.
+	 * Whether to bypass authentication.
 	 * @type {boolean}
 	 * @memberof UmbAppConfig
 	 */
-	bypassAuth: boolean;
+	// TODO: this might not be the right solution
+	bypassAuth?: boolean;
 }
