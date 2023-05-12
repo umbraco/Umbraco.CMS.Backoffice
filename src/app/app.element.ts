@@ -29,7 +29,7 @@ export class UmbAppElement extends UmbLitElement {
 	 * @remarks This is the base URL of the Umbraco server, not the base URL of the backoffice.
 	 */
 	@property({ type: String })
-	serverUrl? = window.location.origin;
+	serverUrl = '';
 
 	/**
 	 * The base path of the backoffice.
@@ -38,7 +38,7 @@ export class UmbAppElement extends UmbLitElement {
 	 */
 	@property({ type: String })
 	// TODO: get from server config
-	backofficePath? = '/umbraco';
+	backofficePath = '/umbraco';
 
 	/**
 	 * Bypass authentication.
@@ -46,7 +46,7 @@ export class UmbAppElement extends UmbLitElement {
 	 */
 	// TODO: this might not be the right solution
 	@property({ type: Boolean })
-	bypassAuth? = false;
+	bypassAuth = false;
 
 	private _routes: UmbRoute[] = [
 		{
@@ -83,8 +83,7 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	async #setup() {
-		if (!this.serverUrl) throw new Error('No serverUrl provided');
-		if (!this.backofficePath) throw new Error('No backofficePath provided');
+		if (this.serverUrl === undefined) throw new Error('No serverUrl provided');
 
 		OpenAPI.BASE = this.serverUrl;
 		const redirectUrl = `${window.location.origin}${this.backofficePath}`;
