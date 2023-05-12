@@ -13,7 +13,6 @@ import { UmbAuthFlow } from '../core/auth/auth-flow';
 import { UmbIconStore } from '../core/stores/icon/icon.store';
 import type { UmbErrorElement } from '../error/error.element';
 import { UMB_APP, UmbAppContext } from './app.context';
-import { UmbAppConfig } from './app-config.interface';
 import type { Guard, UmbRoute } from '@umbraco-cms/backoffice/router';
 import { pathWithoutBasePath } from '@umbraco-cms/backoffice/router';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
@@ -23,24 +22,31 @@ import { contextData, umbDebugContextEventType } from '@umbraco-cms/backoffice/c
 
 @customElement('umb-app')
 export class UmbAppElement extends UmbLitElement {
-	// for some reason it is not possible to use private fields for objects.
-	_config: UmbAppConfig = {
-		serverUrl: window.location.origin,
-		backofficePath: '/umbraco',
-		bypassAuth: false,
-	};
+	/**
+	 * The base URL of the configured Umbraco server.
+	 *
+	 * @attr
+	 * @remarks This is the base URL of the Umbraco server, not the base URL of the backoffice.
+	 */
+	@property({ type: String })
+	serverUrl? = window.location.origin;
 
-	@property({ type: Object, attribute: false })
-	set config(value: UmbAppConfig) {
-		if (!value) return;
-		this._config.serverUrl = value.serverUrl ?? this._config.serverUrl;
-		this._config.backofficePath = value.backofficePath ?? this._config.backofficePath;
-		this._config.bypassAuth = value.bypassAuth ?? this._config.bypassAuth;
-		this.#setup();
-	}
-	get config() {
-		return this._config;
-	}
+	/**
+	 * The base path of the backoffice.
+	 *
+	 * @attr
+	 */
+	@property({ type: String })
+	// TODO: get from server config
+	backofficePath? = '/umbraco';
+
+	/**
+	 * Bypass authentication.
+	 * @type {boolean}
+	 */
+	// TODO: this might not be the right solution
+	@property({ type: Boolean })
+	bypassAuth? = false;
 
 	private _routes: UmbRoute[] = [
 		{
@@ -71,27 +77,28 @@ export class UmbAppElement extends UmbLitElement {
 		this.#uuiIconRegistry.attach(this);
 	}
 
+	connectedCallback(): void {
+		super.connectedCallback();
+		this.#setup();
+	}
+
 	async #setup() {
-		if (!this._config) throw new Error('No config provided');
-		if (this._config.serverUrl === null || this._config.serverUrl === undefined)
-			throw new Error('No serverUrl provided');
+		if (!this.serverUrl) throw new Error('No serverUrl provided');
+		if (!this.backofficePath) throw new Error('No backofficePath provided');
 
-		OpenAPI.BASE = this._config.serverUrl;
-		const redirectUrl = `${window.location.origin}${this._config.backofficePath}`;
+		OpenAPI.BASE = this.serverUrl;
+		const redirectUrl = `${window.location.origin}${this.backofficePath}`;
 
-		this.#authFlow = new UmbAuthFlow(this._config.serverUrl, redirectUrl);
+		this.#authFlow = new UmbAuthFlow(this.serverUrl, redirectUrl);
 
-		this.provideContext(
-			UMB_APP,
-			new UmbAppContext({ backofficePath: this._config.backofficePath!, serverUrl: this._config.serverUrl! })
-		);
+		this.provideContext(UMB_APP, new UmbAppContext({ backofficePath: this.backofficePath, serverUrl: this.serverUrl }));
 
 		// Try to initialise the auth flow and get the runtime status
 		try {
 			// Get the current runtime level
 			await this.#setInitStatus();
 
-			if (!this._config.bypassAuth) {
+			if (this.bypassAuth === false) {
 				// Get service configuration from authentication server
 				await this.#authFlow.setInitialState();
 
@@ -194,7 +201,7 @@ export class UmbAppElement extends UmbLitElement {
 
 	#isAuthorized(): boolean {
 		if (!this.#authFlow) return false;
-		return this.config?.bypassAuth ? true : this.#authFlow.loggedIn();
+		return this.bypassAuth ? true : this.#authFlow.loggedIn();
 	}
 
 	#isAuthorizedGuard(): Guard {

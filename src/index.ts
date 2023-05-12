@@ -8,12 +8,14 @@ if (import.meta.env.VITE_UMBRACO_USE_MSW === 'on') {
 const appElement = new UmbAppElement();
 const isMocking = import.meta.env.VITE_UMBRACO_USE_MSW === 'on';
 
-const config = {
-	serverUrl: isMocking ? undefined : import.meta.env.VITE_UMBRACO_API_URL,
-	backofficePath: import.meta.env.DEV ? '/' : undefined,
-	bypassAuth: isMocking,
-};
+if (!isMocking) {
+	appElement.serverUrl = import.meta.env.VITE_UMBRACO_API_URL;
+}
 
-appElement.config = config;
+if (import.meta.env.DEV) {
+	appElement.backofficePath = '/';
+}
+
+appElement.bypassAuth = isMocking;
 
 document.body.appendChild(appElement);
