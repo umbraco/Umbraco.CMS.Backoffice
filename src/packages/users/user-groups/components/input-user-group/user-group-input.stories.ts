@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/web-components';
-import './input-user-group.element';
 import type { UmbUserGroupInputElement } from './user-group-input.element';
+import './user-group-input.element';
 
 const meta: Meta<UmbUserGroupInputElement> = {
 	title: 'Components/Inputs/User Group',
-	component: 'umb-input-user-group',
+	component: 'umb-user-group-input',
 	argTypes: {
 		// modalType: {
 		// 	control: 'inline-radio',
