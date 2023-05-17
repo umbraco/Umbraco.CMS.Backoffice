@@ -3,7 +3,7 @@ import type { UmbUserGroupInputElement } from './user-group-input.element';
 import './user-group-input.element';
 
 const meta: Meta<UmbUserGroupInputElement> = {
-	title: 'Components/Inputs/User Group',
+	title: 'User Group/Components/User Group Input',
 	component: 'umb-user-group-input',
 	argTypes: {
 		// modalType: {
