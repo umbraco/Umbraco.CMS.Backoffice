@@ -1,18 +1,36 @@
 import { defineConfig } from 'vite';
 
 import { plugins } from './vite.config';
+import { lstatSync, readdirSync } from 'fs';
+
+const readFolders = (path) => readdirSync(path).filter((folder) => lstatSync(`${path}/${folder}`).isDirectory());
+const createModuleDescriptors = (folderName) =>
+	readFolders(`./src/${folderName}`).map((moduleName) => {
+		return {
+			name: moduleName,
+			entry: `./src/${folderName}/${moduleName}/index.ts`,
+		};
+	});
+
+const externals = createModuleDescriptors('external');
+const exclude = [];
+const allowed = externals.filter((module) => !exclude.includes(module.name));
 
 export default defineConfig({
 	build: {
 		lib: {
-			entry: 'src/apps/app/app.element.ts',
+			entry: allowed.map(m => m.entry),
 			formats: ['es'],
-			fileName: 'main',
 		},
 		rollupOptions: {
-			external: [/^@umbraco-cms\/backoffice\//],
+			external: [/^@umbraco-cms\//],
+			output: {
+				preserveModules: true,
+				preserveModulesRoot: 'src',
+				entryFileNames: '[name].js'
+			}
 		},
-		outDir: '../Umbraco.Cms.StaticAssets/wwwroot/umbraco/backoffice',
+		outDir: 'dist-cms',
 		emptyOutDir: false,
 		sourcemap: true,
 	},
