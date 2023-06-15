@@ -115,11 +115,12 @@ export class UmbDocumentTypeWorkspaceEditorElement extends UmbLitElement {
 	render() {
 		return html`
 			<umb-workspace-editor alias="Umb.Workspace.DocumentType">
-				<div id="header" slot="header">
-					<uui-button id="icon" @click=${this._handleIconClick} compact>
+				<div id="icon" slot="pre">
+					<uui-button @click=${this._handleIconClick} compact look="placeholder">
 						<uui-icon name="${this._icon}" style="color: ${this._iconColorAlias}"></uui-icon>
 					</uui-button>
-
+				</div>
+				<div id="header" slot="header">
 					<uui-input id="name" .value=${this._name} @input="${this.#onNameChange}">
 						<!-- TODO: should use UUI-LOCK-INPUT, but that does not fire an event when its locked/unlocked -->
 						<uui-input
@@ -166,6 +167,12 @@ export class UmbDocumentTypeWorkspaceEditorElement extends UmbLitElement {
 			#header {
 				display: flex;
 				flex: 1 1 auto;
+				height: 100%;
+				align-items: center;
+				justify-content: center;
+				box-sizing: border-box;
+				margin-left: calc(var(--uui-size-layout-1) * -1);
+				margin-right: calc(var(--uui-size-space-2) * -1);
 			}
 
 			#name {
@@ -186,8 +193,15 @@ export class UmbDocumentTypeWorkspaceEditorElement extends UmbLitElement {
 
 			#icon {
 				font-size: calc(var(--uui-size-layout-3) / 2);
-				margin-right: var(--uui-size-space-2);
-				margin-left: calc(var(--uui-size-space-4) * -1);
+				height: var(--umb-header-layout-height);
+				aspect-ratio: 1;
+				box-sizing: border-box;
+				padding: var(--uui-size-space-3);
+			}
+
+			#icon uui-button {
+				height: 100%;
+				width: 100%;
 			}
 		`,
 	];

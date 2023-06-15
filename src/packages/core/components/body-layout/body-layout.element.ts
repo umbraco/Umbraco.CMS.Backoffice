@@ -37,6 +37,9 @@ export class UmbBodyLayoutElement extends LitElement {
 	public headerTransparent = false;
 
 	@state()
+	private _preSlotHasChildren = false;
+
+	@state()
 	private _headerSlotHasChildren = false;
 
 	@state()
@@ -79,12 +82,20 @@ export class UmbBodyLayoutElement extends LitElement {
 			<div
 				id="header"
 				style="display: ${this.headline ||
+				this._preSlotHasChildren ||
 				this._headerSlotHasChildren ||
 				this._actionsMenuSlotHasChildren ||
 				this._navigationSlotHasChildren
 					? ''
 					: 'none'}">
 				${this.headline ? html`<h3 id="headline">${this.headline}</h3>` : nothing}
+
+				<slot
+					id="pre-slot"
+					name="pre"
+					@slotchange=${(e: Event) => {
+						this._preSlotHasChildren = this.#hasNodes(e);
+					}}></slot>
 
 				<slot
 					id="header-slot"
@@ -141,8 +152,8 @@ export class UmbBodyLayoutElement extends LitElement {
 
 			#header {
 				display: flex;
-				align-items: center;
 				justify-content: space-between;
+				align-items: center;
 				width: 100%;
 				height: var(--umb-header-layout-height);
 				background-color: var(--uui-color-surface);
@@ -183,6 +194,7 @@ export class UmbBodyLayoutElement extends LitElement {
 				padding: 0;
 			}
 
+			#pre-slot,
 			#header-slot,
 			#tabs-slot,
 			#action-menu-slot,

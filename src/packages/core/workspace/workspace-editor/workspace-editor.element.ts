@@ -132,6 +132,7 @@ export class UmbWorkspaceEditorElement extends UmbLitElement {
 	render() {
 		return html`
 			<umb-body-layout main-no-padding .headline=${this.headline}>
+				<slot name="pre" slot="pre"></slot>
 				<slot name="header" slot="header"></slot>
 				${this.#renderViews()}
 				<slot name="action-menu" slot="action-menu"></slot>
