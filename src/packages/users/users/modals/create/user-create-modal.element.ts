@@ -185,6 +185,7 @@ export class UmbUserCreateModalElement extends UmbModalBaseElement {
 				justify-content: center;
 				height: 100%;
 				width: 100%;
+				max-width: 500px;
 			}
 			uui-box {
 				max-width: 500px;
