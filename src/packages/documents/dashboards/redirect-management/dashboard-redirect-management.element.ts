@@ -290,7 +290,6 @@ export class UmbDashboardRedirectManagementElement extends UmbLitElement {
 				gap: var(--uui-size-space-1);
 				justify-content: space-between;
 				width: 100%;
-				padding: 0 var(--uui-size-layout-1);
 			}
 
 			#header uui-icon {
