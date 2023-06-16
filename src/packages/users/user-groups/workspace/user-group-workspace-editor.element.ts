@@ -92,16 +92,16 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 
 	#renderHeader() {
 		return html`
-			<div id="header" slot="header">
-				<a href="/section/users/view/user-groups">
-					<uui-icon name="umb:arrow-left"></uui-icon>
-				</a>
-				<uui-input
-					id="name"
-					label="name"
-					.value=${this._userGroup?.name ?? ''}
-					@input="${this.#onNameChange}"></uui-input>
-			</div>
+			<uui-button id="back-nav" href="/section/users/view/user-groups" slot="pre">
+				<uui-icon name="umb:arrow-left"></uui-icon>
+			</uui-button>
+
+			<uui-input
+				id="name-input"
+				label="name"
+				slot="header"
+				.value=${this._userGroup?.name ?? ''}
+				@input="${this.#onNameChange}"></uui-input>
 		`;
 	}
 
@@ -165,10 +165,13 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 				display: block;
 				height: 100%;
 			}
-			#header {
-				width: 100%;
-				display: grid;
-				grid-template-columns: var(--uui-size-layout-1) 1fr;
+			#back-nav {
+				height: 100%;
+				aspect-ratio: 1;
+			}
+			#name-input {
+				margin-left: calc(var(--uui-size-layout-1) * -1);
+				width: calc(100% + var(--uui-size-layout-1));
 			}
 			#main {
 				display: grid;
@@ -190,9 +193,6 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 			hr {
 				border: none;
 				border-bottom: 1px solid var(--uui-color-divider);
-				width: 100%;
-			}
-			uui-input {
 				width: 100%;
 			}
 		`,

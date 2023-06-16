@@ -38,12 +38,15 @@ export class UmbDictionaryWorkspaceEditorElement extends UmbLitElement {
 	render() {
 		return html`
 			<umb-workspace-editor alias="Umb.Workspace.Dictionary">
-				<div id="header" slot="header">
-					<uui-button href="/section/translation/dashboard" label="Back to list" compact>
-						<uui-icon name="umb:arrow-left"></uui-icon>
-					</uui-button>
-					<uui-input .value=${this._name} @input="${this.#handleInput}" label="Dictionary name"></uui-input>
-				</div>
+				<uui-button id="back-nav" slot="pre" href="/section/translation/dashboard" label="Back to list" compact>
+					<uui-icon name="umb:arrow-left"></uui-icon>
+				</uui-button>
+				<uui-input
+					id="name-input"
+					slot="header"
+					.value=${this._name}
+					@input="${this.#handleInput}"
+					label="Dictionary name"></uui-input>
 			</umb-workspace-editor>
 		`;
 	}
@@ -51,10 +54,14 @@ export class UmbDictionaryWorkspaceEditorElement extends UmbLitElement {
 	static styles = [
 		UUITextStyles,
 		css`
-			#header {
-				display: flex;
-				gap: var(--uui-size-space-4);
-				width: 100%;
+			#back-nav {
+				height: 100%;
+				aspect-ratio: 1;
+			}
+
+			#name-input {
+				margin-left: calc(var(--uui-size-layout-1) * -1);
+				width: calc(100% + var(--uui-size-layout-1));
 			}
 			uui-input {
 				width: 100%;

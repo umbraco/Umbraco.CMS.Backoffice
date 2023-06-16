@@ -136,12 +136,15 @@ export class UmbUserWorkspaceEditorElement extends UmbLitElement {
 
 	#renderHeader() {
 		return html`
-			<div id="header" slot="header">
-				<a href="/section/users">
-					<uui-icon name="umb:arrow-left"></uui-icon>
-				</a>
-				<uui-input id="name" .value=${this._user?.name ?? ''} @input="${this.#onNameChange}"></uui-input>
-			</div>
+			<uui-button id="back-nav" href="/section/users" slot="pre">
+				<uui-icon name="umb:arrow-left"></uui-icon>
+			</uui-button>
+
+			<uui-input
+				slot="header"
+				id="name-input"
+				.value=${this._user?.name ?? ''}
+				@input="${this.#onNameChange}"></uui-input>
 		`;
 	}
 
@@ -320,10 +323,14 @@ export class UmbUserWorkspaceEditorElement extends UmbLitElement {
 				height: 100%;
 			}
 
-			#header {
-				width: 100%;
-				display: grid;
-				grid-template-columns: var(--uui-size-layout-1) 1fr;
+			#back-nav {
+				height: 100%;
+				aspect-ratio: 1;
+			}
+
+			#name-input {
+				margin-left: calc(var(--uui-size-layout-1) * -1);
+				width: calc(100% + var(--uui-size-layout-1));
 			}
 
 			#main {
