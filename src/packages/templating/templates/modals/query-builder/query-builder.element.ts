@@ -14,8 +14,8 @@ import {
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbDocumentRepository } from '@umbraco-cms/backoffice/document';
 import { UmbButtonWithDropdownElement } from '@umbraco-cms/backoffice/components';
+import type { UmbQueryBuilderFilterElement } from './query-builder-filter.element.js';
 import './query-builder-filter.element.js';
-import UmbQueryBuilderFilterElement from './query-builder-filter.element.js';
 
 export interface TemplateQueryBuilderModalData {
 	hidePartialViews?: boolean;
@@ -74,12 +74,15 @@ export default class UmbChooseInsertTypeModalElement extends UmbModalBaseElement
 		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT_TOKEN, (instance) => {
 			this.#modalManagerContext = instance;
 		});
-		this.#init();
 	}
 
-	#init() {
-		this.#getTemplateQuerySettings();
-		this.#postTemplateQuery();
+	async connectedCallback() {
+		super.connectedCallback();
+
+		await Promise.all([
+			this.#getTemplateQuerySettings(),
+			this.#postTemplateQuery()
+		]);
 	}
 
 	#close() {
