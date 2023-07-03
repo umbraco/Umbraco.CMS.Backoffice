@@ -5,7 +5,6 @@ import { UmbModalBaseElement } from '@umbraco-cms/internal/modal';
 import {
 	UMB_DOCUMENT_PICKER_MODAL,
 	UMB_MODAL_MANAGER_CONTEXT_TOKEN,
-	UmbModalManagerContext,
 } from '@umbraco-cms/backoffice/modal';
 import {
 	TemplateQueryExecuteModel,
@@ -63,7 +62,7 @@ export default class UmbChooseInsertTypeModalElement extends UmbModalBaseElement
 	private _defaultSortDirection: SortOrder = SortOrder.Descending;
 
 	#documentRepository: UmbDocumentRepository;
-	#modalManagerContext?: UmbModalManagerContext;
+	#modalManagerContext?: typeof UMB_MODAL_MANAGER_CONTEXT_TOKEN.TYPE;
 	#templateRepository: UmbTemplateRepository;
 
 	constructor() {
