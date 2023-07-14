@@ -8,5 +8,5 @@ export interface ManifestSection extends ManifestElement<UmbSectionExtensionElem
 
 export interface MetaSection {
 	label: string;
-	pathname: string;
+	pathname?: string;
 }

@@ -3,6 +3,7 @@ import type { UmbBackofficeContext } from '../backoffice.context.js';
 import { css, CSSResultGroup, html, when, customElement, state } from '@umbraco-cms/backoffice/external/lit';
 import type { ManifestSection } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import { pathFolderName } from '@umbraco-cms/backoffice/utils';
 
 @customElement('umb-backoffice-header-sections')
 export class UmbBackofficeHeaderSectionsElement extends UmbLitElement {
@@ -69,15 +70,17 @@ export class UmbBackofficeHeaderSectionsElement extends UmbLitElement {
 	private _renderSections() {
 		return html`
 			<uui-tab-group id="tabs">
-				${this._visibleSections.map(
-					(section: ManifestSection) => html`
+				${this._visibleSections.map((section: ManifestSection) => {
+					const sectionName = section.meta.label ?? section.name;
+					const pathName = 'section/' + (section.meta.pathname ? section.meta.pathname : pathFolderName(sectionName));
+					return html`
 						<uui-tab
 							@click="${() => this._handleSectionTabClick(section.alias)}"
 							?active="${this._currentSectionAlias === section.alias}"
-							href="${`section/${section.meta.pathname}`}"
-							label="${section.meta.label || section.name}"></uui-tab>
-					`
-				)}
+							href="${pathName}"
+							label="${sectionName}"></uui-tab>
+					`;
+				})}
 				${this._renderExtraSections()}
 			</uui-tab-group>
 		`;

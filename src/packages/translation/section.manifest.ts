@@ -9,7 +9,6 @@ const section: ManifestSection = {
 	weight: 100,
 	meta: {
 		label: 'Translation',
-		pathname: 'translation',
 	},
 };
 
