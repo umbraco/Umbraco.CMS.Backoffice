@@ -5,6 +5,7 @@ import type { UmbRoute, UmbRouterSlotChangeEvent } from '@umbraco-cms/backoffice
 import type { ManifestSection, UmbSectionExtensionElement } from '@umbraco-cms/backoffice/extension-registry';
 import { createExtensionElementOrFallback } from '@umbraco-cms/backoffice/extension-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
+import { pathFolderName } from '@umbraco-cms/backoffice/utils';
 
 @customElement('umb-backoffice-main')
 export class UmbBackofficeMainElement extends UmbLitElement {
@@ -50,9 +51,12 @@ export class UmbBackofficeMainElement extends UmbLitElement {
 			if (existingRoute) {
 				return existingRoute;
 			} else {
+				const sectionName = section.meta.label ?? section.name;
+				const pathName =
+					this._routePrefix + (section.meta.pathname ? section.meta.pathname : pathFolderName(sectionName));
 				return {
 					alias: section.alias,
-					path: this._routePrefix + section.meta.pathname,
+					path: pathName,
 					component: () => createExtensionElementOrFallback(section, 'umb-section-default'),
 					setup: (component) => {
 						(component as UmbSectionExtensionElement).manifest = section;
@@ -72,7 +76,9 @@ export class UmbBackofficeMainElement extends UmbLitElement {
 
 	private _onRouteChange = (event: UmbRouterSlotChangeEvent) => {
 		const currentPath = event.target.localActiveViewPath || '';
-		const section = this._sections.find((s) => this._routePrefix + s.meta.pathname === currentPath);
+		const sectionName = section.meta.label ?? section.name;
+		const pathName = this._routePrefix + (section.meta.pathname ? section.meta.pathname : pathFolderName(sectionName));
+		const section = this._sections.find((s) => this._routePrefix + pathName === currentPath);
 		if (!section) return;
 		this._backofficeContext?.setActiveSectionAlias(section.alias);
 		this._provideSectionContext(section);
