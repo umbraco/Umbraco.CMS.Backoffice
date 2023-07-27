@@ -1,6 +1,6 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { UmbDashboardWelcomeElement } from './dashboard-welcome.element';
 import { defaultA11yConfig } from '@umbraco-cms/test-utils';
+import { UmbDashboardWelcomeElement } from './dashboard-welcome.element.js';
 
 describe('umb-dashboard-welcome', () => {
 	let element: UmbDashboardWelcomeElement;

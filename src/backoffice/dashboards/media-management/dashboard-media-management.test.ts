@@ -1,6 +1,6 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { UmbDashboardMediaManagementElement } from './dashboard-media-management.element';
 import { defaultA11yConfig } from '@umbraco-cms/test-utils';
+import { UmbDashboardMediaManagementElement } from './dashboard-media-management.element.js';
 
 describe('umb-dashboard-media-management', () => {
 	let element: UmbDashboardMediaManagementElement;

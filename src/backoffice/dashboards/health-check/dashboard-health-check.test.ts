@@ -1,6 +1,6 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { UmbDashboardHealthCheckElement } from './dashboard-health-check.element';
 import { defaultA11yConfig } from '@umbraco-cms/test-utils';
+import { UmbDashboardHealthCheckElement } from './dashboard-health-check.element.js';
 
 describe('umb-dashboard-health-check', () => {
 	let element: UmbDashboardHealthCheckElement;
