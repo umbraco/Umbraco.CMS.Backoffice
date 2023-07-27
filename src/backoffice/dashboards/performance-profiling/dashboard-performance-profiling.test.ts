@@ -1,5 +1,5 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { defaultA11yConfig } from '@umbraco-cms/test-utils';
+import { defaultA11yConfig } from '@umbraco-cms/internal/test-utils';
 import { UmbDashboardPerformanceProfilingElement } from './dashboard-performance-profiling.element.js';
 
 describe('umb-dashboard-perfomance-profiling', () => {

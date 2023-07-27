@@ -193,7 +193,7 @@ const codeSnippets: Record<CodeEditorLanguage, string> = {
 				"@umbraco-cms/utils": ["libs/utils"],
 				"@umbraco-cms/router": ["libs/router"],
 				"@umbraco-cms/sorter": ["libs/sorter"],
-				"@umbraco-cms/test-utils": ["libs/test-utils"],
+				"@umbraco-cms/internal/test-utils": ["libs/test-utils"],
 				"@umbraco-cms/repository": ["libs/repository"],
 				"@umbraco-cms/resources": ["libs/resources"],
 				"@umbraco-cms/store": ["libs/store"],
