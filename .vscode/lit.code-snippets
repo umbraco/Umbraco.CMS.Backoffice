@@ -1,0 +1,30 @@
+{
+	"Create Lit Component": {
+		"prefix": "lit new",
+		"scope": "typescript",
+		"body": [
+			"import { UUITextStyles } from '@umbraco-ui/uui-css';",
+			"import { css, html } from 'lit';",
+			"import { customElement } from 'lit/decorators.js';",
+			"import { UmbLitElement } from '@umbraco-cms/internal/lit-element';",
+			"",
+			"@customElement('umb-${TM_FILENAME_BASE/(.*)\\..+$/$1/}')",
+			"export class Umb${TM_FILENAME_BASE/(.*)\\..+$/${1:/pascalcase}/}Element extends UmbLitElement {",
+			"\trender() {",
+			"\t\treturn html`${0:umb-${TM_FILENAME_BASE/(.*)\\..+$/$1/}}`;",
+			"\t}",
+			"",
+			"\tstatic styles = [UUITextStyles, css``];",
+			"}",
+			"",
+			"export default Umb${TM_FILENAME_BASE/(.*)\\..+$/${1:/pascalcase}/}Element",
+			"",
+			"declare global {",
+			"\tinterface HTMLElementTagNameMap {",
+			"\t\t'umb-${TM_FILENAME_BASE/(.*)\\..+$/$1/}': Umb${TM_FILENAME_BASE/(.*)\\..+$/${1:/pascalcase}/}Element;",
+			"\t}",
+			"}"
+		],
+		"description": "Create a new Lit Component"
+	}
+}

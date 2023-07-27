@@ -1,41 +1,166 @@
-# Umbraco.CMS.Backoffice
+# @umbraco-cms/backoffice
 
-## Installation instructions
+This package contains the types for the Umbraco Backoffice.
 
-1. Run `npm install`
-2. Run `npm run dev` to launch Vite in dev mode
-
-### Environment variables
-
-The development environment supports `.env` files, so in order to set your own make a copy
-of `.env` and name it `.env.local` and set the variables you need.
-
-As an example to show the installer instead of the login screen, set the following
-in the `.env.local` file to indicate that Umbraco has not been installed:
+## Installation
 
 ```bash
-VITE_UMBRACO_INSTALL_STATUS=must-install
+npm install -D @umbraco-cms/backoffice
 ```
 
-## Environments
+## Usage
 
-### Development
+### Vanilla JavaScript
 
-The development environment is the default environment and is used when running `npm run dev`. All API calls are mocked and the Umbraco backoffice is served from the `src` folder.
+Create an umbraco-package.json file in the root of your package.
 
-### Run against a local Umbraco instance
+```json
+{
+	"name": "My.Package",
+	"version": "0.1.0",
+	"extensions": [
+		{
+			"type": "dashboard",
+			"alias": "my.custom.dashboard",
+			"name": "My Dashboard",
+			"js": "/App_Plugins/MyPackage/dashboard.js",
+			"weight": -1,
+			"meta": {
+				"label": "My Dashboard",
+				"pathname": "my-dashboard"
+			},
+			"conditions": {
+				"sections": ["Umb.Section.Content"]
+			}
+		}
+	]
+}
+```
 
-Create a `.env.local` file and set the following variables:
+Then create a dashboard.js file the same folder.
+
+```javascript
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
+
+const template = document.createElement('template');
+template.innerHTML = `
+  <style>
+    :host {
+      padding: 20px;
+      display: block;
+      box-sizing: border-box;
+    }
+  </style>
+
+  <uui-box>
+    <h1>Welcome to my dashboard</h1>
+    <p>Example of vanilla JS code</p>
+
+    <uui-button label="Click me" id="clickMe" look="secondary"></uui-button>
+  </uui-box>
+`;
+
+export default class MyDashboardElement extends UmbElementMixin(HTMLElement) {
+	/** @type {import('@umbraco-cms/backoffice/notification').UmbNotificationContext} */
+	#notificationContext;
+
+	constructor() {
+		super();
+		this.attachShadow({ mode: 'open' });
+		this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+		this.shadowRoot.getElementById('clickMe').addEventListener('click', this.onClick.bind(this));
+
+		this.consumeContext(UMB_NOTIFICATION_CONTEXT_TOKEN, (_instance) => {
+			this.#notificationContext = _instance;
+		});
+	}
+
+	onClick = () => {
+		this.#notificationContext?.peek('positive', { data: { headline: 'Hello' } });
+	};
+}
+
+customElements.define('my-custom-dashboard', MyDashboardElement);
+```
+
+### TypeScript with Lit
+
+First install Lit and Vite. This command will create a new folder called `my-package` which will have the Vite tooling and Lit for WebComponent development setup.
 
 ```bash
-VITE_UMBRACO_API_URL=http://localhost:5000 # This will be the URL to your Umbraco instance
-VITE_UMBRACO_USE_MSW=off # Indicate that you want all API calls to bypass MSW (mock-service-worker)
+npm create vite@latest -- --template lit-ts my-package
 ```
 
-### Static website
+Go to the new folder and install the backoffice package.
 
-See the Main branch in action here as an [Azure Static Web App](https://ashy-bay-09f36a803.1.azurestaticapps.net/). The deploy runs automatically every time the `main` branch is updated. It uses mocked responses from the Umbraco API to simulate the site just like the local development environment.
+```bash
+cd my-package
+npm install -D @umbraco-cms/backoffice
+```
 
-### Storybook
+Then go to the element located in `src/my-element.ts` and replace it with the following code.
 
-Storybook is also being built and deployed automatically on the Main branch, including a preview URL on each pull request. See it in action on this [Azure Static Web App](https://ambitious-stone-0033b3603.1.azurestaticapps.net/).
+```typescript
+// src/my-element.ts
+import { LitElement, html, customElement } from '@umbraco-cms/backoffice/external/lit';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
+
+@customElement('my-element')
+export default class MyElement extends UmbElementMixin(LitElement) {
+	private _notificationContext?: UmbNotificationContext;
+
+	constructor() {
+		super();
+		this.consumeContext(UMB_NOTIFICATION_CONTEXT_TOKEN, (_instance) => {
+			this._notificationContext = _instance;
+		});
+	}
+
+	onClick() {
+		this._notificationContext?.peek('positive', { data: { message: '#h5yr' } });
+	}
+
+	render() {
+		return html`
+			<uui-box headline="Welcome">
+				<p>A TypeScript Lit Dashboard</p>
+				<uui-button look="primary" label="Click me" @click=${() => this.onClick()}></uui-button>
+			</uui-box>
+		`;
+	}
+}
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'my-element': MyElement;
+	}
+}
+```
+
+Finally add an umbraco-package.json file in the root of your package folder `my-package`.
+
+```json
+{
+	"name": "My.Package",
+	"version": "0.1.0",
+	"extensions": [
+		{
+			"type": "dashboard",
+			"alias": "my.custom.dashboard",
+			"name": "My Dashboard",
+			"js": "/App_Plugins/MyPackage/dist/my-package.js",
+			"weight": -1,
+			"meta": {
+				"label": "My Dashboard",
+				"pathname": "my-dashboard"
+			},
+			"conditions": {
+				"sections": ["Umb.Section.Content"]
+			}
+		}
+	]
+}
+```

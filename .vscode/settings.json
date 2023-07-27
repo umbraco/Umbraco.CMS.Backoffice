@@ -1,0 +1,19 @@
+{
+	"cssVariables.lookupFiles": ["node_modules/@umbraco-ui/uui-css/dist/custom-properties.css"],
+	"cSpell.words": [
+		"backoffice",
+		"Backoffice",
+		"combobox",
+		"Elementable",
+		"Niels",
+		"pickable",
+		"templating",
+		"tinymce",
+		"umbraco",
+		"Uncategorized",
+		"variantable"
+	],
+	"exportall.config.folderListener": [],
+	"exportall.config.relExclusion": [],
+	"conventionalCommits.scopes": ["partial views"]
+}

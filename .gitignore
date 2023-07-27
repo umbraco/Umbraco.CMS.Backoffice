@@ -9,16 +9,21 @@ lerna-debug.log*
 
 node_modules
 dist
+dist-cms
 dist-ssr
-types
+/types
+*.tsbuildinfo
 *.local
+*.tgz
 
 ## testing
-/coverage/
+coverage/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/*.code-snippets
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo
@@ -29,11 +34,17 @@ types
 
 # eslint
 .eslintcache
-/test-results/
-/playwright-report/
-/playwright/.cache/
+test-results/
+playwright-report/
+playwright/.cache/
 
 # storybook
 storybook-static/
 
 custom-elements.json
+
+# JSON for HTML Custom Data
+# https://github.com/runem/web-component-analyzer#vscode
+# https://github.com/microsoft/vscode-custom-data
+vscode-html-custom-data.json
+public/tinymce/*

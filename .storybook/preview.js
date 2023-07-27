@@ -1,50 +1,41 @@
-import '@umbraco-ui/uui';
-import '@umbraco-ui/uui-modal';
-import '@umbraco-ui/uui-modal-container';
-import '@umbraco-ui/uui-modal-dialog';
-import '@umbraco-ui/uui-modal-sidebar';
+import '@umbraco-ui/uui-css/dist/uui-css.css';
+import '../src/css/umb-css.css';
 
-import { html } from 'lit-html';
-import { initialize, mswDecorator } from 'msw-storybook-addon';
+import 'element-internals-polyfill';
+import '@umbraco-ui/uui';
+
+import { html } from 'lit';
 import { setCustomElements } from '@storybook/web-components';
 
-import customElementManifests from '../custom-elements.json';
-import { UmbDataTypeStore } from '../src/core/stores/data-type/data-type.store';
-import { UmbDocumentTypeStore } from '../src/core/stores/document-type.store';
-import { UmbNodeStore } from '../src/core/stores/node.store';
-import { UmbIconStore } from '../src/core/stores/icon/icon.store';
-import { onUnhandledRequest } from '../src/core/mocks/browser';
-import { handlers } from '../src/core/mocks/browser-handlers';
-import { LitElement } from 'lit';
-import { UmbModalService } from '../src/core/services/modal';
+import { startMockServiceWorker } from '../src/mocks';
 
-import { manifests as sectionManifests } from '../src/backoffice/sections/manifests';
-import { manifests as propertyEditorModelManifests } from '../src/backoffice/property-editor-models/manifests';
-import { manifests as propertyEditorUIManifests } from '../src/backoffice/property-editor-uis/manifests';
-import { manifests as treeManifests } from '../src/backoffice/trees/manifests';
-import { manifests as editorManifests } from '../src/backoffice/editors/manifests';
-import { manifests as propertyActionManifests } from '../src/backoffice/property-actions/manifests';
+import { UMB_MODAL_CONTEXT_TOKEN, UmbModalManagerContext } from '../src/packages/core/modal';
+import { UmbDataTypeStore } from '../src/packages/settings/data-types/repository/data-type.store.ts';
+import { UmbDocumentStore } from '../src/packages/documents/documents/repository/document.store.ts';
+import { UmbDocumentTreeStore } from '../src/packages/documents/documents/repository/document.tree.store.ts';
+import { UmbDocumentTypeStore } from '../src/packages/documents/document-types/repository/document-type.store.ts';
+import { umbExtensionsRegistry } from '../src/packages/core/extension-registry';
+import { UmbIconRegistry } from '../src/shared/icon-registry/icon.registry';
+import { UmbLitElement } from '../src/shared/lit-element';
+import customElementManifests from '../dist-cms/custom-elements.json';
 
-import { umbExtensionsRegistry } from '../src/core/extensions-registry';
+import '../src/libs/context-api/provide/context-provider.element';
+import '../src/libs/controller-api/controller-host-initializer.element.ts';
+import '../src/packages/core/components';
 
-import '../src/core/context-api/provide/context-provider.element';
-import '../src/core/css/custom-properties.css';
-import '../src/backoffice/components/backoffice-modal-container.element';
-import '../src/backoffice/components/shared/code-block.element';
+import { manifests as documentManifests } from '../src/packages/documents';
 
-class UmbStoryBookElement extends LitElement {
-	_umbIconStore = new UmbIconStore();
+// MSW
+startMockServiceWorker({ serviceWorker: { url: (import.meta.env.VITE_BASE_PATH ?? '/') + 'mockServiceWorker.js' } });
+
+class UmbStoryBookElement extends UmbLitElement {
+	_umbIconRegistry = new UmbIconRegistry();
 
 	constructor() {
 		super();
-		this._umbIconStore.attach(this);
-
-		this._registerExtensions(sectionManifests);
-		this._registerExtensions(treeManifests);
-		this._registerExtensions(editorManifests);
-		this._registerExtensions(propertyEditorModelManifests);
-		this._registerExtensions(propertyEditorUIManifests);
-		this._registerExtensions(propertyActionManifests);
+		this._umbIconRegistry.attach(this);
+		this._registerExtensions(documentManifests);
+		this.provideContext(UMB_MODAL_CONTEXT_TOKEN, new UmbModalManagerContext(this));
 	}
 
 	_registerExtensions(manifests) {
@@ -55,7 +46,8 @@ class UmbStoryBookElement extends LitElement {
 	}
 
 	render() {
-		return html`<slot></slot>`;
+		return html`<slot></slot>
+			<umb-backoffice-modal-container></umb-backoffice-modal-container> `;
 	}
 }
 
@@ -63,38 +55,37 @@ customElements.define('umb-storybook', UmbStoryBookElement);
 
 const storybookProvider = (story) => html` <umb-storybook>${story()}</umb-storybook> `;
 
-const nodeStoreProvider = (story) => html`
-	<umb-context-provider key="umbNodeStore" .value=${new UmbNodeStore()}>${story()}</umb-context-provider>
-`;
-
 const dataTypeStoreProvider = (story) => html`
-	<umb-context-provider key="umbDataTypeStore" .value=${new UmbDataTypeStore()}>${story()}</umb-context-provider>
-`;
-
-const documentTypeStoreProvider = (story) => html`
-	<umb-context-provider key="umbDocumentTypeStore" .value=${new UmbDocumentTypeStore()}
-		>${story()}</umb-context-provider
+	<umb-controller-host-initializer .create=${(host) => new UmbDataTypeStore(host)}
+		>${story()}</umb-controller-host-initializer
 	>
 `;
 
-const modalServiceProvider = (story) => html`
-	<umb-context-provider style="display: block; padding: 32px;" key="umbModalService" .value=${new UmbModalService()}>
-		${story()}
-		<umb-backoffice-modal-container></umb-backoffice-modal-container>
-	</umb-context-provider>
+const documentTypeStoreProvider = (story) => html`
+	<umb-controller-host-initializer .create=${(host) => new UmbDocumentTypeStore(host)}
+		>${story()}</umb-controller-host-initializer
+	>
 `;
 
-// Initialize MSW
-initialize({ onUnhandledRequest });
+const documentStoreProvider = (story) => html`
+	<umb-controller-host-initializer .create=${(host) => new UmbDocumentStore(host)}
+		>${story()}</umb-controller-host-initializer
+	>
+`;
+
+const documentTreeStoreProvider = (story) => html`
+	<umb-controller-host-initializer .create=${(host) => new UmbDocumentTreeStore(host)}
+		>${story()}</umb-controller-host-initializer
+	>
+`;
 
 // Provide the MSW addon decorator globally
 export const decorators = [
-	mswDecorator,
 	storybookProvider,
-	nodeStoreProvider,
+	documentStoreProvider,
+	documentTreeStoreProvider,
 	dataTypeStoreProvider,
 	documentTypeStoreProvider,
-	modalServiceProvider,
 ];
 
 export const parameters = {
@@ -102,6 +93,28 @@ export const parameters = {
 		storySort: {
 			method: 'alphabetical',
 			includeNames: true,
+			order: [
+				'Guides',
+				[
+					'Getting started',
+					'Extending the Backoffice',
+					[
+						'Intro',
+						'Registration',
+						'Header Apps',
+						'Sections',
+						['Intro', 'Sidebar', 'Views', '*'],
+						'Entity Actions',
+						'Workspaces',
+						['Intro', 'Views', 'Actions', '*'],
+						'Property Editors',
+						'Repositories',
+						'*',
+					],
+					'*',
+				],
+				'*',
+			],
 		},
 	},
 	actions: { argTypesRegex: '^on.*' },
@@ -112,10 +125,18 @@ export const parameters = {
 			date: /Date$/,
 		},
 	},
-	msw: {
-		handlers: {
-			global: handlers,
-		},
+	backgrounds: {
+		default: 'Greyish',
+		values: [
+			{
+				name: 'Greyish',
+				value: '#F3F3F5',
+			},
+			{
+				name: 'White',
+				value: '#ffffff',
+			},
+		],
 	},
 };
 

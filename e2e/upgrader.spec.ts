@@ -1,7 +1,7 @@
-import { rest } from 'msw';
-import { umbracoPath } from '@umbraco-cms/utils';
-import { ProblemDetails, RuntimeLevel, ServerStatus } from '@umbraco-cms/backend-api';
-import { expect, test } from './test';
+const { rest } = window.MockServiceWorker;
+import { umbracoPath } from '@umbraco-cms/backoffice/utils';
+import { ProblemDetails, RuntimeLevelModel, ServerStatusResponseModel } from '@umbraco-cms/backoffice/backend-api';
+import { expect, test } from './test.js';
 
 test.describe('upgrader tests', () => {
 	test.beforeEach(async ({ page, worker }) => {
@@ -11,8 +11,8 @@ test.describe('upgrader tests', () => {
 				return res(
 					// Respond with a 200 status code
 					ctx.status(200),
-					ctx.json<ServerStatus>({
-						serverStatus: RuntimeLevel.UPGRADE,
+					ctx.json<ServerStatusResponseModel>({
+						serverStatus: RuntimeLevelModel.UPGRADE,
 					})
 				);
 			})

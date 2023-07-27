@@ -1,0 +1,47 @@
+# This workflow will publish the @umbraco-cms/backoffice package to npmjs.com
+# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+# The @umbraco-cms scope is owned by Umbraco HQ
+
+name: Node.js Package
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'devops/publish/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'staticwebapp.config.json'
+      - 'README.md'
+  workflow_dispatch:
+
+env:
+  NODE_OPTIONS: --max-old-space-size=16384
+
+jobs:
+  build_publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    concurrency:
+      group: npm-publish
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          registry-url: https://registry.npmjs.org/
+          scope: '@umbraco-cms'
+      - run: npm ci
+      - run: npm run build:for:npm
+      - name: Version and publish
+        run: |
+          SHA_SHORT=$(echo $GITHUB_SHA | cut -c1-8)
+          npm whoami
+          npm version 14.0.0-$SHA_SHORT --allow-same-version --no-git-tag-version
+          npm publish --tag next --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

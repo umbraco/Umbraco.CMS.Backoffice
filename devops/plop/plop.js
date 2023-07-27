@@ -1,5 +1,4 @@
-import lodash from 'lodash';
-const { kebabCase, camelCase, startCase } = lodash;
+import { kebabCase, camelCase, startCase } from 'lodash-es';
 const pascalCase = (str) => startCase(str).replace(/ /g, '');
 
 const tagNamePrefix = 'umb-';
@@ -7,8 +6,8 @@ const classNamePrefix = 'Umb';
 
 const extensions = [
 	{
-		type: 'propertyEditorUI',
-		path: '../../src/backoffice/property-editor-uis',
+		type: 'propertyEditorUi',
+		path: '../../src/backoffice/shared/property-editors/uis',
 		templatePath: './templates/property-editor-ui',
 	},
 ];

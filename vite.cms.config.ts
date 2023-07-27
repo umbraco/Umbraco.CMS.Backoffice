@@ -1,19 +1,22 @@
 import { defineConfig } from 'vite';
 
-import config from './vite.config';
+import { plugins } from './vite.config';
 
 export default defineConfig({
-	...config,
 	build: {
 		lib: {
-			entry: 'src/app.ts',
+			entry: 'src/apps/app/app.element.ts',
 			formats: ['es'],
 			fileName: 'main',
 		},
-		outDir: '../Umbraco.Cms.StaticAssets/wwwroot/umbraco',
-		emptyOutDir: true,
+		rollupOptions: {
+			external: [/^@umbraco-cms\/backoffice\//],
+		},
+		outDir: '../Umbraco.Cms.StaticAssets/wwwroot/umbraco/backoffice',
+		emptyOutDir: false,
 		sourcemap: true,
 	},
-	base: '/umbraco/',
-	mode: 'production'
+	base: '/umbraco/backoffice/',
+	mode: 'production',
+	plugins: [...plugins],
 });
