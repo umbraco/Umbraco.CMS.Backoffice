@@ -4,7 +4,7 @@ import { UmbFolderModalData, UmbFolderModalResult, UmbModalContext } from '@umbr
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { UmbFolderRepository } from '@umbraco-cms/backoffice/repository';
 import { createExtensionClass, ManifestBase } from '@umbraco-cms/backoffice/extension-api';
-import { FolderReponseModel, ProblemDetailsModel } from '@umbraco-cms/backoffice/backend-api';
+import { FolderResponseModel, ProblemDetails } from '@umbraco-cms/backoffice/backend-api';
 import { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 
@@ -21,17 +21,19 @@ export class UmbFolderModalElement extends UmbLitElement {
 	public set data(value: UmbFolderModalData | undefined) {
 		this._data = value;
 		this.#unique = value?.unique || null;
+		this.#parentUnique = value?.parentUnique || null;
 		this.#repositoryAlias = value?.repositoryAlias;
 		this.#observeRepository();
 	}
 
 	#repositoryAlias?: string;
 	#unique: string | null = null;
+	#parentUnique: string | null = null;
 	#repository?: UmbFolderRepository;
 	#repositoryObserver?: UmbObserverController<ManifestBase | undefined>;
 
 	@state()
-	_folder?: FolderReponseModel;
+	_folder?: FolderResponseModel;
 
 	@state()
 	_headline?: string;
@@ -70,7 +72,7 @@ export class UmbFolderModalElement extends UmbLitElement {
 
 	async #create() {
 		if (!this.#repository) throw new Error('Repository is required to create folder');
-		const { data } = await this.#repository.createFolderScaffold(this.#unique);
+		const { data } = await this.#repository.createFolderScaffold(this.#parentUnique);
 		this._folder = data;
 		this._isNew = true;
 	}
@@ -102,11 +104,10 @@ export class UmbFolderModalElement extends UmbLitElement {
 		const isValid = this._formElement?.checkValidity();
 		if (!isValid) return;
 
-		let error: ProblemDetailsModel | undefined;
+		let error: ProblemDetails | undefined;
 
 		const formData = new FormData(this._formElement);
 		const folderName = formData.get('name') as string;
-
 		this._folder = { ...this._folder, name: folderName };
 
 		if (this._isNew) {

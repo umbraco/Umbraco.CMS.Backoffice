@@ -1,3 +1,4 @@
+/* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -28,7 +29,7 @@ export class DocumentTypeResource {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                400: `Bad Request`,
+                404: `Not Found`,
             },
         });
     }
@@ -95,7 +96,6 @@ export class DocumentTypeResource {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                400: `Bad Request`,
                 404: `Not Found`,
             },
         });

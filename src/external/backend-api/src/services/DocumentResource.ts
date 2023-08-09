@@ -1,3 +1,4 @@
+/* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -6,9 +7,12 @@ import type { CreateDocumentRequestModel } from '../models/CreateDocumentRequest
 import type { DocumentItemResponseModel } from '../models/DocumentItemResponseModel';
 import type { DocumentNotificationResponseModel } from '../models/DocumentNotificationResponseModel';
 import type { DocumentResponseModel } from '../models/DocumentResponseModel';
+import type { DomainsResponseModel } from '../models/DomainsResponseModel';
 import type { MoveDocumentRequestModel } from '../models/MoveDocumentRequestModel';
 import type { PagedDocumentTreeItemResponseModel } from '../models/PagedDocumentTreeItemResponseModel';
+import type { PagedDocumentTypeResponseModel } from '../models/PagedDocumentTypeResponseModel';
 import type { PagedRecycleBinItemResponseModel } from '../models/PagedRecycleBinItemResponseModel';
+import type { PublicAccessRequestModel } from '../models/PublicAccessRequestModel';
 import type { UpdateDocumentNotificationsRequestModel } from '../models/UpdateDocumentNotificationsRequestModel';
 import type { UpdateDocumentRequestModel } from '../models/UpdateDocumentRequestModel';
 import type { UpdateDomainsRequestModel } from '../models/UpdateDomainsRequestModel';
@@ -35,7 +39,6 @@ export class DocumentResource {
             mediaType: 'application/json',
             responseHeader: 'Location',
             errors: {
-                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -78,7 +81,6 @@ export class DocumentResource {
                 'id': id,
             },
             errors: {
-                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -104,7 +106,35 @@ export class DocumentResource {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                400: `Bad Request`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * @returns PagedDocumentTypeResponseModel Success
+     * @throws ApiError
+     */
+    public static getDocumentByIdAllowedDocumentTypes({
+        id,
+        skip,
+        take = 100,
+    }: {
+        id: string,
+        skip?: number,
+        take?: number,
+    }): CancelablePromise<PagedDocumentTypeResponseModel> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/management/api/v1/document/{id}/allowed-document-types',
+            path: {
+                'id': id,
+            },
+            query: {
+                'skip': skip,
+                'take': take,
+            },
+            errors: {
                 404: `Not Found`,
             },
         });
@@ -131,7 +161,6 @@ export class DocumentResource {
             mediaType: 'application/json',
             responseHeader: 'Location',
             errors: {
-                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -145,12 +174,15 @@ export class DocumentResource {
         id,
     }: {
         id: string,
-    }): CancelablePromise<any> {
+    }): CancelablePromise<DomainsResponseModel> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/document/{id}/domains',
             path: {
                 'id': id,
+            },
+            errors: {
+                404: `Not Found`,
             },
         });
     }
@@ -197,7 +229,6 @@ export class DocumentResource {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -250,6 +281,99 @@ export class DocumentResource {
     }
 
     /**
+     * @returns string Created
+     * @throws ApiError
+     */
+    public static postDocumentByIdPublicAccess({
+        id,
+        requestBody,
+    }: {
+        id: string,
+        requestBody?: PublicAccessRequestModel,
+    }): CancelablePromise<string> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/umbraco/management/api/v1/document/{id}/public-access',
+            path: {
+                'id': id,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            responseHeader: 'Location',
+            errors: {
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * @returns any Success
+     * @throws ApiError
+     */
+    public static deleteDocumentByIdPublicAccess({
+        id,
+    }: {
+        id: string,
+    }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/umbraco/management/api/v1/document/{id}/public-access',
+            path: {
+                'id': id,
+            },
+            errors: {
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * @returns void
+     * @throws ApiError
+     */
+    public static getDocumentByIdPublicAccess({
+        id,
+    }: {
+        id: string,
+    }): CancelablePromise<void> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/management/api/v1/document/{id}/public-access',
+            path: {
+                'id': id,
+            },
+            errors: {
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * @returns any Success
+     * @throws ApiError
+     */
+    public static putDocumentByIdPublicAccess({
+        id,
+        requestBody,
+    }: {
+        id: string,
+        requestBody?: PublicAccessRequestModel,
+    }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/umbraco/management/api/v1/document/{id}/public-access',
+            path: {
+                'id': id,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
      * @returns any Success
      * @throws ApiError
      */
@@ -269,6 +393,30 @@ export class DocumentResource {
                 'id': id,
                 'dataTypeId': dataTypeId,
                 'culture': culture,
+            },
+        });
+    }
+
+    /**
+     * @returns PagedDocumentTypeResponseModel Success
+     * @throws ApiError
+     */
+    public static getDocumentRootAllowedDocumentTypes({
+        skip,
+        take = 100,
+    }: {
+        skip?: number,
+        take?: number,
+    }): CancelablePromise<PagedDocumentTypeResponseModel> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/umbraco/management/api/v1/document/root/allowed-document-types',
+            query: {
+                'skip': skip,
+                'take': take,
+            },
+            errors: {
+                404: `Not Found`,
             },
         });
     }

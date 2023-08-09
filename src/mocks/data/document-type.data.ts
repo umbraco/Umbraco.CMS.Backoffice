@@ -477,63 +477,6 @@ export const data: Array<DocumentTypeResponseModel> = [
 				},
 			},
 			{
-				id: '24',
-				containerId: 'all-properties-group-key',
-				alias: 'numberRange',
-				name: 'Number Range',
-				description: '',
-				dataTypeId: 'dt-numberRange',
-				variesByCulture: false,
-				variesBySegment: false,
-				validation: {
-					mandatory: true,
-					mandatoryMessage: null,
-					regEx: null,
-					regExMessage: null,
-				},
-				appearance: {
-					labelOnTop: false,
-				},
-			},
-			{
-				id: '25',
-				containerId: 'all-properties-group-key',
-				alias: 'orderDirection',
-				name: 'Order Direction',
-				description: '',
-				dataTypeId: 'dt-orderDirection',
-				variesByCulture: false,
-				variesBySegment: false,
-				validation: {
-					mandatory: true,
-					mandatoryMessage: null,
-					regEx: null,
-					regExMessage: null,
-				},
-				appearance: {
-					labelOnTop: false,
-				},
-			},
-			{
-				id: '26',
-				containerId: 'all-properties-group-key',
-				alias: 'overlaySize',
-				name: 'Overlay Size',
-				description: '',
-				dataTypeId: 'dt-overlaySize',
-				variesByCulture: false,
-				variesBySegment: false,
-				validation: {
-					mandatory: true,
-					mandatoryMessage: null,
-					regEx: null,
-					regExMessage: null,
-				},
-				appearance: {
-					labelOnTop: false,
-				},
-			},
-			{
 				id: '27',
 				containerId: 'all-properties-group-key',
 				alias: 'label',
@@ -1057,7 +1000,6 @@ export const data: Array<DocumentTypeResponseModel> = [
 
 export const treeData: Array<DocumentTypeTreeItemResponseModel> = [
 	{
-		$type: 'DocumentTypeTreeItemViewModel',
 		name: 'All property editors document type',
 		type: 'document-type',
 		hasChildren: false,
@@ -1067,7 +1009,6 @@ export const treeData: Array<DocumentTypeTreeItemResponseModel> = [
 		icon: '',
 	},
 	{
-		$type: 'DocumentTypeTreeItemViewModel',
 		name: 'Page Document Type',
 		type: 'document-type',
 		hasChildren: false,
@@ -1077,7 +1018,6 @@ export const treeData: Array<DocumentTypeTreeItemResponseModel> = [
 		icon: 'umb:document',
 	},
 	{
-		$type: 'DocumentTypeTreeItemViewModel',
 		name: 'Page Document Type Compositional',
 		type: 'document-type',
 		hasChildren: false,
@@ -1087,7 +1027,6 @@ export const treeData: Array<DocumentTypeTreeItemResponseModel> = [
 		icon: 'umb:document',
 	},
 	{
-		$type: 'DocumentTypeTreeItemViewModel',
 		name: 'Page Document Type Inherited',
 		type: 'document-type',
 		hasChildren: false,
@@ -1097,7 +1036,6 @@ export const treeData: Array<DocumentTypeTreeItemResponseModel> = [
 		icon: 'umb:document',
 	},
 	{
-		$type: 'DocumentTypeTreeItemViewModel',
 		name: 'Simple Document Type',
 		type: 'document-type',
 		hasChildren: false,
@@ -1107,7 +1045,6 @@ export const treeData: Array<DocumentTypeTreeItemResponseModel> = [
 		icon: 'umb:document',
 	},
 	{
-		$type: 'DocumentTypeTreeItemViewModel',
 		name: 'Simple Document Type 2',
 		type: 'document-type',
 		hasChildren: false,
@@ -1169,6 +1106,11 @@ class UmbDocumentTypeData extends UmbEntityData<DocumentTypeResponseModel> {
 		const allowedTypeKeys = documentType?.allowedContentTypes?.map((documentType) => documentType.id) ?? [];
 		const items = this.treeData.filter((item) => allowedTypeKeys.includes(item.id ?? ''));
 		return items.map((item) => item);
+	}
+
+	/** For internal use */
+	getAll() {
+		return this.data;
 	}
 }
 

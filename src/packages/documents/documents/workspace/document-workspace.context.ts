@@ -46,7 +46,7 @@ export class UmbDocumentWorkspaceContext
 	readonly splitView;
 
 	constructor(host: UmbControllerHostElement) {
-		super(host, new UmbDocumentRepository(host));
+		super(host, 'Umb.Workspace.Document', new UmbDocumentRepository(host));
 
 		this.structure = new UmbContentTypePropertyStructureManager(this.host, new UmbDocumentTypeRepository(this.host));
 		this.splitView = new UmbWorkspaceSplitViewManager(this.host);
@@ -152,7 +152,7 @@ export class UmbDocumentWorkspaceContext
 		}
 	}
 	setPropertyValue(alias: string, value: unknown, variantId?: UmbVariantId) {
-		const entry = { $type: 'DocumentValueModel', ...variantId?.toObject(), alias, value };
+		const entry = { ...variantId?.toObject(), alias, value };
 		const currentData = this.#draft.value;
 		if (currentData) {
 			const values = appendToFrozenArray(

@@ -1,13 +1,13 @@
+/* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ContentTreeItemResponseModel } from '../models/ContentTreeItemResponseModel';
 import type { CreateMediaRequestModel } from '../models/CreateMediaRequestModel';
 import type { DocumentResponseModel } from '../models/DocumentResponseModel';
-import type { DocumentTreeItemResponseModel } from '../models/DocumentTreeItemResponseModel';
 import type { MediaItemResponseModel } from '../models/MediaItemResponseModel';
+import type { MediaTreeItemResponseModel } from '../models/MediaTreeItemResponseModel';
 import type { MoveMediaRequestModel } from '../models/MoveMediaRequestModel';
-import type { PagedContentTreeItemResponseModel } from '../models/PagedContentTreeItemResponseModel';
+import type { PagedMediaTreeItemResponseModel } from '../models/PagedMediaTreeItemResponseModel';
 import type { PagedRecycleBinItemResponseModel } from '../models/PagedRecycleBinItemResponseModel';
 import type { UpdateMediaRequestModel } from '../models/UpdateMediaRequestModel';
 
@@ -33,7 +33,6 @@ export class MediaResource {
             mediaType: 'application/json',
             responseHeader: 'Location',
             errors: {
-                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -76,7 +75,6 @@ export class MediaResource {
                 'id': id,
             },
             errors: {
-                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -102,7 +100,6 @@ export class MediaResource {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -128,7 +125,6 @@ export class MediaResource {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                400: `Bad Request`,
                 404: `Not Found`,
             },
         });
@@ -207,7 +203,7 @@ export class MediaResource {
     }
 
     /**
-     * @returns PagedContentTreeItemResponseModel Success
+     * @returns PagedMediaTreeItemResponseModel Success
      * @throws ApiError
      */
     public static getTreeMediaChildren({
@@ -220,7 +216,7 @@ export class MediaResource {
         skip?: number,
         take?: number,
         dataTypeId?: string,
-    }): CancelablePromise<PagedContentTreeItemResponseModel> {
+    }): CancelablePromise<PagedMediaTreeItemResponseModel> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/media/children',
@@ -243,7 +239,7 @@ export class MediaResource {
     }: {
         id?: Array<string>,
         dataTypeId?: string,
-    }): CancelablePromise<Array<(ContentTreeItemResponseModel | DocumentTreeItemResponseModel)>> {
+    }): CancelablePromise<Array<MediaTreeItemResponseModel>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/media/item',
@@ -255,7 +251,7 @@ export class MediaResource {
     }
 
     /**
-     * @returns PagedContentTreeItemResponseModel Success
+     * @returns PagedMediaTreeItemResponseModel Success
      * @throws ApiError
      */
     public static getTreeMediaRoot({
@@ -266,7 +262,7 @@ export class MediaResource {
         skip?: number,
         take?: number,
         dataTypeId?: string,
-    }): CancelablePromise<PagedContentTreeItemResponseModel> {
+    }): CancelablePromise<PagedMediaTreeItemResponseModel> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/umbraco/management/api/v1/tree/media/root',

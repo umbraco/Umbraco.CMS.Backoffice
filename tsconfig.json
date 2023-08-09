@@ -17,6 +17,7 @@
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
 		"baseUrl": ".",
+		"incremental": true,
 		"paths": {
 			"@umbraco-cms/backoffice/external/lit": ["src/external/lit"],
 			"@umbraco-cms/backoffice/external/lodash": ["src/external/lodash"],
@@ -34,6 +35,7 @@
 			"@umbraco-cms/backoffice/controller-api": ["src/libs/controller-api"],
 			"@umbraco-cms/backoffice/element-api": ["src/libs/element-api"],
 			"@umbraco-cms/backoffice/extension-api": ["src/libs/extension-api"],
+			"@umbraco-cms/backoffice/localization-api": ["src/libs/localization-api"],
 			"@umbraco-cms/backoffice/observable-api": ["src/libs/observable-api"],
 
 			// SHARED
@@ -57,6 +59,7 @@
 			"@umbraco-cms/backoffice/entity-bulk-action": ["src/packages/core/entity-bulk-action"],
 			"@umbraco-cms/backoffice/extension-registry": ["src/packages/core/extension-registry"],
 			"@umbraco-cms/backoffice/id": ["src/packages/core/id"],
+			"@umbraco-cms/backoffice/localization": ["src/packages/core/localization"],
 			"@umbraco-cms/backoffice/macro": ["src/packages/core/macro"],
 			"@umbraco-cms/backoffice/menu": ["src/packages/core/menu"],
 			"@umbraco-cms/backoffice/modal": ["src/packages/core/modal"],
@@ -71,6 +74,8 @@
 			"@umbraco-cms/backoffice/tree": ["src/packages/core/tree"],
 			"@umbraco-cms/backoffice/variant": ["src/packages/core/variant"],
 			"@umbraco-cms/backoffice/workspace": ["src/packages/core/workspace"],
+
+			"@umbraco-cms/backoffice/dictionary": ["./src/packages/dictionary/dictionary/index.ts"],
 
 			"@umbraco-cms/backoffice/document": ["./src/packages/documents/documents/index.ts"],
 			"@umbraco-cms/backoffice/document-blueprint": ["./src/packages/documents/document-blueprints/index.ts"],

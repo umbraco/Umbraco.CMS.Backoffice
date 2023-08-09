@@ -1,5 +1,6 @@
 import {
 	UmbUserCollectionFilterModel,
+	UmbUserDetail,
 	UmbUserDetailDataSource,
 	UmbUserDetailRepository,
 	UmbUserSetGroupDataSource,
@@ -27,7 +28,6 @@ import {
 	InviteUserRequestModel,
 	UpdateUserRequestModel,
 	UserItemResponseModel,
-	UserResponseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import { UMB_NOTIFICATION_CONTEXT_TOKEN, UmbNotificationContext } from '@umbraco-cms/backoffice/notification';
@@ -49,7 +49,7 @@ export class UmbUserRepository
 	#disableSource: UmbUserDisableServerDataSource;
 	#unlockSource: UmbUserUnlockServerDataSource;
 
-	#collectionSource: UmbCollectionDataSource<UserResponseModel>;
+	#collectionSource: UmbCollectionDataSource<UmbUserDetail>;
 
 	#notificationContext?: UmbNotificationContext;
 
@@ -186,8 +186,12 @@ export class UmbUserRepository
 
 		if (data) {
 			this.#detailStore?.append(data);
+		}
 
-			const notification = { data: { message: `User saved` } };
+		if (!error) {
+			const notification = {
+				data: { message: this.#host.localize?.term('speechBubbles_editUserSaved') ?? 'User saved' },
+			};
 			this.#notificationContext?.peek('positive', notification);
 		}
 

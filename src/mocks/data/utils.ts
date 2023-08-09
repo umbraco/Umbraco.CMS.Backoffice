@@ -7,14 +7,13 @@ import type {
 	DocumentTypeResponseModel,
 	FileSystemTreeItemPresentationModel,
 	DocumentResponseModel,
+	TextFileResponseModelBaseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 
 export const createEntityTreeItem = (item: any): EntityTreeItemResponseModel => {
 	return {
-		$type: '',
 		name: item.name,
 		type: item.type,
-		icon: item.icon,
 		hasChildren: item.hasChildren,
 		id: item.id,
 		isContainer: item.isContainer,
@@ -25,7 +24,6 @@ export const createEntityTreeItem = (item: any): EntityTreeItemResponseModel => 
 export const createFolderTreeItem = (item: any): FolderTreeItemResponseModel => {
 	return {
 		...createEntityTreeItem(item),
-		$type: 'FolderTreeItemResponseModel',
 		isFolder: item.isFolder,
 	};
 };
@@ -46,7 +44,6 @@ export const createDocumentTreeItem = (
 ): DocumentTreeItemResponseModel & { isTrashed: boolean } => {
 	return {
 		...createContentTreeItem(item),
-		$type: 'DocumentTreeItemViewModel',
 		type: 'document',
 		icon: 'document', // TODO: Should get this from document type...
 		name: item.variants?.[0].name ?? '',
@@ -72,9 +69,14 @@ export const createFileSystemTreeItem = (item: any): FileSystemTreeItemPresentat
 	return {
 		name: item.name,
 		type: item.type,
-		icon: item.icon,
 		hasChildren: item.hasChildren,
 		path: item.path,
 		isFolder: item.isFolder,
 	};
 };
+
+export const createTextFileItem = (item: any): TextFileResponseModelBaseModel => ({
+	path: item.path,
+	name: item.name,
+	content: item.content,
+});

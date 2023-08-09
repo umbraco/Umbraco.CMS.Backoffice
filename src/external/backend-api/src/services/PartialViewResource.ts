@@ -1,3 +1,4 @@
+/* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -193,6 +194,9 @@ export class PartialViewResource {
             url: '/umbraco/management/api/v1/partial-view/snippet/{name}',
             path: {
                 'name': name,
+            },
+            errors: {
+                404: `Not Found`,
             },
         });
     }

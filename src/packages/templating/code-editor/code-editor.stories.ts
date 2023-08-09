@@ -124,7 +124,7 @@ const codeSnippets: Record<CodeEditorLanguage, string> = {
 		content = createObservablePart(this.#data, (data) => data?.content);
 
 		constructor(host: UmbControllerHostElement) {
-			super(host, new UmbTemplateRepository(host));
+			super(host, 'Umb.Workspace.Template', new UmbTemplateRepository(host));
 		}
 
 		getData() {
@@ -132,11 +132,11 @@ const codeSnippets: Record<CodeEditorLanguage, string> = {
 		}
 
 		setName(value: string) {
-			this.#data.next({ ...this.#data.value, $type: this.#data.value?.$type || '', name: value });
+			this.#data.next({ ...this.#data.value, name: value });
 		}
 
 		setContent(value: string) {
-			this.#data.next({ ...this.#data.value, $type: this.#data.value?.$type || '', content: value });
+			this.#data.next({ ...this.#data.value, content: value });
 		}
 
 		async load(entityId: string) {

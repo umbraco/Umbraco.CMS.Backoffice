@@ -1,31 +1,19 @@
 import { esbuildPlugin } from '@web/dev-server-esbuild';
 import { playwrightLauncher } from '@web/test-runner-playwright';
 import { importMapsPlugin } from '@web/dev-server-import-maps';
-import rollupUrl from 'rollup-plugin-url';
-import { fromRollup } from '@web/dev-server-rollup';
 
-const url = fromRollup(rollupUrl);
+const mode = process.env.MODE || 'dev';
+if (!['dev', 'prod'].includes(mode)) {
+	throw new Error(`MODE must be "dev" or "prod", was "${mode}"`);
+}
 
 /** @type {import('@web/dev-server').DevServerConfig} */
 export default {
-	nodeResolve: true,
-	files: ['src/**/*.test.ts', 'libs/**/*.test.ts'],
-	mimeTypes: {
-		'./public/**/*': 'js',
-	},
+	rootDir: '.',
+	files: ['./src/**/*.test.ts'],
+	nodeResolve: { exportConditions: mode === 'dev' ? ['development'] : [] },
 	plugins: [
-		{
-			name: 'resolve-umbraco-and-vite-imports',
-			// Rewrite Vite's root imports to the public folder
-			transformImport(args) {
-				if (args.source.match(/^\/.*?\.(png|gif|jpg|jpeg|svg)$/is)) {
-					return `/public${args.source}`;
-				}
-			},
-		},
-		// Serve images from the public folder as JS modules
-		url({ include: ['public/**/*'] }),
-		esbuildPlugin({ ts: true, target: 'auto', json: true }),
+		esbuildPlugin({ ts: true, tsconfig: './tsconfig.json', target: 'auto', json: true }),
 		importMapsPlugin({
 			inject: {
 				importMap: {
@@ -48,6 +36,7 @@ export default {
 						'@umbraco-cms/backoffice/controller-api': './src/libs/controller-api/index.ts',
 						'@umbraco-cms/backoffice/element-api': './src/libs/element-api/index.ts',
 						'@umbraco-cms/backoffice/extension-api': './src/libs/extension-api/index.ts',
+						'@umbraco-cms/backoffice/localization-api': './src/libs/localization-api/index.ts',
 						'@umbraco-cms/backoffice/observable-api': './src/libs/observable-api/index.ts',
 
 						'@umbraco-cms/backoffice/auth': './src/shared/auth/index.ts',
@@ -72,6 +61,7 @@ export default {
 						'@umbraco-cms/backoffice/entity-bulk-action': './src/packages/core/entity-bulk-action/index.ts',
 						'@umbraco-cms/backoffice/extension-registry': './src/packages/core/extension-registry/index.ts',
 						'@umbraco-cms/backoffice/id': './src/packages/core/id/index.ts',
+						'@umbraco-cms/backoffice/localization': './src/packages/core/localization/index.ts',
 						'@umbraco-cms/backoffice/macro': './src/packages/core/macro/index.ts',
 						'@umbraco-cms/backoffice/menu': './src/packages/core/menu/index.ts',
 						'@umbraco-cms/backoffice/modal': './src/packages/core/modal/index.ts',
@@ -86,6 +76,8 @@ export default {
 						'@umbraco-cms/backoffice/tree': './src/packages/core/tree/index.ts',
 						'@umbraco-cms/backoffice/variant': './src/packages/core/variant/index.ts',
 						'@umbraco-cms/backoffice/workspace': './src/packages/core/workspace/index.ts',
+
+						'@umbraco-cms/backoffice/dictionary': './src/packages/dictionary/dictionary/index.ts',
 
 						'@umbraco-cms/backoffice/document': './src/packages/documents/documents/index.ts',
 						'@umbraco-cms/backoffice/document-blueprint': './src/packages/documents/document-blueprints/index.ts',
@@ -123,7 +115,7 @@ export default {
 		reporters: ['lcovonly', 'text-summary'],
 	},
 	testRunnerHtml: (testFramework) =>
-		`<html>
+		`<html lang="en-us">
 			<head>
 				<meta charset="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />

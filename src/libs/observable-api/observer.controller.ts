@@ -1,21 +1,24 @@
-import { UmbObserver } from './observer.js';
+import { ObserverCallback, UmbObserver } from './observer.js';
 import { Observable } from '@umbraco-cms/backoffice/external/rxjs';
 import { UmbController, UmbControllerAlias, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
 export class UmbObserverController<T = unknown> extends UmbObserver<T> implements UmbController {
-	_alias?: UmbControllerAlias;
+	#host: UmbControllerHost;
+	#alias?: UmbControllerAlias;
+
 	public get controllerAlias() {
-		return this._alias;
+		return this.#alias;
 	}
 
 	constructor(
 		host: UmbControllerHost,
 		source: Observable<T>,
-		callback: (_value: T) => void,
+		callback: ObserverCallback<T>,
 		alias?: UmbControllerAlias
 	) {
 		super(source, callback);
-		this._alias = alias;
+		this.#host = host;
+		this.#alias = alias;
 
 		// Lets check if controller is already here:
 		// No we don't want this, as multiple different controllers might be looking at the same source.
@@ -27,5 +30,10 @@ export class UmbObserverController<T = unknown> extends UmbObserver<T> implement
 		*/
 
 		host.addController(this);
+	}
+
+	destroy(): void {
+		super.destroy();
+		this.#host.removeController(this);
 	}
 }

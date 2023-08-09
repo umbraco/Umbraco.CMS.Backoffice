@@ -65,7 +65,7 @@ export class UmbResourceController extends UmbBaseController {
 				// Cancelled - do nothing
 				return {};
 			} else {
-				// ApiError - body could hold a ProblemDetailsModel from the server
+				// ApiError - body could hold a ProblemDetails from the server
 				if (typeof error.body !== 'undefined' && !!error.body) {
 					try {
 						(error as any).body = typeof error.body === 'string' ? JSON.parse(error.body) : error.body;
@@ -96,8 +96,8 @@ export class UmbResourceController extends UmbBaseController {
 						if (this.#notificationContext) {
 							this.#notificationContext.peek('danger', {
 								data: {
-									headline: error.body.title ?? error.name ?? 'Server Error',
-									message: error.body.detail ?? error.message ?? 'Something went wrong',
+									headline: error.body?.title ?? error.name ?? 'Server Error',
+									message: error.body?.detail ?? error.message ?? 'Something went wrong',
 								},
 								...options,
 							});
