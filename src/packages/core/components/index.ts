@@ -32,3 +32,4 @@ export * from './ref-property-editor-ui/index.js';
 export * from './table/index.js';
 export * from './tooltip-menu/index.js';
 export * from './variant-selector/index.js';
+export * from './priority-navigation/index.js';
