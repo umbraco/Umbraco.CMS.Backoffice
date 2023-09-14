@@ -45,7 +45,7 @@ export class UmbDocumentServerDataSource
 			this.#host,
 			DocumentResource.getDocumentById({
 				id,
-			})
+			}),
 		);
 	}
 
@@ -60,7 +60,6 @@ export class UmbDocumentServerDataSource
 			urls: [],
 			templateId: null,
 			parentId: null,
-			id: UmbId.new(),
 			contentTypeId: documentTypeId,
 			values: [],
 			variants: [
@@ -75,6 +74,7 @@ export class UmbDocumentServerDataSource
 				},
 			],
 			...preset,
+			id: UmbId.new(),
 		};
 
 		return { data };
@@ -142,7 +142,7 @@ export class UmbDocumentServerDataSource
 				headers: {
 					'Content-Type': 'application/json',
 				},
-			}) as any
+			}) as any,
 		);
 	}
 
@@ -165,7 +165,7 @@ export class UmbDocumentServerDataSource
 				headers: {
 					'Content-Type': 'application/json',
 				},
-			}).then((res) => res.json())
+			}).then((res) => res.json()),
 		);
 	}
 
@@ -175,22 +175,11 @@ export class UmbDocumentServerDataSource
 	 * @return {*}
 	 * @memberof UmbDocumentTypeServerDataSource
 	 */
-	async getAllowedDocumentTypesOf(id: string) {
-		if (!id) throw new Error('Id is missing');
-
+	async getAllowedDocumentTypesOf(id: string | null) {
+		if (id === undefined) throw new Error('Id is missing');
+		// TODO: remove when null is allowed as id.
+		const hackId = id === null ? undefined : id;
 		// TODO: Notice, here we need to implement pagination.
-		return tryExecuteAndNotify(this.#host, DocumentResource.getDocumentByIdAllowedDocumentTypes({ id }));
-	}
-
-	/**
-	 * Get the allowed document types for root
-	 * @param {string} id
-	 * @return {*}
-	 * @memberof UmbDocumentTypeServerDataSource
-	 */
-	async getAllowedDocumentTypesAtRoot() {
-		console.log('source requestAllowedDocumentTypesAtRoot');
-		// TODO: Notice, here we need to implement pagination.
-		return tryExecuteAndNotify(this.#host, DocumentResource.getDocumentRootAllowedDocumentTypes({}));
+		return tryExecuteAndNotify(this.#host, DocumentResource.getDocumentAllowedDocumentTypes({ parentId: hackId }));
 	}
 }
