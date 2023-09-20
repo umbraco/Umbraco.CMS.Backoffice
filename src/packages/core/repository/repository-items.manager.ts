@@ -1,4 +1,4 @@
-import { UmbItemRepository } from '@umbraco-cms/backoffice/repository';
+import { UmbItemRepository } from 'src/packages/core/repository';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
 import { UmbArrayState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import { UmbExtensionClassInitializer } from '@umbraco-cms/backoffice/extension-registry';
@@ -29,7 +29,7 @@ export class UmbRepositoryItemsManager<ItemType extends ItemResponseModelBaseMod
 	constructor(
 		host: UmbControllerHostElement,
 		repositoryAlias: string,
-		getUniqueMethod?: (entry: ItemType) => string | undefined
+		getUniqueMethod?: (entry: ItemType) => string | undefined,
 	) {
 		this.host = host;
 		this.#getUnique = getUniqueMethod || ((entry) => entry.id || '');
