@@ -1,5 +1,5 @@
 export * from './modal-token.js';
-export * from './allowed-document-types-modal.token.js';
+export * from './create-document-modal.token.js';
 export * from './change-password-modal.token.js';
 export * from './code-editor-modal.token.js';
 export * from './confirm-modal.token.js';
@@ -33,3 +33,4 @@ export * from './data-type-picker-modal.token.js';
 export * from './workspace-modal.token.js';
 export * from './data-type-picker-flow-modal.token.js';
 export * from './data-type-picker-flow-data-type-picker-modal.token.js';
+export * from './entity-user-permission-settings-modal.token.js';
