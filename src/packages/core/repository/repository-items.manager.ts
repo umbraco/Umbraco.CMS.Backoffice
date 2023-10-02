@@ -46,8 +46,13 @@ export class UmbRepositoryItemsManager<ItemType extends ItemResponseModelBaseMod
 
 	setUniques(uniques: string[]) {
 		this.#uniques.next(uniques);
-
 		//TODO: Check if it's safe to call requestItems here.
+		// We don't have to request items if there is no uniques.
+		if (uniques.length === 0) {
+			this.#items.next([]);
+			return;
+		}
+
 		this.#requestItems();
 	}
 
