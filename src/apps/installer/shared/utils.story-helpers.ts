@@ -7,7 +7,7 @@ export class UmbContextStoryRenderElement extends UmbLitElement {
 	@property()
 	story: any
 
-	renderStory(story) {
+	renderStory(story: any) {
 		this.story = story;
 		return this;
 	}
