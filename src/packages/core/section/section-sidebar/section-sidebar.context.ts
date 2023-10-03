@@ -1,9 +1,9 @@
-import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
 import { UmbStringState, UmbBooleanState } from '@umbraco-cms/backoffice/observable-api';
 
-export class UmbSectionSidebarContext {
-	#host: UmbControllerHostElement;
+export class UmbSectionSidebarContext extends UmbBaseContext {
+
 	#contextMenuIsOpen = new UmbBooleanState(false);
 	contextMenuIsOpen = this.#contextMenuIsOpen.asObservable();
 
@@ -17,7 +17,7 @@ export class UmbSectionSidebarContext {
 	headline = this.#headline.asObservable();
 
 	constructor(host: UmbControllerHostElement) {
-		this.#host = host;
+		super(host, UMB_SECTION_SIDEBAR_CONTEXT_TOKEN);
 	}
 
 	toggleContextMenu(entityType: string, unique: string | null | undefined, headline: string | undefined) {

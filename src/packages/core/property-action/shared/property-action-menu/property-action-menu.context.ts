@@ -1,13 +1,13 @@
-import { UmbBaseController, type UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
+import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { type UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
 import { UmbBooleanState } from '@umbraco-cms/backoffice/observable-api';
 
-export class UmbPropertyActionMenuContext extends UmbBaseController {
+export class UmbPropertyActionMenuContext extends UmbBaseContext {
 	#isOpen = new UmbBooleanState(false);
 	public readonly isOpen = this.#isOpen.asObservable();
 
 	constructor(host: UmbControllerHostElement) {
-		super(host);
-		this.provideContext('umbPropertyActionMenu', this);
+		super(host, UMB_PROPERTY_ACTION_MENU);
 	}
 
 	toggle() {
@@ -20,3 +20,5 @@ export class UmbPropertyActionMenuContext extends UmbBaseController {
 		this.#isOpen.next(false);
 	}
 }
+
+export const UMB_PROPERTY_ACTION_MENU = new UmbContextToken<UmbPropertyActionMenuContext>('umbPropertyActionMenu');
