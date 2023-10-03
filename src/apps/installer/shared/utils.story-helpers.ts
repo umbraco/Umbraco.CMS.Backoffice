@@ -1,6 +1,7 @@
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import { property } from '@umbraco-cms/backoffice/external/lit';
+import { customElement, property } from '@umbraco-cms/backoffice/external/lit';
 
+@customElement('umb-context-story-render')
 export class UmbContextStoryRenderElement extends UmbLitElement {
 
 	@property()

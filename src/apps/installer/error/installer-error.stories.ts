@@ -30,7 +30,7 @@ export default {
 	title: 'Apps/Installer/Steps',
 	component: 'umb-installer-error',
 	id: 'umb-installer-error',
-	decorators: [(story) => contextProvider.renderStory(story)],
+	decorators: [(story) => html`${contextProvider.renderStory(story)}`],
 } as Meta;
 
 export const Step5Error: Story<UmbInstallerErrorElement> = () => html`<umb-installer-error></umb-installer-error>`;
