@@ -7,15 +7,16 @@ import {
 	TelemetryLevelModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
-import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbObjectState, UmbNumberState } from '@umbraco-cms/backoffice/observable-api';
+import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
 /**
  * Context API for the installer
  * @export
  * @class UmbInstallerContext
  */
-export class UmbInstallerContext {
+export class UmbInstallerContext extends UmbBaseContext {
 	private _data = new UmbObjectState<InstallVResponseModel>({
 		user: { name: '', email: '', password: '', subscribeToNewsletter: false },
 		database: { id: '', providerName: '' },
@@ -32,7 +33,8 @@ export class UmbInstallerContext {
 	private _installStatus = new UmbObjectState<ProblemDetails | null>(null);
 	public readonly installStatus = this._installStatus.asObservable();
 
-	constructor() {
+	constructor(host: UmbControllerHost) {
+		super(host, UMB_INSTALLER_CONTEXT_TOKEN);
 		this._loadInstallerSettings();
 	}
 

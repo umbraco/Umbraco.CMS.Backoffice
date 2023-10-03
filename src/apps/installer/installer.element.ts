@@ -14,12 +14,7 @@ export class UmbInstallerElement extends UmbLitElement {
 	@state()
 	step = 1;
 
-	private _umbInstallerContext = new UmbInstallerContext();
-
-	constructor() {
-		super();
-		this.provideContext(UMB_INSTALLER_CONTEXT_TOKEN, this._umbInstallerContext);
-	}
+	private _umbInstallerContext = new UmbInstallerContext(this);
 
 	connectedCallback(): void {
 		super.connectedCallback();
