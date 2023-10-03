@@ -1,11 +1,13 @@
-import { UmbAppContextConfig } from '../../apps/app/app-context-config.interface.js';
-import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbAppContextConfig } from './app-context-config.interface.js';
+import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 
-export class UmbAppContext {
+export class UmbAppContext extends UmbBaseContext {
 	#serverUrl: string;
 	#backofficePath: string;
 
-	constructor(config: UmbAppContextConfig) {
+	constructor(host: UmbControllerHost, config: UmbAppContextConfig) {
+		super(host, UMB_APP)
 		this.#serverUrl = config.serverUrl;
 		this.#backofficePath = config.backofficePath;
 	}

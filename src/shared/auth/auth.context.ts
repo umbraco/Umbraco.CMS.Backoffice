@@ -1,15 +1,18 @@
 import { IUmbAuth } from './auth.interface.js';
 import { UmbAuthFlow } from './auth-flow.js';
 import { UmbLoggedInUser } from './types.js';
+import { UMB_AUTH } from './auth.token.js';
 import { UserResource } from '@umbraco-cms/backoffice/backend-api';
 import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import { ReplaySubject } from '@umbraco-cms/backoffice/external/rxjs';
+import { UmbBaseContext } from '@umbraco-cms/backoffice/context-api';
 
-export class UmbAuthContext implements IUmbAuth {
+export class UmbAuthContext extends UmbBaseContext implements IUmbAuth {
 	#currentUser = new UmbObjectState<UmbLoggedInUser | undefined>(undefined);
 	readonly currentUser = this.#currentUser.asObservable();
+	//TODO: Change into BooleanState:
 	readonly isLoggedIn = new ReplaySubject<boolean>(1);
 	readonly languageIsoCode = this.#currentUser.asObservablePart((user) => user?.languageIsoCode ?? 'en-us');
 
@@ -17,6 +20,7 @@ export class UmbAuthContext implements IUmbAuth {
 	#authFlow;
 
 	constructor(host: UmbControllerHostElement, authFlow: UmbAuthFlow) {
+		super(host, UMB_AUTH);
 		this.#host = host;
 		this.#authFlow = authFlow;
 
