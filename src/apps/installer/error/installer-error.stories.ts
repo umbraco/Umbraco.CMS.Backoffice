@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/web-components';
 
-import { installerContextProvider } from '../shared/utils.story-helpers.js';
+import { UmbContextStoryRenderElement } from '../shared/utils.story-helpers.js';
 import { UmbInstallerContext } from '../installer.context.js';
 import type { UmbInstallerErrorElement } from './installer-error.element.js';
 import { html } from '@umbraco-cms/backoffice/external/lit';
@@ -21,14 +21,16 @@ const error = {
 	},
 };
 
-const installerContext = new UmbInstallerContext();
+const contextProvider = new UmbContextStoryRenderElement()
+
+const installerContext = new UmbInstallerContext(contextProvider);
 installerContext.setInstallStatus(error);
 
 export default {
 	title: 'Apps/Installer/Steps',
 	component: 'umb-installer-error',
 	id: 'umb-installer-error',
-	decorators: [(story) => installerContextProvider(story, installerContext)],
+	decorators: [(story) => contextProvider.renderStory(story)],
 } as Meta;
 
 export const Step5Error: Story<UmbInstallerErrorElement> = () => html`<umb-installer-error></umb-installer-error>`;
