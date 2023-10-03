@@ -1,8 +1,9 @@
 import type { ManifestSection } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbStringState } from '@umbraco-cms/backoffice/observable-api';
-import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbContextToken, UmbBaseContext } from '@umbraco-cms/backoffice/context-api';
+import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
-export class UmbSectionContext {
+export class UmbSectionContext extends UmbBaseContext {
 	#manifestAlias = new UmbStringState<string | undefined>(undefined);
 	#manifestPathname = new UmbStringState<string | undefined>(undefined);
 	#manifestLabel = new UmbStringState<string | undefined>(undefined);
@@ -10,7 +11,8 @@ export class UmbSectionContext {
 	public readonly pathname = this.#manifestPathname.asObservable();
 	public readonly label = this.#manifestLabel.asObservable();
 
-	constructor(manifest: ManifestSection) {
+	constructor(host: UmbControllerHost, manifest: ManifestSection) {
+		super(host, UMB_SECTION_CONTEXT_TOKEN);
 		this.setManifest(manifest);
 	}
 
