@@ -1,13 +1,15 @@
 import { UmbDocumentWorkspaceContext } from "../workspace/index.js";
+import { UMB_DOCUMENT_VARIANT_CONTEXT } from "./document-variant-context.token.js";
 import { DocumentVariantResponseModel, PropertyTypeModelBaseModel } from "@umbraco-cms/backoffice/backend-api";
-import { UmbBaseController, UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
+import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { map } from "@umbraco-cms/backoffice/external/rxjs";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { UmbVariantId } from "@umbraco-cms/backoffice/variant";
-import { UMB_VARIANT_CONTEXT, UmbVariantContext } from "@umbraco-cms/backoffice/workspace";
+import { UmbVariantContext } from "@umbraco-cms/backoffice/workspace";
+import { UmbBaseContext } from "@umbraco-cms/backoffice/context-api";
 
 // TODO: This code can be split into a UmbContentTypeVariantContext, leaving just the publishing state and methods to this class.
-export class UmbDocumentVariantContext extends UmbBaseController implements UmbVariantContext {
+export class UmbDocumentVariantContext extends UmbBaseContext implements UmbVariantContext {
 
 	#workspace: UmbDocumentWorkspaceContext;
 	#variantId: UmbVariantId;
@@ -48,7 +50,7 @@ export class UmbDocumentVariantContext extends UmbBaseController implements UmbV
 
 	constructor(host: UmbControllerHost, workspace: UmbDocumentWorkspaceContext, variantId?: UmbVariantId) {
 		// The controller alias, is a very generic name cause we want only one of these for this controller host.
-		super(host, 'variantContext');
+		super(host, UMB_DOCUMENT_VARIANT_CONTEXT);
 		this.#workspace = workspace;
 		this.#variantId = variantId ?? UmbVariantId.CreateInvariant();
 
@@ -60,9 +62,6 @@ export class UmbDocumentVariantContext extends UmbBaseController implements UmbV
 			},
 			'_observeActiveVariant'
 		);
-
-		// TODO: Refactor: use the document dataset context token.
-		this.provideContext(UMB_VARIANT_CONTEXT, this);
 	}
 
 

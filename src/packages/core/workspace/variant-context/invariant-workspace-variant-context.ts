@@ -1,10 +1,11 @@
 import { DocumentVariantResponseModel } from "@umbraco-cms/backoffice/backend-api";
-import { UmbBaseController, UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
+import { UmbBaseContext } from "@umbraco-cms/backoffice/context-api";
+import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { UmbVariantId } from "@umbraco-cms/backoffice/variant";
 import { UMB_VARIANT_CONTEXT, UmbVariantContext, UmbInvariantableWorkspaceContextInterface } from "@umbraco-cms/backoffice/workspace";
 
-export class UmbInvariantWorkspaceVariantContext<WorkspaceType extends UmbInvariantableWorkspaceContextInterface= UmbInvariantableWorkspaceContextInterface> extends UmbBaseController implements UmbVariantContext {
+export class UmbInvariantWorkspaceVariantContext<WorkspaceType extends UmbInvariantableWorkspaceContextInterface= UmbInvariantableWorkspaceContextInterface> extends UmbBaseContext implements UmbVariantContext {
 
 	protected _workspace: WorkspaceType;
 
@@ -36,11 +37,8 @@ export class UmbInvariantWorkspaceVariantContext<WorkspaceType extends UmbInvari
 
 
 	constructor(host: UmbControllerHost, workspace: WorkspaceType) {
-		// The controller alias, is a very generic name cause we want only one of these for this controller host.
-		super(host, 'variantContext');
+		super(host, UMB_VARIANT_CONTEXT);
 		this._workspace = workspace;
-
-		this.provideContext(UMB_VARIANT_CONTEXT, this);
 	}
 
 
