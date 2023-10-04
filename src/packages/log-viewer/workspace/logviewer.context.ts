@@ -19,7 +19,7 @@ import {
 	SavedLogSearchPresenationBaseModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { UmbBaseController, UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
-import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { query } from '@umbraco-cms/backoffice/router';
 import { UMB_WORKSPACE_CONTEXT, UmbWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
 import { Observable } from '@umbraco-cms/backoffice/external/rxjs';
@@ -37,7 +37,7 @@ export interface LogViewerDateRange {
 
 // TODO: Revisit usage of workspace for this case...
 export class UmbLogViewerWorkspaceContext
-	extends UmbBaseController
+	extends UmbBaseContext
 	implements UmbWorkspaceContextInterface<UmbEntityBase>
 {
 	public readonly workspaceAlias: string = 'Umb.Workspace.LogViewer';
@@ -131,8 +131,8 @@ export class UmbLogViewerWorkspaceContext
 	currentPage = 1;
 
 	constructor(host: UmbControllerHostElement) {
-		super(host);
-		this.provideContext(UMB_WORKSPACE_CONTEXT, this);
+		super(host, UMB_WORKSPACE_CONTEXT);
+		// TODO: Refactor the UMB_APP_LOG_VIEWER_CONTEXT_TOKEN away, and use a discriminated workspace context token instead.
 		// TODO: Revisit usage of workspace for this case... currently no other workspace context provides them self with their own token.
 		this.provideContext(UMB_APP_LOG_VIEWER_CONTEXT_TOKEN, this);
 		this.#repository = new UmbLogViewerRepository(host);
