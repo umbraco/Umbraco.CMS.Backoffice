@@ -33,7 +33,6 @@ export class UmbDashboardHealthCheckElement extends UmbLitElement {
 
 	constructor() {
 		super();
-		this.provideContext(UMB_HEALTHCHECK_DASHBOARD_CONTEXT_TOKEN, this._healthCheckDashboardContext);
 
 		this.observe(umbExtensionsRegistry.extensionsOfType('healthCheck'), (healthCheckManifests) => {
 			this._healthCheckDashboardContext.manifests = healthCheckManifests;
