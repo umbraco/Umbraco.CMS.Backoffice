@@ -1,12 +1,12 @@
 import { map } from '@umbraco-cms/backoffice/external/rxjs';
-import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbStringState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
-import { UmbBaseController, UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
+import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
 import { ManifestTheme, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 
 const LOCAL_STORAGE_KEY = 'umb-theme-alias';
 
-export class UmbThemeContext extends UmbBaseController {
+export class UmbThemeContext extends UmbBaseContext {
 	#theme = new UmbStringState('umb-light-theme');
 	#themeObserver?: UmbObserverController<ManifestTheme[]>;
 
@@ -15,9 +15,7 @@ export class UmbThemeContext extends UmbBaseController {
 	#styleElement: HTMLLinkElement | HTMLStyleElement | null = null;
 
 	constructor(host: UmbControllerHostElement) {
-		super(host);
-
-		this.provideContext(UMB_THEME_CONTEXT_TOKEN, this);
+		super(host, UMB_THEME_CONTEXT_TOKEN);
 
 		const storedTheme = localStorage.getItem(LOCAL_STORAGE_KEY);
 		if (storedTheme) {
