@@ -1,15 +1,15 @@
 import type { UmbRoute } from './route.interface.js';
 import { createRoutePathBuilder } from './generate-route-path-builder.function.js';
 import type { IRoutingInfo, IRouterSlot } from '@umbraco-cms/backoffice/external/router-slot';
-import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
-import { UmbBaseController, type UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
+import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { type UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
 import { UMB_MODAL_MANAGER_CONTEXT_TOKEN, UmbModalRouteRegistration } from '@umbraco-cms/backoffice/modal';
 
 const EmptyDiv = document.createElement('div');
 
 type UmbRoutePlusModalKey = UmbRoute & { __modalKey: string };
 
-export class UmbRouteContext extends UmbBaseController {
+export class UmbRouteContext extends UmbBaseContext {
 	#mainRouter: IRouterSlot;
 	#modalRouter: IRouterSlot;
 	#modalRegistrations: UmbModalRouteRegistration[] = [];
@@ -20,10 +20,9 @@ export class UmbRouteContext extends UmbBaseController {
 	#activeModalPath?: string;
 
 	constructor(host: UmbControllerHostElement, mainRouter: IRouterSlot, modalRouter: IRouterSlot) {
-		super(host);
+		super(host, UMB_ROUTE_CONTEXT_TOKEN);
 		this.#mainRouter = mainRouter;
 		this.#modalRouter = modalRouter;
-		this.provideContext(UMB_ROUTE_CONTEXT_TOKEN, this);
 		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT_TOKEN, (context) => {
 			this.#modalContext = context;
 			this.#generateModalRoutes();

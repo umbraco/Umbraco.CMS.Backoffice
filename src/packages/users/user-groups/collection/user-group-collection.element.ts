@@ -13,6 +13,7 @@ export class UmbUserCollectionElement extends UmbLitElement {
 
 	connectedCallback(): void {
 		super.connectedCallback();
+		// TODO: Stop doing this, when we have a look at collections:
 		this.provideContext(UMB_COLLECTION_CONTEXT_TOKEN, this.#collectionContext);
 	}
 
