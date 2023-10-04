@@ -2,14 +2,15 @@ import { Observable } from '@umbraco-cms/backoffice/external/rxjs';
 import { UmbPagedData, UmbTreeRepository } from '@umbraco-cms/backoffice/repository';
 import { ManifestTree, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbBooleanState } from '@umbraco-cms/backoffice/observable-api';
-import { UmbBaseController, UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
+import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { createExtensionClass } from '@umbraco-cms/backoffice/extension-api';
 import { ProblemDetails, TreeItemPresentationModel } from '@umbraco-cms/backoffice/backend-api';
 import { UmbSelectionManagerBase } from '@umbraco-cms/backoffice/utils';
 import { UmbSelectedEvent } from '@umbraco-cms/backoffice/events';
+import { UmbBaseContext } from '@umbraco-cms/backoffice/context-api';
 
 // TODO: update interface
-export interface UmbTreeContext<TreeItemType extends TreeItemPresentationModel> extends UmbBaseController {
+export interface UmbTreeContext<TreeItemType extends TreeItemPresentationModel> extends UmbBaseContext {
 	readonly selectable: Observable<boolean>;
 	readonly selection: Observable<Array<string | null>>;
 	setSelectable(value: boolean): void;
@@ -28,7 +29,7 @@ export interface UmbTreeContext<TreeItemType extends TreeItemPresentationModel> 
 }
 
 export class UmbTreeContextBase<TreeItemType extends TreeItemPresentationModel>
-	extends UmbBaseController
+	extends UmbBaseContext
 	implements UmbTreeContext<TreeItemType>
 {
 	#selectionManager = new UmbSelectionManagerBase();
@@ -51,9 +52,8 @@ export class UmbTreeContextBase<TreeItemType extends TreeItemPresentationModel>
 		this.#initialized ? resolve() : (this.#initResolver = resolve);
 	});
 
-	constructor(host: UmbControllerHostElement) {
-		super(host);
-		this.provideContext('umbTreeContext', this);
+	constructor(host: UmbControllerHost) {
+		super(host, 'umbTreeContext');
 	}
 
 	// TODO: find a generic way to do this
