@@ -6,7 +6,7 @@ import { customElement } from '@umbraco-cms/backoffice/external/lit';
 @customElement('test-my-controller-host')
 export class UmbTestControllerHostElement extends UmbControllerHostElementMixin(HTMLElement) {}
 
-export class UmbTestControllerImplementationElement extends UmbBaseController {
+class UmbTestControllerImplementationElement extends UmbBaseController {
 	testIsConnected = false;
 	testIsDestroyed = false;
 
