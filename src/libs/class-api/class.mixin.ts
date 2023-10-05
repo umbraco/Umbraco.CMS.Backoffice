@@ -2,17 +2,17 @@ import type { UmbClassMixinInterface } from './class.interface.js';
 import type { Observable } from '@umbraco-cms/backoffice/external/rxjs';
 import type { ClassConstructor } from '@umbraco-cms/backoffice/extension-api';
 import {
-	type UmbControllerHost,
-	UmbControllerHostBaseMixin,
-	UmbController,
-	UmbControllerAlias,
-} from '@umbraco-cms/backoffice/controller-api';
-import {
 	type UmbContextToken,
 	type UmbContextCallback,
 	UmbContextConsumerController,
 	UmbContextProviderController,
 } from '@umbraco-cms/backoffice/context-api';
+import {
+	type UmbControllerHost,
+	UmbControllerHostBaseMixin,
+	UmbController,
+	UmbControllerAlias,
+} from '@umbraco-cms/backoffice/controller-api';
 import { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 
 type UmbClassMixinConstructor = new (
