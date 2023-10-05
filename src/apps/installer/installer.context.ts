@@ -7,16 +7,16 @@ import {
 	TelemetryLevelModel,
 } from '@umbraco-cms/backoffice/backend-api';
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
-import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbObjectState, UmbNumberState } from '@umbraco-cms/backoffice/observable-api';
-import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { UmbControllerHost, UmbBaseContextController } from '@umbraco-cms/backoffice/controller-api';
 
 /**
  * Context API for the installer
  * @export
  * @class UmbInstallerContext
  */
-export class UmbInstallerContext extends UmbBaseContext {
+export class UmbInstallerContext extends UmbBaseContextController {
 	private _data = new UmbObjectState<InstallVResponseModel>({
 		user: { name: '', email: '', password: '', subscribeToNewsletter: false },
 		database: { id: '', providerName: '' },
