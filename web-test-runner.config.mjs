@@ -20,8 +20,6 @@ export default {
 					imports: {
 						'src/': './src/',
 
-						'@umbraco-cms/backoffice/app': './src/apps/app/index.ts',
-
 						'@umbraco-cms/backoffice/external/lit': './src/external/lit/index.ts',
 						'@umbraco-cms/backoffice/external/lodash': './src/external/lodash/index.ts',
 						'@umbraco-cms/backoffice/external/monaco-editor': './src/external/monaco-editor/index.ts',
@@ -108,6 +106,8 @@ export default {
 						'@umbraco-cms/backoffice/code-editor': './src/packages/templating/code-editor/index.ts',
 
 						'@umbraco-cms/internal/test-utils': './utils/test-utils.ts',
+
+						'@umbraco-cms/backoffice/app': './src/apps/app/index.ts',
 					},
 				},
 			},
