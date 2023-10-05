@@ -1,10 +1,10 @@
 import { DocumentVariantResponseModel } from "@umbraco-cms/backoffice/backend-api";
-import { UmbControllerHost, UmbBaseContext } from "@umbraco-cms/backoffice/controller-api";
+import { UmbControllerHost, UmbBaseContextController } from "@umbraco-cms/backoffice/controller-api";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { UmbVariantId } from "@umbraco-cms/backoffice/variant";
 import { UMB_VARIANT_CONTEXT, UmbVariantContext, UmbInvariantableWorkspaceContextInterface } from "@umbraco-cms/backoffice/workspace";
 
-export class UmbInvariantWorkspaceVariantContext<WorkspaceType extends UmbInvariantableWorkspaceContextInterface= UmbInvariantableWorkspaceContextInterface> extends UmbBaseContext implements UmbVariantContext {
+export class UmbInvariantWorkspaceVariantContext<WorkspaceType extends UmbInvariantableWorkspaceContextInterface= UmbInvariantableWorkspaceContextInterface> extends UmbBaseContextController implements UmbVariantContext {
 
 	protected _workspace: WorkspaceType;
 

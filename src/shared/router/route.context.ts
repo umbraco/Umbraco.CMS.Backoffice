@@ -2,14 +2,14 @@ import type { UmbRoute } from './route.interface.js';
 import { createRoutePathBuilder } from './generate-route-path-builder.function.js';
 import type { IRoutingInfo, IRouterSlot } from '@umbraco-cms/backoffice/external/router-slot';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
-import { type UmbControllerHostElement, UmbBaseContext } from '@umbraco-cms/backoffice/controller-api';
+import { type UmbControllerHostElement, UmbBaseContextController } from '@umbraco-cms/backoffice/controller-api';
 import { UMB_MODAL_MANAGER_CONTEXT_TOKEN, UmbModalRouteRegistration } from '@umbraco-cms/backoffice/modal';
 
 const EmptyDiv = document.createElement('div');
 
 type UmbRoutePlusModalKey = UmbRoute & { __modalKey: string };
 
-export class UmbRouteContext extends UmbBaseContext {
+export class UmbRouteContext extends UmbBaseContextController {
 	#mainRouter: IRouterSlot;
 	#modalRouter: IRouterSlot;
 	#modalRegistrations: UmbModalRouteRegistration[] = [];

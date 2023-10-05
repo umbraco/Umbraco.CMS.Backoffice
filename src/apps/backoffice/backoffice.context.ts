@@ -1,10 +1,10 @@
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbBasicState, UmbStringState } from '@umbraco-cms/backoffice/observable-api';
 import { UmbExtensionManifestController, UmbExtensionsManifestController } from '@umbraco-cms/backoffice/extension-api';
-import { UmbBaseContext, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { UmbBaseContextController, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { ManifestSection, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 
-export class UmbBackofficeContext extends UmbBaseContext {
+export class UmbBackofficeContext extends UmbBaseContextController {
 	#activeSectionAlias = new UmbStringState(undefined);
 	public readonly activeSectionAlias = this.#activeSectionAlias.asObservable();
 

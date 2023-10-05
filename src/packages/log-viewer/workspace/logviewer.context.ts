@@ -18,7 +18,7 @@ import {
 	PagedSavedLogSearchResponseModel,
 	SavedLogSearchPresenationBaseModel,
 } from '@umbraco-cms/backoffice/backend-api';
-import { UmbControllerHostElement, UmbBaseContext } from '@umbraco-cms/backoffice/controller-api';
+import { UmbControllerHostElement, UmbBaseContextController } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { query } from '@umbraco-cms/backoffice/router';
 import { UMB_WORKSPACE_CONTEXT, UmbWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
@@ -37,7 +37,7 @@ export interface LogViewerDateRange {
 
 // TODO: Revisit usage of workspace for this case...
 export class UmbLogViewerWorkspaceContext
-	extends UmbBaseContext
+	extends UmbBaseContextController
 	implements UmbWorkspaceContextInterface<UmbEntityBase>
 {
 	public readonly workspaceAlias: string = 'Umb.Workspace.LogViewer';

@@ -1,14 +1,14 @@
 import { UmbDocumentWorkspaceContext } from "../workspace/index.js";
 import { UMB_DOCUMENT_VARIANT_CONTEXT } from "./document-variant-context.token.js";
 import { DocumentVariantResponseModel, PropertyTypeModelBaseModel } from "@umbraco-cms/backoffice/backend-api";
-import { UmbControllerHost, UmbBaseContext } from "@umbraco-cms/backoffice/controller-api";
+import { UmbControllerHost, UmbBaseContextController } from "@umbraco-cms/backoffice/controller-api";
 import { map } from "@umbraco-cms/backoffice/external/rxjs";
 import { UmbObjectState } from "@umbraco-cms/backoffice/observable-api";
 import { UmbVariantId } from "@umbraco-cms/backoffice/variant";
 import { UmbVariantContext } from "@umbraco-cms/backoffice/workspace";
 
 // TODO: This code can be split into a UmbContentTypeVariantContext, leaving just the publishing state and methods to this class.
-export class UmbDocumentVariantContext extends UmbBaseContext implements UmbVariantContext {
+export class UmbDocumentVariantContext extends UmbBaseContextController implements UmbVariantContext {
 
 	#workspace: UmbDocumentWorkspaceContext;
 	#variantId: UmbVariantId;

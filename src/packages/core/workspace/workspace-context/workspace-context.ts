@@ -1,12 +1,12 @@
 import { UmbSaveableWorkspaceContextInterface } from './saveable-workspace-context.interface.js';
-import { UmbControllerHostElement, UmbBaseContext } from '@umbraco-cms/backoffice/controller-api';
+import { UmbControllerHostElement, UmbBaseContextController } from '@umbraco-cms/backoffice/controller-api';
 import { UmbBooleanState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbEntityBase } from '@umbraco-cms/backoffice/models';
 import { UMB_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/workspace';
 import { UMB_MODAL_CONTEXT_TOKEN, UmbModalContext } from '@umbraco-cms/backoffice/modal';
 
 export abstract class UmbWorkspaceContext<RepositoryType, EntityType extends UmbEntityBase>
-	extends UmbBaseContext
+	extends UmbBaseContextController
 	implements UmbSaveableWorkspaceContextInterface<EntityType>
 {
 	public readonly host: UmbControllerHostElement;
