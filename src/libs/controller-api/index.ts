@@ -5,3 +5,4 @@ export * from './controller.class.js';
 export * from './controller.interface.js';
 export * from './controller-alias.type.js';
 export * from './base-context.controller.js';
+export * from './base-context-controller.interface.js';
