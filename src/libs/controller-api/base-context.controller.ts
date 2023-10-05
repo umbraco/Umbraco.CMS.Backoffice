@@ -1,5 +1,6 @@
 import type { UmbContextToken } from "../context-api/token/index.js";
-import { UmbBaseController, UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
+import { UmbControllerHost } from "./controller-host.interface.js";
+import { UmbBaseController } from "./controller.class.js";
 
 export abstract class UmbBaseContextController<BaseType = any, ResultType extends BaseType = BaseType> extends UmbBaseController {
 	constructor(host: UmbControllerHost, alias: string | UmbContextToken<BaseType, ResultType> ) {
