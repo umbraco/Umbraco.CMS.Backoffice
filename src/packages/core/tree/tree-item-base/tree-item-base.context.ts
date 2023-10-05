@@ -5,8 +5,8 @@ import { UMB_SECTION_CONTEXT_TOKEN, UMB_SECTION_SIDEBAR_CONTEXT_TOKEN } from '@u
 import type { UmbSectionContext, UmbSectionSidebarContext } from '@umbraco-cms/backoffice/section';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbBooleanState, UmbDeepState, UmbStringState } from '@umbraco-cms/backoffice/observable-api';
-import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbControllerHost, UmbBaseContext } from '@umbraco-cms/backoffice/controller-api';
+import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import type { TreeItemPresentationModel } from '@umbraco-cms/backoffice/backend-api';
 
 // add type for unique function

@@ -1,7 +1,7 @@
 import { UmbHealthCheckContext } from './health-check.context.js';
 import type { ManifestHealthCheck } from '@umbraco-cms/backoffice/extension-registry';
-import { UmbBaseContext, UmbContextToken } from '@umbraco-cms/backoffice/context-api';
-import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UmbControllerHost, UmbBaseContext } from '@umbraco-cms/backoffice/controller-api';
 
 export class UmbHealthCheckDashboardContext extends UmbBaseContext {
 	#manifests: ManifestHealthCheck[] = [];

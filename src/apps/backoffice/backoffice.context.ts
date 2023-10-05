@@ -1,7 +1,7 @@
-import { UmbContextToken, UmbBaseContext } from '@umbraco-cms/backoffice/context-api';
+import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbBasicState, UmbStringState } from '@umbraco-cms/backoffice/observable-api';
 import { UmbExtensionManifestController, UmbExtensionsManifestController } from '@umbraco-cms/backoffice/extension-api';
-import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { UmbBaseContext, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { ManifestSection, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 
 export class UmbBackofficeContext extends UmbBaseContext {

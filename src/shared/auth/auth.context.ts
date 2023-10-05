@@ -3,11 +3,10 @@ import { UmbAuthFlow } from './auth-flow.js';
 import { UmbLoggedInUser } from './types.js';
 import { UMB_AUTH } from './auth.token.js';
 import { UserResource } from '@umbraco-cms/backoffice/backend-api';
-import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
+import { UmbBaseContext, UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import { ReplaySubject } from '@umbraco-cms/backoffice/external/rxjs';
-import { UmbBaseContext } from '@umbraco-cms/backoffice/context-api';
 
 export class UmbAuthContext extends UmbBaseContext implements IUmbAuth {
 	#currentUser = new UmbObjectState<UmbLoggedInUser | undefined>(undefined);
