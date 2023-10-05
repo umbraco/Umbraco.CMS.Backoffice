@@ -21,7 +21,7 @@ import {
 	fallback,
 	localizations,
 } from './manager.js';
-import { UmbController, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import type { UmbController, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
 const LocalizeControllerAlias = Symbol();
 /**
