@@ -8,8 +8,8 @@ import {
 	UmbControllerAlias,
 } from '@umbraco-cms/backoffice/controller-api';
 import {
-	UmbContextToken,
-	UmbContextCallback,
+	type UmbContextToken,
+	type UmbContextCallback,
 	UmbContextConsumerController,
 	UmbContextProviderController,
 } from '@umbraco-cms/backoffice/context-api';
