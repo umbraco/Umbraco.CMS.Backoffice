@@ -608,6 +608,56 @@ export const data: Array<DocumentTypeResponseModel> = [
 			keepLatestVersionPerDayForDays: null,
 		},
 	},
+	{
+		allowedTemplateIds: [],
+		defaultTemplateId: null,
+		id: 'simple-document-type-id',
+		alias: 'blogPost',
+		name: 'All property editors document type',
+		description: null,
+		icon: 'umb:item-arrangement',
+		allowedAsRoot: true,
+		variesByCulture: true,
+		variesBySegment: false,
+		isElement: false,
+		properties: [
+			{
+				id: '6',
+				containerId: 'all-properties-group-key',
+				alias: 'markdownEditor',
+				name: 'MarkdownEditor',
+				description: '',
+				dataTypeId: 'dt-markdownEditor',
+				variesByCulture: false,
+				variesBySegment: false,
+				validation: {
+					mandatory: true,
+					mandatoryMessage: null,
+					regEx: null,
+					regExMessage: null,
+				},
+				appearance: {
+					labelOnTop: false,
+				},
+			},
+		],
+		containers: [
+			{
+				id: 'all-properties-group-key',
+				parentId: null,
+				name: 'Content',
+				type: 'Group',
+				sortOrder: 0,
+			},
+		],
+		allowedContentTypes: [],
+		compositions: [],
+		cleanup: {
+			preventCleanup: false,
+			keepAllVersionsNewerThanDays: null,
+			keepLatestVersionPerDayForDays: null,
+		},
+	},
 
 	{
 		allowedTemplateIds: [],

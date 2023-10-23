@@ -1,3 +1,4 @@
+import { UmbMarkdownActionsController } from './actions/markdown.actions.js';
 import { sanitizeHtml } from '@umbraco-cms/backoffice/external/sanitize-html';
 import { marked } from '@umbraco-cms/backoffice/external/marked';
 import { monaco } from '@umbraco-cms/backoffice/external/monaco-editor';
@@ -33,6 +34,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 
 	#isCodeEditorReady = new UmbBooleanState(false);
 	#editor?: UmbCodeEditorController;
+	#actions?: UmbMarkdownActionsController;
 
 	@query('umb-code-editor')
 	_codeEditor?: UmbCodeEditorElement;
@@ -60,12 +62,18 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 			}); // Prefer to update options before showing the editor, to avoid seeing the changes in the UI.
 
 			this.#isCodeEditorReady.next(true);
-			this.#loadActions();
+
+			if (this.#editor) {
+				this.#actions = new UmbMarkdownActionsController(this, this.#editor);
+			}
+
+			//this.#loadActions();
 		} catch (error) {
 			console.error(error);
 		}
 	}
 
+	/*
 	async #loadActions() {
 		// TODO: Find a way to have "double" keybindings (ctrl+m+ctrl+c for `code`, rather than simple ctrl+c as its taken by OS to copy things)
 		// Going with the keybindings of a Markdown Shortcut plugin https://marketplace.visualstudio.com/items?itemName=robole.markdown-shortcuts#shortcuts or perhaps there are keybindings that would make more sense.
@@ -168,8 +176,9 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 			// TODO: Open in modal
 		});
 	}
+	*/
 
-	private _focusEditor(): void {
+	focusEditor(): void {
 		// If we press one of the action buttons manually (which is outside the editor), we need to focus the editor again.
 		this.#editor?.monacoEditor?.focus();
 	}
@@ -180,7 +189,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 
 		const selectedValue = this.#editor?.getValueInRange(selection);
 
-		this._focusEditor(); // Focus before opening modal
+		this.focusEditor(); // Focus before opening modal
 		const modalContext = this._modalContext?.open(UMB_LINK_PICKER_MODAL, {
 			index: null,
 			link: { name: selectedValue },
@@ -214,7 +223,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 				}
 			})
 			.catch(() => undefined)
-			.finally(() => this._focusEditor());
+			.finally(() => this.focusEditor());
 	}
 
 	private _insertMedia() {
@@ -223,7 +232,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 
 		const alt = this.#editor?.getValueInRange(selection);
 
-		this._focusEditor(); // Focus before opening modal, otherwise cannot regain focus back after modal
+		this.focusEditor(); // Focus before opening modal, otherwise cannot regain focus back after modal
 		const modalContext = this._modalContext?.open(UMB_MEDIA_TREE_PICKER_MODAL, {});
 
 		modalContext
@@ -245,7 +254,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 				}
 			})
 			.catch(() => undefined)
-			.finally(() => this._focusEditor());
+			.finally(() => this.focusEditor());
 	}
 
 	private _insertLine() {
@@ -265,11 +274,11 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 				column: endColumn,
 			});
 		}
-		this._focusEditor();
+		this.focusEditor();
 	}
-
+	/*
 	private _insertBetweenSelection(startValue: string, endValue: string, placeholder?: string) {
-		this._focusEditor();
+		this.focusEditor();
 		const selection = this.#editor?.getSelections()[0];
 		if (!selection) return;
 
@@ -345,7 +354,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 	}
 
 	private _insertAtCurrentLine(value: string) {
-		this._focusEditor();
+		this.focusEditor();
 		const selection = this.#editor?.getSelections()[0];
 		if (!selection) return;
 
@@ -356,7 +365,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 		const lineValue = this.#editor?.getValueInRange({ ...selection, startColumn: 1 });
 
 		// Regex: check if the line starts with a positive number followed by dot and a space
-		if (lineValue?.startsWith(value) || lineValue?.match(/^[1-9]\d*\.\s.*/)) {
+		if (lineValue?.startsWith(value) || lineValue?.match(/^[1-9]\d*\.\s./)) { insert * after last . in the regex
 			// Cancel previous insert
 			this.#editor?.monacoEditor?.executeEdits('', [
 				{
@@ -369,7 +378,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 					text: '',
 				},
 			]);
-		} else if (value.match(/^[1-9]\d*\.\s.*/) && previousLineValue?.match(/^[1-9]\d*\.\s.*/)) {
+		} else if (value.match(/^[1-9]\d*\.\s./) && previousLineValue?.match(/^[1-9]\d\.\s./)) { insert * after last . in the regex and after d. also in first regex after last .
 			// Check if the PREVIOUS line starts with a positive number followed by dot and a space. If yes, get that number.
 			const previousNumber = parseInt(previousLineValue, 10);
 			this.#editor?.insertAtPosition(`${previousNumber + 1}. `, {
@@ -384,7 +393,9 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 			});
 		}
 	}
+	*/
 
+	/*
 	private _insertQuote() {
 		const selection = this.#editor?.getSelections()[0];
 		if (!selection) return;
@@ -404,8 +415,9 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 				});
 			}
 		}
-		this._focusEditor();
+		this.focusEditor();
 	}
+	*/
 
 	private _renderBasicActions() {
 		return html`<div>
@@ -500,7 +512,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 					label="Press F1 for all actions"
 					title="Press F1 for all actions"
 					@click=${() => {
-						this._focusEditor();
+						this.focusEditor();
 						this.#editor?.monacoEditor?.trigger('', 'editor.action.quickCommand', '');
 					}}>
 					<uui-key>F1</uui-key>
@@ -545,9 +557,9 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 	}
 
 	renderPreview() {
-		if (!this.preview) return;
+		if (this.preview) return;
 		return html`<uui-scroll-container id="preview">
-			${unsafeHTML(sanitizeHtml(marked.parse(this.value as string)))}
+			${unsafeHTML(sanitizeHtml(marked.parse((this.value as string) ?? '')))}
 		</uui-scroll-container>`;
 	}
 
@@ -591,6 +603,19 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 				border-left: 2px solid var(--uui-color-default-emphasis);
 				margin-inline: 0;
 				padding-inline: var(--uui-size-3);
+			}
+
+			p > code,
+			pre {
+				border: 1px solid var(--uui-color-divider-emphasis);
+				border-radius: var(--uui-border-radius);
+				padding: 0 var(--uui-size-1);
+				background-color: var(--uui-color-background);
+			}
+
+			hr {
+				border: none;
+				border-bottom: 1px solid var(--uui-palette-cocoa-black);
 			}
 		`,
 	];
