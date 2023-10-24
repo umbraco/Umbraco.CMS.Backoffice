@@ -22,8 +22,11 @@ export class UmbAuthLayoutElement extends LitElement {
 	static styles: CSSResultGroup = [
 		css`
 			@media (max-width: 800px) {
-				#image-column {
+				#layout #image-column {
 					display: none;
+					padding: var(--uui-size-layout-2);
+					top: 48px;
+					left: 48px;
 				}
 				#layout #logo {
 					background-image: url('umbraco_logo_blue_horizontal.svg');
@@ -37,6 +40,14 @@ export class UmbAuthLayoutElement extends LitElement {
 					max-height: calc(50% + 100px);
 				}
 			}
+			@media (max-width: 1200px) {
+				#layout #image-column {
+					padding: var(--uui-size-layout-2);
+					top: 64px;
+					left: 64px;
+				}
+			}
+
 			:host {
 				display: block;
 				height: 100dvh;
@@ -48,7 +59,7 @@ export class UmbAuthLayoutElement extends LitElement {
 			#image-column {
 				width: 100%;
 				overflow: hidden;
-				padding: 32px;
+				padding: var(--uui-size-layout-3);
 				padding-right: 0;
 				box-sizing: border-box;
 				overflow: visible;
@@ -60,8 +71,8 @@ export class UmbAuthLayoutElement extends LitElement {
 				width: 140px;
 				height: 39px;
 				z-index: 1;
-				top: 48px;
-				left: 48px;
+				top: 64px;
+				left: 64px;
 			}
 			#auth-column {
 				display: flex;
@@ -70,6 +81,7 @@ export class UmbAuthLayoutElement extends LitElement {
 				max-height: calc(50% + 200px);
 				box-sizing: border-box;
 				margin-block: auto;
+				padding-block: var(--uui-size-layout-2);
 			}
 			#image {
 				z-index: 0;
