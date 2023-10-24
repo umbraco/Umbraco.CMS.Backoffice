@@ -132,6 +132,16 @@ export default class UmbLoginElement extends LitElement {
 	static styles: CSSResultGroup = [
 		UUITextStyles,
 		css`
+			@media (max-width: 1200px) {
+				#welcome {
+					font-size: 3rem;
+				}
+			}
+			@media (max-width: 800px) {
+				#welcome {
+					font-size: 2.5rem;
+				}
+			}
 			#auth {
 				display: flex;
 				flex-direction: column;

@@ -33,6 +33,11 @@ export class UmbAuthLayoutElement extends LitElement {
 
 	static styles: CSSResultGroup = [
 		css`
+			@media (max-width: 800px) {
+				#image-column {
+					display: none;
+				}
+			}
 			:host {
 				display: block;
 				height: 100dvh;
@@ -40,11 +45,9 @@ export class UmbAuthLayoutElement extends LitElement {
 			}
 			#layout {
 				display: flex;
-				gap: 32px;
 				height: 100%;
 			}
 			#image-column {
-				max-width: 800px;
 				width: 100%;
 				overflow: hidden;
 				position: relative;
@@ -62,7 +65,6 @@ export class UmbAuthLayoutElement extends LitElement {
 			#auth-column {
 				display: flex;
 				width: 100%;
-				min-width: 600px;
 				height: 100%;
 				max-height: calc(50% + 200px);
 				padding: 32px;
