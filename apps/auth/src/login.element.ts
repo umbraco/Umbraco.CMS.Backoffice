@@ -107,7 +107,7 @@ export default class UmbLoginElement extends LitElement {
 								  </uui-form-layout-item>`
 								: nothing}
 
-							<uui-form-layout-item>${this.#renderErrorMessage()}</uui-form-layout-item>
+							<uui-form-layout-item id="form-error-message">${this.#renderErrorMessage()}</uui-form-layout-item>
 
 							<uui-button
 								id="login"
@@ -162,8 +162,12 @@ export default class UmbLoginElement extends LitElement {
 			#login {
 				margin-top: 32px;
 			}
-			.text-danger {
+			#form-error-message {
+				margin-bottom: 0;
+			}
+			p.text-danger {
 				color: var(--uui-color-danger-standalone);
+				margin: 0;
 			}
 		`,
 	];

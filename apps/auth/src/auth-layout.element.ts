@@ -92,30 +92,6 @@ export class UmbAuthLayoutElement extends LitElement {
 				box-sizing: border-box;
 				margin-inline: auto;
 			}
-			/* 
-
-			#logo img {
-				height: 100%;
-			}
-
-			#container {
-				position: relative;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 100vw;
-				height: 100vh;
-			}
-
-			#box {
-				width: 500px;
-				padding: var(--uui-size-space-6) var(--uui-size-space-5) var(--uui-size-space-5) var(--uui-size-space-5);
-			}
-
-			#email,
-			#password {
-				width: 100%;
-			} */
 		`,
 	];
 }
