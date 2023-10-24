@@ -43,8 +43,15 @@ export class UmbAuthLayoutElement extends LitElement {
 			@media (max-width: 1200px) {
 				#layout #image-column {
 					padding: var(--uui-size-layout-2);
-					top: 64px;
-					left: 64px;
+				}
+			}
+			@media (min-width: 1200px) {
+				#layout #image-column {
+					padding: var(--uui-size-layout-2);
+				}
+				#layout #auth-column {
+					padding-inline: var(--uui-size-space-4);
+					max-width: 600px;
 				}
 			}
 
