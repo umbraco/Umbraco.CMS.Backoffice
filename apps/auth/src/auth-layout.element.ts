@@ -41,7 +41,6 @@ export class UmbAuthLayoutElement extends LitElement {
 			:host {
 				display: block;
 				height: 100dvh;
-				background-color: white;
 			}
 			#layout {
 				display: flex;
@@ -54,6 +53,7 @@ export class UmbAuthLayoutElement extends LitElement {
 				padding: 32px;
 				padding-right: 0;
 				box-sizing: border-box;
+				overflow: visible;
 			}
 			#logo {
 				position: fixed;
@@ -81,7 +81,10 @@ export class UmbAuthLayoutElement extends LitElement {
 				width: 100%;
 				height: 100%;
 				transform: scaleX(-1);
-				border-radius: 32px;
+				border-radius: 26px;
+				border: 1px solid white;
+				box-sizing: border-box;
+				box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 48px;
 			}
 			#auth-box {
 				max-width: 300px;
