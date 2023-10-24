@@ -21,40 +21,6 @@ export class UmbAuthLayoutElement extends LitElement {
 
 	static styles: CSSResultGroup = [
 		css`
-			@media (max-width: 800px) {
-				#layout #image-column {
-					display: none;
-					padding: var(--uui-size-layout-2);
-					top: 48px;
-					left: 48px;
-				}
-				#layout #logo {
-					background-image: url('umbraco_logo_blue_horizontal.svg');
-					width: 80px;
-					height: 22px;
-					top: var(--uui-size-space-4);
-					left: var(--uui-size-space-4);
-				}
-				#layout #auth-column {
-					padding-inline: var(--uui-size-space-4);
-					max-height: calc(50% + 100px);
-				}
-			}
-			@media (max-width: 1200px) {
-				#layout #image-column {
-					padding: var(--uui-size-layout-2);
-				}
-			}
-			@media (min-width: 1200px) {
-				#layout #image-column {
-					padding: var(--uui-size-layout-2);
-				}
-				#layout #auth-column {
-					padding-inline: var(--uui-size-space-4);
-					max-width: 600px;
-				}
-			}
-
 			:host {
 				display: block;
 				height: 100dvh;
@@ -62,33 +28,37 @@ export class UmbAuthLayoutElement extends LitElement {
 			#layout {
 				display: flex;
 				height: 100%;
+				max-width: 2000px;
 			}
 			#image-column {
+				display: none;
+				padding: var(--uui-size-layout-2);
 				width: 100%;
 				overflow: hidden;
-				padding: var(--uui-size-layout-3);
 				padding-right: 0;
 				box-sizing: border-box;
 				overflow: visible;
+				padding-right: 0;
 			}
 			#logo {
 				position: fixed;
-				background-image: url('umbraco_logo_white_horizontal.svg');
+				background-image: url('umbraco_logo_blue_horizontal.svg');
 				background-repeat: no-repeat;
-				width: 140px;
-				height: 39px;
 				z-index: 1;
-				top: 64px;
-				left: 64px;
+				width: 80px;
+				height: 22px;
+				top: var(--uui-size-space-4);
+				left: var(--uui-size-space-4);
 			}
 			#auth-column {
 				display: flex;
 				width: 100%;
 				height: 100%;
-				max-height: calc(50% + 200px);
 				box-sizing: border-box;
 				margin-block: auto;
 				padding-block: var(--uui-size-layout-2);
+				padding-inline: var(--uui-size-space-4);
+				max-height: calc(50% + 100px);
 			}
 			#image {
 				z-index: 0;
@@ -110,6 +80,41 @@ export class UmbAuthLayoutElement extends LitElement {
 				width: 100%;
 				box-sizing: border-box;
 				margin-inline: auto;
+			}
+			@media (min-width: 850px) {
+				#image-column {
+					display: block;
+				}
+				#auth-box {
+					width: 300px;
+				}
+				#logo {
+					background-image: url('umbraco_logo_white_horizontal.svg');
+					top: 48px;
+					left: 48px;
+					width: 140px;
+					height: 39px;
+				}
+				#auth-column {
+					max-height: calc(50% + 200px);
+					width: max-content;
+					padding-inline: 100px;
+				}
+			}
+			@media (min-width: 1300px) {
+				#image-column {
+					padding: var(--uui-size-layout-3);
+					padding-right: 0;
+				}
+				#auth-column {
+					padding-inline: 200px;
+				}
+				#logo {
+					top: 64px;
+					left: 64px;
+				}
+			}
+			@media (min-width: 1600px) {
 			}
 		`,
 	];

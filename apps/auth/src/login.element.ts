@@ -132,16 +132,6 @@ export default class UmbLoginElement extends LitElement {
 	static styles: CSSResultGroup = [
 		UUITextStyles,
 		css`
-			@media (max-width: 1200px) {
-				#welcome {
-					font-size: 3rem;
-				}
-			}
-			@media (max-width: 800px) {
-				#welcome {
-					font-size: 2.5rem;
-				}
-			}
 			#auth {
 				display: flex;
 				flex-direction: column;
@@ -151,6 +141,7 @@ export default class UmbLoginElement extends LitElement {
 				text-align: center;
 				margin-bottom: 32px;
 				font-weight: 400;
+				font-size: 2.5rem;
 			}
 			#input-email,
 			#input-password,
@@ -168,6 +159,16 @@ export default class UmbLoginElement extends LitElement {
 			p.text-danger {
 				color: var(--uui-color-danger-standalone);
 				margin: 0;
+			}
+			@media (min-width: 850px) {
+				#welcome {
+					font-size: 3rem;
+				}
+			}
+			@media (min-width: 1300px) {
+				#welcome {
+					font-size: 3.5rem;
+				}
 			}
 		`,
 	];
