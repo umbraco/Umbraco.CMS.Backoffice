@@ -160,7 +160,7 @@ export default class UmbLoginElement extends LitElement {
 				border-radius: var(--uui-border-radius);
 			}
 			#button-login {
-				margin-top: 32px;
+				margin-top: var(--uui-size-layout-1);
 			}
 			#form-error-message {
 				margin-bottom: 0;
