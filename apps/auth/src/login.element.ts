@@ -61,6 +61,7 @@ export default class UmbLoginElement extends LitElement {
 	};
 
 	get #greeting() {
+		return 'Welcome';
 		return [
 			'Happy super Sunday',
 			'Happy marvelous Monday',
@@ -75,8 +76,8 @@ export default class UmbLoginElement extends LitElement {
 	render() {
 		return html`
 			<umb-auth-layout>
-				<div class="uui-text">
-					<h1 class="uui-h3">${this.#greeting}</h1>
+				<div id="auth" class="uui-text">
+					<h1 id="welcome">${this.#greeting}</h1>
 					<uui-form>
 						<form id="LoginForm" name="login" @submit="${this.#handleSubmit}">
 							<uui-form-layout-item>
@@ -109,10 +110,11 @@ export default class UmbLoginElement extends LitElement {
 							<uui-form-layout-item>${this.#renderErrorMessage()}</uui-form-layout-item>
 
 							<uui-button
+								id="login"
 								type="submit"
 								label="Login"
 								look="primary"
-								color="positive"
+								color="default"
 								state=${this._loginState}></uui-button>
 						</form>
 					</uui-form>
@@ -130,9 +132,25 @@ export default class UmbLoginElement extends LitElement {
 	static styles: CSSResultGroup = [
 		UUITextStyles,
 		css`
+			#auth {
+				display: flex;
+				flex-direction: column;
+			}
+			#welcome {
+				color: var(--uui-color-interactive);
+				text-align: center;
+				margin-bottom: 32px;
+				font-weight: 400;
+			}
 			#email,
-			#password {
+			#password,
+			#login {
 				width: 100%;
+				height: 40px;
+				border-radius: var(--uui-border-radius);
+			}
+			#login {
+				margin-top: 32px;
 			}
 			.text-danger {
 				color: var(--uui-color-danger-standalone);

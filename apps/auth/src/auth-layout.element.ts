@@ -7,6 +7,9 @@ export class UmbAuthLayoutElement extends LitElement {
 		return html`
 			<div id="layout">
 				<div id="image-column">
+					<div id="logo">
+						<img src="umbraco_logo_white_horizontal.svg" alt="Umbraco" />
+					</div>
 					<div id="image"></div>
 				</div>
 				<div id="auth-column">
@@ -16,10 +19,6 @@ export class UmbAuthLayoutElement extends LitElement {
 				</div>
 			</div>
 			<!-- <div id="background"></div>
-
-			<div id="logo">
-				<img src="umbraco_logo_white_horizontal.svg" alt="Umbraco" />
-			</div>
 
 			<div id="container">
 				<div>
@@ -53,11 +52,22 @@ export class UmbAuthLayoutElement extends LitElement {
 				padding-right: 0;
 				box-sizing: border-box;
 			}
+			#logo {
+				position: fixed;
+				width: 140px;
+				z-index: 1;
+				top: 48px;
+				left: 48px;
+			}
 			#auth-column {
+				display: flex;
 				width: 100%;
+				min-width: 600px;
+				height: 100%;
+				max-height: calc(50% + 200px);
 				padding: 32px;
 				box-sizing: border-box;
-				min-width: 600px;
+				margin-block: auto;
 			}
 			#image {
 				z-index: 0;
@@ -73,17 +83,11 @@ export class UmbAuthLayoutElement extends LitElement {
 			}
 			#auth-box {
 				max-width: 300px;
+				width: 100%;
 				box-sizing: border-box;
-				margin: 250px auto;
+				margin-inline: auto;
 			}
 			/* 
-
-			#logo {
-				position: fixed;
-				top: var(--uui-size-space-5);
-				left: var(--uui-size-space-5);
-				height: 30px;
-			}
 
 			#logo img {
 				height: 100%;
