@@ -6,10 +6,8 @@ export class UmbAuthLayoutElement extends LitElement {
 	render() {
 		return html`
 			<div id="layout">
+				<div id="logo"></div>
 				<div id="image-column">
-					<div id="logo">
-						<img src="umbraco_logo_white_horizontal.svg" alt="Umbraco" />
-					</div>
 					<div id="image"></div>
 				</div>
 				<div id="auth-column">
@@ -18,16 +16,6 @@ export class UmbAuthLayoutElement extends LitElement {
 					</div>
 				</div>
 			</div>
-			<!-- <div id="background"></div>
-
-			<div id="container">
-				<div>
-					<div id="image"></div>
-				</div>
-				<uui-box id="box">
-					<slot></slot>
-				</uui-box>
-			</div> -->
 		`;
 	}
 
@@ -36,6 +24,17 @@ export class UmbAuthLayoutElement extends LitElement {
 			@media (max-width: 800px) {
 				#image-column {
 					display: none;
+				}
+				#layout #logo {
+					background-image: url('umbraco_logo_blue_horizontal.svg');
+					width: 80px;
+					height: 22px;
+					top: var(--uui-size-space-4);
+					left: var(--uui-size-space-4);
+				}
+				#layout #auth-column {
+					padding-inline: var(--uui-size-space-4);
+					max-height: calc(50% + 100px);
 				}
 			}
 			:host {
@@ -49,7 +48,6 @@ export class UmbAuthLayoutElement extends LitElement {
 			#image-column {
 				width: 100%;
 				overflow: hidden;
-				position: relative;
 				padding: 32px;
 				padding-right: 0;
 				box-sizing: border-box;
@@ -57,7 +55,10 @@ export class UmbAuthLayoutElement extends LitElement {
 			}
 			#logo {
 				position: fixed;
+				background-image: url('umbraco_logo_white_horizontal.svg');
+				background-repeat: no-repeat;
 				width: 140px;
+				height: 39px;
 				z-index: 1;
 				top: 48px;
 				left: 48px;
@@ -67,7 +68,6 @@ export class UmbAuthLayoutElement extends LitElement {
 				width: 100%;
 				height: 100%;
 				max-height: calc(50% + 200px);
-				padding: 32px;
 				box-sizing: border-box;
 				margin-block: auto;
 			}
