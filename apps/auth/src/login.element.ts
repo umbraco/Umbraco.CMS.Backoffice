@@ -84,7 +84,7 @@ export default class UmbLoginElement extends LitElement {
 								<uui-label id="emailLabel" for="email" slot="label" required>Email</uui-label>
 								<uui-input
 									type="email"
-									id="email"
+									id="input-email"
 									name="email"
 									label="Email"
 									required
@@ -94,7 +94,7 @@ export default class UmbLoginElement extends LitElement {
 							<uui-form-layout-item>
 								<uui-label id="passwordLabel" for="password" slot="label" required>Password</uui-label>
 								<uui-input-password
-									id="password"
+									id="input-password"
 									name="password"
 									label="Password"
 									required
@@ -110,7 +110,7 @@ export default class UmbLoginElement extends LitElement {
 							<uui-form-layout-item id="form-error-message">${this.#renderErrorMessage()}</uui-form-layout-item>
 
 							<uui-button
-								id="login"
+								id="button-login"
 								type="submit"
 								label="Login"
 								look="primary"
@@ -152,14 +152,14 @@ export default class UmbLoginElement extends LitElement {
 				margin-bottom: 32px;
 				font-weight: 400;
 			}
-			#email,
-			#password,
-			#login {
+			#input-email,
+			#input-password,
+			#button-login {
 				width: 100%;
 				height: 40px;
 				border-radius: var(--uui-border-radius);
 			}
-			#login {
+			#button-login {
 				margin-top: 32px;
 			}
 			#form-error-message {
