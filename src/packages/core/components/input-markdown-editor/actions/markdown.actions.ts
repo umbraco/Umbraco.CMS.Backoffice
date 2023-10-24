@@ -503,9 +503,9 @@ export class UmbMarkdownActionsController {
 	}
 
 	public insertOl() {
-		console.log('ol');
+		const regexNumberDot = /^[1-9]\d*\..*/;
 		const selections = this.#editor?.getSelections();
-		const edits = selections?.map((selection): Array<monaco.editor.IIdentifiedSingleEditOperation> | void => {
+		const edits = selections?.map((selection): Array<monaco.editor.IIdentifiedSingleEditOperation> => {
 			let lineIndex = selection.startLineNumber;
 			const lineSelections = [];
 			for (lineIndex; lineIndex <= selection.endLineNumber; lineIndex++) {
@@ -519,43 +519,46 @@ export class UmbMarkdownActionsController {
 				});
 			}
 
-			//const previousEndColumn = this.#editor?.monacoModel?.getLineMaxColumn(Math.max(selection.endLineNumber - 1, 1));
-
-			/*
-			const previousLine = this.#editor?.getValueInRange({
-				...selection,
-                startColumn: 1,
-				startLineNumber: selection.startLineNumber - 1,
-			});
-
-			console.log('previous line', previousLine);
-            */
-
 			// Check if we are going to perform inserts or removal of ol items.
 			// Rather than toggle ol on/off for each line, let's make the selected lines uniform (make them all ol items, or cancel all ol items).
+			const initialLineIsOl = this.#editor?.getValueInRange({ ...selection, startColumn: 1 }).match(regexNumberDot);
 
-			const initialLineIsOl = this.#editor?.getValueInRange({ ...selection, startColumn: 1 }).match(/^[1-9]\d*\..*/);
-
-			//
-
-			/*
 			if (!initialLineIsOl) {
-				// Perform inserts of ul
-				const edits = lineSelections.map((lineSelection): monaco.editor.IIdentifiedSingleEditOperation => {
-					const string = this.#editor?.getValueInRange(lineSelection).replace(/^[-]/, '').trimStart();
-					return { range: lineSelection, text: `- ${string}` };
+				//perform inserts of ol
+				const previousLine = this.#getPreviousLine(selection);
+				const previousNumber = previousLine ? parseInt(previousLine, 10) : undefined;
+
+				const edits = lineSelections.map((lineSelection, index): monaco.editor.IIdentifiedSingleEditOperation => {
+					const number = index + (previousNumber || 0) + 1; // start from 1
+					const string = this.#editor?.getValueInRange(lineSelection).replace(regexNumberDot, '').trimStart();
+					return { range: lineSelection, text: `${number}. ${string}` };
 				});
 				return edits;
 			} else {
-				//Removal of ul
+				//Removal of ol
 				const edits = lineSelections.map((lineSelection): monaco.editor.IIdentifiedSingleEditOperation => {
-					const string = this.#editor?.getValueInRange(lineSelection).replace(/^[-]/, '').trimStart();
+					const string = this.#editor?.getValueInRange(lineSelection).replace(regexNumberDot, '').trimStart();
 					return { range: lineSelection, text: `${string}` };
 				});
 				return edits;
 			}
-            */
 		});
-		//this.#performEdits(edits?.flat());
+		this.#performEdits(edits?.flat());
+	}
+
+	#getPreviousLine(currentRange: monaco.IRange) {
+		const previousLineNumber = currentRange.startLineNumber - 1;
+		if (previousLineNumber < 1) return;
+
+		const previousEndColumn = this.#editor?.monacoModel?.getLineMaxColumn(previousLineNumber);
+		if (!previousEndColumn) return;
+
+		const previousLineValue = this.#editor?.getValueInRange({
+			startColumn: 1,
+			endColumn: previousEndColumn,
+			startLineNumber: previousLineNumber,
+			endLineNumber: previousLineNumber,
+		});
+		return previousLineValue;
 	}
 }
