@@ -61,7 +61,7 @@
 		"./language": "./dist-cms/packages/settings/languages/index.js",
 		"./logviewer": "./dist-cms/packages/settings/logviewer/index.js",
 		"./relation-type": "./dist-cms/packages/settings/relation-types/index.js",
-		"./tags": "./dist-cms/packages/tags/index.js",
+		"./tag": "./dist-cms/packages/tags/index.js",
 		"./partial-view": "./dist-cms/packages/templating/partial-views/index.js",
 		"./stylesheet": "./dist-cms/packages/templating/stylesheets/index.js",
 		"./template": "./dist-cms/packages/templating/templates/index.js",
