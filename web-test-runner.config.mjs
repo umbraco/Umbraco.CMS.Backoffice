@@ -43,7 +43,6 @@ export default {
 						'@umbraco-cms/backoffice/localization-api': './src/libs/localization-api/index.ts',
 						'@umbraco-cms/backoffice/observable-api': './src/libs/observable-api/index.ts',
 
-						'@umbraco-cms/backoffice/auth': './src/shared/auth/index.ts',
 						'@umbraco-cms/backoffice/icon': './src/shared/icon-registry/index.ts',
 						'@umbraco-cms/backoffice/models': './src/shared/models/index.ts',
 						'@umbraco-cms/backoffice/resources': './src/shared/resources/index.ts',
@@ -102,6 +101,7 @@ export default {
 						'@umbraco-cms/backoffice/stylesheet': './src/packages/templating/stylesheets/index.ts',
 						'@umbraco-cms/backoffice/template': './src/packages/templating/templates/index.ts',
 
+						'@umbraco-cms/backoffice/auth': './src/packages/user/auth/index.ts',
 						'@umbraco-cms/backoffice/user-group': './src/packages/user/user-group/index.ts',
 						'@umbraco-cms/backoffice/current-user': './src/packages/user/current-user/index.ts',
 						'@umbraco-cms/backoffice/user': './src/packages/user/user/index.ts',
