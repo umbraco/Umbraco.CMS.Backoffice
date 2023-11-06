@@ -1,5 +1,5 @@
-import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UMB_AUTH } from '@umbraco-cms/backoffice/auth';
+import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 
