@@ -62,6 +62,7 @@ export class UmbScriptsWorkspaceEditElement extends UmbLitElement {
 
 			this.observe(this.#scriptsWorkspaceContext.path, (path) => {
 				this._path = path;
+				this._dirName = this._path?.substring(0, this._path?.lastIndexOf('\\') + 1)?.replace('\\', '/');
 			});
 
 			this.observe(this.#scriptsWorkspaceContext.isNew, (isNew) => {
@@ -76,12 +77,6 @@ export class UmbScriptsWorkspaceEditElement extends UmbLitElement {
 				this.#scriptsWorkspaceContext?.setName(`${nameInputValue}.js`);
 			});
 		});
-	}
-
-	protected willUpdate(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-		if (_changedProperties.has('_path')) {
-			this._dirName = this._path?.substring(0, this._path?.lastIndexOf('/'));
-		}
 	}
 
 	#onNameInput(event: Event) {
