@@ -6,7 +6,7 @@ import { UmbContextRequestEventImplementation, UMB_CONTENT_REQUEST_EVENT_TYPE } 
 
 const testContextAlias = 'my-test-context';
 const testContextAliasAndApiAlias = 'my-test-context#testApi';
-const testContextAliasAndNotExstingApiAlias = 'my-test-context#notExistingTestApi';
+const testContextAliasAndNotExistingApiAlias = 'my-test-context#notExistingTestApi';
 
 class UmbTestContextConsumerClass {
 	public prop: string = 'value from provider';
@@ -135,7 +135,7 @@ describe('UmbContextConsumer', () => {
 			const element = document.createElement('div');
 			document.body.appendChild(element);
 
-			const localConsumer = new UmbContextConsumer(element, testContextAliasAndNotExstingApiAlias, () => {
+			const localConsumer = new UmbContextConsumer(element, testContextAliasAndNotExistingApiAlias, () => {
 				expect(false).to.be.true;
 			});
 			localConsumer.hostConnected();
