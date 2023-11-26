@@ -13,6 +13,7 @@ import {
 	query,
 } from '@umbraco-cms/backoffice/external/lit';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 @customElement('umb-image-cropper-focus-setter')
 export class UmbImageCropperFocusSetterElement extends LitElement {
@@ -24,6 +25,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	@property({ type: String }) src?: string;
 	@property({ attribute: false }) focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
+
+	@property({ type: Boolean, reflect: true }) disabled = false;
 
 	#DOT_RADIUS = 8 as const;
 
@@ -142,7 +145,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 
 	#handleGridDrag(event: PointerEvent) {
-		//if (this.disabled) return;
+		if (this.disabled) return;
 		const grid = this.wrapperElement; //this.shadowRoot!.querySelector<HTMLElement>('.color-area')!;
 		const handle = this.focalPointElement; //grid.querySelector<HTMLElement>('.color-area__handle')!;
 		const { width, height } = grid.getBoundingClientRect();
@@ -159,8 +162,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			if (isNaN(x) || isNaN(y)) return;
 
 			this.#setFocalPoint(x, y, width, height);
-
-			//this.syncValues();
+			
 		  },
 		  onStop: () => (this.isDraggingGridHandle = false),
 		  initialEvent: event,
@@ -168,27 +170,27 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	  }
 	
 	  #handleGridKeyDown(event: KeyboardEvent) {
-		//if (this.disabled) return;
+		if (this.disabled) return;
 		const increment = event.shiftKey ? 10 : 1;
 	
 		if (event.key === 'ArrowLeft') {
 		  event.preventDefault();
-		  //this.syncValues();
+		  // Update focal point left position
 		}
 	
 		if (event.key === 'ArrowRight') {
 		  event.preventDefault();
-		  //this.syncValues();
+		  // Update focal point left position
 		}
 	
 		if (event.key === 'ArrowUp') {
 		  event.preventDefault();
-		  //this.syncValues();
+		  // Update focal point top position
 		}
 	
 		if (event.key === 'ArrowDown') {
 		  event.preventDefault();
-		  //this.syncValues();
+		  // Update focal point top position
 		}
 	  }
 
@@ -204,6 +206,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 					class=${classMap({
 						'focal-point--dragging': this.isDraggingGridHandle,
 				  	})}
+					tabindex=${ifDefined(this.disabled ? undefined : '0')}
+					aria-label="Focal Point"
 					@keydown=${this.#handleGridKeyDown}>
 				</span>
 			</div>
