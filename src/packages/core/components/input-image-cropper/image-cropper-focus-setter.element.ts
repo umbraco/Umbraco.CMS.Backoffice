@@ -1,4 +1,5 @@
-import { clamp } from './mathUtils.js';
+//import { clamp } from './mathUtils.js';
+import { drag, clamp } from '@umbraco-ui/uui-base/lib/utils';
 import { UmbImageCropperFocalPoint } from './index.js';
 import {
 	LitElement,
@@ -8,8 +9,10 @@ import {
 	nothing,
 	customElement,
 	property,
+	state,
 	query,
 } from '@umbraco-cms/backoffice/external/lit';
+import { classMap } from 'lit/directives/class-map.js';
 
 @customElement('umb-image-cropper-focus-setter')
 export class UmbImageCropperFocusSetterElement extends LitElement {
@@ -17,10 +20,12 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	@query('#wrapper') wrapperElement!: HTMLImageElement;
 	@query('#focal-point') focalPointElement!: HTMLImageElement;
 
+	@state() private isDraggingGridHandle = false;
+
 	@property({ type: String }) src?: string;
 	@property({ attribute: false }) focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
 
-	#DOT_RADIUS = 6 as const;
+	#DOT_RADIUS = 8 as const;
 
 	connectedCallback() {
 		super.connectedCallback();
@@ -66,16 +71,16 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	async #addEventListeners() {
 		await this.updateComplete; // Wait for the @query to be resolved
-		this.imageElement?.addEventListener('mousedown', this.#onStartDrag);
-		window.addEventListener('mouseup', this.#onEndDrag);
+		//this.imageElement?.addEventListener('mousedown', this.#onStartDrag);
+		//window.addEventListener('mouseup', this.#onEndDrag);
 	}
 
 	#removeEventListeners() {
-		this.imageElement?.removeEventListener('mousedown', this.#onStartDrag);
-		window.removeEventListener('mouseup', this.#onEndDrag);
+		//this.imageElement?.removeEventListener('mousedown', this.#onStartDrag);
+		//window.removeEventListener('mouseup', this.#onEndDrag);
 	}
 
-	#onStartDrag = (event: MouseEvent) => {
+	/*#onStartDrag = (event: MouseEvent) => {
 		event.preventDefault();
 		window.addEventListener('mousemove', this.#onDrag);
 	};
@@ -88,9 +93,9 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	#onDrag = (event: MouseEvent) => {
 		event.preventDefault();
 		this.#onSetFocalPoint(event);
-	};
+	};*/
 
-	#onSetFocalPoint(event: MouseEvent) {
+	/*#onSetFocalPoint(event: MouseEvent) {
 		event.preventDefault();
 
 		const image = this.imageElement.getBoundingClientRect();
@@ -111,15 +116,96 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				composed: true,
 			}),
 		);
+	}*/
+
+	#setFocalPoint(x: number, y: number, width: number, height: number) {
+		//const image = this.imageElement.getBoundingClientRect();
+
+		//const x = clamp(event.clientX - image.left, 0, image.width);
+		//const y = clamp(event.clientY - image.top, 0, image.height);
+
+		//const left = clamp((x / width) * 100, 0, 100);
+		//const top = clamp(100 - (y / height) * 100, 0, 100);
+		const left = clamp((x / width), 0, 1);
+		const top = clamp((y / height), 0, 1);
+
+		this.focalPointElement.style.left = `calc(${left * 100}% - ${this.#DOT_RADIUS}px)`;
+		this.focalPointElement.style.top = `calc(${top * 100}% - ${this.#DOT_RADIUS}px)`;
+
+		this.dispatchEvent(
+			new CustomEvent('change', {
+				detail: { left, top },
+				bubbles: true,
+				composed: true,
+			}),
+		);
 	}
+
+	#handleGridDrag(event: PointerEvent) {
+		//if (this.disabled) return;
+		const grid = this.wrapperElement; //this.shadowRoot!.querySelector<HTMLElement>('.color-area')!;
+		const handle = this.focalPointElement; //grid.querySelector<HTMLElement>('.color-area__handle')!;
+		const { width, height } = grid.getBoundingClientRect();
+	
+		handle.focus();
+		event.preventDefault();
+		event.stopPropagation();
+	
+		this.isDraggingGridHandle = true;
+	
+		drag(grid, {
+		  onMove: (x, y) => {
+			// check if coordinates are not NaN (can happen when dragging outside of the grid)
+			if (isNaN(x) || isNaN(y)) return;
+
+			this.#setFocalPoint(x, y, width, height);
+
+			//this.syncValues();
+		  },
+		  onStop: () => (this.isDraggingGridHandle = false),
+		  initialEvent: event,
+		});
+	  }
+	
+	  #handleGridKeyDown(event: KeyboardEvent) {
+		//if (this.disabled) return;
+		const increment = event.shiftKey ? 10 : 1;
+	
+		if (event.key === 'ArrowLeft') {
+		  event.preventDefault();
+		  //this.syncValues();
+		}
+	
+		if (event.key === 'ArrowRight') {
+		  event.preventDefault();
+		  //this.syncValues();
+		}
+	
+		if (event.key === 'ArrowUp') {
+		  event.preventDefault();
+		  //this.syncValues();
+		}
+	
+		if (event.key === 'ArrowDown') {
+		  event.preventDefault();
+		  //this.syncValues();
+		}
+	  }
 
 	render() {
 		if (!this.src) return nothing;
 
 		return html`
-			<div id="wrapper">
-				<img id="image" @click=${this.#onSetFocalPoint} @keydown=${() => nothing} src=${this.src} alt="" />
-				<div id="focal-point"></div>
+			<div id="wrapper"
+				@mousedown=${this.#handleGridDrag}
+        		@touchstart=${this.#handleGridDrag}>
+				<img id="image" @keydown=${() => nothing} src=${this.src} alt="" />
+				<span id="focal-point"
+					class=${classMap({
+						'focal-point--dragging': this.isDraggingGridHandle,
+				  	})}
+					@keydown=${this.#handleGridKeyDown}>
+				</span>
 			</div>
 		`;
 	}
@@ -140,6 +226,9 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			margin: auto;
 			max-width: 100%;
 			max-height: 100%;
+			box-sizing: border-box;
+        	cursor: crosshair;
+        	forced-color-adjust: none;
 		}
 		#image {
 			margin: auto;
@@ -151,11 +240,18 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			position: absolute;
 			width: calc(2 * var(--dot-radius));
 			height: calc(2 * var(--dot-radius));
-			outline: 3px solid black;
 			top: 0;
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+        	border: solid 2px white;
 			border-radius: 50%;
 			pointer-events: none;
-			background-color: white;
+			background-color: var(--uui-palette-spanish-pink-light);
+			transition: 150ms transform;
+        	box-sizing: inherit;
+		}
+		.focal-point--dragging {
+			cursor: none;
+			transform: scale(1.5);
 		}
 	`;
 }
