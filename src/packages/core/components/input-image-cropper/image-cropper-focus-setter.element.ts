@@ -1,5 +1,5 @@
 //import { clamp } from './mathUtils.js';
-import { drag, clamp } from '@umbraco-ui/uui-base/lib/utils';
+import { drag, clamp } from '@umbraco-cms/backoffice/external/uui';
 import { UmbImageCropperFocalPoint } from './index.js';
 import {
 	LitElement,
