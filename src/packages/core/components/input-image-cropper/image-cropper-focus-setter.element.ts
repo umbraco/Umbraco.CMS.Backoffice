@@ -47,7 +47,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 		if (_changedProperties.has('focalPoint')) {
 			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
-			this.#resetCoords();
 		}
 	}
 
