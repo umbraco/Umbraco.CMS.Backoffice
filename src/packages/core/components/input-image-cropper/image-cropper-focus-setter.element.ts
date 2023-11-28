@@ -46,8 +46,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		super.updated(_changedProperties);
 
 		if (_changedProperties.has('focalPoint')) {
-			this.focalPointElement.style.left = `calc(${this.focalPoint.left * 100}% - ${this.#DOT_RADIUS}px)`;
-			this.focalPointElement.style.top = `calc(${this.focalPoint.top * 100}% - ${this.#DOT_RADIUS}px)`;
+			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
 		}
 	}
 
@@ -55,8 +54,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		super.firstUpdated(_changedProperties);
 
 		this.style.setProperty('--dot-radius', `${this.#DOT_RADIUS}px`);
-		this.focalPointElement.style.left = `calc(${this.focalPoint.left * 100}% - ${this.#DOT_RADIUS}px)`;
-		this.focalPointElement.style.top = `calc(${this.focalPoint.top * 100}% - ${this.#DOT_RADIUS}px)`;
+		this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
 
 		this.imageElement.onload = () => {
 			const imageAspectRatio = this.imageElement.naturalWidth / this.imageElement.naturalHeight;
@@ -94,8 +92,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		const left = clamp((x / width), 0, 1);
 		const top = clamp((y / height), 0, 1);
 
-		this.focalPointElement.style.left = `calc(${left * 100}% - ${this.#DOT_RADIUS}px)`;
-		this.focalPointElement.style.top = `calc(${top * 100}% - ${this.#DOT_RADIUS}px)`;
+		this.#setFocalPointStyle(left, top);
 
 		this.dispatchEvent(
 			new CustomEvent('change', {
@@ -104,6 +101,11 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				composed: true,
 			}),
 		);
+	}
+
+	#setFocalPointStyle(left: number, top: number) {
+		this.focalPointElement.style.left = `calc(${left * 100}% - ${this.#DOT_RADIUS}px)`;
+		this.focalPointElement.style.top = `calc(${top * 100}% - ${this.#DOT_RADIUS}px)`;
 	}
 
 	#handleGridDrag(event: PointerEvent) {
