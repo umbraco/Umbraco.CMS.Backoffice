@@ -23,6 +23,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	@state() private isDraggingGridHandle = false;
 
+	@state() private coords = { x: 0, y: 0 };
+
 	@property({ type: String }) src?: string;
 	@property({ attribute: false }) focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
 
@@ -67,6 +69,10 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				this.wrapperElement.style.height = '100%';
 			}
 
+			// Init x and y coords from half of rendered image size, which is equavalient to focal point { left: 0.5, top: 0.5 }.
+			this.coords.x = this.imageElement.clientWidth / 2;
+			this.coords.y = this.imageElement.clientHeight / 2;
+
 			this.imageElement.style.aspectRatio = `${imageAspectRatio}`;
 			this.wrapperElement.style.aspectRatio = `${imageAspectRatio}`;
 		};
@@ -74,61 +80,17 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	async #addEventListeners() {
 		await this.updateComplete; // Wait for the @query to be resolved
-		//this.imageElement?.addEventListener('mousedown', this.#onStartDrag);
-		//window.addEventListener('mouseup', this.#onEndDrag);
 	}
 
 	#removeEventListeners() {
-		//this.imageElement?.removeEventListener('mousedown', this.#onStartDrag);
-		//window.removeEventListener('mouseup', this.#onEndDrag);
+		
 	}
 
-	/*#onStartDrag = (event: MouseEvent) => {
-		event.preventDefault();
-		window.addEventListener('mousemove', this.#onDrag);
-	};
+	#setFocalPoint(x: number, y: number) {
 
-	#onEndDrag = (event: MouseEvent) => {
-		event.preventDefault();
-		window.removeEventListener('mousemove', this.#onDrag);
-	};
+		const grid = this.wrapperElement;
+		const { width, height } = grid.getBoundingClientRect();
 
-	#onDrag = (event: MouseEvent) => {
-		event.preventDefault();
-		this.#onSetFocalPoint(event);
-	};*/
-
-	/*#onSetFocalPoint(event: MouseEvent) {
-		event.preventDefault();
-
-		const image = this.imageElement.getBoundingClientRect();
-
-		const x = clamp(event.clientX - image.left, 0, image.width);
-		const y = clamp(event.clientY - image.top, 0, image.height);
-
-		const left = clamp(x / image.width, 0, 1);
-		const top = clamp(y / image.height, 0, 1);
-
-		this.focalPointElement.style.left = `calc(${left * 100}% - ${this.#DOT_RADIUS}px)`;
-		this.focalPointElement.style.top = `calc(${top * 100}% - ${this.#DOT_RADIUS}px)`;
-
-		this.dispatchEvent(
-			new CustomEvent('change', {
-				detail: { left, top },
-				bubbles: true,
-				composed: true,
-			}),
-		);
-	}*/
-
-	#setFocalPoint(x: number, y: number, width: number, height: number) {
-		//const image = this.imageElement.getBoundingClientRect();
-
-		//const x = clamp(event.clientX - image.left, 0, image.width);
-		//const y = clamp(event.clientY - image.top, 0, image.height);
-
-		//const left = clamp((x / width) * 100, 0, 100);
-		//const top = clamp(100 - (y / height) * 100, 0, 100);
 		const left = clamp((x / width), 0, 1);
 		const top = clamp((y / height), 0, 1);
 
@@ -146,9 +108,9 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	#handleGridDrag(event: PointerEvent) {
 		if (this.disabled) return;
-		const grid = this.wrapperElement; //this.shadowRoot!.querySelector<HTMLElement>('.color-area')!;
-		const handle = this.focalPointElement; //grid.querySelector<HTMLElement>('.color-area__handle')!;
-		const { width, height } = grid.getBoundingClientRect();
+		
+		const grid = this.wrapperElement;
+		const handle = this.focalPointElement;
 	
 		handle.focus();
 		event.preventDefault();
@@ -161,8 +123,10 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			// check if coordinates are not NaN (can happen when dragging outside of the grid)
 			if (isNaN(x) || isNaN(y)) return;
 
-			this.#setFocalPoint(x, y, width, height);
-			
+			this.coords.x = x;
+			this.coords.y = y;
+
+			this.#setFocalPoint(x, y);
 		  },
 		  onStop: () => (this.isDraggingGridHandle = false),
 		  initialEvent: event,
@@ -171,26 +135,33 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	
 	  #handleGridKeyDown(event: KeyboardEvent) {
 		if (this.disabled) return;
-		const increment = event.shiftKey ? 10 : 1;
+		const increment = event.shiftKey ? 1 : 10;
+
+		const grid = this.wrapperElement;
+		const { width, height } = grid.getBoundingClientRect();
 	
 		if (event.key === 'ArrowLeft') {
 		  event.preventDefault();
-		  // Update focal point left position
+		  this.coords.x = clamp(this.coords.x - increment, 0, width);
+		  this.#setFocalPoint(this.coords.x, this.coords.y);
 		}
 	
 		if (event.key === 'ArrowRight') {
 		  event.preventDefault();
-		  // Update focal point left position
+		  this.coords.x = clamp(this.coords.x + increment, 0, width);
+		  this.#setFocalPoint(this.coords.x, this.coords.y);
 		}
 	
 		if (event.key === 'ArrowUp') {
 		  event.preventDefault();
-		  // Update focal point top position
+		  this.coords.y = clamp(this.coords.y - increment, 0, height);
+		  this.#setFocalPoint(this.coords.x, this.coords.y);
 		}
 	
 		if (event.key === 'ArrowDown') {
 		  event.preventDefault();
-		  // Update focal point top position
+		  this.coords.y = clamp(this.coords.y + increment, 0, height);
+		  this.#setFocalPoint(this.coords.x, this.coords.y);
 		}
 	  }
 
