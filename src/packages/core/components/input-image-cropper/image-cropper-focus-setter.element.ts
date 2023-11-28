@@ -84,7 +84,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 
 	#removeEventListeners() {
-		
+
 	}
 
 	#setFocalPoint(x: number, y: number) {
@@ -123,62 +123,62 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	#handleGridDrag(event: PointerEvent) {
 		if (this.disabled) return;
-		
+
 		const grid = this.wrapperElement;
 		const handle = this.focalPointElement;
-	
+
 		handle.focus();
 		event.preventDefault();
 		event.stopPropagation();
-	
+
 		this.isDraggingGridHandle = true;
-	
+
 		drag(grid, {
-		  onMove: (x, y) => {
-			// check if coordinates are not NaN (can happen when dragging outside of the grid)
-			if (isNaN(x) || isNaN(y)) return;
+			onMove: (x, y) => {
+				// check if coordinates are not NaN (can happen when dragging outside of the grid)
+				if (isNaN(x) || isNaN(y)) return;
 
-			this.coords.x = x;
-			this.coords.y = y;
+				this.coords.x = x;
+				this.coords.y = y;
 
-			this.#setFocalPoint(x, y);
-		  },
-		  onStop: () => (this.isDraggingGridHandle = false),
-		  initialEvent: event,
+				this.#setFocalPoint(x, y);
+			},
+			onStop: () => (this.isDraggingGridHandle = false),
+			initialEvent: event,
 		});
-	  }
-	
-	  #handleGridKeyDown(event: KeyboardEvent) {
+	}
+
+	#handleGridKeyDown(event: KeyboardEvent) {
 		if (this.disabled) return;
 		const increment = event.shiftKey ? 1 : 10;
 
 		const grid = this.wrapperElement;
 		const { width, height } = grid.getBoundingClientRect();
-	
+
 		if (event.key === 'ArrowLeft') {
-		  event.preventDefault();
-		  this.coords.x = clamp(this.coords.x - increment, 0, width);
-		  this.#setFocalPoint(this.coords.x, this.coords.y);
+			event.preventDefault();
+			this.coords.x = clamp(this.coords.x - increment, 0, width);
+			this.#setFocalPoint(this.coords.x, this.coords.y);
 		}
-	
+
 		if (event.key === 'ArrowRight') {
-		  event.preventDefault();
-		  this.coords.x = clamp(this.coords.x + increment, 0, width);
-		  this.#setFocalPoint(this.coords.x, this.coords.y);
+			event.preventDefault();
+			this.coords.x = clamp(this.coords.x + increment, 0, width);
+			this.#setFocalPoint(this.coords.x, this.coords.y);
 		}
-	
+
 		if (event.key === 'ArrowUp') {
-		  event.preventDefault();
-		  this.coords.y = clamp(this.coords.y - increment, 0, height);
-		  this.#setFocalPoint(this.coords.x, this.coords.y);
+			event.preventDefault();
+			this.coords.y = clamp(this.coords.y - increment, 0, height);
+			this.#setFocalPoint(this.coords.x, this.coords.y);
 		}
-	
+
 		if (event.key === 'ArrowDown') {
-		  event.preventDefault();
-		  this.coords.y = clamp(this.coords.y + increment, 0, height);
-		  this.#setFocalPoint(this.coords.x, this.coords.y);
+			event.preventDefault();
+			this.coords.y = clamp(this.coords.y + increment, 0, height);
+			this.#setFocalPoint(this.coords.x, this.coords.y);
 		}
-	  }
+	}
 
 	render() {
 		if (!this.src) return nothing;
@@ -190,8 +190,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				<img id="image" @keydown=${() => nothing} src=${this.src} alt="" />
 				<span id="focal-point"
 					class=${classMap({
-						'focal-point--dragging': this.isDraggingGridHandle,
-				  	})}
+			'focal-point--dragging': this.isDraggingGridHandle,
+		})}
 					tabindex=${ifDefined(this.disabled ? undefined : '0')}
 					aria-label="Focal Point"
 					@keydown=${this.#handleGridKeyDown}>
