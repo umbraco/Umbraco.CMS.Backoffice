@@ -47,6 +47,11 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 		if (_changedProperties.has('focalPoint')) {
 			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
+
+			// Reset coords if focal point change to center.
+			if (this.#isCentered(this.focalPoint)) {
+				this.#resetCoords();
+			}
 		}
 	}
 
@@ -104,6 +109,10 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	#setFocalPointStyle(left: number, top: number) {
 		this.focalPointElement.style.left = `calc(${left * 100}% - ${this.#DOT_RADIUS}px)`;
 		this.focalPointElement.style.top = `calc(${top * 100}% - ${this.#DOT_RADIUS}px)`;
+	}
+
+	#isCentered(focalPoint: UmbImageCropperFocalPoint) {
+		return focalPoint.left === 0.5 && focalPoint.top === 0.5;
 	}
 
 	#resetCoords() {
