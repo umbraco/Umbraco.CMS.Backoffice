@@ -47,6 +47,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 		if (_changedProperties.has('focalPoint')) {
 			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
+			this.#resetCoords();
 		}
 	}
 
@@ -67,9 +68,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				this.wrapperElement.style.height = '100%';
 			}
 
-			// Init x and y coords from half of rendered image size, which is equavalient to focal point { left: 0.5, top: 0.5 }.
-			this.coords.x = this.imageElement.clientWidth / 2;
-			this.coords.y = this.imageElement.clientHeight / 2;
+			this.#resetCoords();
 
 			this.imageElement.style.aspectRatio = `${imageAspectRatio}`;
 			this.wrapperElement.style.aspectRatio = `${imageAspectRatio}`;
@@ -106,6 +105,12 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	#setFocalPointStyle(left: number, top: number) {
 		this.focalPointElement.style.left = `calc(${left * 100}% - ${this.#DOT_RADIUS}px)`;
 		this.focalPointElement.style.top = `calc(${top * 100}% - ${this.#DOT_RADIUS}px)`;
+	}
+
+	#resetCoords() {
+		// Init x and y coords from half of rendered image size, which is equavalient to focal point { left: 0.5, top: 0.5 }.
+		this.coords.x = this.imageElement.clientWidth / 2;
+		this.coords.y = this.imageElement.clientHeight / 2;
 	}
 
 	#handleGridDrag(event: PointerEvent) {
