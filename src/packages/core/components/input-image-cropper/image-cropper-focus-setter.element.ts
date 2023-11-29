@@ -26,7 +26,24 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	@state() private coords = { x: 0, y: 0 };
 
 	@property({ type: String }) src?: string;
-	@property({ attribute: false }) focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
+
+	@property({ attribute: false })
+	get focalPoint() {
+		return this.#focalPoint;
+	}
+	set focalPoint(value) {
+		this.#focalPoint = value;
+		console.log("value", value);
+
+		if (this.#isCentered(this.#focalPoint)) {
+			//this.#resetCoords();
+			this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
+		}
+
+		this.requestUpdate();
+	}
+
+	#focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
 
 	@property({ type: Boolean, reflect: true }) disabled = false;
 
@@ -49,9 +66,9 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
 
 			// Reset coords if focal point change to center.
-			if (this.#isCentered(this.focalPoint)) {
+			/*if (this.#isCentered(this.focalPoint)) {
 				this.#resetCoords();
-			}
+			}*/
 		}
 	}
 
@@ -87,6 +104,13 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	}
 
+	#coordsToFactor(x: number, y: number) {
+		const top = (y / 100) / y * 50;
+		const left = (x / 100) / x * 50;
+
+		return { top, left }; 
+	}
+
 	#setFocalPoint(x: number, y: number) {
 
 		const grid = this.wrapperElement;
@@ -95,6 +119,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		const left = clamp((x / width), 0, 1);
 		const top = clamp((y / height), 0, 1);
 
+		this.#coordsToFactor(x, y);
 		this.#setFocalPointStyle(left, top);
 
 		this.dispatchEvent(
