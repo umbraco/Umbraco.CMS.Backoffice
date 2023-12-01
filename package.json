@@ -160,7 +160,7 @@
 		"@storybook/addon-links": "7.5.3",
 		"@storybook/mdx2-csf": "^1.1.0",
 		"@storybook/web-components-vite": "7.5.3",
-		"@storybook/web-components": "7.5.3",
+		"@storybook/web-components": "7.6.3",
 		"@types/chai": "^4.3.5",
 		"@types/lodash-es": "^4.17.8",
 		"@types/mocha": "^10.0.1",
