@@ -195,7 +195,7 @@
 		"rollup-plugin-import-css": "^3.3.4",
 		"rollup-plugin-web-worker-loader": "^1.6.1",
 		"rollup": "^3.27.2",
-		"storybook": "7.5.3",
+		"storybook": "7.6.3",
 		"tiny-glob": "^0.2.9",
 		"tsc-alias": "^1.8.8",
 		"typescript-json-schema": "^0.62.0",
