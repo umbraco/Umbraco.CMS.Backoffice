@@ -21,13 +21,17 @@ export class UmbLanguageRootTableDeleteColumnLayoutElement extends UmbLitElement
 		if (this.value.isDefault) return nothing;
 
 		return html`
-			<umb-dropdown .open=${this._isOpen} compact hide-expand>
+			<umb-entity-action-list-dropdown
+				@action-executed=${this.#onActionExecuted}
+				entity-type="language"
+				unique=${ifDefined(this.value.isoCode)}></umb-entity-action-list-dropdown>
+			<!-- <umb-dropdown .open=${this._isOpen} compact hide-expand>
 				<uui-symbol-more slot="label"></uui-symbol-more>
 				<umb-entity-action-list
 					@action-executed=${this.#onActionExecuted}
 					entity-type="language"
 					unique=${ifDefined(this.value.isoCode)}></umb-entity-action-list>
-			</umb-dropdown>
+			</umb-dropdown> -->
 		`;
 	}
 
