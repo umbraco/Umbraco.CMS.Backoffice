@@ -158,7 +158,7 @@
 		"@rollup/plugin-commonjs": "^25.0.7",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^15.2.3",
-		"@storybook/addon-a11y": "7.6.5",
+		"@storybook/addon-a11y": "7.6.7",
 		"@storybook/addon-actions": "7.6.5",
 		"@storybook/addon-essentials": "7.6.5",
 		"@storybook/addon-links": "7.6.5",
