@@ -17,29 +17,32 @@ export class UmbTreeElement extends UmbLitElement {
 		this.#treeContext.setTreeAlias(newVal);
 	}
 
+	private _selectable: boolean = false;
 	@property({ type: Boolean, reflect: true })
 	get selectable() {
 		return this.#treeContext.selection.getSelectable();
 	}
 	set selectable(newVal) {
-		this.#treeContext.selection.setSelectable(newVal);
+		this._selectable = newVal;
 	}
 
+	private _selection: Array<string | null> = [];
 	@property({ type: Array })
 	get selection() {
 		return this.#treeContext.selection.getSelection();
 	}
 	set selection(newVal) {
 		if (!Array.isArray(newVal)) return;
-		this.#treeContext?.selection.setSelection(newVal);
+		this._selection = newVal;
 	}
 
+	private _multiple: boolean = false;
 	@property({ type: Boolean, reflect: true })
 	get multiple() {
 		return this.#treeContext.selection.getMultiple();
 	}
 	set multiple(newVal) {
-		this.#treeContext.selection.setMultiple(newVal);
+		this._multiple = newVal;
 	}
 
 	// TODO: what is the best name for this functionality?
@@ -87,6 +90,17 @@ export class UmbTreeElement extends UmbLitElement {
 	constructor() {
 		super();
 		this.#requestTreeRoot();
+	}
+
+	connectedCallback(): void {
+		super.connectedCallback();
+		this.#setupSelection();
+	}
+
+	async #setupSelection() {
+		this.#treeContext.selection.setMultiple(this._multiple);
+		this.#treeContext.selection.setSelectable(this._selectable);
+		this.#treeContext.selection.setSelection(this._selection);
 	}
 
 	async #requestTreeRoot() {
