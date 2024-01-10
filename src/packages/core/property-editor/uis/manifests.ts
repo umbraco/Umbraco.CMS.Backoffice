@@ -29,6 +29,7 @@ import { manifest as label } from './label/manifests.js';
 import { manifest as valueType } from './value-type/manifests.js';
 import { manifests as numbers } from './number/manifests.js';
 import { manifest as userPicker } from './user-picker/manifests.js';
+import { manifest as userGroupPicker } from './user-group-picker/manifests.js';
 import { manifest as memberPicker } from './member-picker/manifests.js';
 import { manifest as memberGroupPicker } from './member-group-picker/manifests.js';
 import type { ManifestPropertyEditorUi } from '@umbraco-cms/backoffice/extension-registry';
@@ -58,6 +59,7 @@ export const manifests: Array<ManifestPropertyEditorUi> = [
 	label,
 	valueType,
 	userPicker,
+	userGroupPicker,
 	memberPicker,
 	memberGroupPicker,
 	...numbers,
