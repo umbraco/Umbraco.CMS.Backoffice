@@ -788,6 +788,15 @@ export const data: Array<DataTypeResponseModel | FolderTreeItemResponseModel> = 
 	},
 	{
 		type: 'data-type',
+		name: 'User Group Picker',
+		id: 'dt-userGroupPicker',
+		parentId: null,
+		editorAlias: 'Umbraco.UserGroupPicker',
+		editorUiAlias: 'Umb.PropertyEditorUi.UserGroupPicker',
+		values: [],
+	},
+	{
+		type: 'data-type',
 		name: 'Member Picker',
 		id: 'dt-memberPicker',
 		parentId: null,
