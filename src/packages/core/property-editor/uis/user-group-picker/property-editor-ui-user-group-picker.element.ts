@@ -16,7 +16,7 @@ export class UmbPropertyEditorUIUserGroupPickerElement extends UmbLitElement imp
 	public config?: UmbPropertyEditorConfigCollection;
 
 	render() {
-		return html`<div>umb-property-editor-ui-user-group-picker</div>`;
+		return html`<umb-user-group-input></umb-user-group-input>`;
 	}
 
 	static styles = [UmbTextStyles];
