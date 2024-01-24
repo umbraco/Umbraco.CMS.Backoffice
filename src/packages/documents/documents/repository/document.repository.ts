@@ -1,26 +1,16 @@
 import { UmbDocumentTreeStore, UMB_DOCUMENT_TREE_STORE_CONTEXT } from '../tree/document-tree.store.js';
 import { UmbDocumentServerDataSource } from './sources/document.server.data.js';
-import { UmbDocumentStore, UMB_DOCUMENT_STORE_CONTEXT_TOKEN } from './document.store.js';
-import { UMB_DOCUMENT_ITEM_STORE_CONTEXT_TOKEN, type UmbDocumentItemStore } from './document-item.store.js';
+import { UmbDocumentStore, UMB_DOCUMENT_STORE_CONTEXT } from './document.store.js';
+import { UMB_DOCUMENT_ITEM_STORE_CONTEXT, type UmbDocumentItemStore } from './document-item.store.js';
 import { UmbDocumentItemServerDataSource } from './sources/document-item.server.data.js';
-import type { UmbDetailRepository } from '@umbraco-cms/backoffice/repository';
-import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbBaseController } from '@umbraco-cms/backoffice/class-api';
-import {
-	DocumentResponseModel,
-	CreateDocumentRequestModel,
-	UpdateDocumentRequestModel,
-} from '@umbraco-cms/backoffice/backend-api';
-import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
+import { CreateDocumentRequestModel, UpdateDocumentRequestModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
 import { UmbApi } from '@umbraco-cms/backoffice/extension-api';
 import { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 
-export class UmbDocumentRepository
-	extends UmbBaseController
-	implements
-		UmbDetailRepository<CreateDocumentRequestModel, any, UpdateDocumentRequestModel, DocumentResponseModel>,
-		UmbApi
-{
+export class UmbDocumentRepository extends UmbBaseController implements UmbApi {
 	#init!: Promise<unknown>;
 
 	#treeStore?: UmbDocumentTreeStore;
@@ -33,7 +23,7 @@ export class UmbDocumentRepository
 
 	#notificationContext?: UmbNotificationContext;
 
-	constructor(host: UmbControllerHostElement) {
+	constructor(host: UmbControllerHost) {
 		super(host);
 
 		// TODO: figure out how spin up get the correct data source
@@ -45,15 +35,15 @@ export class UmbDocumentRepository
 				this.#treeStore = instance;
 			}).asPromise(),
 
-			this.consumeContext(UMB_DOCUMENT_STORE_CONTEXT_TOKEN, (instance) => {
+			this.consumeContext(UMB_DOCUMENT_STORE_CONTEXT, (instance) => {
 				this.#store = instance;
 			}).asPromise(),
 
-			this.consumeContext(UMB_DOCUMENT_ITEM_STORE_CONTEXT_TOKEN, (instance) => {
+			this.consumeContext(UMB_DOCUMENT_ITEM_STORE_CONTEXT, (instance) => {
 				this.#itemStore = instance;
 			}).asPromise(),
 
-			this.consumeContext(UMB_NOTIFICATION_CONTEXT_TOKEN, (instance) => {
+			this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
 				this.#notificationContext = instance;
 			}).asPromise(),
 		]);

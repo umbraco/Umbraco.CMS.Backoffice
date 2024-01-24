@@ -17,15 +17,15 @@ export class UmbBackofficeContext extends UmbContextBase<UmbBackofficeContext> {
 	public readonly allowedSections = this.#allowedSections.asObservable();
 
 	constructor(host: UmbControllerHost) {
-		super(host, UMB_BACKOFFICE_CONTEXT_TOKEN);
+		super(host, UMB_BACKOFFICE_CONTEXT);
 		new UmbExtensionsManifestInitializer(this, umbExtensionsRegistry, 'section', null, (sections) => {
-			this.#allowedSections.next([...sections]);
+			this.#allowedSections.setValue([...sections]);
 		});
 	}
 
 	public setActiveSectionAlias(alias: string) {
-		this.#activeSectionAlias.next(alias);
+		this.#activeSectionAlias.setValue(alias);
 	}
 }
 
-export const UMB_BACKOFFICE_CONTEXT_TOKEN = new UmbContextToken<UmbBackofficeContext>('UmbBackofficeContext');
+export const UMB_BACKOFFICE_CONTEXT = new UmbContextToken<UmbBackofficeContext>('UmbBackofficeContext');

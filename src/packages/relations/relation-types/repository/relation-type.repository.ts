@@ -1,23 +1,13 @@
 import { UmbRelationTypeTreeStore, UMB_RELATION_TYPE_TREE_STORE_CONTEXT } from '../tree/index.js';
 import { UmbRelationTypeServerDataSource } from './sources/relation-type.server.data.js';
-import { UmbRelationTypeStore, UMB_RELATION_TYPE_STORE_CONTEXT_TOKEN } from './relation-type.store.js';
+import { UmbRelationTypeStore, UMB_RELATION_TYPE_STORE_CONTEXT } from './relation-type.store.js';
 import { type UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbBaseController } from '@umbraco-cms/backoffice/class-api';
-import {
-	CreateRelationTypeRequestModel,
-	RelationTypeResponseModel,
-	UpdateRelationTypeRequestModel,
-} from '@umbraco-cms/backoffice/backend-api';
-import { UmbDetailRepository } from '@umbraco-cms/backoffice/repository';
-import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/notification';
+import { CreateRelationTypeRequestModel, UpdateRelationTypeRequestModel } from '@umbraco-cms/backoffice/backend-api';
+import { UmbNotificationContext, UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
 import { UmbApi } from '@umbraco-cms/backoffice/extension-api';
 
-export class UmbRelationTypeRepository
-	extends UmbBaseController
-	implements
-		UmbDetailRepository<CreateRelationTypeRequestModel, any, UpdateRelationTypeRequestModel, RelationTypeResponseModel>,
-		UmbApi
-{
+export class UmbRelationTypeRepository extends UmbBaseController implements UmbApi {
 	#init!: Promise<unknown>;
 
 	#treeStore?: UmbRelationTypeTreeStore;
@@ -38,11 +28,11 @@ export class UmbRelationTypeRepository
 				this.#treeStore = instance;
 			}).asPromise(),
 
-			this.consumeContext(UMB_RELATION_TYPE_STORE_CONTEXT_TOKEN, (instance) => {
+			this.consumeContext(UMB_RELATION_TYPE_STORE_CONTEXT, (instance) => {
 				this.#detailStore = instance;
 			}).asPromise(),
 
-			this.consumeContext(UMB_NOTIFICATION_CONTEXT_TOKEN, (instance) => {
+			this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
 				this.#notificationContext = instance;
 			}).asPromise(),
 		]);

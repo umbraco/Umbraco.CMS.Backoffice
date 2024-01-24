@@ -3,16 +3,17 @@ import { marked } from '@umbraco-cms/backoffice/external/marked';
 import { monaco } from '@umbraco-cms/backoffice/external/monaco-editor';
 import { UmbCodeEditorController, UmbCodeEditorElement, loadCodeEditor } from '@umbraco-cms/backoffice/code-editor';
 import { css, html, customElement, query, property, unsafeHTML, when } from '@umbraco-cms/backoffice/external/lit';
-import { FormControlMixin, UUIModalSidebarSize, UUITextStyles } from '@umbraco-cms/backoffice/external/uui';
+import { FormControlMixin, UUIModalSidebarSize } from '@umbraco-cms/backoffice/external/uui';
 import { UmbBooleanState } from '@umbraco-cms/backoffice/observable-api';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import {
 	UMB_LINK_PICKER_MODAL,
 	UMB_MEDIA_TREE_PICKER_MODAL,
-	UMB_MODAL_MANAGER_CONTEXT_TOKEN,
+	UMB_MODAL_MANAGER_CONTEXT,
 	UmbModalManagerContext,
 } from '@umbraco-cms/backoffice/modal';
 import { UMB_APP_CONTEXT } from '@umbraco-cms/backoffice/app';
+import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 
 /**
  * @element umb-input-markdown
@@ -46,7 +47,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 	constructor() {
 		super();
 		this.#loadCodeEditor();
-		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT_TOKEN, (instance) => {
+		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (instance) => {
 			this._modalContext = instance;
 		});
 		this.consumeContext(UMB_APP_CONTEXT, (instance) => {
@@ -66,7 +67,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 				folding: false,
 			}); // Prefer to update options before showing the editor, to avoid seeing the changes in the UI.
 
-			this.#isCodeEditorReady.next(true);
+			this.#isCodeEditorReady.setValue(true);
 			this.#loadActions();
 		} catch (error) {
 			console.error(error);
@@ -560,7 +561,7 @@ export class UmbInputMarkdownElement extends FormControlMixin(UmbLitElement) {
 	}
 
 	static styles = [
-		UUITextStyles,
+		UmbTextStyles,
 		css`
 			:host {
 				display: flex;

@@ -1,10 +1,11 @@
+import { UmbBlockListContext } from '../../context/block-list.context.js';
 import { html, css, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import { type UmbBlockLayoutBaseModel } from '@umbraco-cms/backoffice/block';
 import '../ref-list-block/index.js';
-import { UmbBlockContext } from '@umbraco-cms/backoffice/block';
-import { UMB_CONFIRM_MODAL, UMB_MODAL_MANAGER_CONTEXT_TOKEN } from '@umbraco-cms/backoffice/modal';
+import '../inline-list-block/index.js';
+import { UMB_CONFIRM_MODAL, UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 
 /**
  * @element umb-property-editor-ui-block-list-block
@@ -22,28 +23,43 @@ export class UmbPropertyEditorUIBlockListBlockElement extends UmbLitElement impl
 	}
 	private _layout?: UmbBlockLayoutBaseModel | undefined;
 
-	#context = new UmbBlockContext(this);
+	#context = new UmbBlockListContext(this);
+
+	@state()
+	_contentUdi?: string;
 
 	@state()
 	_label = '';
 
+	@state()
+	_workspaceEditPath?: string;
+
+	@state()
+	_inlineEditingMode?: boolean;
+
 	constructor() {
 		super();
 
+		this.observe(this.#context.workspaceEditPath, (workspaceEditPath) => {
+			this._workspaceEditPath = workspaceEditPath;
+		});
+		this.observe(this.#context.contentUdi, (contentUdi) => {
+			this._contentUdi = contentUdi;
+		});
 		this.observe(this.#context.label, (label) => {
 			this._label = label;
 		});
-		this.observe(this.#context.layout, (layout) => {
-			console.log('layout', layout);
+		this.observe(this.#context.inlineEditingMode, (inlineEditingMode) => {
+			this._inlineEditingMode = inlineEditingMode;
 		});
 	}
 
 	#requestDelete() {
-		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT_TOKEN, async (modalManager) => {
+		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, async (modalManager) => {
 			const modalContext = modalManager.open(UMB_CONFIRM_MODAL, {
 				data: {
 					headline: `Delete ${this._label}`,
-					content: 'Are you sure you want to delete this block?',
+					content: 'Are you sure you want to delete this [INSERT BLOCK TYPE NAME]?',
 					confirmLabel: 'Delete',
 					color: 'danger',
 				},
@@ -54,17 +70,22 @@ export class UmbPropertyEditorUIBlockListBlockElement extends UmbLitElement impl
 	}
 
 	#renderRefBlock() {
-		return html`<umb-ref-list-block .name=${this._label}> </umb-ref-list-block>`;
+		return html`<umb-ref-list-block .name=${this._label}></umb-ref-list-block>`;
 	}
 
-	/*#renderInlineBlock() {
-		return html`<umb-inline-list-block name="block" }}></umb-inline-list-block>`;
-	}*/
+	#renderInlineBlock() {
+		return html`<umb-inline-list-block .name=${this._label}></umb-inline-list-block>`;
+	}
 
 	#renderBlock() {
 		return html`
-			${this.#renderRefBlock()}
+			${this._inlineEditingMode ? this.#renderInlineBlock() : this.#renderRefBlock()}
 			<uui-action-bar>
+				${this._workspaceEditPath
+					? html`<uui-button label="edit" compact href=${this._workspaceEditPath}>
+							<uui-icon name="icon-edit"></uui-icon>
+					  </uui-button>`
+					: ''}
 				<uui-button label="delete" compact @click=${this.#requestDelete}>
 					<uui-icon name="icon-remove"></uui-icon>
 				</uui-button>
@@ -73,7 +94,7 @@ export class UmbPropertyEditorUIBlockListBlockElement extends UmbLitElement impl
 	}
 
 	render() {
-		return this.layout ? this.#renderBlock() : '';
+		return this.layout && this._contentUdi ? this.#renderBlock() : '';
 	}
 
 	static styles = [
@@ -84,9 +105,12 @@ export class UmbPropertyEditorUIBlockListBlockElement extends UmbLitElement impl
 			}
 			uui-action-bar {
 				position: absolute;
-				top: 50%;
-				transform: translateY(-50%);
+				top: var(--uui-size-2);
 				right: var(--uui-size-2);
+			}
+
+			:host([drag-placeholder]) {
+				opacity: 0.2;
 			}
 		`,
 	];

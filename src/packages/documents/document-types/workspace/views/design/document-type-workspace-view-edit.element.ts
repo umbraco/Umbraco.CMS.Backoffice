@@ -1,4 +1,5 @@
 import { UmbDocumentTypeWorkspaceContext } from '../../document-type-workspace.context.js';
+import { UmbDocumentTypeDetailModel } from '../../../types.js';
 import type { UmbDocumentTypeWorkspaceViewEditTabElement } from './document-type-workspace-view-edit-tab.element.js';
 import { css, html, customElement, state, repeat, nothing, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 import { UUIInputElement, UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
@@ -12,7 +13,7 @@ import {
 import { UMB_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/workspace';
 import type { UmbRoute } from '@umbraco-cms/backoffice/router';
 import { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-registry';
-import { UMB_CONFIRM_MODAL, UMB_MODAL_MANAGER_CONTEXT_TOKEN, UmbConfirmModalData } from '@umbraco-cms/backoffice/modal';
+import { UMB_CONFIRM_MODAL, UMB_MODAL_MANAGER_CONTEXT, UmbConfirmModalData } from '@umbraco-cms/backoffice/modal';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UmbSorterConfig, UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 
@@ -38,6 +39,7 @@ export class UmbDocumentTypeWorkspaceViewEditElement extends UmbLitElement imple
 
 	config: UmbSorterConfig<PropertyTypeContainerModelBaseModel> = {
 		...SORTER_CONFIG,
+		// TODO: Missing handlers to work properly: performItemMove and performItemRemove
 		performItemInsert: async (args) => {
 			if (!this._tabs) return false;
 			const oldIndex = this._tabs.findIndex((tab) => tab.id! === args.item.id);
@@ -84,9 +86,9 @@ export class UmbDocumentTypeWorkspaceViewEditElement extends UmbLitElement imple
 
 	private _workspaceContext?: UmbDocumentTypeWorkspaceContext;
 
-	private _tabsStructureHelper = new UmbContentTypeContainerStructureHelper(this);
+	private _tabsStructureHelper = new UmbContentTypeContainerStructureHelper<UmbDocumentTypeDetailModel>(this);
 
-	private _modalManagerContext?: typeof UMB_MODAL_MANAGER_CONTEXT_TOKEN.TYPE;
+	private _modalManagerContext?: typeof UMB_MODAL_MANAGER_CONTEXT.TYPE;
 
 	constructor() {
 		super();
@@ -114,7 +116,7 @@ export class UmbDocumentTypeWorkspaceViewEditElement extends UmbLitElement imple
 			this._observeRootGroups();
 		});
 
-		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT_TOKEN, (context) => {
+		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (context) => {
 			this._modalManagerContext = context;
 		});
 	}
@@ -155,7 +157,7 @@ export class UmbDocumentTypeWorkspaceViewEditElement extends UmbLitElement imple
 					setup: (component) => {
 						(component as UmbDocumentTypeWorkspaceViewEditTabElement).tabName = tabName;
 						(component as UmbDocumentTypeWorkspaceViewEditTabElement).ownerTabId =
-							this._workspaceContext?.structure.isOwnerContainer(tab.id!) ? tab.id : undefined;
+							this._tabsStructureHelper.isOwnerContainer(tab.id!) ? tab.id : undefined;
 					},
 				});
 			});

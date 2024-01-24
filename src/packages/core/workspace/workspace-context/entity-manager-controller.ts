@@ -4,7 +4,7 @@ import { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api
 import {
 	UmbNotificationDefaultData,
 	UmbNotificationContext,
-	UMB_NOTIFICATION_CONTEXT_TOKEN,
+	UMB_NOTIFICATION_CONTEXT,
 } from '@umbraco-cms/backoffice/notification';
 import { UmbObjectState, UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import { UmbEntityDetailStore } from '@umbraco-cms/backoffice/store';
@@ -35,7 +35,7 @@ export class UmbEntityWorkspaceManager<
 		this._host = host;
 		this._entityType = entityType;
 
-		new UmbContextConsumerController(this._host, UMB_NOTIFICATION_CONTEXT_TOKEN, (_instance) => {
+		new UmbContextConsumerController(this._host, UMB_NOTIFICATION_CONTEXT, (_instance) => {
 			this._notificationContext = _instance;
 		});
 
@@ -53,7 +53,7 @@ export class UmbEntityWorkspaceManager<
 
 		if (this.#isNew) {
 			const newData = this._store.getScaffold(this._entityType, this._createAtParentKey || null);
-			this.state.next(newData);
+			this.state.setValue(newData);
 		} else {
 			this._storeSubscription?.destroy();
 			this._storeSubscription = new UmbObserverController(
@@ -61,7 +61,7 @@ export class UmbEntityWorkspaceManager<
 				this._store.getByKey(this._entityId),
 				(content) => {
 					if (!content) return; // TODO: Handle nicely if there is no content data.
-					this.state.next(content as any);
+					this.state.setValue(content as any);
 				},
 			);
 		}
