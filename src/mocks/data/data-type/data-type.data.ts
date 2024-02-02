@@ -834,6 +834,17 @@ export const data: Array<UmbMockDataTypeModel> = [
 		values: [],
 	},
 	{
+		name: 'User Group Picker',
+		id: 'dt-userGroupPicker',
+		parentId: null,
+		editorAlias: 'Umbraco.UserGroupPicker',
+		editorUiAlias: 'Umb.PropertyEditorUi.UserGroupPicker',
+		hasChildren: false,
+		isContainer: false,
+		isFolder: false,
+		values: [],
+	},
+	{
 		name: 'Member Picker',
 		id: 'dt-memberPicker',
 		parent: null,
