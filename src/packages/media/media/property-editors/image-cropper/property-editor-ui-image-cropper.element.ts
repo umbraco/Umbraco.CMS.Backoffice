@@ -1,9 +1,10 @@
-import { html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
+import { html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import '../../components/input-image-cropper/input-image-cropper.element.js';
+import type { UmbImageCropperFocalPoint } from '@umbraco-cms/backoffice/media';
 
 /**
  * @element umb-property-editor-ui-image-cropper
@@ -13,20 +14,24 @@ export class UmbPropertyEditorUIImageCropperElement extends UmbLitElement implem
 	@property()
 	value: any = undefined;
 
-	#crops = [];
+	@state()
+	_config: {
+		crops: Array<any>;
+		focalPoint: { left: number; top: number };
+		src: string;
+	} = {
+		crops: [],
+		focalPoint: { left: 0.5, top: 0.5 },
+		src: '',
+	};
 
 	@property({ attribute: false })
 	public set config(config: UmbPropertyEditorConfigCollection | undefined) {
-		this.#crops = config?.getValueByAlias('crops') ?? [];
-
-		if (!this.value) {
-			//TODO: How should we combine the crops from the value with the configuration?
-			this.value = {
-				crops: this.#crops,
-				focalPoint: { left: 0.5, top: 0.5 },
-				src: 'https://picsum.photos/seed/picsum/1920/1080',
-			};
-		}
+		this._config = {
+			crops: config?.getValueByAlias('crops') ?? [],
+			focalPoint: config?.getValueByAlias<UmbImageCropperFocalPoint>('focalPoint') ?? { left: 0.5, top: 0.5 },
+			src: config?.getValueByAlias('src') ?? '',
+		};
 	}
 
 	#onChange(e: Event) {
@@ -35,7 +40,7 @@ export class UmbPropertyEditorUIImageCropperElement extends UmbLitElement implem
 	}
 
 	render() {
-		return html`<umb-input-image-cropper @change=${this.#onChange} .value=${this.value}></umb-input-image-cropper>`;
+		return html`<umb-input-image-cropper @change=${this.#onChange} .config=${this._config}></umb-input-image-cropper>`;
 	}
 
 	static styles = [UmbTextStyles];
