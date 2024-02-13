@@ -8,6 +8,7 @@ export interface UmbCollectionConfiguration {
 }
 
 export interface UmbCollectionContext {
+	setConfig(config: UmbCollectionConfiguration): void;
 	setManifest(manifest: ManifestCollection): void;
 	getManifest(): ManifestCollection | undefined;
 	requestCollection(): Promise<void>;

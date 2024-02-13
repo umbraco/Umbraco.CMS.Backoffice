@@ -14,7 +14,7 @@ import {
 // TODO: move to UI Library - entity actions should NOT be moved to UI Library but stay in an UmbTable element
 export interface UmbTableItem {
 	id: string;
-	icon?: string | null;
+	icon?: string;
 	entityType?: string;
 	data: Array<UmbTableItemData>;
 }
@@ -103,7 +103,7 @@ export class UmbTableElement extends LitElement {
 	@property({ type: String, attribute: false })
 	public orderingColumn = '';
 
-	@property({ type: String, attribute: false })
+	@property({ type: Boolean, attribute: false })
 	public orderingDesc = false;
 
 	@state()

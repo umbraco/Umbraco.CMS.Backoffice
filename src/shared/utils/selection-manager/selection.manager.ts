@@ -12,7 +12,7 @@ export class UmbSelectionManager extends UmbBaseController {
 	#selectable = new UmbBooleanState(false);
 	public readonly selectable = this.#selectable.asObservable();
 
-	#selection = new UmbArrayState(<Array<string | null>>[], (x) => x);
+	#selection = new UmbArrayState(<Array<string>>[], (x) => x);
 	public readonly selection = this.#selection.asObservable();
 
 	#multiple = new UmbBooleanState(false);
@@ -51,10 +51,10 @@ export class UmbSelectionManager extends UmbBaseController {
 
 	/**
 	 * Sets the current selection.
-	 * @param {Array<string | null>} value
+	 * @param {Array<string>} value
 	 * @memberof UmbSelectionManager
 	 */
-	public setSelection(value: Array<string | null>) {
+	public setSelection(value: Array<string>) {
 		if (this.getSelectable() === false) return;
 		if (value === undefined) throw new Error('Value cannot be undefined');
 		const newSelection = this.getMultiple() ? value : value.slice(0, 1);
@@ -101,6 +101,7 @@ export class UmbSelectionManager extends UmbBaseController {
 	 * @memberof UmbSelectionManager
 	 */
 	public select(unique: string | null) {
+		if (unique === null) return;
 		if (this.getSelectable() === false) return;
 		if (this.isSelected(unique)) return;
 		const newSelection = this.getMultiple() ? [...this.getSelection(), unique] : [unique];
@@ -127,6 +128,7 @@ export class UmbSelectionManager extends UmbBaseController {
 	 * @memberof UmbSelectionManager
 	 */
 	public isSelected(unique: string | null) {
+		if (unique === null) return false;
 		return this.getSelection().includes(unique);
 	}
 
