@@ -1,7 +1,7 @@
 import { UmbBaseController } from '@umbraco-cms/backoffice/class-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbExtensionsManifestInitializer, createExtensionElement } from '@umbraco-cms/backoffice/extension-api';
-import type { ManifestCollectionView} from '@umbraco-cms/backoffice/extension-registry';
+import type { ManifestCollectionView } from '@umbraco-cms/backoffice/extension-registry';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbArrayState, UmbObjectState, UmbStringState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbRoute } from '@umbraco-cms/backoffice/router';
@@ -58,7 +58,7 @@ export class UmbCollectionViewManager extends UmbBaseController {
 	}
 
 	#observeViews() {
-		return new UmbExtensionsManifestInitializer(this, umbExtensionsRegistry, 'collectionView', null, (views) => {
+		new UmbExtensionsManifestInitializer(this, umbExtensionsRegistry, 'collectionView', null, (views) => {
 			const manifests = views.map((view) => view.manifest);
 			this.#views.setValue(manifests);
 			this.#createRoutes(manifests);
@@ -68,7 +68,7 @@ export class UmbCollectionViewManager extends UmbBaseController {
 	#createRoutes(views: ManifestCollectionView[] | null) {
 		let routes: Array<UmbRoute> = [];
 
-		if (views) {
+		if (views && views.length > 0) {
 			// find the default view from the config. If it doesn't exist, use the first view
 			const defaultView = views.find((view) => view.alias === this.#defaultViewAlias);
 			const fallbackView = defaultView?.meta.pathName || views[0].meta.pathName;

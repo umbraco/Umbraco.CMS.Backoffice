@@ -17,16 +17,20 @@ export class UmbDocumentWorkspaceViewCollectionElement extends UmbLitElement imp
 		super();
 
 		this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (workspaceContext) => {
-			this.observe(workspaceContext.structure.ownerContentType(), (documentType) => {
-				if (!documentType) return;
+			this.observe(
+				workspaceContext.structure.ownerContentType(),
+				(documentType) => {
+					if (!documentType) return;
 
-				console.log('UmbDocumentWorkspaceViewCollectionElement.documentType', documentType);
+					console.log('UmbDocumentWorkspaceViewCollectionElement.documentType', documentType, this);
 
-				// TODO: [LK] Once the API is ready, wire up the data-type ID from the content-type.
-				const dataTypeUnique = 'dt-collectionView';
+					// TODO: [LK] Once the API is ready, wire up the data-type ID from the content-type.
+					const dataTypeUnique = 'dt-collectionView';
 
-				this.#observeDataType(dataTypeUnique);
-			}, '_observeDocumentType');
+					this.#observeDataType(dataTypeUnique);
+				},
+				'_observeDocumentType',
+			);
 		});
 	}
 
