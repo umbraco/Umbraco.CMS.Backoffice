@@ -53,7 +53,8 @@ export class UmbObserver<T> {
 	}
 
 	hostDisconnected() {
-		// No cause then it cant re-connect, if the same element just was moved in DOM. (Yeah, what did i write here.. I think it can..?)
+		// No cause then it cant re-connect, if the same element just was moved in DOM. [NL]
+		// I do not agree with my self anymore ^^. I think we should unsubscribe here, to help garbage collector and prevent unforeseen side effects of observations continuing while element are out of the DOM. [NL]
 		this.#subscription?.unsubscribe();
 	}
 
