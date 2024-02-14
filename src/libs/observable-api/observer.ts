@@ -53,8 +53,8 @@ export class UmbObserver<T> {
 	}
 
 	hostDisconnected() {
-		// No cause then it cant re-connect, if the same element just was moved in DOM.
-		//this.#subscription.unsubscribe();
+		// No cause then it cant re-connect, if the same element just was moved in DOM. (Yeah, what did i write here.. I think it can..?)
+		this.#subscription?.unsubscribe();
 	}
 
 	destroy(): void {
