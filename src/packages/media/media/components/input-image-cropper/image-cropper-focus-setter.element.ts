@@ -1,18 +1,7 @@
 import type { UmbImageCropperFocalPoint } from './index.js';
 import { drag, clamp } from '@umbraco-cms/backoffice/external/uui';
-import { clamp } from '@umbraco-cms/backoffice/utils';
-import {
-	LitElement,
-	PropertyValueMap,
-	css,
-	html,
-	nothing,
-	customElement,
-	property,
-	state,
-	query,
-} from '@umbraco-cms/backoffice/external/lit';
-import type { PropertyValueMap } from '@umbraco-cms/backoffice/external/lit';
+//import { clamp } from '@umbraco-cms/backoffice/utils';
+import { state } from '@umbraco-cms/backoffice/external/lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 
@@ -22,8 +11,8 @@ import { LitElement, css, html, nothing, customElement, property, query } from '
 @customElement('umb-image-cropper-focus-setter')
 export class UmbImageCropperFocusSetterElement extends LitElement {
 	@query('#image') imageElement?: HTMLImageElement;
-	@query('#wrapper') wrapperElement?: HTMLImageElement;
-	@query('#focal-point') focalPointElement?: HTMLImageElement;
+	@query('#wrapper') wrapperElement?: HTMLElement;
+	@query('#focal-point') focalPointElement?: HTMLElement;
 
 	@state() private isDraggingGridHandle = false;
 
@@ -122,7 +111,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		return { top, left }; 
 	}
 
-	#onSetFocalPoint(event: MouseEvent) {
+	/*#onSetFocalPoint(event: MouseEvent) {
 		event.preventDefault();
 		if (!this.focalPointElement || !this.imageElement) return;
 
@@ -142,9 +131,32 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				composed: false,
 			}),
 		);
+	}*/
+
+	#setFocalPoint(x: number, y: number, width: number, height: number) {
+		//const image = this.imageElement.getBoundingClientRect();
+		//const x = clamp(event.clientX - image.left, 0, image.width);
+		//const y = clamp(event.clientY - image.top, 0, image.height);
+		//const left = clamp((x / width) * 100, 0, 100);
+		//const top = clamp(100 - (y / height) * 100, 0, 100);
+		const left = clamp((x / width), 0, 1);
+		const top = clamp((y / height), 0, 1);
+
+		this.#coordsToFactor(x, y);
+		this.#setFocalPointStyle(left, top);
+
+		this.dispatchEvent(
+			new CustomEvent('change', {
+				detail: { left, top },
+				bubbles: false,
+				composed: false,
+			}),
+		);
 	}
 
 	#setFocalPointStyle(left: number, top: number) {
+		if (!this.focalPointElement) return;
+
 		this.focalPointElement.style.left = `calc(${left * 100}% - ${this.#DOT_RADIUS}px)`;
 		this.focalPointElement.style.top = `calc(${top * 100}% - ${this.#DOT_RADIUS}px)`;
 	}
@@ -154,8 +166,10 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 
 	#resetCoords() {
+		if (!this.imageElement) return;
+
 		// Init x and y coords from half of rendered image size, which is equavalient to focal point { left: 0.5, top: 0.5 }.
-		this.coords.x = this.imageElement.clientWidth / 2;
+		this.coords.x = this.imageElement?.clientWidth / 2;
 		this.coords.y = this.imageElement.clientHeight / 2;
 	}
 
@@ -165,7 +179,9 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		const grid = this.wrapperElement;
 		const handle = this.focalPointElement;
 
-		handle.focus();
+		if (!grid) return;
+
+		handle?.focus();
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -179,7 +195,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				this.coords.x = x;
 				this.coords.y = y;
 
-				this.#onSetFocalPoint(x, y);
+				this.#setFocalPoint(x, y, grid.clientWidth, grid.clientHeight);
 			},
 			onStop: () => (this.isDraggingGridHandle = false),
 			initialEvent: event,
@@ -191,30 +207,32 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		const increment = event.shiftKey ? 1 : 10;
 
 		const grid = this.wrapperElement;
+		if (!grid) return;
+
 		const { width, height } = grid.getBoundingClientRect();
 
 		if (event.key === 'ArrowLeft') {
 			event.preventDefault();
 			this.coords.x = clamp(this.coords.x - increment, 0, width);
-			this.#onSetFocalPoint(this.coords.x, this.coords.y);
+			this.#setFocalPoint(this.coords.x, this.coords.y, width, height);
 		}
 
 		if (event.key === 'ArrowRight') {
 			event.preventDefault();
 			this.coords.x = clamp(this.coords.x + increment, 0, width);
-			this.#onSetFocalPoint(this.coords.x, this.coords.y);
+			this.#setFocalPoint(this.coords.x, this.coords.y, width, height);
 		}
 
 		if (event.key === 'ArrowUp') {
 			event.preventDefault();
 			this.coords.y = clamp(this.coords.y - increment, 0, height);
-			this.#onSetFocalPoint(this.coords.x, this.coords.y);
+			this.#setFocalPoint(this.coords.x, this.coords.y, width, height);
 		}
 
 		if (event.key === 'ArrowDown') {
 			event.preventDefault();
 			this.coords.y = clamp(this.coords.y + increment, 0, height);
-			this.#onSetFocalPoint(this.coords.x, this.coords.y);
+			this.#setFocalPoint(this.coords.x, this.coords.y, width, height);
 		}
 	}
 
@@ -237,7 +255,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			</div>
 		`;
 	}
-	
+
 	static styles = css`
 		:host {
 			display: flex;
