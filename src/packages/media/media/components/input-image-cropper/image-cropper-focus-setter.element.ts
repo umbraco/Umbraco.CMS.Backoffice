@@ -181,6 +181,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 		if (!grid) return;
 
+		const { width, height } = grid.getBoundingClientRect();
+
 		handle?.focus();
 		event.preventDefault();
 		event.stopPropagation();
@@ -195,7 +197,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				this.coords.x = x;
 				this.coords.y = y;
 
-				this.#setFocalPoint(x, y, grid.clientWidth, grid.clientHeight);
+				this.#setFocalPoint(x, y, width, height);
 			},
 			onStop: () => (this.isDraggingGridHandle = false),
 			initialEvent: event,
