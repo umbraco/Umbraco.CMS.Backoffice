@@ -1,10 +1,12 @@
-import { TinyMcePluginArguments, UmbTinyMcePluginBase } from '@umbraco-cms/backoffice/components';
-import {
+import type { TinyMcePluginArguments} from '@umbraco-cms/backoffice/components';
+import { UmbTinyMcePluginBase } from '@umbraco-cms/backoffice/components';
+import type {
 	UmbCodeEditorModalData,
 	UmbCodeEditorModalValue,
+	UmbModalManagerContext} from '@umbraco-cms/backoffice/modal';
+import {
 	UMB_CODE_EDITOR_MODAL,
-	UmbModalManagerContext,
-	UMB_MODAL_MANAGER_CONTEXT_TOKEN,
+	UMB_MODAL_MANAGER_CONTEXT,
 } from '@umbraco-cms/backoffice/modal';
 
 export default class UmbTinyMceCodeEditorPlugin extends UmbTinyMcePluginBase {
@@ -13,7 +15,7 @@ export default class UmbTinyMceCodeEditorPlugin extends UmbTinyMcePluginBase {
 	constructor(args: TinyMcePluginArguments) {
 		super(args);
 
-		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT_TOKEN, (modalContext) => {
+		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (modalContext) => {
 			this.#modalContext = modalContext;
 		});
 
@@ -28,9 +30,11 @@ export default class UmbTinyMceCodeEditorPlugin extends UmbTinyMcePluginBase {
 		const modalHandler = this.#modalContext?.open<UmbCodeEditorModalData, UmbCodeEditorModalValue>(
 			UMB_CODE_EDITOR_MODAL,
 			{
-				headline: 'Edit source code',
-				content: this.editor.getContent() ?? '',
-				language: 'html',
+				data: {
+					headline: 'Edit source code',
+					content: this.editor.getContent() ?? '',
+					language: 'html',
+				},
 			},
 		);
 

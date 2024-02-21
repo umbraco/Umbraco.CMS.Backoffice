@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/web-components';
+import type { Meta, Story } from '@storybook/web-components';
 import icons from '../../../src/shared/icon-registry/icons/icons.json';
 import { html, repeat } from '@umbraco-cms/backoffice/external/lit';
 
@@ -31,7 +31,7 @@ const Template: Story = () => {
     				height: 100%;">
 						<uui-icon style="font-size: 30px; margin-bottom: 9px;" name="${icon.name}"></uui-icon
 						><small>${icon.name}</small>
-					</div>`
+					</div>`,
 			)}
 		</div>
 	`;

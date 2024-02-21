@@ -1,17 +1,20 @@
-import { UmbContextDiscriminator, UmbContextToken } from '../token/context-token.js';
+import type { UmbContextDiscriminator, UmbContextToken } from '../token/context-token.js';
 import {
 	isUmbContextProvideEventType,
 	//isUmbContextUnprovidedEventType,
 	UMB_CONTEXT_PROVIDE_EVENT_TYPE,
 	//umbContextUnprovidedEventType,
 } from '../provide/context-provide.event.js';
-import { UmbContextRequestEventImplementation, UmbContextCallback } from './context-request.event.js';
+import type { UmbContextCallback } from './context-request.event.js';
+import { UmbContextRequestEventImplementation } from './context-request.event.js';
 
 /**
  * @export
  * @class UmbContextConsumer
  */
 export class UmbContextConsumer<BaseType = unknown, ResultType extends BaseType = BaseType> {
+	#skipOrigin?: boolean;
+	#stopAtContextMatch = true;
 	#callback?: UmbContextCallback<ResultType>;
 	#promise?: Promise<ResultType>;
 	#promiseResolver?: (instance: ResultType) => void;
@@ -28,13 +31,13 @@ export class UmbContextConsumer<BaseType = unknown, ResultType extends BaseType 
 
 	/**
 	 * Creates an instance of UmbContextConsumer.
-	 * @param {EventTarget} hostElement
+	 * @param {Element} element
 	 * @param {string} contextIdentifier
 	 * @param {UmbContextCallback} callback
 	 * @memberof UmbContextConsumer
 	 */
 	constructor(
-		protected hostElement: EventTarget,
+		protected element: Element,
 		contextIdentifier: string | UmbContextToken<BaseType, ResultType>,
 		callback?: UmbContextCallback<ResultType>,
 	) {
@@ -43,6 +46,25 @@ export class UmbContextConsumer<BaseType = unknown, ResultType extends BaseType 
 		this.#apiAlias = idSplit[1] ?? 'default';
 		this.#callback = callback;
 		this.#discriminator = (contextIdentifier as UmbContextToken<BaseType, ResultType>).getDiscriminator?.();
+	}
+
+	/**
+	 * @public
+	 * @memberof UmbContextConsumer
+	 * @description Skip the contexts provided by the requesting element.
+	 */
+	public skipOrigin() {
+		this.#skipOrigin = true;
+	}
+
+	/**
+	 * @public
+	 * @memberof UmbContextConsumer
+	 * @description Pass beyond any context aliases that matches this.
+	 * The default behavior is to stop at first Context Alias match, this is to avoid receiving unforeseen descending contexts.
+	 */
+	public passContextAliasMatches() {
+		this.#stopAtContextMatch = false;
 	}
 
 	protected _onResponse = (instance: BaseType): boolean => {
@@ -91,8 +113,13 @@ export class UmbContextConsumer<BaseType = unknown, ResultType extends BaseType 
 	 * @description Request the context from the host element.
 	 */
 	public request() {
-		const event = new UmbContextRequestEventImplementation(this.#contextAlias, this.#apiAlias, this._onResponse);
-		this.hostElement.dispatchEvent(event);
+		const event = new UmbContextRequestEventImplementation(
+			this.#contextAlias,
+			this.#apiAlias,
+			this._onResponse,
+			this.#stopAtContextMatch,
+		);
+		(this.#skipOrigin ? this.element.parentNode : this.element)?.dispatchEvent(event);
 	}
 
 	public hostConnected() {
@@ -142,5 +169,6 @@ export class UmbContextConsumer<BaseType = unknown, ResultType extends BaseType 
 		this.#promise = undefined;
 		this.#promiseResolver = undefined;
 		this.#instance = undefined;
+		this.#discriminator = undefined;
 	}
 }

@@ -1,11 +1,12 @@
-import { TinyMcePluginArguments, UmbTinyMcePluginBase } from '@umbraco-cms/backoffice/components';
+import type { TinyMcePluginArguments } from '@umbraco-cms/backoffice/components';
+import { UmbTinyMcePluginBase } from '@umbraco-cms/backoffice/components';
 import { UmbMediaHelper } from '@umbraco-cms/backoffice/utils';
-import {
-	UMB_MEDIA_TREE_PICKER_MODAL,
-	UmbModalManagerContext,
-	UMB_MODAL_MANAGER_CONTEXT_TOKEN,
-} from '@umbraco-cms/backoffice/modal';
-import { UMB_CURRENT_USER_CONTEXT, UmbCurrentUser } from '@umbraco-cms/backoffice/current-user';
+import type { UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
+import { UMB_MEDIA_TREE_PICKER_MODAL, UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import type { UMB_CURRENT_USER_CONTEXT, UmbCurrentUserModel } from '@umbraco-cms/backoffice/current-user';
+import type { RawEditorOptions } from '@umbraco-cms/backoffice/external/tinymce';
+import { UmbTemporaryFileRepository } from '@umbraco-cms/backoffice/temporary-file';
+import { UmbId } from '@umbraco-cms/backoffice/id';
 
 interface MediaPickerTargetData {
 	altText?: string;
@@ -26,16 +27,18 @@ interface MediaPickerResultData {
 
 export default class UmbTinyMceMediaPickerPlugin extends UmbTinyMcePluginBase {
 	#mediaHelper: UmbMediaHelper;
-	#currentUser?: UmbCurrentUser;
+	#currentUser?: UmbCurrentUserModel;
 	#modalContext?: UmbModalManagerContext;
 	#currentUserContext?: typeof UMB_CURRENT_USER_CONTEXT.TYPE;
+	#temporaryFileRepository;
 
 	constructor(args: TinyMcePluginArguments) {
 		super(args);
 
 		this.#mediaHelper = new UmbMediaHelper();
+		this.#temporaryFileRepository = new UmbTemporaryFileRepository(args.host);
 
-		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT_TOKEN, (modalContext) => {
+		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (modalContext) => {
 			this.#modalContext = modalContext;
 		});
 
@@ -46,19 +49,48 @@ export default class UmbTinyMceMediaPickerPlugin extends UmbTinyMcePluginBase {
 		// 	this.#observeCurrentUser();
 		// });
 
-		this.editor.ui.registry.addButton('umbmediapicker', {
+		this.editor.ui.registry.addToggleButton('umbmediapicker', {
 			icon: 'image',
 			tooltip: 'Media Picker',
-			//stateSelector: 'img[data-udi]', TODO => Investigate where stateselector has gone, or if it is still needed
 			onAction: () => this.#onAction(),
+			onSetup: (api) => {
+				const changed = this.editor.selection.selectorChangedWithUnbind('img[data-udi]', (state) =>
+					api.setActive(state),
+				);
+				return () => changed.unbind();
+			},
 		});
+
+		// Register global options for the editor
+		this.editor.options.register('maxImageSize', { processor: 'number', default: 500 });
+
+		// Adjust Editor settings to allow pasting images
+		// but only if the umbmediapicker button is present
+		const toolbar = this.configuration?.getValueByAlias<string[]>('toolbar');
+		if (toolbar?.includes('umbmediapicker')) {
+			this.editor.options.set('paste_data_images', true);
+			this.editor.options.set('automatic_uploads', false);
+			this.editor.options.set('images_upload_handler', this.#uploadImageHandler);
+			// This allows images to be pasted in & stored as Base64 until they get uploaded to server
+			this.editor.options.set('images_replace_blob_uris', true);
+
+			// Listen for SetContent to update images
+			this.editor.on('SetContent', async (e) => {
+				const content = e.content;
+
+				// Handle images that are pasted in
+				this.#mediaHelper.uploadBlobImages(this.editor, content);
+			});
+		}
 	}
 
+	/*
 	async #observeCurrentUser() {
 		if (!this.#currentUserContext) return;
 
 		this.observe(this.#currentUserContext.currentUser, (currentUser) => (this.#currentUser = currentUser));
 	}
+	*/
 
 	async #onAction() {
 		const selectedElm = this.editor.selection.getNode();
@@ -90,6 +122,8 @@ export default class UmbTinyMceMediaPickerPlugin extends UmbTinyMcePluginBase {
 	}
 
 	async #showMediaPicker(currentTarget: MediaPickerTargetData) {
+		/*
+		// TODO: I dont think we should parse this one... it should be up to the modal to get this information, and then we could parse some configs on to affect this.
 		let startNodeId;
 		let startNodeIsVirtual;
 
@@ -102,13 +136,18 @@ export default class UmbTinyMceMediaPickerPlugin extends UmbTinyMcePluginBase {
 				startNodeIsVirtual = this.#currentUser?.mediaStartNodeIds?.length !== 1;
 			}
 		}
+		*/
 
 		// TODO => startNodeId and startNodeIsVirtual do not exist on ContentTreeItemResponseModel
 		const modalHandler = this.#modalContext?.open(UMB_MEDIA_TREE_PICKER_MODAL, {
-			selection: currentTarget.udi ? [...currentTarget.udi] : [],
-			multiple: false,
-			//startNodeId,
-			//startNodeIsVirtual,
+			data: {
+				multiple: false,
+				//startNodeId,
+				//startNodeIsVirtual,
+			},
+			value: {
+				selection: currentTarget.udi ? [...currentTarget.udi] : [],
+			},
 		});
 
 		if (!modalHandler) return;
@@ -176,4 +215,38 @@ export default class UmbTinyMceMediaPickerPlugin extends UmbTinyMcePluginBase {
 			}
 		});
 	}
+
+	#uploadImageHandler: RawEditorOptions['images_upload_handler'] = (blobInfo, progress) => {
+		return new Promise((resolve, reject) => {
+			// Fetch does not support progress, so we need to fake it.
+			progress(0);
+
+			const id = UmbId.new();
+			const fileBlob = blobInfo.blob();
+			const file = new File([fileBlob], blobInfo.filename(), { type: fileBlob.type });
+
+			progress(50);
+
+			document.dispatchEvent(new CustomEvent('rte.file.uploading', { composed: true, bubbles: true }));
+
+			this.#temporaryFileRepository
+				.upload(id, file)
+				.then((response) => {
+					if (response.error) {
+						reject(response.error);
+						return;
+					}
+
+					// Put temp location into localstorage (used to update the img with data-tmpimg later on)
+					const blobUri = window.URL.createObjectURL(fileBlob);
+					sessionStorage.setItem(`tinymce__${blobUri}`, id);
+					resolve(blobUri);
+				})
+				.catch(reject)
+				.finally(() => {
+					progress(100);
+					document.dispatchEvent(new CustomEvent('rte.file.uploaded', { composed: true, bubbles: true }));
+				});
+		});
+	};
 }

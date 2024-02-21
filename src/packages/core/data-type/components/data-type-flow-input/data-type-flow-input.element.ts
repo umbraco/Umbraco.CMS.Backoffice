@@ -1,11 +1,9 @@
+import { UMB_DATATYPE_WORKSPACE_MODAL } from '../../index.js';
 import { css, html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
-import { UmbLitElement } from '@umbraco-cms/internal/lit-element';
-import {
-	UmbModalRouteRegistrationController,
-	UMB_DATA_TYPE_PICKER_FLOW_MODAL,
-	UMB_WORKSPACE_MODAL,
-} from '@umbraco-cms/backoffice/modal';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbModalRouteRegistrationController, UMB_DATA_TYPE_PICKER_FLOW_MODAL } from '@umbraco-cms/backoffice/modal';
+import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 
 // Note: Does only support picking a single data type. But this could be developed later into this same component. To follow other picker input components.
 /**
@@ -48,21 +46,21 @@ export class UmbInputDataTypeElement extends FormControlMixin(UmbLitElement) {
 	constructor() {
 		super();
 
-		this.#editDataTypeModal = new UmbModalRouteRegistrationController(this, UMB_WORKSPACE_MODAL).onSetup(() => {
-			return { entityType: 'data-type', preset: {} };
-		});
+		this.#editDataTypeModal = new UmbModalRouteRegistrationController(this, UMB_DATATYPE_WORKSPACE_MODAL);
 
 		new UmbModalRouteRegistrationController(this, UMB_DATA_TYPE_PICKER_FLOW_MODAL)
 			.onSetup(() => {
 				return {
-					selection: this._ids,
-					submitLabel: 'Submit',
+					data: {
+						submitLabel: 'Submit',
+					},
+					value: { selection: this._ids ?? [] },
 				};
 			})
 			.onSubmit((submitData) => {
-				// TODO: we might should set the alias to null or empty string, if no selection.
-				this.value = submitData.selection.join(',');
-				this.dispatchEvent(new CustomEvent('change', { composed: true, bubbles: true }));
+				// TODO: we maybe should set the alias to null, if no selection?
+				this.value = submitData?.selection.join(',') ?? '';
+				this.dispatchEvent(new UmbChangeEvent());
 			})
 			.observeRouteBuilder((routeBuilder) => {
 				this._createRoute = routeBuilder(null);
@@ -78,7 +76,7 @@ export class UmbInputDataTypeElement extends FormControlMixin(UmbLitElement) {
 							// TODO: Could use something smarter for workspace modals, as I would like to avoid setting the rest of the URL here:
 							this.#editDataTypeModal?.open({}, 'edit/' + this._ids![0]);
 						}}
-						border>
+						standalone>
 						<!-- TODO: Get the icon from property editor UI -->
 						<uui-icon name="${'document'}" slot="icon"></uui-icon>
 						<uui-action-bar slot="actions">

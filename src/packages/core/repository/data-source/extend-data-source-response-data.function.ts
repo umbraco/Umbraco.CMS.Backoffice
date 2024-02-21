@@ -1,5 +1,5 @@
-import { DataSourceResponse } from '../index.js';
-import { Diff } from '@umbraco-cms/backoffice/utils';
+import type { DataSourceResponse } from '../index.js';
+import type { Diff } from '@umbraco-cms/backoffice/utils';
 
 /**
  * This function extends the data set of a DataSourceResponse.
@@ -22,7 +22,7 @@ export function extendDataSourceResponseData<
 	ExtendedDataType extends IncomingDataType,
 	IncomingDataType extends object = object,
 	MissingPropsType extends object = Diff<IncomingDataType, ExtendedDataType>,
-	ToType = IncomingDataType & ExtendedDataType
+	ToType = IncomingDataType & ExtendedDataType,
 >(response: DataSourceResponse<IncomingDataType>, appendData: MissingPropsType): DataSourceResponse<ToType> {
 	if (response.data === undefined) return response as unknown as DataSourceResponse<ToType>;
 	return { ...response, data: { ...response.data, ...appendData } as unknown as ToType };

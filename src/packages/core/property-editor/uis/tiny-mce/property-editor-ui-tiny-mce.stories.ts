@@ -39,7 +39,6 @@ const config = new UmbPropertyEditorConfigCollection([
 			'anchor',
 			'table',
 			'umbmediapicker',
-			'umbmacro',
 			'umbembeddialog',
 		],
 	},
@@ -80,7 +79,9 @@ const meta: Meta<UmbPropertyEditorUITinyMceElement> = {
 	id: 'umb-property-editor-ui-tiny-mce',
 	args: {
 		config: undefined,
-		value: `
+		value: {
+			blocks: {},
+			markup: `
 			<h2>TinyMCE</h2>
 			<p>I am a default value for the TinyMCE text editor story.</p>
 			<p>
@@ -92,6 +93,7 @@ const meta: Meta<UmbPropertyEditorUITinyMceElement> = {
 				<a href="https://docs.umbraco.com" target="_blank" rel="noopener noreferrer">Umbraco documentation</a>
 			</p>
 		`,
+		},
 	},
 };
 
