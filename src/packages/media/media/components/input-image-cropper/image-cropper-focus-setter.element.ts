@@ -82,11 +82,12 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		this.style.setProperty('--dot-radius', `${this.#DOT_RADIUS}px`);
 
 		if (this.focalPointElement) {
-		this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
+			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
 		}
 		if (this.imageElement) {
 			this.imageElement.onload = () => {
 				if (!this.imageElement || !this.wrapperElement) return;
+
 				const imageAspectRatio = this.imageElement.naturalWidth / this.imageElement.naturalHeight;
 				const hostRect = this.getBoundingClientRect();
 				const image = this.imageElement.getBoundingClientRect();
@@ -98,7 +99,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 					this.imageElement.style.height = '100%';
 				}
 
-			this.#resetCoords();
+				this.#resetCoords();
 
 				this.imageElement.style.aspectRatio = `${imageAspectRatio}`;
 				this.wrapperElement.style.aspectRatio = `${imageAspectRatio}`;
@@ -178,7 +179,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				this.coords.x = x;
 				this.coords.y = y;
 
-				this.#setFocalPoint(x, y);
+				this.#onSetFocalPoint(x, y);
 			},
 			onStop: () => (this.isDraggingGridHandle = false),
 			initialEvent: event,
@@ -195,25 +196,25 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		if (event.key === 'ArrowLeft') {
 			event.preventDefault();
 			this.coords.x = clamp(this.coords.x - increment, 0, width);
-			this.#setFocalPoint(this.coords.x, this.coords.y);
+			this.#onSetFocalPoint(this.coords.x, this.coords.y);
 		}
 
 		if (event.key === 'ArrowRight') {
 			event.preventDefault();
 			this.coords.x = clamp(this.coords.x + increment, 0, width);
-			this.#setFocalPoint(this.coords.x, this.coords.y);
+			this.#onSetFocalPoint(this.coords.x, this.coords.y);
 		}
 
 		if (event.key === 'ArrowUp') {
 			event.preventDefault();
 			this.coords.y = clamp(this.coords.y - increment, 0, height);
-			this.#setFocalPoint(this.coords.x, this.coords.y);
+			this.#onSetFocalPoint(this.coords.x, this.coords.y);
 		}
 
 		if (event.key === 'ArrowDown') {
 			event.preventDefault();
 			this.coords.y = clamp(this.coords.y + increment, 0, height);
-			this.#setFocalPoint(this.coords.x, this.coords.y);
+			this.#onSetFocalPoint(this.coords.x, this.coords.y);
 		}
 	}
 
@@ -227,8 +228,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				<img id="image" @keydown=${() => nothing} src=${this.src} alt="" />
 				<span id="focal-point"
 					class=${classMap({
-			'focal-point--dragging': this.isDraggingGridHandle,
-		})}
+						'focal-point--dragging': this.isDraggingGridHandle,
+					})}
 					tabindex=${ifDefined(this.disabled ? undefined : '0')}
 					aria-label="Focal Point"
 					@keydown=${this.#handleGridKeyDown}>
@@ -236,6 +237,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			</div>
 		`;
 	}
+	
 	static styles = css`
 		:host {
 			display: flex;
