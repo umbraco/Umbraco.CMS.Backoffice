@@ -29,7 +29,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		console.log("value", value);
 
 		if (this.#isCentered(this.#focalPoint)) {
-			//this.#resetCoords();
+			console.log("center")
+			this.#resetCoords();
 			this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
 		}
 
