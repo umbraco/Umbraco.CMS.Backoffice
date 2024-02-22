@@ -289,7 +289,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			position: absolute;
 			width: calc(2 * var(--dot-radius));
 			height: calc(2 * var(--dot-radius));
-			outline: 3px solid black;
+			//outline: 3px solid black;
 			top: 0;
 			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
         	border: solid 2px white;
