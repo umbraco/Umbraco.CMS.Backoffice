@@ -13,6 +13,7 @@ import { UMB_PROPERTY_SETTINGS_MODAL, UmbModalRouteRegistrationController } from
 
 @customElement('umb-document-type-workspace-view-edit-properties')
 export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitElement {
+	#modalRegistration;
 	#model: Array<UmbPropertyTypeModel> = [];
 	#sorter = new UmbSorterController<UmbPropertyTypeModel, UmbDocumentTypeWorkspacePropertyElement>(this, {
 		getUniqueOfElement: (element) => {
@@ -87,6 +88,7 @@ export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitEle
 		if (value === this._containerId) return;
 		const oldValue = this._containerId;
 		this._containerId = value;
+		this.#modalRegistration.setUniquePathValue('containerId', value);
 		this.requestUpdate('containerId', oldValue);
 	}
 
@@ -159,8 +161,10 @@ export class UmbDocumentTypeWorkspaceViewEditPropertiesElement extends UmbLitEle
 		});
 
 		// Note: Route for adding a new property
-		new UmbModalRouteRegistrationController(this, UMB_PROPERTY_SETTINGS_MODAL)
+		this.#modalRegistration = new UmbModalRouteRegistrationController(this, UMB_PROPERTY_SETTINGS_MODAL)
+			//Is there a way to make new-property BEFORE containerId in the URL? right now it shows as .../containerId/new-property/...
 			.addAdditionalPath('new-property')
+			.addUniquePaths(['containerId'])
 			.onSetup(async () => {
 				const documentTypeId = this._ownerDocumentTypes?.find(
 					(types) => types.containers?.find((containers) => containers.id === this.containerId),

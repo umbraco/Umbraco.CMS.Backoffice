@@ -15,6 +15,7 @@ import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
  */
 @customElement('umb-data-type-flow-input')
 export class UmbInputDataTypeElement extends FormControlMixin(UmbLitElement) {
+	#modalRegistration;
 	protected getFormElement() {
 		return undefined;
 	}
@@ -38,6 +39,17 @@ export class UmbInputDataTypeElement extends FormControlMixin(UmbLitElement) {
 			.filter((id) => id.length !== 0);
 	}
 
+	private _propertyId = '';
+	@property({ type: String })
+	set propertyId(value: string) {
+		if (!value) return;
+		this._propertyId = value;
+		this.#modalRegistration.setUniquePathValue('propertyId', value);
+	}
+	get propertyId(): string {
+		return this._propertyId;
+	}
+
 	#editDataTypeModal?: UmbModalRouteRegistrationController;
 
 	@state()
@@ -48,7 +60,8 @@ export class UmbInputDataTypeElement extends FormControlMixin(UmbLitElement) {
 
 		this.#editDataTypeModal = new UmbModalRouteRegistrationController(this, UMB_DATATYPE_WORKSPACE_MODAL);
 
-		new UmbModalRouteRegistrationController(this, UMB_DATA_TYPE_PICKER_FLOW_MODAL)
+		this.#modalRegistration = new UmbModalRouteRegistrationController(this, UMB_DATA_TYPE_PICKER_FLOW_MODAL)
+			.addUniquePaths(['propertyId'])
 			.onSetup(() => {
 				return {
 					data: {
