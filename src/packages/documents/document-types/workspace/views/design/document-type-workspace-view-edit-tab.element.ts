@@ -155,9 +155,16 @@ export class UmbDocumentTypeWorkspaceViewEditTabElement extends UmbLitElement {
 		});
 	}
 
-	#onAddGroup = () => {
+	#onAddGroup = async () => {
 		// Idea, maybe we can gather the sortOrder from the last group rendered and add 1 to it?
-		this._groupStructureHelper.addContainer(this._ownerTabId);
+		const newContainer = await this._groupStructureHelper.addContainer(this._ownerTabId);
+
+		requestAnimationFrame(() => {
+			this.shadowRoot
+				?.querySelector(`[container-id="${newContainer?.id}"]`)
+				?.parentElement?.querySelector('uui-input')
+				?.focus();
+		});
 	};
 
 	render() {

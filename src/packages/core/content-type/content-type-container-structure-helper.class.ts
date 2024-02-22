@@ -217,7 +217,7 @@ export class UmbContentTypeContainerStructureHelper<T extends UmbContentTypeMode
 	async addContainer(parentContainerId?: string | null, sortOrder?: number) {
 		if (!this.#structure) return;
 
-		await this.#structure.createContainer(null, parentContainerId, this._childType, sortOrder);
+		return await this.#structure.createContainer(null, parentContainerId, this._childType, sortOrder);
 	}
 
 	async removeContainer(groupId: string) {
