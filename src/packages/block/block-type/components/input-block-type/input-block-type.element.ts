@@ -1,4 +1,5 @@
-import type { UmbBlockTypeBaseModel } from '../../types.js';
+import type { UmbBlockTypeCardElement } from '../block-type-card/index.js';
+import type { UmbBlockTypeBaseModel, UmbBlockTypeWithGroupKey } from '../../types.js';
 import {
 	UMB_CONFIRM_MODAL,
 	UMB_DOCUMENT_TYPE_PICKER_MODAL,
@@ -10,17 +11,33 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { UmbPropertyDatasetContext } from '@umbraco-cms/backoffice/property';
 import { UMB_PROPERTY_DATASET_CONTEXT } from '@umbraco-cms/backoffice/property';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
+import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 
 @customElement('umb-input-block-type')
 export class UmbInputBlockTypeElement<
-	BlockType extends UmbBlockTypeBaseModel = UmbBlockTypeBaseModel,
+	BlockType extends UmbBlockTypeWithGroupKey = UmbBlockTypeWithGroupKey,
 > extends UmbLitElement {
+	#sorter = new UmbSorterController<BlockType, UmbBlockTypeCardElement>(this, {
+		getUniqueOfElement: (element) => element.contentElementTypeKey!,
+		getUniqueOfModel: (modelEntry) => modelEntry.contentElementTypeKey!,
+		identifier: 'block-editor-blocks-sorter',
+		itemSelector: '.cake',
+		containerSelector: '#container',
+		resolveVerticalDirection: () => false,
+		onChange: ({ model }) => {
+			const newGroupKey = this.getAttribute('data-umb-group-key') ?? null;
+			this.value = model.map((x) => ({ ...x, groupKey: newGroupKey }));
+			this.dispatchEvent(new UmbChangeEvent());
+		},
+	});
+
 	@property({ type: Array, attribute: false })
 	public get value() {
 		return this._items;
 	}
 	public set value(items) {
 		this._items = items ?? [];
+		this.#sorter.setModel(this._items);
 	}
 
 	@property({ type: String })
@@ -95,7 +112,7 @@ export class UmbInputBlockTypeElement<
 	}
 
 	render() {
-		return html`<div>
+		return html`<div id="container">
 			${repeat(this.value, (block) => block.contentElementTypeKey, this.#renderItem)} ${this.#renderButton()}
 		</div>`;
 	}
@@ -103,6 +120,7 @@ export class UmbInputBlockTypeElement<
 	#renderItem = (block: BlockType) => {
 		return html`
 			<umb-block-type-card
+				class="cake"
 				.name=${block.label}
 				.iconColor=${block.iconColor}
 				.backgroundColor=${block.backgroundColor}
@@ -156,6 +174,10 @@ export class UmbInputBlockTypeElement<
 			}
 			uui-input uui-button {
 				opacity: 0;
+			}
+
+			[drag-placeholder] {
+				opacity: 0.2;
 			}
 		`,
 	];

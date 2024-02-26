@@ -178,6 +178,7 @@ export class UmbPropertyEditorUIBlockGridTypeConfigurationElement
 						<umb-input-block-type
 							.value=${group.blocks}
 							.workspacePath=${this._workspacePath}
+							data-umb-group-key=${group.key}
 							@create=${(e: CustomEvent) => this.#onCreate(e, group.key)}
 							@change=${(e: CustomEvent) => this.#onChange(e, group.key)}></umb-input-block-type>
 					</div>`,
