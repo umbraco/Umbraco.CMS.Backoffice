@@ -30,6 +30,12 @@ const entityActions: Array<ManifestTypes> = [
 			repositoryAlias: UMB_DOCUMENT_DETAIL_REPOSITORY_ALIAS,
 			entityTypes: [UMB_DOCUMENT_ENTITY_TYPE],
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.UserPermission',
+				verb: 'Umb.Document.CreateBlueprint',
+			},
+		],
 	},
 	{
 		type: 'entityAction',
@@ -43,19 +49,31 @@ const entityActions: Array<ManifestTypes> = [
 			repositoryAlias: UMB_DOCUMENT_DETAIL_REPOSITORY_ALIAS,
 			entityTypes: [UMB_DOCUMENT_ENTITY_TYPE],
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.UserPermission',
+				verb: 'Umb.Document.Move',
+			},
+		],
 	},
 	{
 		type: 'entityAction',
-		alias: 'Umb.EntityAction.Document.Copy',
-		name: 'Copy Document Entity Action',
+		alias: 'Umb.EntityAction.Document.Duplicate',
+		name: 'Duplicate Document Entity Action',
 		weight: 600,
 		api: UmbCopyEntityAction,
 		meta: {
 			icon: 'icon-documents',
-			label: 'Copy (TBD)',
+			label: 'Duplicate (TBD)',
 			repositoryAlias: UMB_DOCUMENT_DETAIL_REPOSITORY_ALIAS,
 			entityTypes: [UMB_DOCUMENT_ENTITY_TYPE],
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.UserPermission',
+				verb: 'Umb.Document.Duplicate',
+			},
+		],
 	},
 	{
 		type: 'entityAction',
@@ -69,6 +87,12 @@ const entityActions: Array<ManifestTypes> = [
 			repositoryAlias: UMB_DOCUMENT_DETAIL_REPOSITORY_ALIAS,
 			entityTypes: [UMB_DOCUMENT_ROOT_ENTITY_TYPE, UMB_DOCUMENT_ENTITY_TYPE],
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.UserPermission',
+				verb: 'Umb.Document.Sort',
+			},
+		],
 	},
 	{
 		type: 'entityAction',
@@ -81,6 +105,12 @@ const entityActions: Array<ManifestTypes> = [
 			repositoryAlias: UMB_DOCUMENT_DETAIL_REPOSITORY_ALIAS,
 			entityTypes: [UMB_DOCUMENT_ENTITY_TYPE],
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.UserPermission',
+				verb: 'Umb.Document.Publish',
+			},
+		],
 	},
 	{
 		type: 'entityAction',
@@ -93,6 +123,12 @@ const entityActions: Array<ManifestTypes> = [
 			repositoryAlias: UMB_DOCUMENT_DETAIL_REPOSITORY_ALIAS,
 			entityTypes: [UMB_DOCUMENT_ENTITY_TYPE],
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.UserPermission',
+				verb: 'Umb.Document.Unpublish',
+			},
+		],
 	},
 	{
 		type: 'entityAction',
@@ -105,6 +141,12 @@ const entityActions: Array<ManifestTypes> = [
 			repositoryAlias: UMB_DOCUMENT_DETAIL_REPOSITORY_ALIAS,
 			entityTypes: [UMB_DOCUMENT_ENTITY_TYPE],
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.UserPermission',
+				verb: 'Umb.Document.Rollback',
+			},
+		],
 	},
 ];
 

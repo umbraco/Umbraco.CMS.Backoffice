@@ -1,9 +1,9 @@
 import { UMB_DOCUMENT_DETAIL_REPOSITORY_ALIAS } from '../../repository/index.js';
 import { UMB_DOCUMENT_ENTITY_TYPE, UMB_DOCUMENT_ROOT_ENTITY_TYPE } from '../../entity.js';
 import { UmbCreateDocumentEntityAction } from './create.action.js';
-import type { ManifestEntityAction, ManifestModal } from '@umbraco-cms/backoffice/extension-registry';
+import type { ManifestModal, ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 
-const entityActions: Array<ManifestEntityAction> = [
+const entityActions: Array<ManifestTypes> = [
 	{
 		type: 'entityAction',
 		alias: 'Umb.EntityAction.Document.Create',
@@ -16,17 +16,12 @@ const entityActions: Array<ManifestEntityAction> = [
 			repositoryAlias: UMB_DOCUMENT_DETAIL_REPOSITORY_ALIAS,
 			entityTypes: [UMB_DOCUMENT_ROOT_ENTITY_TYPE, UMB_DOCUMENT_ENTITY_TYPE],
 		},
-		/* removed until we have permissions in place
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				// TODO: investigate why the match property is not typed
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				//@ts-ignore
-				match: 'Umb.UserPermission.Document.Create',
+				verb: 'Umb.Document.Create',
 			},
 		],
-		*/
 	},
 ];
 

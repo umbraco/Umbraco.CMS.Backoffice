@@ -18,7 +18,7 @@ export const manifests = [
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				match: 'Umb.UserPermission.Document.Delete',
+				verb: 'Umb.UserPermission.Document.Delete',
 			},
 		],
 	},

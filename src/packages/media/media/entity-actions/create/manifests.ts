@@ -16,17 +16,6 @@ const entityActions: Array<ManifestEntityAction> = [
 			repositoryAlias: UMB_MEDIA_DETAIL_REPOSITORY_ALIAS,
 			entityTypes: [UMB_MEDIA_ROOT_ENTITY_TYPE, UMB_MEDIA_ENTITY_TYPE],
 		},
-		/* removed until we have permissions in place
-		conditions: [
-			{
-				alias: 'Umb.Condition.UserPermission',
-				// TODO: investigate why the match property is not typed
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				//@ts-ignore
-				match: 'Umb.UserPermission.Media.Create',
-			},
-		],
-		*/
 	},
 ];
 
