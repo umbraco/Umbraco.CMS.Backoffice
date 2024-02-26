@@ -21,7 +21,8 @@ export class UmbUserPermissionCondition extends UmbBaseController implements Umb
 			this.observe(
 				context.currentUser,
 				(currentUser) => {
-					this.permitted = currentUser?.fallbackPermissions?.includes(this.config.verb) || false;
+					const fallbackPermissions = currentUser?.fallbackPermissions || [];
+					this.permitted = this.config.verbs.every((verb) => fallbackPermissions.includes(verb));
 					this.#onChange();
 				},
 				'umbUserPermissionConditionObserver',
@@ -35,9 +36,9 @@ export type UserPermissionConditionConfig = UmbConditionConfigBase<'Umb.Conditio
 	 *
 	 *
 	 * @example
-	 * "Umb.UserPermission.Document.Create"
+	 * ["Umb.Document.Update", "Umb.Document.Publish"]
 	 */
-	verb: string;
+	verbs: Array<string>;
 };
 
 export const manifest: ManifestCondition = {

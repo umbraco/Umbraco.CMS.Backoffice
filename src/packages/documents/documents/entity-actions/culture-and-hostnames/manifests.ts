@@ -19,7 +19,7 @@ const entityActions: Array<ManifestTypes> = [
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				verb: 'Umb.Document.CultureAndHostnames',
+				verbs: ['Umb.Document.CultureAndHostnames'],
 			},
 		],
 	},

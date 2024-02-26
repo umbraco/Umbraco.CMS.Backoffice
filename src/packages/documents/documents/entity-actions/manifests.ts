@@ -33,7 +33,7 @@ const entityActions: Array<ManifestTypes> = [
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				verb: 'Umb.Document.CreateBlueprint',
+				verbs: ['Umb.Document.CreateBlueprint'],
 			},
 		],
 	},
@@ -52,7 +52,7 @@ const entityActions: Array<ManifestTypes> = [
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				verb: 'Umb.Document.Move',
+				verbs: ['Umb.Document.Move'],
 			},
 		],
 	},
@@ -71,7 +71,7 @@ const entityActions: Array<ManifestTypes> = [
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				verb: 'Umb.Document.Duplicate',
+				verbs: ['Umb.Document.Duplicate'],
 			},
 		],
 	},
@@ -90,7 +90,7 @@ const entityActions: Array<ManifestTypes> = [
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				verb: 'Umb.Document.Sort',
+				verbs: ['Umb.Document.Sort'],
 			},
 		],
 	},
@@ -108,7 +108,7 @@ const entityActions: Array<ManifestTypes> = [
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				verb: 'Umb.Document.Publish',
+				verbs: ['Umb.Document.Publish'],
 			},
 		],
 	},
@@ -126,7 +126,7 @@ const entityActions: Array<ManifestTypes> = [
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				verb: 'Umb.Document.Unpublish',
+				verbs: ['Umb.Document.Unpublish'],
 			},
 		],
 	},
@@ -144,7 +144,7 @@ const entityActions: Array<ManifestTypes> = [
 		conditions: [
 			{
 				alias: 'Umb.Condition.UserPermission',
-				verb: 'Umb.Document.Rollback',
+				verbs: ['Umb.Document.Rollback'],
 			},
 		],
 	},
