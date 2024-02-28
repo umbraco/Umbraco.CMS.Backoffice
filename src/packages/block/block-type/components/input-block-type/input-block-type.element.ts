@@ -26,6 +26,9 @@ export class UmbInputBlockTypeElement<
 		containerSelector: '#container',
 		resolveVerticalDirection: () => false,
 		onChange: ({ model }) => {
+			/** TODO: This is quite hacky for now. Can only move an item one step at a time. Been unable to set it up where it sync the values correctly.
+			 * (Thoughts) This is due to how Block Editor handles all the values as one big array and then sorts them correctly into groups after.
+			 * We need to look into a solution when we have more time. */
 			this._items = model;
 			this.dispatchEvent(new UmbChangeEvent());
 		},
