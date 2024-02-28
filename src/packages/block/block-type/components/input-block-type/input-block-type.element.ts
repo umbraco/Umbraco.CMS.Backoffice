@@ -17,16 +17,21 @@ import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 export class UmbInputBlockTypeElement<
 	BlockType extends UmbBlockTypeWithGroupKey = UmbBlockTypeWithGroupKey,
 > extends UmbLitElement {
+	#items: Array<BlockType> = [];
 	#sorter = new UmbSorterController<BlockType, UmbBlockTypeCardElement>(this, {
 		getUniqueOfElement: (element) => element.contentElementTypeKey!,
 		getUniqueOfModel: (modelEntry) => modelEntry.contentElementTypeKey!,
 		identifier: 'block-editor-blocks-sorter',
-		itemSelector: '.cake',
+		itemSelector: 'umb-block-type-card',
 		containerSelector: '#container',
 		resolveVerticalDirection: () => false,
 		onChange: ({ model }) => {
+			this._items = model;
+			this.dispatchEvent(new UmbChangeEvent());
+		},
+		onContainerChange: () => {
 			const newGroupKey = this.getAttribute('data-umb-group-key') ?? null;
-			this.value = model.map((x) => ({ ...x, groupKey: newGroupKey }));
+			this._items = this._items.map((x) => ({ ...x, groupKey: newGroupKey }));
 			this.dispatchEvent(new UmbChangeEvent());
 		},
 	});
@@ -112,7 +117,6 @@ export class UmbInputBlockTypeElement<
 	#renderItem = (block: BlockType) => {
 		return html`
 			<umb-block-type-card
-				class="cake"
 				.name=${block.label}
 				.iconColor=${block.iconColor}
 				.backgroundColor=${block.backgroundColor}
