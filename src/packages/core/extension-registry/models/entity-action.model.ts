@@ -1,3 +1,4 @@
+import type { ConditionTypes } from '../conditions/types.js';
 import type { ManifestElementAndApi, ManifestWithDynamicConditions } from '@umbraco-cms/backoffice/extension-api';
 
 /**
@@ -5,7 +6,7 @@ import type { ManifestElementAndApi, ManifestWithDynamicConditions } from '@umbr
  * For example for content you may wish to create a new document etc
  */
 // TODO: create interface for API
-export interface ManifestEntityAction extends ManifestElementAndApi, ManifestWithDynamicConditions {
+export interface ManifestEntityAction extends ManifestElementAndApi, ManifestWithDynamicConditions<ConditionTypes> {
 	type: 'entityAction';
 	meta: MetaEntityAction;
 }
