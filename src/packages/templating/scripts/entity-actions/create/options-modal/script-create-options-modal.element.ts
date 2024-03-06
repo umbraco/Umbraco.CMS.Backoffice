@@ -8,7 +8,7 @@ import { UmbCreateFolderEntityAction } from '@umbraco-cms/backoffice/tree';
 @customElement('umb-script-create-options-modal')
 export class UmbScriptCreateOptionsModalElement extends UmbModalBaseElement<UmbScriptCreateOptionsModalData, string> {
 	#modalManager?: UmbModalManagerContext;
-	#createFolderAction?: UmbCreateFolderEntityAction<any>;
+	#createFolderAction?: UmbCreateFolderEntityAction;
 
 	constructor() {
 		super();
@@ -22,15 +22,15 @@ export class UmbScriptCreateOptionsModalElement extends UmbModalBaseElement<UmbS
 		super.connectedCallback();
 		if (!this.data?.parent) throw new Error('A parent is required to create a folder');
 
-		this.#createFolderAction = new UmbCreateFolderEntityAction(
-			this,
-			UMB_SCRIPT_FOLDER_REPOSITORY_ALIAS,
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			// TODO: allow null for entity actions. Some actions can be executed on the root item
-			this.data.parent.unique,
-			this.data.parent.entityType,
-		);
+		this.#createFolderAction = new UmbCreateFolderEntityAction(this, {
+			unique: this.data.parent.unique,
+			entityType: this.data.parent.entityType,
+			meta: {
+				icon: 'icon-folder',
+				label: 'New folder...',
+				folderRepositoryAlias: UMB_SCRIPT_FOLDER_REPOSITORY_ALIAS,
+			},
+		});
 	}
 
 	async #onCreateFolderClick(event: PointerEvent) {

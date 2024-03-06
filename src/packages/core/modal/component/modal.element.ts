@@ -6,8 +6,7 @@ import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registr
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { CSSResultGroup } from '@umbraco-cms/backoffice/external/lit';
 import { html, customElement } from '@umbraco-cms/backoffice/external/lit';
-import { BehaviorSubject } from '@umbraco-cms/backoffice/external/rxjs';
-import type { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
+import { UmbBasicState, type UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 import {
 	UUIModalCloseEvent,
 	type UUIDialogElement,
@@ -26,6 +25,7 @@ export class UmbModalElement extends UmbLitElement {
 		return this.#modalContext;
 	}
 	public set modalContext(value: UmbModalContext | undefined) {
+		if (this.#modalContext === value) return;
 		this.#modalContext = value;
 
 		if (!value) {
@@ -38,7 +38,7 @@ export class UmbModalElement extends UmbLitElement {
 
 	public element?: UUIModalDialogElement | UUIModalSidebarElement;
 
-	#innerElement = new BehaviorSubject<HTMLElement | undefined>(undefined);
+	#innerElement = new UmbBasicState<HTMLElement | undefined>(undefined);
 
 	#modalExtensionObserver?: UmbObserverController<ManifestModal | undefined>;
 	#modalRouterElement: UmbRouterSlotElement = document.createElement('umb-router-slot');
@@ -51,6 +51,7 @@ export class UmbModalElement extends UmbLitElement {
 	#createModalElement() {
 		if (!this.#modalContext) return;
 
+		this.#modalContext.addEventListener('umb:destroy', this.#onContextDestroy);
 		this.element = this.#createContainerElement();
 
 		// Makes sure that the modal triggers the reject of the context promise when it is closed by pressing escape.
@@ -136,9 +137,13 @@ export class UmbModalElement extends UmbLitElement {
 		// TODO: add inner fallback element if no extension element is found
 		const innerElement = await createExtensionElement(manifest);
 
+		if (!this.#modalContext) {
+			// If context does not exist any more, it means we have been destroyed. So we need to back out:
+			return undefined;
+		}
 		if (innerElement) {
 			innerElement.manifest = manifest;
-			innerElement.data = this.#modalContext!.data;
+			innerElement.data = this.#modalContext.data;
 			innerElement.modalContext = this.#modalContext;
 		}
 
@@ -147,14 +152,14 @@ export class UmbModalElement extends UmbLitElement {
 
 	#appendInnerElement(element: HTMLElement) {
 		this.#modalRouterElement.appendChild(element);
-		this.#innerElement.next(element);
+		this.#innerElement.setValue(element);
 	}
 
 	#removeInnerElement() {
 		const innerElement = this.#innerElement.getValue();
 		if (innerElement) {
 			this.#modalRouterElement.removeChild(innerElement);
-			this.#innerElement.next(undefined);
+			this.#innerElement.setValue(undefined);
 		}
 	}
 
@@ -167,10 +172,19 @@ export class UmbModalElement extends UmbLitElement {
 		this.destroy();
 	}
 
+	#onContextDestroy = () => {
+		this.destroy();
+	};
+
 	destroy() {
-		this.#innerElement.complete();
+		this.#innerElement.destroy();
 		this.#modalExtensionObserver?.destroy();
 		this.#modalExtensionObserver = undefined;
+		if (this.#modalContext) {
+			this.#modalContext.removeEventListener('umb:destroy', this.#onContextDestroy);
+			this.#modalContext.destroy();
+			this.#modalContext = undefined;
+		}
 		super.destroy();
 	}
 
