@@ -53,7 +53,7 @@ export class UmbWebhookWorkspaceEditorElement extends UmbLitElement {
 				<strong>Add webhook</strong>
 			</div>
 			<div slot="footer-info" id="footer-into">
-				<a href="section/settings/workspace/language-root">Languages</a> /
+				<a href="section/settings/workspace/webhook">Webhooks</a> /
 				${this._isNew ? 'Create' : 'Edit'}
 			</div>
 		</umb-workspace-editor>`;

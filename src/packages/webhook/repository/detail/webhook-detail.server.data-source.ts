@@ -82,7 +82,7 @@ export class UmbWebhookServerDataSource implements UmbDetailDataSource<UmbWebhoo
 	 * Inserts a new Webhook on the server
 	 * @param {UmbWebhookDetailModel} model
 	 * @return {*}
-	 * @memberof UmbLanguageServerDataSource
+	 * @memberof UmbWebhookServerDataSource
 	 */
 	async create(model: UmbWebhookDetailModel) {
 		if (!model) throw new Error('Webhook is missing');
