@@ -41,7 +41,7 @@ export class UmbUserGroupPickerModalElement extends UmbModalBaseElement<
 	#onSelected(event: UUIMenuItemEvent, item: UmbUserGroupDetailModel) {
 		if (!item.unique) throw new Error('User group unique is required');
 		event.stopPropagation();
-		this.#selectionManager.select(item.unique);
+		this.#selectionManager.select({ unique: item.unique, entityType: item.entityType });
 		this.requestUpdate();
 		this.modalContext?.dispatchEvent(new UmbSelectedEvent(item.unique));
 	}
@@ -49,7 +49,7 @@ export class UmbUserGroupPickerModalElement extends UmbModalBaseElement<
 	#onDeselected(event: UUIMenuItemEvent, item: UmbUserGroupDetailModel) {
 		if (!item.unique) throw new Error('User group unique is required');
 		event.stopPropagation();
-		this.#selectionManager.deselect(item.unique);
+		this.#selectionManager.deselect({ unique: item.unique, entityType: item.entityType });
 		this.requestUpdate();
 		this.modalContext?.dispatchEvent(new UmbDeselectedEvent(item.unique));
 	}
@@ -70,7 +70,7 @@ export class UmbUserGroupPickerModalElement extends UmbModalBaseElement<
 								selectable
 								@selected=${(event: UUIMenuItemEvent) => this.#onSelected(event, item)}
 								@deselected=${(event: UUIMenuItemEvent) => this.#onDeselected(event, item)}
-								?selected=${this.#selectionManager.isSelected(item.unique)}>
+								?selected=${this.#selectionManager.isSelected({ unique: item.unique, entityType: item.entityType })}>
 								<umb-icon .name=${item.icon || undefined} slot="icon"></umb-icon>
 							</uui-menu-item>
 						`,
