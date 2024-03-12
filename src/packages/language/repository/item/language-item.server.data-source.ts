@@ -3,6 +3,7 @@ import { UmbItemServerDataSourceBase } from '@umbraco-cms/backoffice/repository'
 import type { LanguageItemResponseModel } from '@umbraco-cms/backoffice/external/backend-api';
 import { LanguageResource } from '@umbraco-cms/backoffice/external/backend-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { UMB_LANGUAGE_ENTITY_TYPE } from '../../entity.js';
 
 /**
  * A server data source for Language items
@@ -33,6 +34,7 @@ const getItems = (uniques: Array<string>) => LanguageResource.getItemLanguage({ 
 const mapper = (item: LanguageItemResponseModel): UmbLanguageItemModel => {
 	return {
 		unique: item.isoCode,
+		entityType: UMB_LANGUAGE_ENTITY_TYPE,
 		name: item.name,
 	};
 };
