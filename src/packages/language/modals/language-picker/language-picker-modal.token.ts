@@ -1,4 +1,5 @@
 import type { UmbLanguageItemModel } from '@umbraco-cms/backoffice/language';
+import type { UmbPickerModalValue } from '@umbraco-cms/backoffice/modal';
 import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
 
 export interface UmbLanguagePickerModalData {
@@ -6,9 +7,7 @@ export interface UmbLanguagePickerModalData {
 	filter?: (language: UmbLanguageItemModel) => boolean;
 }
 
-export interface UmbLanguagePickerModalValue {
-	selection: Array<string | null>;
-}
+export interface UmbLanguagePickerModalValue extends UmbPickerModalValue {}
 
 export const UMB_LANGUAGE_PICKER_MODAL = new UmbModalToken<UmbLanguagePickerModalData, UmbLanguagePickerModalValue>(
 	'Umb.Modal.LanguagePicker',

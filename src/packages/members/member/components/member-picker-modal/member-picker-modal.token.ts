@@ -1,4 +1,5 @@
 import type { UmbMemberItemModel } from '../../repository/index.js';
+import type { UmbPickerModalValue } from '@umbraco-cms/backoffice/modal';
 import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
 
 export interface UmbMemberPickerModalData {
@@ -6,9 +7,7 @@ export interface UmbMemberPickerModalData {
 	filter?: (member: UmbMemberItemModel) => boolean;
 }
 
-export interface UmbMemberPickerModalValue {
-	selection: Array<string | null>;
-}
+export interface UmbMemberPickerModalValue extends UmbPickerModalValue {}
 
 export const UMB_MEMBER_PICKER_MODAL = new UmbModalToken<UmbMemberPickerModalData, UmbMemberPickerModalValue>(
 	'Umb.Modal.MemberPicker',
