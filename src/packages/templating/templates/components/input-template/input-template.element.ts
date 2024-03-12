@@ -139,12 +139,11 @@ export class UmbInputTemplateElement extends FormControlMixin(UmbLitElement) {
 
 		if (!value?.selection) return;
 
-		const selectedIds = value.selection.filter((x) => x !== null) as Array<string>;
-
-		if (!selectedIds.length) return;
+		const selectedUniques = value.selection.map((x) => x.unique).filter((x) => x !== null) as Array<string>;
+		if (!selectedUniques.length) return;
 
 		// Add templates to row of picked templates and dispatch change event
-		this.#appendTemplates(selectedIds);
+		this.#appendTemplates(selectedUniques);
 	}
 
 	#removeTemplate(unique: string) {

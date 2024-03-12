@@ -38,7 +38,7 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 	#templateWorkspaceContext?: typeof UMB_TEMPLATE_WORKSPACE_CONTEXT.TYPE;
 	#isNew = false;
 
-	#masterTemplateUnique: string | null = null;
+	#masterTemplateEntity: { unique: string; entityType: string } | null = null;
 
 	// TODO: Revisit this code, to not use RxJS directly:
 	private inputQuery$ = new Subject<string>();
@@ -65,8 +65,13 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 			});
 
 			this.observe(this.#templateWorkspaceContext.masterTemplate, (masterTemplate) => {
-				this.#masterTemplateUnique = masterTemplate?.unique ?? null;
-				this._masterTemplateName = masterTemplate?.name ?? null;
+				if (masterTemplate) {
+					this.#masterTemplateEntity = { unique: masterTemplate.name, entityType: masterTemplate.entityType };
+					this._masterTemplateName = masterTemplate.name;
+				} else {
+					this.#masterTemplateEntity = null;
+					this._masterTemplateName = null;
+				}
 			});
 
 			this.observe(this.#templateWorkspaceContext.isNew, (isNew) => {
@@ -135,7 +140,7 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 				},
 			},
 			value: {
-				selection: [this.#masterTemplateUnique],
+				selection: [this.#masterTemplateEntity],
 			},
 		});
 
@@ -174,7 +179,7 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 				${this._masterTemplateName
 					? html`<uui-button look="secondary" label=${this.localize.term('actions_remove')} compact>
 							<uui-icon name="icon-delete" @click=${this.#resetMasterTemplate}></uui-icon>
-					  </uui-button>`
+						</uui-button>`
 					: nothing}
 			</uui-button-group>
 		`;
@@ -224,7 +229,7 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 					? this.#renderCodeEditor()
 					: html`<div id="loader-container">
 							<uui-loader></uui-loader>
-					  </div>`}
+						</div>`}
 			</uui-box>
 		</umb-workspace-editor>`;
 	}
