@@ -258,7 +258,7 @@ export class UmbDocumentWorkspaceViewInfoElement extends UmbLitElement {
 							<uui-action-bar slot="actions">
 								<uui-button label=${this.localize.term('general_edit')} @click=${this.#openTemplatePicker}></uui-button>
 							</uui-action-bar>
-					  </uui-ref-node>`
+						</uui-ref-node>`
 					: html`<uui-button
 							label=${this.localize.term('general_edit')}
 							@click=${this.#openTemplatePicker}></uui-button>`}
@@ -288,11 +288,10 @@ export class UmbDocumentWorkspaceViewInfoElement extends UmbLitElement {
 
 		if (!result?.selection.length) return;
 
-		const templateUnique = result.selection[0];
+		const selectedTemplate = result.selection[0];
+		if (!selectedTemplate.unique) throw new Error('No template unique found');
 
-		if (!templateUnique) return;
-
-		this.#workspaceContext?.setTemplate(templateUnique);
+		this.#workspaceContext?.setTemplate(selectedTemplate.unique);
 	}
 
 	static styles = [
