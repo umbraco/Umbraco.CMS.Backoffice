@@ -184,12 +184,14 @@ export abstract class UmbTreeItemContextBase<TreeItemType extends UmbTreeItemMod
 
 	public select() {
 		if (this.unique === undefined) throw new Error('Could not select. Unique is missing');
-		this.treeContext?.selection.select(this.unique);
+		if (!this.entityType) throw new Error('Could not select. EntityType is missing');
+		this.treeContext?.selection.select({ entityType: this.entityType, unique: this.unique });
 	}
 
 	public deselect() {
 		if (this.unique === undefined) throw new Error('Could not deselect. Unique is missing');
-		this.treeContext?.selection.deselect(this.unique);
+		if (!this.entityType) throw new Error('Could not select. EntityType is missing');
+		this.treeContext?.selection.deselect({ entityType: this.entityType, unique: this.unique });
 	}
 
 	async #consumeContexts() {
@@ -260,7 +262,12 @@ export abstract class UmbTreeItemContextBase<TreeItemType extends UmbTreeItemMod
 		if (!this.treeContext || !this.unique) return;
 
 		this.observe(
-			this.treeContext.selection.selection.pipe(map((selection) => selection.includes(this.unique!))),
+			this.treeContext.selection.selection.pipe(
+				map(
+					(selection) =>
+						selection.find((item) => item.unique === this.unique && item.entityType === this.entityType) !== undefined,
+				),
+			),
 			(isSelected) => {
 				this.#isSelected.setValue(isSelected);
 			},

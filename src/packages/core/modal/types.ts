@@ -1,3 +1,5 @@
+import type { UmbEntitySelectModel } from '@umbraco-cms/backoffice/utils';
+
 export interface UmbPickerModalData<TreeItemType> {
 	multiple?: boolean;
 	hideTreeRoot?: boolean;
@@ -5,7 +7,7 @@ export interface UmbPickerModalData<TreeItemType> {
 	pickableFilter?: (item: TreeItemType) => boolean;
 }
 export interface UmbPickerModalValue {
-	selection: Array<string | null>;
+	selection: Array<UmbEntitySelectModel>;
 }
 
 export interface UmbTreePickerModalData<TreeItemType> extends UmbPickerModalData<TreeItemType> {

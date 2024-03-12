@@ -11,7 +11,7 @@ import {
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbExtensionApiInitializer } from '@umbraco-cms/backoffice/extension-api';
-import { UmbPaginationManager, UmbSelectionManager } from '@umbraco-cms/backoffice/utils';
+import { UmbEntitySelectionManager, UmbPaginationManager } from '@umbraco-cms/backoffice/utils';
 import type { UmbEntityActionEvent } from '@umbraco-cms/backoffice/entity-action';
 import { UmbArrayState, UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
@@ -31,7 +31,7 @@ export class UmbDefaultTreeContext<TreeItemType extends UmbTreeItemModelBase>
 
 	public selectableFilter?: (item: TreeItemType) => boolean = () => true;
 	public filter?: (item: TreeItemType) => boolean = () => true;
-	public readonly selection = new UmbSelectionManager(this._host);
+	public readonly selection = new UmbEntitySelectionManager(this._host);
 	public readonly pagination = new UmbPaginationManager();
 
 	#manifest?: ManifestTree;
