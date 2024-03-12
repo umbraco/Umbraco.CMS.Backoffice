@@ -1,3 +1,5 @@
+import type { UmbEntitySelectModel } from '@umbraco-cms/backoffice/utils';
+
 export interface UmbTreeItemModelBase {
 	name: string;
 	entityType: string;
@@ -18,5 +20,5 @@ export interface UmbUniqueTreeRootModel extends UmbTreeItemModelBase {
 export type UmbTreeSelectionConfiguration = {
 	multiple?: boolean;
 	selectable?: boolean;
-	selection?: Array<string | null>;
+	selection?: Array<UmbEntitySelectModel>;
 };
