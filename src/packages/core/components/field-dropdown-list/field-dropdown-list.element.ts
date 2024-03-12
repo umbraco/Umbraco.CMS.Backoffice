@@ -95,9 +95,10 @@ export class UmbFieldDropdownListElement extends UmbLitElement {
 		});
 
 		const modalValue = await modalContext.onSubmit();
-		const unique = modalValue.selection[0] ?? '';
+		const selected = modalValue.selection[0];
+		if (!selected.unique) return;
 
-		const { data } = await this.#documentTypeDetailRepository.requestByUnique(unique);
+		const { data } = await this.#documentTypeDetailRepository.requestByUnique(selected.unique);
 		if (!data) return;
 
 		this._unique = data.unique;
@@ -115,9 +116,10 @@ export class UmbFieldDropdownListElement extends UmbLitElement {
 		});
 
 		const modalValue = await modalContext.onSubmit();
-		const unique = modalValue.selection[0] ?? '';
+		const selected = modalValue.selection[0];
+		if (!selected.unique) return;
 
-		const { data } = await this.#mediaTypeDetailRepository.requestByUnique(unique);
+		const { data } = await this.#mediaTypeDetailRepository.requestByUnique(selected.unique);
 		if (!data) return;
 
 		this._unique = data.unique;
@@ -168,7 +170,7 @@ export class UmbFieldDropdownListElement extends UmbLitElement {
 								display-value=${this.localize.term('content_mediatype')}>
 								<strong> ${this.localize.term('content_mediatype')} </strong>
 								${this.localize.term('defaultdialogs_treepicker')}
-						  </uui-combobox-list-option>`
+							</uui-combobox-list-option>`
 						: nothing}
 				</uui-combobox-list>
 			</uui-combobox>
