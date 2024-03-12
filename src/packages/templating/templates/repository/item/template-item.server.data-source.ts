@@ -1,3 +1,4 @@
+import { UMB_TEMPLATE_ENTITY_TYPE } from '../../entity.js';
 import type { UmbTemplateItemModel } from './types.js';
 import { UmbItemServerDataSourceBase } from '@umbraco-cms/backoffice/repository';
 import type { TemplateItemResponseModel } from '@umbraco-cms/backoffice/external/backend-api';
@@ -33,6 +34,7 @@ const getItems = (uniques: Array<string>) => TemplateResource.getItemTemplate({ 
 const mapper = (item: TemplateItemResponseModel): UmbTemplateItemModel => {
 	return {
 		unique: item.id,
+		entityType: UMB_TEMPLATE_ENTITY_TYPE,
 		name: item.name,
 		alias: item.alias,
 	};
