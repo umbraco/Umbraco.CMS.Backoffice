@@ -1,4 +1,5 @@
 import type { CodeSnippetType } from '../../types.js';
+import type { UmbEntitySelectModel } from '@umbraco-cms/backoffice/utils';
 import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
 
 export interface UmbTemplatingItemPickerModalData {
@@ -6,7 +7,7 @@ export interface UmbTemplatingItemPickerModalData {
 }
 
 export type UmbTemplatingItemPickerModalValue = {
-	value: string;
+	value: UmbEntitySelectModel;
 	type: CodeSnippetType;
 };
 
