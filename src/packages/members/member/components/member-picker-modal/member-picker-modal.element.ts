@@ -2,7 +2,7 @@ import { UmbMemberCollectionRepository } from '../../collection/index.js';
 import type { UmbMemberDetailModel } from '../../types.js';
 import type { UmbMemberPickerModalValue, UmbMemberPickerModalData } from './member-picker-modal.token.js';
 import { html, customElement, state, repeat } from '@umbraco-cms/backoffice/external/lit';
-import { UmbSelectionManager } from '@umbraco-cms/backoffice/utils';
+import { UmbEntitySelectionManager } from '@umbraco-cms/backoffice/utils';
 import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
 
 @customElement('umb-member-picker-modal')
@@ -14,7 +14,7 @@ export class UmbMemberPickerModalElement extends UmbModalBaseElement<
 	private _members: Array<UmbMemberDetailModel> = [];
 
 	#collectionRepository = new UmbMemberCollectionRepository(this);
-	#selectionManager = new UmbSelectionManager(this);
+	#selectionManager = new UmbEntitySelectionManager(this);
 
 	connectedCallback(): void {
 		super.connectedCallback();
@@ -55,9 +55,9 @@ export class UmbMemberPickerModalElement extends UmbModalBaseElement<
 						<uui-menu-item
 							label=${item.variants[0].name ?? ''}
 							selectable
-							@selected=${() => this.#selectionManager.select(item.unique)}
-							@deselected=${() => this.#selectionManager.deselect(item.unique)}
-							?selected=${this.#selectionManager.isSelected(item.unique)}>
+							@selected=${() => this.#selectionManager.select({ unique: item.unique, entityType: item.entityType })}
+							@deselected=${() => this.#selectionManager.deselect({ unique: item.unique, entityType: item.entityType })}
+							?selected=${this.#selectionManager.isSelected({ unique: item.unique, entityType: item.entityType })}>
 							<uui-icon slot="icon" name="icon-globe"></uui-icon>
 						</uui-menu-item>
 					`,
