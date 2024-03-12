@@ -13,3 +13,4 @@ export * from './string/split-string-to-array.js';
 export * from './type/diff.type.js';
 export * from './string/to-camel-case/to-camel-case.function.js';
 export * from './debounce/debounce.function.js';
+export * from './entity-selection-manager/index.js';
