@@ -5,14 +5,14 @@ import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { PropertyValueMap } from '@umbraco-cms/backoffice/external/lit';
 import { css, html, customElement, state, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
-import { UmbSelectionManager } from '@umbraco-cms/backoffice/utils';
+import { UmbEntitySelectionManager } from '@umbraco-cms/backoffice/utils';
 
 @customElement('umb-user-picker-modal')
 export class UmbUserPickerModalElement extends UmbModalBaseElement<UmbUserPickerModalData, UmbUserPickerModalValue> {
 	@state()
 	private _users: Array<UmbUserItemModel> = [];
 
-	#selectionManager = new UmbSelectionManager(this);
+	#selectionManager = new UmbEntitySelectionManager(this);
 	#userCollectionRepository = new UmbUserCollectionRepository(this);
 
 	connectedCallback(): void {
@@ -55,9 +55,10 @@ export class UmbUserPickerModalElement extends UmbModalBaseElement<UmbUserPicker
 							<uui-menu-item
 								label=${ifDefined(user.name)}
 								selectable
-								@selected=${() => this.#selectionManager.select(user.unique)}
-								@deselected=${() => this.#selectionManager.deselect(user.unique)}
-								?selected=${this.#selectionManager.isSelected(user.unique)}>
+								@selected=${() => this.#selectionManager.select({ unique: user.unique, entityType: user.entityType })}
+								@deselected=${() =>
+									this.#selectionManager.deselect({ unique: user.unique, entityType: user.entityType })}
+								?selected=${this.#selectionManager.isSelected({ unique: user.unique, entityType: user.entityType })}>
 								<uui-avatar slot="icon" name=${ifDefined(user.name)}></uui-avatar>
 							</uui-menu-item>
 						`,

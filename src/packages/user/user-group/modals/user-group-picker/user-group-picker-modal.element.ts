@@ -1,7 +1,7 @@
 import { UmbUserGroupCollectionRepository } from '../../collection/repository/index.js';
 import type { UmbUserGroupDetailModel } from '../../types.js';
 import { html, customElement, state, ifDefined } from '@umbraco-cms/backoffice/external/lit';
-import { UmbSelectionManager } from '@umbraco-cms/backoffice/utils';
+import { UmbEntitySelectionManager } from '@umbraco-cms/backoffice/utils';
 import type { UMB_USER_GROUP_PICKER_MODAL } from '@umbraco-cms/backoffice/user-group';
 import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
 import type { UUIMenuItemEvent } from '@umbraco-cms/backoffice/external/uui';
@@ -15,7 +15,7 @@ export class UmbUserGroupPickerModalElement extends UmbModalBaseElement<
 	@state()
 	private _userGroups: Array<UmbUserGroupDetailModel> = [];
 
-	#selectionManager = new UmbSelectionManager(this);
+	#selectionManager = new UmbEntitySelectionManager(this);
 	#userGroupCollectionRepository = new UmbUserGroupCollectionRepository(this);
 
 	connectedCallback(): void {
