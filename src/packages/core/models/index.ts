@@ -4,6 +4,11 @@ export type UmbEntityBase = {
 	name?: string;
 };
 
+export interface UmbEntityModel {
+	unique: string | null;
+	entityType: string;
+}
+
 export interface UmbSwatchDetails {
 	label: string;
 	value: string;
