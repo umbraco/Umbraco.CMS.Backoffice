@@ -140,15 +140,16 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 				},
 			},
 			value: {
-				selection: [this.#masterTemplateEntity],
+				selection: this.#masterTemplateEntity ? [this.#masterTemplateEntity] : [],
 			},
 		});
 
 		modalContext
 			?.onSubmit()
 			.then((value) => {
-				if (!value?.selection) return;
-				this.#templateWorkspaceContext?.setMasterTemplate(value.selection[0] ?? null);
+				const selected = value.selection[0];
+				if (!selected) return;
+				this.#templateWorkspaceContext?.setMasterTemplate(selected.unique);
 			})
 			.catch(() => undefined);
 	}

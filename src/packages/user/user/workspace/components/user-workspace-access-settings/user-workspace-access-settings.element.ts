@@ -26,17 +26,20 @@ export class UmbUserWorkspaceAccessSettingsElement extends UmbLitElement {
 
 	#onUserGroupsChange(event: UmbChangeEvent) {
 		const target = event.target as UmbUserGroupInputElement;
-		this.#userWorkspaceContext?.updateProperty('userGroupUniques', target.selectedIds);
+		const uniques = target.selection.map((group) => group.unique).filter((unique) => unique) as string[];
+		this.#userWorkspaceContext?.updateProperty('userGroupUniques', uniques);
 	}
 
 	#onDocumentStartNodeChange(event: UmbChangeEvent) {
 		const target = event.target as UmbInputDocumentElement;
-		this.#userWorkspaceContext?.updateProperty('documentStartNodeUniques', target.selectedIds);
+		const uniques = target.selection.map((group) => group.unique).filter((unique) => unique) as string[];
+		this.#userWorkspaceContext?.updateProperty('documentStartNodeUniques', uniques);
 	}
 
 	#onMediaStartNodeChange(event: UmbChangeEvent) {
 		const target = event.target as UmbInputMediaElement;
-		this.#userWorkspaceContext?.updateProperty('mediaStartNodeUniques', target.selectedIds);
+		const uniques = target.selection.map((group) => group.unique).filter((unique) => unique) as string[];
+		this.#userWorkspaceContext?.updateProperty('mediaStartNodeUniques', uniques);
 	}
 
 	render() {

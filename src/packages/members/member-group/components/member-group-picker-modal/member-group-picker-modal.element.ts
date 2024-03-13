@@ -5,7 +5,7 @@ import type {
 	UmbMemberGroupPickerModalData,
 } from './member-group-picker-modal.token.js';
 import { html, customElement, state, repeat } from '@umbraco-cms/backoffice/external/lit';
-import { UmbSelectionManager } from '@umbraco-cms/backoffice/utils';
+import { UmbEntitySelectionManager } from '@umbraco-cms/backoffice/utils';
 import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
 
 @customElement('umb-member-group-picker-modal')
@@ -17,7 +17,7 @@ export class UmbMemberGroupPickerModalElement extends UmbModalBaseElement<
 	private _memberGroups: Array<UmbMemberGroupDetailModel> = [];
 
 	#collectionRepository = new UmbMemberGroupCollectionRepository(this);
-	#selectionManager = new UmbSelectionManager(this);
+	#selectionManager = new UmbEntitySelectionManager(this);
 
 	connectedCallback(): void {
 		super.connectedCallback();
@@ -56,11 +56,11 @@ export class UmbMemberGroupPickerModalElement extends UmbModalBaseElement<
 					(item) => item.unique,
 					(item) => html`
 						<uui-menu-item
-							label=${item.name ?? ''}
+							label=${item.name}
 							selectable
-							@selected=${() => this.#selectionManager.select(item.unique)}
-							@deselected=${() => this.#selectionManager.deselect(item.unique)}
-							?selected=${this.#selectionManager.isSelected(item.unique)}>
+							@selected=${() => this.#selectionManager.select({ unique: item.unique, entityType: item.entityType })}
+							@deselected=${() => this.#selectionManager.deselect({ unique: item.unique, entityType: item.entityType })}
+							?selected=${this.#selectionManager.isSelected({ unique: item.unique, entityType: item.entityType })}>
 							<uui-icon slot="icon" name="icon-globe"></uui-icon>
 						</uui-menu-item>
 					`,

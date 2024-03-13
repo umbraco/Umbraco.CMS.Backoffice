@@ -12,6 +12,7 @@ import {
 } from '@umbraco-cms/backoffice/external/lit';
 import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import type { UmbEntitySelectModel } from '@umbraco-cms/backoffice/utils';
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 import { UMB_WORKSPACE_MODAL, UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/modal';
 
@@ -73,20 +74,20 @@ export class UmbInputDocumentTypeElement extends FormControlMixin(UmbLitElement)
 	maxMessage = 'This field exceeds the allowed amount of items';
 
 	@property({ type: Array })
-	public set selectedIds(ids: Array<string> | undefined) {
-		this.#pickerContext.setSelection(ids ?? []);
+	public set selection(selection: Array<UmbEntitySelectModel>) {
+		this.#pickerContext.setSelection(selection);
 	}
-	public get selectedIds(): Array<string> {
+	public get selection(): Array<UmbEntitySelectModel> {
 		return this.#pickerContext.getSelection();
 	}
 
 	@property()
 	public set value(idsString: string) {
 		// Its with full purpose we don't call super.value, as thats being handled by the observation of the context selection.
-		this.selectedIds = splitStringToArray(idsString);
+		this.selection = splitStringToArray(idsString);
 	}
 	public get value(): string {
-		return this.selectedIds.join(',');
+		return this.selection.join(',');
 	}
 
 	@state()
@@ -160,7 +161,7 @@ export class UmbInputDocumentTypeElement extends FormControlMixin(UmbLitElement)
 	}
 
 	#renderAddButton() {
-		if (this.max > 0 && this.selectedIds.length >= this.max) return nothing;
+		if (this.max > 0 && this.selection.length >= this.max) return nothing;
 		return html`
 			<uui-button
 				id="add-button"

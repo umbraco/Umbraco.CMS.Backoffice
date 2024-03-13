@@ -31,20 +31,21 @@ export class UmbTemplatingInsertMenuElement extends UmbLitElement {
 
 	async determineInsertValue(modalValue: UmbTemplatingItemPickerModalValue) {
 		const { type, value } = modalValue;
+		if (!value.unique) throw new Error('Unique value is required');
 
 		switch (type) {
 			case CodeSnippetType.partialView: {
-				this.value = getInsertPartialSnippet(value);
+				this.value = getInsertPartialSnippet(value.unique);
 				this.#dispatchInsertEvent();
 				break;
 			}
 			case CodeSnippetType.dictionaryItem: {
-				await this.#getDictionaryItemSnippet(value);
+				await this.#getDictionaryItemSnippet(value.unique);
 				this.#dispatchInsertEvent();
 				break;
 			}
 			case CodeSnippetType.pageField: {
-				this.value = value;
+				this.value = value.unique;
 				this.#dispatchInsertEvent();
 				break;
 			}

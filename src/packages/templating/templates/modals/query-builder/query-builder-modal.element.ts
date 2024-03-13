@@ -96,7 +96,7 @@ export default class UmbTemplateQueryBuilderModalElement extends UmbModalBaseEle
 			.onSubmit()
 			.then((result) => {
 				const selection = result.selection[0];
-				this.#updateQueryRequest({ rootDocument: selection ? { unique: selection } : null });
+				this.#updateQueryRequest({ rootDocument: selection.unique ? { unique: selection.unique } : null });
 
 				if (result.selection.length > 0 && result.selection[0] === null) {
 					this._selectedRootContentName = 'all pages';
@@ -104,14 +104,15 @@ export default class UmbTemplateQueryBuilderModalElement extends UmbModalBaseEle
 				}
 
 				if (result.selection.length > 0) {
-					this.#getDocumentItem(result.selection as string[]);
+					const uniques = result.selection.map((item) => item.unique).filter((item) => item !== null) as string[];
+					this.#getDocumentItem(uniques);
 					return;
 				}
 			});
 	}
 
-	async #getDocumentItem(ids: string[]) {
-		const { data } = await this.#documentItemRepository.requestItems(ids);
+	async #getDocumentItem(uniques: string[]) {
+		const { data } = await this.#documentItemRepository.requestItems(uniques);
 		if (data) {
 			// TODO: get correct variant name
 			this._selectedRootContentName = data[0].variants[0].name;
@@ -234,7 +235,7 @@ export default class UmbTemplateQueryBuilderModalElement extends UmbModalBaseEle
 										<umb-localize key=${ifDefined(sort.localizeKey)}>
 											${sort.direction ?? this._defaultSortDirection}
 										</umb-localize>
-								  </uui-button>`
+									</uui-button>`
 								: ''}
 						</div>
 						<div class="row query-results">

@@ -73,7 +73,7 @@ export class UmbPropertyEditorUITreePickerSourceTypePickerElement
 	#onChange(event: CustomEvent) {
 		switch (this.sourceType) {
 			case 'content':
-				this.#setValue((<UmbInputDocumentTypeElement>event.target).selectedIds);
+				this.#setValue((<UmbInputDocumentTypeElement>event.target).selection);
 				break;
 			case 'media':
 				this.#setValue((<UmbInputMediaTypeElement>event.target).selectedIds);

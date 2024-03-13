@@ -38,7 +38,7 @@ export class UmbPropertyEditorUIDocumentTypePickerElement extends UmbLitElement 
 	private _onlyElementTypes?: boolean;
 
 	private _onChange(event: CustomEvent) {
-		const selectedIds = (event.target as UmbInputDocumentTypeElement).selectedIds;
+		const selectedIds = (event.target as UmbInputDocumentTypeElement).selection;
 		this.value = this._multiPicker ? selectedIds.join(',') : selectedIds[0];
 		this.dispatchEvent(new UmbPropertyValueChangeEvent());
 	}

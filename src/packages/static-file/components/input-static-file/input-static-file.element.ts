@@ -3,7 +3,7 @@ import { UmbStaticFilePickerContext } from './input-static-file.context.js';
 import { css, html, customElement, property, state, ifDefined, repeat } from '@umbraco-cms/backoffice/external/lit';
 import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
+import { UmbEntitySelectModel, splitStringToArray } from '@umbraco-cms/backoffice/utils';
 
 @customElement('umb-input-static-file')
 export class UmbInputStaticFileElement extends FormControlMixin(UmbLitElement) {
@@ -53,18 +53,18 @@ export class UmbInputStaticFileElement extends FormControlMixin(UmbLitElement) {
 	@property({ type: String, attribute: 'min-message' })
 	maxMessage = 'This field exceeds the allowed amount of files';
 
-	public get selectedPaths(): Array<string> {
+	public get selection(): Array<UmbEntitySelectModel> {
 		return this.#pickerContext.getSelection();
 	}
-	public set selectedPaths(paths: Array<string>) {
-		this.#pickerContext.setSelection(paths);
+	public set selection(selection: Array<UmbEntitySelectModel>) {
+		this.#pickerContext.setSelection(selection);
 	}
 
 	@property()
 	// get value is handled by super class.
 	public set value(pathsString: string) {
 		// Its with full purpose we don't call super.value, as thats being handled by the observation of the context selection.
-		this.selectedPaths = splitStringToArray(pathsString);
+		this.selection = splitStringToArray(pathsString);
 	}
 
 	@state()
@@ -104,14 +104,14 @@ export class UmbInputStaticFileElement extends FormControlMixin(UmbLitElement) {
 							(item) => item.unique,
 							(item) => this._renderItem(item),
 						)}
-				  </uui-ref-list>`
+					</uui-ref-list>`
 				: ''}
 			${this.#renderAddButton()}
 		`;
 	}
 
 	#renderAddButton() {
-		if (this.max > 0 && this.selectedPaths.length >= this.max) return;
+		if (this.max > 0 && this.selection.length >= this.max) return;
 		return html`<uui-button
 			id="add-button"
 			look="placeholder"

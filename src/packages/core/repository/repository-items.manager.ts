@@ -1,3 +1,4 @@
+import type { UmbEntityModel } from '../models/index.js';
 import type { UmbItemRepository } from '@umbraco-cms/backoffice/repository';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbArrayState } from '@umbraco-cms/backoffice/observable-api';
@@ -5,7 +6,7 @@ import { type ManifestRepository, umbExtensionsRegistry } from '@umbraco-cms/bac
 import { UmbExtensionApiInitializer } from '@umbraco-cms/backoffice/extension-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 
-export class UmbRepositoryItemsManager<ItemType extends { unique: string }> extends UmbControllerBase {
+export class UmbRepositoryItemsManager<ItemType extends UmbEntityModel> extends UmbControllerBase {
 	//
 	repository?: UmbItemRepository<ItemType>;
 	#getUnique: (entry: ItemType) => string | undefined;
@@ -17,19 +18,15 @@ export class UmbRepositoryItemsManager<ItemType extends { unique: string }> exte
 		return this.#init;
 	}
 
-	#uniques = new UmbArrayState<string>([], (x) => x);
-	uniques = this.#uniques.asObservable();
+	#entities = new UmbArrayState<UmbEntityModel>([], (x) => x.unique);
+	uniques = this.#entities.asObservable();
 
 	#items = new UmbArrayState<ItemType>([], (x) => this.#getUnique(x));
 	items = this.#items.asObservable();
 
 	/* TODO: find a better way to have a getUniqueMethod. If we want to support trees/items of different types,
 	then it need to be bound to the type and can't be a generic method we pass in. */
-	constructor(
-		host: UmbControllerHost,
-		repositoryAlias: string,
-		getUniqueMethod?: (entry: ItemType) => string | undefined,
-	) {
+	constructor(host: UmbControllerHost, repositoryAlias: string, getUniqueMethod?: (entry: ItemType) => string | null) {
 		super(host);
 
 		this.#getUnique = getUniqueMethod || ((entry) => entry.unique);
@@ -64,12 +61,12 @@ export class UmbRepositoryItemsManager<ItemType extends { unique: string }> exte
 		});
 	}
 
-	getUniques(): Array<string> {
-		return this.#uniques.value;
+	getEntities(): Array<UmbEntityModel> {
+		return this.#entities.value;
 	}
 
-	setUniques(uniques: string[]): void {
-		this.#uniques.setValue(uniques);
+	setEntities(entities: Array<UmbEntityModel>): void {
+		this.#entities.setValue(entities);
 	}
 
 	getItems(): Array<ItemType> {
@@ -82,7 +79,7 @@ export class UmbRepositoryItemsManager<ItemType extends { unique: string }> exte
 
 		// TODO: Test if its just some items that is gone now, if so then just filter them out. (maybe use code from #removeItem)
 		// This is where this.#getUnique comes in play. Unless that can come from the repository, but that collides with the idea of having a multi-type repository. If that happens.
-		const { asObservable } = await this.repository.requestItems(this.getUniques());
+		const { asObservable } = await this.repository.requestItems(this.getEntities());
 
 		if (asObservable) {
 			this.observe(
@@ -96,7 +93,7 @@ export class UmbRepositoryItemsManager<ItemType extends { unique: string }> exte
 	}
 
 	#sortByUniques(data: Array<ItemType>): Array<ItemType> {
-		const uniques = this.getUniques();
+		const uniques = this.getEntities();
 		return [...data].sort((a, b) => {
 			const aIndex = uniques.indexOf(this.#getUnique(a) ?? '');
 			const bIndex = uniques.indexOf(this.#getUnique(b) ?? '');

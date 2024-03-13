@@ -5,7 +5,7 @@ import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UMB_WORKSPACE_MODAL, UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/modal';
 import { type UmbSorterConfig, UmbSorterController } from '@umbraco-cms/backoffice/sorter';
-import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
+import { UmbEntitySelectModel, splitStringToArray } from '@umbraco-cms/backoffice/utils';
 
 const SORTER_CONFIG: UmbSorterConfig<string> = {
 	getUniqueOfElement: (element) => {
@@ -74,12 +74,12 @@ export class UmbInputMediaElement extends FormControlMixin(UmbLitElement) {
 	@property({ type: String, attribute: 'min-message' })
 	maxMessage = 'This field exceeds the allowed amount of items';
 
-	public get selectedIds(): Array<string> {
+	public get selection(): Array<UmbEntitySelectModel> {
 		return this.#pickerContext.getSelection();
 	}
-	public set selectedIds(ids: Array<string>) {
-		this.#pickerContext.setSelection(ids);
-		this.#sorter.setModel(ids);
+	public set selection(selection: Array<UmbEntitySelectModel>) {
+		this.#pickerContext.setSelection(selection);
+		this.#sorter.setModel(selection);
 	}
 
 	@property({ type: Array })

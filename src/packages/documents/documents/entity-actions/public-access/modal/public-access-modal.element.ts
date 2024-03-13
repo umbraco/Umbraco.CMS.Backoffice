@@ -140,7 +140,7 @@ export class UmbPublicAccessModalElement extends UmbModalBaseElement<
 	}
 
 	#onChangeMember(e: CustomEvent) {
-		this._selectedIds = (e.target as UmbInputMemberElement).selectedIds;
+		this._selectedIds = (e.target as UmbInputMemberElement).selection;
 	}
 
 	// Renders

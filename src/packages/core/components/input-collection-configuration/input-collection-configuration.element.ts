@@ -39,7 +39,7 @@ export class UmbInputCollectionConfigurationElement extends FormControlMixin(Umb
 
 	#setValue(value: string) {
 		this.value = value;
-		this.#itemManager.setUniques(value ? [value] : []);
+		this.#itemManager.setEntities(value ? [value] : []);
 		this.dispatchEvent(new UmbChangeEvent());
 	}
 
@@ -85,7 +85,7 @@ export class UmbInputCollectionConfigurationElement extends FormControlMixin(Umb
 		super.connectedCallback();
 
 		if (this.value) {
-			this.#itemManager.setUniques([this.value as string]);
+			this.#itemManager.setEntities([this.value as string]);
 		}
 	}
 

@@ -50,15 +50,13 @@ export class UmbTemplatingItemPickerModalElement extends UmbModalBaseElement<
 		if (result === undefined) return;
 
 		const value = partialViewPickerContext?.getValue().selection[0];
+		if (!value?.unique) return;
 
-		if (!value) return;
-
-		const regex = /^%2F|%25dot%25cshtml$/g;
-		const prettyPath = value.replace(regex, '').replace(/%2F/g, '/');
 		this.value = {
-			value: prettyPath,
+			value,
 			type: CodeSnippetType.partialView,
 		};
+
 		this.modalContext?.submit();
 	}
 

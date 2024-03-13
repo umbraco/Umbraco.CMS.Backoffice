@@ -4,7 +4,7 @@ import { css, html, customElement, property, state, ifDefined, repeat } from '@u
 import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { MemberItemResponseModel } from '@umbraco-cms/backoffice/external/backend-api';
-import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
+import { UmbEntitySelectModel, splitStringToArray } from '@umbraco-cms/backoffice/utils';
 import { UMB_WORKSPACE_MODAL, UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/modal';
 import { type UmbSorterConfig, UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 
@@ -25,7 +25,7 @@ export class UmbInputMemberGroupElement extends FormControlMixin(UmbLitElement) 
 	#sorter = new UmbSorterController(this, {
 		...SORTER_CONFIG,
 		onChange: ({ model }) => {
-			this.selectedIds = model;
+			this.selection = model;
 		},
 	});
 
@@ -75,12 +75,12 @@ export class UmbInputMemberGroupElement extends FormControlMixin(UmbLitElement) 
 	@property({ type: String, attribute: 'min-message' })
 	maxMessage = 'This field exceeds the allowed amount of items';
 
-	public get selectedIds(): Array<string> {
+	public get selection(): Array<UmbEntitySelectModel> {
 		return this.#pickerContext.getSelection();
 	}
-	public set selectedIds(ids: Array<string>) {
-		this.#pickerContext.setSelection(ids);
-		this.#sorter.setModel(ids);
+	public set selection(selection: Array<UmbEntitySelectModel>) {
+		this.#pickerContext.setSelection(selection);
+		this.#sorter.setModel(selection);
 	}
 
 	@property({ type: Boolean })
@@ -92,7 +92,7 @@ export class UmbInputMemberGroupElement extends FormControlMixin(UmbLitElement) 
 	@property()
 	public set value(idsString: string) {
 		// Its with full purpose we don't call super.value, as thats being handled by the observation of the context selection.
-		this.selectedIds = splitStringToArray(idsString);
+		this.selection = splitStringToArray(idsString);
 	}
 
 	@property({ type: Object, attribute: false })
@@ -180,7 +180,7 @@ export class UmbInputMemberGroupElement extends FormControlMixin(UmbLitElement) 
 	}
 
 	#renderAddButton() {
-		if (this.max > 0 && this.selectedIds.length >= this.max) return;
+		if (this.max > 0 && this.selection.length >= this.max) return;
 		return html`<uui-button
 			id="add-button"
 			look="placeholder"

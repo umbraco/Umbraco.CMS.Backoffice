@@ -16,7 +16,12 @@ import {
 	type UmbDocumentTypeDetailModel,
 	UmbDocumentTypeDetailRepository,
 } from '@umbraco-cms/backoffice/document-type';
-import { UmbTemplateDetailRepository, UMB_TEMPLATE_PICKER_MODAL } from '@umbraco-cms/backoffice/template';
+import {
+	UmbTemplateDetailRepository,
+	UMB_TEMPLATE_PICKER_MODAL,
+	UMB_TEMPLATE_ENTITY_TYPE,
+} from '@umbraco-cms/backoffice/template';
+import { UMB_DOCUMENT_TYPE_ENTITY_TYPE } from 'src/packages/documents/document-types/entity.js';
 
 @customElement('umb-document-workspace-view-info')
 export class UmbDocumentWorkspaceViewInfoElement extends UmbLitElement {
@@ -72,7 +77,7 @@ export class UmbDocumentWorkspaceViewInfoElement extends UmbLitElement {
 		new UmbModalRouteRegistrationController(this, UMB_WORKSPACE_MODAL)
 			.addAdditionalPath('document-type')
 			.onSetup(() => {
-				return { data: { entityType: 'document-type', preset: {} } };
+				return { data: { entityType: UMB_DOCUMENT_TYPE_ENTITY_TYPE, preset: {} } };
 			})
 			.observeRouteBuilder((routeBuilder) => {
 				this._editDocumentTypePath = routeBuilder({});
@@ -120,7 +125,7 @@ export class UmbDocumentWorkspaceViewInfoElement extends UmbLitElement {
 				new UmbModalRouteRegistrationController(this, UMB_WORKSPACE_MODAL)
 					.addAdditionalPath('template')
 					.onSetup(() => {
-						return { data: { entityType: 'template', preset: {} } };
+						return { data: { entityType: UMB_TEMPLATE_ENTITY_TYPE, preset: {} } };
 					})
 					.observeRouteBuilder((routeBuilder) => {
 						this._editTemplatePath = routeBuilder({});
@@ -280,7 +285,7 @@ export class UmbDocumentWorkspaceViewInfoElement extends UmbLitElement {
 					this._allowedTemplates?.find((allowed) => template.unique === allowed.id) ? true : false,
 			},
 			value: {
-				selection: [this._templateUnique],
+				selection: [{ unique: this._templateUnique, entityType: UMB_TEMPLATE_ENTITY_TYPE }],
 			},
 		});
 

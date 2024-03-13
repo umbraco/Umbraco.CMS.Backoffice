@@ -74,7 +74,7 @@ export class UmbInputTreeElement extends FormControlMixin(UmbLitElement) {
 				this.value = (event.target as UmbInputMediaElement).selectedIds.join(',');
 				break;
 			case 'member':
-				this.value = (event.target as UmbInputMemberElement).selectedIds.join(',');
+				this.value = (event.target as UmbInputMemberElement).selection.join(',');
 				break;
 			default:
 				break;

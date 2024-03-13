@@ -86,7 +86,7 @@ export class UmbDocumentTypeWorkspaceViewStructureElement extends UmbLitElement 
 							@change="${(e: CustomEvent) => {
 								const sortedContentTypesList: Array<UmbContentTypeSortModel> = (
 									e.target as UmbInputDocumentTypeElement
-								).selectedIds.map((id, index) => ({
+								).selection.map((id, index) => ({
 									contentType: { unique: id },
 									sortOrder: index,
 								}));

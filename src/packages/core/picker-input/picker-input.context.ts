@@ -4,6 +4,7 @@ import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 import type { UmbModalToken, UmbPickerModalData, UmbPickerModalValue } from '@umbraco-cms/backoffice/modal';
 import { UMB_MODAL_MANAGER_CONTEXT, umbConfirmModal } from '@umbraco-cms/backoffice/modal';
+import type { UmbEntitySelectModel } from '@umbraco-cms/backoffice/utils';
 
 export class UmbPickerInputContext<ItemType extends { name: string; unique: string }> extends UmbControllerBase {
 	// TODO: We are way too unsecure about the requirements for the Modal Token, as we have certain expectation for the data and value.
@@ -57,12 +58,13 @@ export class UmbPickerInputContext<ItemType extends { name: string; unique: stri
 	}
 
 	getSelection() {
-		return this.#itemManager.getUniques();
+		return this.#itemManager.getEntities();
 	}
 
-	setSelection(selection: Array<string | null>) {
-		// Note: Currently we do not support picking root item. So we filter out null values:
-		this.#itemManager.setUniques(selection.filter((value) => value !== null) as Array<string>);
+	setSelection(selection: Array<UmbEntitySelectModel>) {
+		this.#itemManager.setEntities(
+			selection.map((value) => value.unique).filter((value) => value !== null) as Array<string>,
+		);
 	}
 
 	async openPicker(pickerData?: Partial<UmbPickerModalData<ItemType>>) {

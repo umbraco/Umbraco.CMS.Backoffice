@@ -95,14 +95,14 @@ export class UmbTemplateWorkspaceContext
 		}
 	}
 
-	async setMasterTemplate(id: string | null) {
-		if (id === null) {
+	async setMasterTemplate(unique: string | null) {
+		if (unique === null) {
 			this.#masterTemplate.setValue(null);
 			this.#updateMasterTemplateLayoutBlock();
 			return null;
 		}
 
-		const { data } = await this.itemRepository.requestItems([id]);
+		const { data } = await this.itemRepository.requestItems([unique]);
 		if (data) {
 			this.#masterTemplate.setValue(data[0]);
 			this.#updateMasterTemplateLayoutBlock();

@@ -36,9 +36,9 @@ export class UmbBlockTypeCardElement extends UmbLitElement {
 	public set contentElementTypeKey(value: string | undefined) {
 		this._elementTypeKey = value;
 		if (value) {
-			this.#itemManager.setUniques([value]);
+			this.#itemManager.setEntities([value]);
 		} else {
-			this.#itemManager.setUniques([]);
+			this.#itemManager.setEntities([]);
 		}
 	}
 	private _elementTypeKey?: string | undefined;

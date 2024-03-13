@@ -48,7 +48,7 @@ export class UmbPropertyEditorUIMemberPickerElement extends UmbLitElement implem
 
 	private _onChange(event: CustomEvent) {
 		//TODO: This is a hack, something changed so now we need to convert the array to a comma separated string to make it work with the server.
-		const toCommaSeparatedString = (event.target as UmbInputMemberElement).selectedIds.join(',');
+		const toCommaSeparatedString = (event.target as UmbInputMemberElement).selection.join(',');
 		// this.value = (event.target as UmbInputMemberElement).selectedIds;
 		this.value = toCommaSeparatedString;
 		this.dispatchEvent(new CustomEvent('property-value-change'));

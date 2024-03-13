@@ -31,7 +31,7 @@ export class UmbBlockTypeWorkspaceEditorElement extends UmbLitElement {
 			this.#workspaceContext?.createPropertyDatasetContext(this);
 			this.observe(this.#workspaceContext.unique, (unique) => {
 				if (unique) {
-					this.#itemManager.setUniques([unique]);
+					this.#itemManager.setEntities([unique]);
 				}
 			});
 		});
@@ -51,7 +51,7 @@ export class UmbBlockTypeWorkspaceEditorElement extends UmbLitElement {
 						alias=${this.workspaceAlias}
 						headline=${this.localize.term('blockEditor_blockConfigurationOverlayTitle', [this._name])}>
 					</umb-workspace-editor>
-			  `
+				`
 			: '';
 	}
 
