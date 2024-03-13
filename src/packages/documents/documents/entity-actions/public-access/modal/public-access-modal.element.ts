@@ -128,11 +128,11 @@ export class UmbPublicAccessModalElement extends UmbModalBaseElement<
 	// Change Events
 
 	#onChangeLoginPage(e: CustomEvent) {
-		this._loginPageId = (e.target as UmbInputDocumentElement).selectedIds[0];
+		this._loginPageId = (e.target as UmbInputDocumentElement).selection[0];
 	}
 
 	#onChangeErrorPage(e: CustomEvent) {
-		this._errorPageId = (e.target as UmbInputDocumentElement).selectedIds[0];
+		this._errorPageId = (e.target as UmbInputDocumentElement).selection[0];
 	}
 
 	#onChangeGroup(e: CustomEvent) {

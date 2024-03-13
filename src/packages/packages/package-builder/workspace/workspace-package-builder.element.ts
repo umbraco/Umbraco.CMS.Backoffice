@@ -125,7 +125,7 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 			${this._package?.id
 				? html`<uui-button @click="${this.#download}" color="" look="secondary" label="Download package">
 						Download
-				  </uui-button>`
+					</uui-button>`
 				: nothing}
 			<uui-button
 				@click="${this._package.id ? this.#update : this.#save}"
@@ -176,7 +176,7 @@ export class UmbWorkspacePackageBuilderElement extends UmbLitElement {
 					.value=${this._package.contentNodeId ?? ''}
 					max="1"
 					@change="${(e: CustomEvent) =>
-						(this._package.contentNodeId = (e.target as UmbInputDocumentElement).selectedIds[0])}">
+						(this._package.contentNodeId = (e.target as UmbInputDocumentElement).selection[0])}">
 				</umb-input-document>
 				<uui-checkbox
 					label="Include child nodes"

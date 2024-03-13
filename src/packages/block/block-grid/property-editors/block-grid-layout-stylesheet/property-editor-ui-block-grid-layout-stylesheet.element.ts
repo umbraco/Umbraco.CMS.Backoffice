@@ -28,7 +28,9 @@ export class UmbPropertyEditorUIBlockGridLayoutStylesheetElement
 	public set config(config: UmbPropertyEditorConfigCollection | undefined) {}
 
 	private _onChange(event: CustomEvent) {
-		this.value = (event.target as UmbInputStaticFileElement).selection;
+		this.value = (event.target as UmbInputStaticFileElement).selection
+			.map((file) => file.unique)
+			.filter((file) => file) as Array<string>;
 		this.dispatchEvent(new CustomEvent('property-value-change'));
 	}
 
