@@ -34,8 +34,9 @@ export class UmbLogViewerWorkspaceElement extends UmbLitElement {
 
 	render() {
 		return html`
-			<umb-workspace-editor alias="Umb.Workspace.LogViewer" headline="Log Viewer" .enforceNoFooter=${true}>
-			</umb-workspace-editor>
+			<umb-workspace-editor
+				headline=${this.localize.term('treeHeaders_logViewer')}
+				.enforceNoFooter=${true}></umb-workspace-editor>
 		`;
 	}
 

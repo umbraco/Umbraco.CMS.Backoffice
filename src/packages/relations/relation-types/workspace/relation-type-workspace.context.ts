@@ -15,6 +15,8 @@ export class UmbRelationTypeWorkspaceContext
 	//
 	public readonly repository: UmbRelationTypeRepository = new UmbRelationTypeRepository(this);
 
+	#parent?: { entityType: string; unique: string | null };
+
 	#data = new UmbObjectState<RelationTypeResponseModel | undefined>(undefined);
 	readonly data = this.#data.asObservable();
 	readonly name = this.#data.asObservablePart((data) => data?.name);
@@ -24,7 +26,13 @@ export class UmbRelationTypeWorkspaceContext
 		super(host, 'Umb.Workspace.RelationType');
 	}
 
+	protected resetState(): void {
+		super.resetState();
+		this.#data.setValue(undefined);
+	}
+
 	async load(id: string) {
+		this.resetState();
 		const { data } = await this.repository.requestById(id);
 
 		if (data) {
@@ -33,8 +41,10 @@ export class UmbRelationTypeWorkspaceContext
 		}
 	}
 
-	async createScaffold(parentId: string | null) {
-		const { data } = await this.repository.createScaffold(parentId);
+	async create(parent: { entityType: string; unique: string | null }) {
+		this.resetState();
+		this.#parent = parent;
+		const { data } = await this.repository.createScaffold();
 		if (!data) return;
 		this.setIsNew(true);
 		this.#data.setValue(data);
@@ -42,14 +52,14 @@ export class UmbRelationTypeWorkspaceContext
 
 	async getRelations() {
 		//TODO: How do we test this?
-		return await this.repository.requestRelationsById(this.getEntityId());
+		return await this.repository.requestRelationsById(this.getUnique());
 	}
 
 	getData() {
 		return this.#data.getValue();
 	}
 
-	getEntityId() {
+	getUnique() {
 		return this.getData()?.id || '';
 	}
 

@@ -1,17 +1,12 @@
 import { UMB_DATA_TYPE_WORKSPACE_CONTEXT } from '../../data-type-workspace.context-token.js';
-import type { UmbDataTypeDetailModel } from '../../../types.js';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, state } from '@umbraco-cms/backoffice/external/lit';
-import type { UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
 import { UMB_MODAL_MANAGER_CONTEXT, UMB_PROPERTY_EDITOR_UI_PICKER_MODAL } from '@umbraco-cms/backoffice/modal';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-registry';
 
 @customElement('umb-data-type-details-workspace-view')
 export class UmbDataTypeDetailsWorkspaceViewEditElement extends UmbLitElement implements UmbWorkspaceViewElement {
-	@state()
-	_dataType?: UmbDataTypeDetailModel;
-
 	@state()
 	private _propertyEditorUiIcon?: string | null = null;
 
@@ -25,14 +20,9 @@ export class UmbDataTypeDetailsWorkspaceViewEditElement extends UmbLitElement im
 	private _propertyEditorSchemaAlias?: string | null = null;
 
 	private _workspaceContext?: typeof UMB_DATA_TYPE_WORKSPACE_CONTEXT.TYPE;
-	private _modalContext?: UmbModalManagerContext;
 
 	constructor() {
 		super();
-
-		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (instance) => {
-			this._modalContext = instance;
-		});
 
 		this.consumeContext(UMB_DATA_TYPE_WORKSPACE_CONTEXT, (_instance) => {
 			this._workspaceContext = _instance;
@@ -44,10 +34,6 @@ export class UmbDataTypeDetailsWorkspaceViewEditElement extends UmbLitElement im
 		if (!this._workspaceContext) {
 			return;
 		}
-
-		this.observe(this._workspaceContext.data, (dataType) => {
-			this._dataType = dataType;
-		});
 
 		this.observe(this._workspaceContext.propertyEditorUiAlias, (value) => {
 			this._propertyEditorUiAlias = value;
@@ -66,17 +52,18 @@ export class UmbDataTypeDetailsWorkspaceViewEditElement extends UmbLitElement im
 		});
 	}
 
-	private _openPropertyEditorUIPicker() {
-		const modalContext = this._modalContext?.open(UMB_PROPERTY_EDITOR_UI_PICKER_MODAL, {
-			value: {
-				selection: this._propertyEditorUiAlias ? [this._propertyEditorUiAlias] : [],
-			},
-		});
+	async #openPropertyEditorUIPicker() {
+		const modalManager = await this.getContext(UMB_MODAL_MANAGER_CONTEXT);
+		const value = await modalManager
+			.open(this, UMB_PROPERTY_EDITOR_UI_PICKER_MODAL, {
+				value: {
+					selection: this._propertyEditorUiAlias ? [this._propertyEditorUiAlias] : [],
+				},
+			})
+			.onSubmit()
+			.catch(() => undefined);
 
-		modalContext?.onSubmit().then((value) => {
-			console.log('got', value);
-			this._workspaceContext?.setPropertyEditorUiAlias(value?.selection[0]);
-		});
+		this._workspaceContext?.setPropertyEditorUiAlias(value?.selection[0]);
 	}
 
 	render() {
@@ -98,21 +85,21 @@ export class UmbDataTypeDetailsWorkspaceViewEditElement extends UmbLitElement im
 								property-editor-schema-alias=${this._propertyEditorSchemaAlias}
 								standalone>
 								${this._propertyEditorUiIcon
-									? html` <uui-icon name="${this._propertyEditorUiIcon}" slot="icon"></uui-icon> `
+									? html` <umb-icon name="${this._propertyEditorUiIcon}" slot="icon"></umb-icon> `
 									: ''}
 								<uui-action-bar slot="actions">
-									<uui-button label="Change" @click=${this._openPropertyEditorUIPicker}></uui-button>
+									<uui-button label="Change" @click=${this.#openPropertyEditorUIPicker}></uui-button>
 								</uui-action-bar>
 							</umb-ref-property-editor-ui>
-					  `
+						`
 					: html`
 							<uui-button
 								slot="editor"
 								label="Select Property Editor"
 								look="placeholder"
 								color="default"
-								@click=${this._openPropertyEditorUIPicker}></uui-button>
-					  `}
+								@click=${this.#openPropertyEditorUIPicker}></uui-button>
+						`}
 			</umb-property-layout>
 		`;
 	}

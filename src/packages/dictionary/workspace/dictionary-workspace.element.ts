@@ -13,25 +13,26 @@ export class UmbWorkspaceDictionaryElement extends UmbLitElement {
 	@state()
 	_routes: UmbRoute[] = [
 		{
-			path: 'edit/:unique',
-			component: this.#createElement,
-			setup: (_component, info) => {
-				const unique = info.match.params.unique;
-				this.#workspaceContext.load(unique);
-			},
-		},
-		{
-			path: 'create/:parentUnique',
+			path: 'create/parent/:entityType/:parentUnique',
 			component: this.#createElement,
 			setup: async (_component, info) => {
+				const parentEntityType = info.match.params.entityType;
 				const parentUnique = info.match.params.parentUnique === 'null' ? null : info.match.params.parentUnique;
-				await this.#workspaceContext.create(parentUnique);
+				this.#workspaceContext.create({ entityType: parentEntityType, unique: parentUnique });
 
 				new UmbWorkspaceIsNewRedirectController(
 					this,
 					this.#workspaceContext,
 					this.shadowRoot!.querySelector('umb-router-slot')!,
 				);
+			},
+		},
+		{
+			path: 'edit/:unique',
+			component: this.#createElement,
+			setup: (_component, info) => {
+				const unique = info.match.params.unique;
+				this.#workspaceContext.load(unique);
 			},
 		},
 	];

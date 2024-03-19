@@ -3,11 +3,11 @@ import { UMB_BLOCK_GRID_INLINE_PROPERTY_DATASET_CONTEXT } from './block-grid-inl
 import type { UmbPropertyDatasetContext } from '@umbraco-cms/backoffice/property';
 import { UMB_PROPERTY_DATASET_CONTEXT } from '@umbraco-cms/backoffice/property';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UmbBaseController } from '@umbraco-cms/backoffice/class-api';
+import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 import { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import type { Observable } from '@umbraco-cms/backoffice/external/rxjs';
 
-export class UmbBlockGridInlinePropertyDatasetContext extends UmbBaseController implements UmbPropertyDatasetContext {
+export class UmbBlockGridInlinePropertyDatasetContext extends UmbControllerBase implements UmbPropertyDatasetContext {
 	#entryContext: UmbBlockGridEntryContext;
 
 	// default data:
@@ -19,7 +19,7 @@ export class UmbBlockGridInlinePropertyDatasetContext extends UmbBaseController 
 		return this.#entryContext.getEntityType();
 	}
 	getUnique() {
-		return this.#entryContext.getEntityId();
+		return this.#entryContext.getUnique();
 	}
 
 	getName(): string | undefined {

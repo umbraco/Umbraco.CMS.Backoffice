@@ -1,4 +1,4 @@
-import { css, html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
+import { html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
@@ -17,24 +17,26 @@ export class UmbInputNumberRangeElement extends FormControlMixin(UmbLitElement) 
 
 	@state()
 	private _minValue?: number;
-	@property()
-	public get minValue() {
-		return this._minValue;
-	}
+
+	@property({ type: Number })
 	public set minValue(value: number | undefined) {
 		this._minValue = value;
 		this.updateValue();
 	}
+	public get minValue() {
+		return this._minValue;
+	}
 
 	@state()
 	private _maxValue?: number;
-	@property()
-	public get maxValue() {
-		return this._maxValue;
-	}
+
+	@property({ type: Number })
 	public set maxValue(value: number | undefined) {
 		this._maxValue = value;
 		this.updateValue();
+	}
+	public get maxValue() {
+		return this._maxValue;
 	}
 
 	private updateValue() {
@@ -52,9 +54,8 @@ export class UmbInputNumberRangeElement extends FormControlMixin(UmbLitElement) 
 			this.maxValue = getNumberOrUndefined(splittedValue[1]);
 		}
 	}
-
-	constructor() {
-		super();
+	public get value(): string {
+		return this.minValue || this.maxValue ? (this.minValue || '') + ',' + (this.maxValue || '') : '';
 	}
 
 	protected getFormElement() {

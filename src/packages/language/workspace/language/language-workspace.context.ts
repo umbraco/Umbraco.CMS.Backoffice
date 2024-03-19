@@ -6,7 +6,7 @@ import {
 } from '@umbraco-cms/backoffice/workspace';
 import { ApiError } from '@umbraco-cms/backoffice/external/backend-api';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
-import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 
 export class UmbLanguageWorkspaceContext
@@ -22,11 +22,17 @@ export class UmbLanguageWorkspaceContext
 	#validationErrors = new UmbObjectState<any | undefined>(undefined);
 	readonly validationErrors = this.#validationErrors.asObservable();
 
-	constructor(host: UmbControllerHostElement) {
+	constructor(host: UmbControllerHost) {
 		super(host, 'Umb.Workspace.Language');
 	}
 
+	protected resetState(): void {
+		super.resetState();
+		this.#data.setValue(undefined);
+	}
+
 	async load(unique: string) {
+		this.resetState();
 		const { data } = await this.repository.requestByUnique(unique);
 		if (data) {
 			this.setIsNew(false);
@@ -35,7 +41,8 @@ export class UmbLanguageWorkspaceContext
 	}
 
 	async create() {
-		const { data } = await this.repository.createScaffold(null);
+		this.resetState();
+		const { data } = await this.repository.createScaffold();
 		if (!data) return;
 		this.setIsNew(true);
 		this.#data.update(data);
@@ -51,7 +58,7 @@ export class UmbLanguageWorkspaceContext
 	}
 
 	// TODO: Convert to uniques:
-	getEntityId() {
+	getUnique() {
 		return this.#data.getValue()?.unique;
 	}
 

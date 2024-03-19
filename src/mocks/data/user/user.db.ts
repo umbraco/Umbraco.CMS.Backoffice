@@ -52,6 +52,9 @@ class UmbUserMockDB extends UmbEntityMockDbBase<UmbMockUserModel> {
 	getCurrentUser(): CurrentUserResponseModel {
 		const firstUser = this.data[0];
 		const permissions = firstUser.userGroupIds?.length ? umbUserGroupMockDb.getPermissions(firstUser.userGroupIds) : [];
+		const allowedSections = firstUser.userGroupIds?.length
+			? umbUserGroupMockDb.getAllowedSections(firstUser.userGroupIds)
+			: [];
 
 		return {
 			id: firstUser.id,
@@ -64,7 +67,9 @@ class UmbUserMockDB extends UmbEntityMockDbBase<UmbMockUserModel> {
 			languages: [],
 			documentStartNodeIds: firstUser.documentStartNodeIds,
 			mediaStartNodeIds: firstUser.mediaStartNodeIds,
+			fallbackPermissions: [],
 			permissions,
+			allowedSections,
 		};
 	}
 

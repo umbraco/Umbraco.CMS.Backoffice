@@ -21,6 +21,9 @@ export class UmbWorkspaceSplitViewElement extends UmbLitElement {
 	public set splitViewIndex(index: number) {
 		this.splitViewContext.setSplitViewIndex(index);
 	}
+	public get splitViewIndex(): number {
+		return this.splitViewContext.getSplitViewIndex()!;
+	}
 
 	splitViewContext = new UmbWorkspaceSplitViewContext(this);
 
@@ -31,7 +34,7 @@ export class UmbWorkspaceSplitViewElement extends UmbLitElement {
 					<umb-variant-selector></umb-variant-selector>
 				</div>
 				${this.displayNavigation
-					? html`<umb-workspace-action-menu slot="action-menu"></umb-workspace-action-menu>`
+					? html`<umb-workspace-entity-action-menu slot="action-menu"></umb-workspace-entity-action-menu>`
 					: ''}
 				<slot name="action-menu" slot="action-menu"></slot>
 			</umb-workspace-editor>

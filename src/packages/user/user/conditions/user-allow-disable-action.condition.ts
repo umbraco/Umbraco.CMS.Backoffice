@@ -1,26 +1,16 @@
+import { UmbUserStateEnum } from '../types.js';
 import { UmbUserActionConditionBase } from './user-allow-action-base.condition.js';
-import { UserStateModel } from '@umbraco-cms/backoffice/external/backend-api';
-import type {
-	ManifestCondition,
-	UmbConditionConfigBase,
-	UmbConditionControllerArguments,
-} from '@umbraco-cms/backoffice/extension-api';
+import type { ManifestCondition } from '@umbraco-cms/backoffice/extension-api';
 
 export class UmbUserAllowDisableActionCondition extends UmbUserActionConditionBase {
-	constructor(args: UmbConditionControllerArguments<UmbConditionConfigBase>) {
-		super(args);
-	}
-
-	async onUserDataChange() {
+	async _onUserDataChange() {
 		// don't allow the current user to disable themselves
-		if (!this.userData || !this.userData.unique || (await this.isCurrentUser())) {
+		if (!this.userUnique || (await this.isCurrentUser())) {
 			this.permitted = false;
-			super.onUserDataChange();
 			return;
 		}
 
-		this.permitted = this.userData?.state !== UserStateModel.DISABLED;
-		super.onUserDataChange();
+		this.permitted = this.userState !== UmbUserStateEnum.DISABLED;
 	}
 }
 

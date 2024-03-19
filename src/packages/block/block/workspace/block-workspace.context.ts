@@ -231,7 +231,7 @@ export class UmbBlockWorkspaceContext<
 		return this.#layout.getValue();
 	}
 
-	getEntityId() {
+	getUnique() {
 		return this.getData()!.contentUdi;
 	}
 
@@ -295,7 +295,8 @@ export class UmbBlockWorkspaceContext<
 			}
 		}
 
-		this.saveComplete(layoutData);
+		this.setIsNew(false);
+		this.workspaceComplete(layoutData);
 	}
 
 	#modalRejected = () => {
@@ -326,6 +327,9 @@ export class UmbBlockWorkspaceContext<
 	public destroy(): void {
 		super.destroy();
 		this.#layout.destroy();
+		this.#label.destroy();
+		this.#blockManager = undefined;
+		this.#modalContext = undefined;
 	}
 }
 

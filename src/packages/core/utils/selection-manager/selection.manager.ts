@@ -1,6 +1,6 @@
-import { UmbBaseController } from '@umbraco-cms/backoffice/class-api';
+import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UmbSelectionChangeEvent } from '@umbraco-cms/backoffice/event';
+import { UmbDeselectedEvent, UmbSelectedEvent, UmbSelectionChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbArrayState, UmbBooleanState } from '@umbraco-cms/backoffice/observable-api';
 
 /**
@@ -8,8 +8,8 @@ import { UmbArrayState, UmbBooleanState } from '@umbraco-cms/backoffice/observab
  * @export
  * @class UmbSelectionManager
  */
-export class UmbSelectionManager<ValueType = string | null> extends UmbBaseController {
-	#selectable = new UmbBooleanState(false);
+export class UmbSelectionManager<ValueType extends string | null = string | null> extends UmbControllerBase {
+	#selectable = new UmbBooleanState(true);
 	public readonly selectable = this.#selectable.asObservable();
 
 	#selection = new UmbArrayState(<Array<ValueType>>[], (x) => x);
@@ -81,7 +81,9 @@ export class UmbSelectionManager<ValueType = string | null> extends UmbBaseContr
 		/* If multiple is set to false, and the current selection is more than one,
 		then we need to set the selection to the first item. */
 		if (value === false && this.getSelection().length > 1) {
-			this.setSelection([this.getSelection()[0]]);
+			const first = this.getSelection()[0];
+			this.clearSelection();
+			this.select(first);
 		}
 	}
 
@@ -105,6 +107,7 @@ export class UmbSelectionManager<ValueType = string | null> extends UmbBaseContr
 		if (this.isSelected(unique)) return;
 		const newSelection = this.getMultiple() ? [...this.getSelection(), unique] : [unique];
 		this.#selection.setValue(newSelection);
+		this.getHostElement().dispatchEvent(new UmbSelectedEvent(unique));
 		this.getHostElement().dispatchEvent(new UmbSelectionChangeEvent());
 	}
 
@@ -117,6 +120,7 @@ export class UmbSelectionManager<ValueType = string | null> extends UmbBaseContr
 		if (this.getSelectable() === false) return;
 		const newSelection = this.getSelection().filter((x) => x !== unique);
 		this.#selection.setValue(newSelection);
+		this.getHostElement().dispatchEvent(new UmbDeselectedEvent(unique));
 		this.getHostElement().dispatchEvent(new UmbSelectionChangeEvent());
 	}
 

@@ -1,11 +1,7 @@
-import type {
-	UmbPropertyDatasetContext,
-	UmbNameablePropertyDatasetContext} from '@umbraco-cms/backoffice/property';
-import {
-	UMB_PROPERTY_DATASET_CONTEXT
-} from '@umbraco-cms/backoffice/property';
+import type { UmbPropertyDatasetContext, UmbNameablePropertyDatasetContext } from '@umbraco-cms/backoffice/property';
+import { UMB_PROPERTY_DATASET_CONTEXT } from '@umbraco-cms/backoffice/property';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UmbBaseController } from '@umbraco-cms/backoffice/class-api';
+import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import type { UmbInvariantableWorkspaceContextInterface } from '@umbraco-cms/backoffice/workspace';
 
@@ -15,7 +11,7 @@ import type { UmbInvariantableWorkspaceContextInterface } from '@umbraco-cms/bac
 export class UmbInvariantWorkspacePropertyDatasetContext<
 		WorkspaceType extends UmbInvariantableWorkspaceContextInterface = UmbInvariantableWorkspaceContextInterface,
 	>
-	extends UmbBaseController
+	extends UmbContextBase<UmbPropertyDatasetContext>
 	implements UmbPropertyDatasetContext, UmbNameablePropertyDatasetContext
 {
 	#workspace: WorkspaceType;
@@ -31,7 +27,7 @@ export class UmbInvariantWorkspacePropertyDatasetContext<
 		return this.#workspace.getEntityType();
 	}
 	getUnique() {
-		return this.#workspace.getEntityId();
+		return this.#workspace.getUnique();
 	}
 	getName() {
 		return this.#workspace.getName();
@@ -41,13 +37,10 @@ export class UmbInvariantWorkspacePropertyDatasetContext<
 	}
 
 	constructor(host: UmbControllerHost, workspace: WorkspaceType) {
-		// The controller alias, is a very generic name cause we want only one of these for this controller host.
-		super(host, 'variantContext');
+		super(host, UMB_PROPERTY_DATASET_CONTEXT);
 		this.#workspace = workspace;
 
 		this.name = this.#workspace.name;
-
-		this.provideContext(UMB_PROPERTY_DATASET_CONTEXT, this);
 	}
 
 	/**

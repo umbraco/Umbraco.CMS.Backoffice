@@ -7,11 +7,11 @@ import { css, html, nothing, customElement, state } from '@umbraco-cms/backoffic
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { UmbInputDocumentElement } from '@umbraco-cms/backoffice/document';
-import type { UmbInputSectionElement } from '@umbraco-cms/backoffice/components';
+import type { UmbInputSectionElement } from '@umbraco-cms/backoffice/section';
 import type { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import type { UmbInputMediaElement } from '@umbraco-cms/backoffice/media';
 
-import './components/user-group-default-permission-list.element.js';
+import './components/user-group-entity-user-permission-list.element.js';
 import './components/user-group-granular-permission-list.element.js';
 
 @customElement('umb-user-group-workspace-editor')
@@ -33,19 +33,19 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 	#onSectionsChange(event: UmbChangeEvent) {
 		event.stopPropagation();
 		const target = event.target as UmbInputSectionElement;
-		this.#workspaceContext?.updateProperty('sections', target.value);
+		this.#workspaceContext?.updateProperty('sections', target.selection);
 	}
 
 	#onDocumentStartNodeChange(event: CustomEvent) {
 		event.stopPropagation();
 		const target = event.target as UmbInputDocumentElement;
-		this.#workspaceContext?.updateProperty('documentStartNode', { unique: target.selectedIds[0] });
+		this.#workspaceContext?.updateProperty('documentStartNode', { unique: target.selection[0] });
 	}
 
 	#onMediaStartNodeChange(event: CustomEvent) {
 		event.stopPropagation();
 		const target = event.target as UmbInputMediaElement;
-		this.#workspaceContext?.updateProperty('mediaStartNode', { unique: target.selectedIds[0] });
+		this.#workspaceContext?.updateProperty('mediaStartNode', { unique: target.selection[0] });
 	}
 
 	#onNameChange(event: UUIInputEvent) {
@@ -98,7 +98,7 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 					description=${this.localize.term('user_sectionsHelp')}>
 					<umb-input-section
 						slot="editor"
-						.value=${this._userGroup.sections ?? []}
+						.selection=${this._userGroup.sections ?? []}
 						@change=${this.#onSectionsChange}></umb-input-section>
 				</umb-property-layout>
 				<umb-property-layout
@@ -107,7 +107,7 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 					<umb-input-document
 						slot="editor"
 						max="1"
-						.selectedIds=${this._userGroup.documentStartNode?.unique ? [this._userGroup.documentStartNode.unique] : []}
+						.selection=${this._userGroup.documentStartNode?.unique ? [this._userGroup.documentStartNode.unique] : []}
 						@change=${this.#onDocumentStartNodeChange}></umb-input-document>
 				</umb-property-layout>
 				<umb-property-layout
@@ -116,22 +116,23 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 					<umb-input-media
 						slot="editor"
 						max="1"
-						.selectedIds=${this._userGroup.mediaStartNode?.unique ? [this._userGroup.mediaStartNode.unique] : []}
+						.selection=${this._userGroup.mediaStartNode?.unique ? [this._userGroup.mediaStartNode.unique] : []}
 						@change=${this.#onMediaStartNodeChange}></umb-input-media>
 				</umb-property-layout>
 			</uui-box>
 
 			<uui-box>
 				<div slot="headline"><umb-localize key="user_permissionsDefault"></umb-localize></div>
-				<umb-user-group-default-permission-list></umb-user-group-default-permission-list>
+
+				<umb-property-layout label="Entity permissions" description="Assign permissions for an entity type">
+					<umb-user-group-entity-user-permission-list slot="editor"></umb-user-group-entity-user-permission-list>
+				</umb-property-layout>
 			</uui-box>
 
-			<!-- Temp disabled because it is work in progress
 			<uui-box>
 				<div slot="headline"><umb-localize key="user_permissionsGranular"></umb-localize></div>
 				<umb-user-group-granular-permission-list></umb-user-group-granular-permission-list>
 			</uui-box>
-	-->
 		`;
 	}
 
