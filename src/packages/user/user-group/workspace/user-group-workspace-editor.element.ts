@@ -7,7 +7,7 @@ import { css, html, nothing, customElement, state } from '@umbraco-cms/backoffic
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { UmbInputDocumentElement } from '@umbraco-cms/backoffice/document';
-import type { UmbInputSectionElement } from '@umbraco-cms/backoffice/components';
+import type { UmbInputSectionElement } from '@umbraco-cms/backoffice/section';
 import type { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import type { UmbInputMediaElement } from '@umbraco-cms/backoffice/media';
 
@@ -33,7 +33,7 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 	#onSectionsChange(event: UmbChangeEvent) {
 		event.stopPropagation();
 		const target = event.target as UmbInputSectionElement;
-		this.#workspaceContext?.updateProperty('sections', target.value);
+		this.#workspaceContext?.updateProperty('sections', target.selection);
 	}
 
 	#onDocumentStartNodeChange(event: CustomEvent) {
@@ -98,7 +98,7 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 					description=${this.localize.term('user_sectionsHelp')}>
 					<umb-input-section
 						slot="editor"
-						.value=${this._userGroup.sections ?? []}
+						.selection=${this._userGroup.sections ?? []}
 						@change=${this.#onSectionsChange}></umb-input-section>
 				</umb-property-layout>
 				<umb-property-layout

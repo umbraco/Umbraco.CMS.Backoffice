@@ -5,7 +5,7 @@ import {
 	type UmbSaveableWorkspaceContextInterface,
 	UmbEditableWorkspaceContextBase,
 } from '@umbraco-cms/backoffice/workspace';
-import type { UmbControllerHostElement } from '@umbraco-cms/backoffice/controller-api';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 
@@ -13,15 +13,21 @@ export class UmbMemberGroupWorkspaceContext
 	extends UmbEditableWorkspaceContextBase<UmbMemberGroupDetailModel>
 	implements UmbSaveableWorkspaceContextInterface
 {
-	public readonly detailRepository = new UmbMemberGroupDetailRepository(this);
+	public readonly repository = new UmbMemberGroupDetailRepository(this);
+	#getDataPromise?: Promise<any>;
 
 	#data = new UmbObjectState<UmbMemberGroupDetailModel | undefined>(undefined);
 	readonly data = this.#data.asObservable();
 
+	readonly unique = this.#data.asObservablePart((data) => data?.unique);
 	readonly name = this.#data.asObservablePart((data) => data?.name);
 
-	constructor(host: UmbControllerHostElement) {
+	constructor(host: UmbControllerHost) {
 		super(host, UMB_MEMBER_GROUP_WORKSPACE_ALIAS);
+	}
+
+	public isLoaded() {
+		return this.#getDataPromise;
 	}
 
 	protected resetState(): void {
@@ -31,17 +37,32 @@ export class UmbMemberGroupWorkspaceContext
 
 	async load(unique: string) {
 		this.resetState();
-		const { data } = await this.detailRepository.requestByUnique(unique);
+		this.#getDataPromise = this.repository.requestByUnique(unique);
+		type GetDataType = Awaited<ReturnType<UmbMemberGroupDetailRepository['requestByUnique']>>;
+		const { data, asObservable } = (await this.#getDataPromise) as GetDataType;
 
 		if (data) {
 			this.setIsNew(false);
 			this.#data.update(data);
 		}
+
+		this.observe(
+			asObservable(),
+			(memberGroup) => this.#onMemberGroupStoreChange(memberGroup),
+			'umbMemberGroupStoreObserver',
+		);
 	}
 
-	async create(parentUnique: string | null) {
+	#onMemberGroupStoreChange(memberGroup: UmbMemberGroupDetailModel | undefined) {
+		if (!memberGroup) {
+			history.pushState(null, '', 'section/member-management/view/member-groups');
+		}
+	}
+
+	async create() {
 		this.resetState();
-		const { data } = await this.detailRepository.createScaffold(parentUnique);
+		this.#getDataPromise = this.repository.createScaffold();
+		const { data } = await this.#getDataPromise;
 
 		if (data) {
 			this.setIsNew(true);
@@ -56,12 +77,13 @@ export class UmbMemberGroupWorkspaceContext
 		if (!data) throw new Error('No data to save');
 
 		if (this.getIsNew()) {
-			await this.detailRepository.create(data);
+			await this.repository.create(data);
 		} else {
-			await this.detailRepository.save(data);
+			await this.repository.save(data);
 		}
 
-		this.saveComplete(data);
+		this.setIsNew(false);
+		this.workspaceComplete(data);
 	}
 
 	getData() {
@@ -69,7 +91,7 @@ export class UmbMemberGroupWorkspaceContext
 	}
 
 	getUnique() {
-		return this.getData()?.unique || '';
+		return this.getData()?.unique;
 	}
 
 	getEntityType() {
@@ -85,7 +107,8 @@ export class UmbMemberGroupWorkspaceContext
 	}
 
 	public destroy(): void {
-		console.log('destroy');
+		this.#data.destroy();
+		super.destroy();
 	}
 }
 

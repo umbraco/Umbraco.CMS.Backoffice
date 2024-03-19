@@ -14,11 +14,11 @@ export class UmbInputMemberTypeElement extends FormControlMixin(UmbLitElement) {
 	 * @default 0
 	 */
 	@property({ type: Number })
-	public get min(): number {
-		return this.#pickerContext.min;
-	}
 	public set min(value: number) {
 		this.#pickerContext.min = value;
+	}
+	public get min(): number {
+		return this.#pickerContext.min;
 	}
 
 	/**
@@ -37,11 +37,11 @@ export class UmbInputMemberTypeElement extends FormControlMixin(UmbLitElement) {
 	 * @default Infinity
 	 */
 	@property({ type: Number })
-	public get max(): number {
-		return this.#pickerContext.max;
-	}
 	public set max(value: number) {
 		this.#pickerContext.max = value;
+	}
+	public get max(): number {
+		return this.#pickerContext.max;
 	}
 
 	/**
@@ -53,11 +53,11 @@ export class UmbInputMemberTypeElement extends FormControlMixin(UmbLitElement) {
 	@property({ type: String, attribute: 'min-message' })
 	maxMessage = 'This field exceeds the allowed amount of items';
 
-	public get selectedIds(): Array<string> {
-		return this.#pickerContext.getSelection();
-	}
 	public set selectedIds(ids: Array<string>) {
 		this.#pickerContext.setSelection(ids);
+	}
+	public get selectedIds(): Array<string> {
+		return this.#pickerContext.getSelection();
 	}
 
 	@property()
@@ -148,7 +148,7 @@ export class UmbInputMemberTypeElement extends FormControlMixin(UmbLitElement) {
 
 	#renderIcon(item: MemberTypeItemResponseModel) {
 		if (!item.icon) return;
-		return html`<uui-icon slot="icon" name=${item.icon}></uui-icon>`;
+		return html`<umb-icon slot="icon" name=${item.icon}></umb-icon>`;
 	}
 
 	static styles = [

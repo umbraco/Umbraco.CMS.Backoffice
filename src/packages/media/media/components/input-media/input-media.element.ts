@@ -3,9 +3,9 @@ import { UmbMediaPickerContext } from './input-media.context.js';
 import { css, html, customElement, property, state, ifDefined, repeat } from '@umbraco-cms/backoffice/external/lit';
 import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 import { UMB_WORKSPACE_MODAL, UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/modal';
 import { type UmbSorterConfig, UmbSorterController } from '@umbraco-cms/backoffice/sorter';
+import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 
 const SORTER_CONFIG: UmbSorterConfig<string> = {
 	getUniqueOfElement: (element) => {
@@ -95,6 +95,9 @@ export class UmbInputMediaElement extends FormControlMixin(UmbLitElement) {
 	public set value(idsString: string) {
 		// Its with full purpose we don't call super.value, as thats being handled by the observation of the context selection.
 		this.selectedIds = splitStringToArray(idsString);
+	}
+	public get value() {
+		return this.selectedIds.join(',');
 	}
 
 	@state()

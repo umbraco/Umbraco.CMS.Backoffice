@@ -45,7 +45,11 @@ export class UmbUserWorkspaceContext
 		There might be a less manual way to do this.
 	*/
 	onUserStoreChanges(user: EntityType | undefined) {
-		if (!user) return;
+		if (!user) {
+			//TODO: This solution is alright for now. But reconsider when we introduce signal-r
+			history.pushState(null, '', 'section/user-management');
+			return;
+		}
 		this.#currentData.update({ state: user.state, avatarUrls: user.avatarUrls });
 	}
 
@@ -85,7 +89,8 @@ export class UmbUserWorkspaceContext
 		if (newData) {
 			this.#persistedData.setValue(newData);
 			this.#currentData.setValue(newData);
-			this.saveComplete(newData);
+			this.setIsNew(false);
+			this.workspaceComplete(newData);
 		}
 	}
 

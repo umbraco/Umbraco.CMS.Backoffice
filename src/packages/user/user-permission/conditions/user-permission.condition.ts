@@ -1,29 +1,25 @@
 import { UMB_CURRENT_USER_CONTEXT } from '../../current-user/current-user.context.js';
-import { UmbBaseController } from '@umbraco-cms/backoffice/class-api';
+import { UmbConditionBase } from '@umbraco-cms/backoffice/extension-registry';
 import type {
 	ManifestCondition,
 	UmbConditionConfigBase,
 	UmbConditionControllerArguments,
 	UmbExtensionCondition,
 } from '@umbraco-cms/backoffice/extension-api';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
-export class UmbUserPermissionCondition extends UmbBaseController implements UmbExtensionCondition {
-	config: UserPermissionConditionConfig;
-	permitted = false;
-	#onChange: () => void;
-
-	constructor(args: UmbConditionControllerArguments<UserPermissionConditionConfig>) {
-		super(args.host);
-		this.config = args.config;
-		this.#onChange = args.onChange;
+export class UmbUserPermissionCondition
+	extends UmbConditionBase<UserPermissionConditionConfig>
+	implements UmbExtensionCondition
+{
+	constructor(host: UmbControllerHost, args: UmbConditionControllerArguments<UserPermissionConditionConfig>) {
+		super(host, args);
 
 		this.consumeContext(UMB_CURRENT_USER_CONTEXT, (context) => {
 			this.observe(
 				context.currentUser,
 				(currentUser) => {
-					const fallbackPermissions = currentUser?.fallbackPermissions || [];
-					this.permitted = this.config.verbs.every((verb) => fallbackPermissions.includes(verb));
-					this.#onChange();
+					//this.permitted = currentUser?.permissions?.includes(this.config.match) || false;
 				},
 				'umbUserPermissionConditionObserver',
 			);
@@ -36,9 +32,9 @@ export type UserPermissionConditionConfig = UmbConditionConfigBase<'Umb.Conditio
 	 *
 	 *
 	 * @example
-	 * ["Umb.Document.Update", "Umb.Document.Publish"]
+	 * "Umb.UserPermission.Document.Create"
 	 */
-	verbs: Array<string>;
+	match: string;
 };
 
 export const manifest: ManifestCondition = {
