@@ -31,7 +31,7 @@ export class UmbLocalizeElement extends UmbLitElement {
 	 * If true, the key will be rendered instead of the localized value if the key is not found.
 	 * @attr
 	 */
-	@property()
+	@property({ type: Boolean })
 	debug = false;
 
 	@state()
@@ -41,7 +41,10 @@ export class UmbLocalizeElement extends UmbLitElement {
 		// If the value is the same as the key, it means the key was not found.
 		if (localizedValue === this.key) {
 			(this.getHostElement() as HTMLElement).setAttribute('data-localize-missing', this.key);
-			return '';
+			if (this.debug) {
+				return this.key;
+			}
+			return this.textContent ?? this.key;
 		}
 
 		(this.getHostElement() as HTMLElement).removeAttribute('data-localize-missing');
@@ -50,11 +53,7 @@ export class UmbLocalizeElement extends UmbLitElement {
 	}
 
 	protected render() {
-		return this.text.trim()
-			? html`${unsafeHTML(this.text)}`
-			: this.debug
-			? html`<span style="color:red">${this.key}</span>`
-			: html`<slot></slot>`;
+		return html`${unsafeHTML(this.text)}`;
 	}
 
 	static styles = [
