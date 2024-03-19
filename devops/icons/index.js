@@ -6,7 +6,7 @@ const path = pathModule.default;
 const getDirName = path.dirname;
 const glob = globModule.default;
 
-const moduleDirectory = 'src/shared/icon-registry';
+const moduleDirectory = 'src/packages/core/icon-registry';
 const iconsOutputDirectory = `${moduleDirectory}/icons`;
 const umbracoSvgDirectory = `${moduleDirectory}/svgs`;
 const iconMapJson = `${moduleDirectory}/icon-dictionary.json`;
@@ -170,3 +170,4 @@ const writeFileWithDir = (path, contents, cb) => {
 };
 
 run();
+
