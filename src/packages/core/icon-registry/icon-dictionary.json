@@ -966,6 +966,14 @@
 			"file": "gift.svg"
 		},
 		{
+			"name": "icon-github",
+			"file": "github.svg"
+		},
+		{
+			"name": "icon-gitlab",
+			"file": "gitlab.svg"
+		},
+		{
 			"name": "icon-glasses",
 			"file": "glasses.svg"
 		},
@@ -1236,6 +1244,10 @@
 		{
 			"name": "icon-link",
 			"file": "link.svg"
+		},
+		{
+			"name": "icon-linkedin",
+			"file": "linkedin.svg"
 		},
 		{
 			"_name": "icon-linux-tux",
@@ -2013,6 +2025,10 @@
 			"legacy": true
 		},
 		{
+			"name": "icon-slack",
+			"file": "slack.svg"
+		},
+		{
 			"name": "icon-sleep",
 			"file": "moon-star.svg"
 		},
@@ -2265,6 +2281,10 @@
 			"file": "monitor-play.svg"
 		},
 		{
+			"name": "icon-twitter",
+			"file": "twitter.svg"
+		},
+		{
 			"name": "icon-umb-content",
 			"file": "file.svg",
 			"legacy": true
@@ -2429,10 +2449,6 @@
 			"name": "icon-zoom-in",
 			"file": "zoom-in.svg"
 		},
-
-
-
-
 		{
 			"name": "icon-zoom-out",
 			"file": "zoom-out.svg"
@@ -2444,6 +2460,14 @@
 		{
 			"name": "icon-database",
 			"file": "database.svg"
+		},
+		{
+			"name": "icon-x",
+			"file": "x.svg"
+		},
+		{
+			"name": "icon-youtube",
+			"file": "youtube.svg"
 		}
 	],
 	"umbraco": [
