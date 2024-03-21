@@ -2,6 +2,7 @@ import { UMB_TEMPLATING_SECTION_PICKER_MODAL } from '../../modals/templating-sec
 import type { UmbTemplatingInsertMenuElement } from '../../components/templating-item-menu/templating-item-menu.element.js';
 import { UMB_TEMPLATE_QUERY_BUILDER_MODAL } from '../modals/query-builder/index.js';
 import { getQuerySnippet } from '../../utils/index.js';
+import { UMB_TEMPLATE_PICKER_MODAL } from '../modals/template-picker-modal.token.js';
 import { UMB_TEMPLATE_WORKSPACE_CONTEXT } from './template-workspace.context-token.js';
 import type { UmbCodeEditorElement } from '@umbraco-cms/backoffice/code-editor';
 import { toCamelCase } from '@umbraco-cms/backoffice/utils';
@@ -9,7 +10,6 @@ import type { UUIInputElement } from '@umbraco-cms/backoffice/external/uui';
 import { css, html, customElement, query, state, nothing, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 import type { UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
 import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
-import { UMB_TEMPLATE_PICKER_MODAL } from 'src/packages/templating/templates/index.js';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { Subject, debounceTime } from '@umbraco-cms/backoffice/external/rxjs';
 
