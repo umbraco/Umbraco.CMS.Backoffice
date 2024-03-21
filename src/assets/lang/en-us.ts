@@ -1777,7 +1777,7 @@ export default {
 		scripting: 'Scripting Files',
 		scripts: 'Scripts',
 		stylesheets: 'Stylesheets',
-		templates: 'Templates',
+		templates: 'Views',
 		logViewer: 'Log Viewer',
 		users: 'Users',
 		settingsGroup: 'Settings',

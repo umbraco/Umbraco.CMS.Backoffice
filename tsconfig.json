@@ -92,7 +92,7 @@
 			"@umbraco-cms/backoffice/style": ["./src/packages/core/style/index.ts"],
 			"@umbraco-cms/backoffice/stylesheet": ["./src/packages/templating/stylesheets/index.ts"],
 			"@umbraco-cms/backoffice/tags": ["./src/packages/tags/index.ts"],
-			"@umbraco-cms/backoffice/template": ["./src/packages/templating/templates/index.ts"],
+			"@umbraco-cms/backoffice/template": ["src/packages/templating/templates/index.ts"],
 			"@umbraco-cms/backoffice/temporary-file": ["./src/packages/core/temporary-file/index.ts"],
 			"@umbraco-cms/backoffice/themes": ["./src/packages/core/themes/index.ts"],
 			"@umbraco-cms/backoffice/tiny-mce": ["./src/packages/tiny-mce/index.ts"],
