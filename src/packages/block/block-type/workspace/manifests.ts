@@ -7,6 +7,7 @@ import type { ManifestWorkspaceAction } from '@umbraco-cms/backoffice/extension-
 export const manifests: Array<ManifestWorkspaceAction> = [
 	{
 		type: 'workspaceAction',
+		kind: 'default',
 		alias: 'Umb.WorkspaceAction.BlockType.Save',
 		name: 'Save Block Type Workspace Action',
 		api: UmbSaveWorkspaceAction,
