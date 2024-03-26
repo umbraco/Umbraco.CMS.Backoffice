@@ -39,12 +39,19 @@ import type { ManifestLocalization } from './localization.model.js';
 import type { ManifestTree } from './tree.model.js';
 import type { ManifestTreeItem } from './tree-item.model.js';
 import type { ManifestUserProfileApp } from './user-profile-app.model.js';
-import type { ManifestWorkspace } from './workspace.model.js';
+import type { ManifestWorkspace, ManifestWorkspaceRoutableKind } from './workspace.model.js';
 import type { ManifestWorkspaceAction, ManifestWorkspaceActionDefaultKind } from './workspace-action.model.js';
 import type { ManifestWorkspaceActionMenuItem } from './workspace-action-menu-item.model.js';
 import type { ManifestWorkspaceContext } from './workspace-context.model.js';
-import type { ManifestWorkspaceFooterApp } from './workspace-footer-app.model.js';
-import type { ManifestWorkspaceView } from './workspace-view.model.js';
+import type {
+	ManifestWorkspaceFooterApp,
+	ManifestWorkspaceFooterAppMenuBreadcrumbKind,
+	ManifestWorkspaceFooterAppVariantMenuBreadcrumbKind,
+} from './workspace-footer-app.model.js';
+import type {
+	ManifestWorkspaceView,
+	ManifestWorkspaceViewContentTypeDesignEditorKind,
+} from './workspace-view.model.js';
 import type { ManifestEntityUserPermission } from './entity-user-permission.model.js';
 import type { ManifestGranularUserPermission } from './user-granular-permission.model.js';
 import type { ManifestCollectionAction } from './collection-action.model.js';
@@ -107,9 +114,17 @@ export type ManifestEntityActions =
 	| ManifestEntityActionDeleteFolderKind
 	| ManifestEntityActionTrashKind;
 
-export type ManifestWorkspaceActions = ManifestWorkspaceAction | ManifestWorkspaceActionDefaultKind;
+export type ManifestWorkspaceFooterApps =
+	| ManifestWorkspaceFooterApp
+	| ManifestWorkspaceFooterAppMenuBreadcrumbKind
+	| ManifestWorkspaceFooterAppVariantMenuBreadcrumbKind;
 
 export type ManifestPropertyActions = ManifestPropertyAction | ManifestPropertyActionDefaultKind;
+
+export type ManifestWorkspaceActions = ManifestWorkspaceAction | ManifestWorkspaceActionDefaultKind;
+
+export type ManifestWorkspaces = ManifestWorkspace | ManifestWorkspaceRoutableKind;
+export type ManifestWorkspaceViews = ManifestWorkspaceView | ManifestWorkspaceViewContentTypeDesignEditorKind;
 
 export type ManifestTypes =
 	| ManifestBundle<ManifestTypes>
@@ -152,12 +167,12 @@ export type ManifestTypes =
 	| ManifestTreeItem
 	| ManifestTreeStore
 	| ManifestUserProfileApp
-	| ManifestWorkspace
-	| ManifestWorkspaceActions
 	| ManifestWorkspaceActionMenuItem
+	| ManifestWorkspaceActions
 	| ManifestWorkspaceContext
-	| ManifestWorkspaceFooterApp
-	| ManifestWorkspaceView
+	| ManifestWorkspaceFooterApps
+	| ManifestWorkspaces
+	| ManifestWorkspaceViews
 	| ManifestEntityUserPermission
 	| ManifestGranularUserPermission
 	| ManifestBase;
