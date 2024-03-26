@@ -63,6 +63,9 @@ export abstract class UmbTreeItemContextBase<TreeItemType extends UmbTreeItemMod
 	#path = new UmbStringState('');
 	path = this.#path.asObservable();
 
+	#isOpen = new UmbBooleanState(false);
+	isOpen = this.#isOpen.asObservable();
+
 	treeContext?: UmbDefaultTreeContext<TreeItemType>;
 	#sectionContext?: UmbSectionContext;
 	#sectionSidebarContext?: UmbSectionSidebarContext;
@@ -152,6 +155,7 @@ export abstract class UmbTreeItemContextBase<TreeItemType extends UmbTreeItemMod
 		this.#observeSectionPath();
 		this.#hasChildrenInitValueFlag = false;
 		this.#observeHasChildren();
+		this.#observeLocation();
 	}
 
 	public async loadChildren() {
@@ -210,6 +214,7 @@ export abstract class UmbTreeItemContextBase<TreeItemType extends UmbTreeItemMod
 			this.#observeIsSelected();
 			this.#hasChildrenInitValueFlag = false;
 			this.#observeHasChildren();
+			this.#observeLocation();
 		});
 
 		this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
@@ -239,6 +244,14 @@ export abstract class UmbTreeItemContextBase<TreeItemType extends UmbTreeItemMod
 
 	getTreeItem() {
 		return this.#treeItem.getValue();
+	}
+
+	public showChildren() {
+		this.#isOpen.setValue(true);
+	}
+
+	public hideChildren() {
+		this.#isOpen.setValue(false);
 	}
 
 	#observeIsSelectable() {
@@ -318,6 +331,24 @@ export abstract class UmbTreeItemContextBase<TreeItemType extends UmbTreeItemMod
 			}
 			this.#hasChildrenInitValueFlag = true;
 		});
+	}
+
+	#observeLocation() {
+		if (!this.treeContext || this.unique === undefined) return;
+
+		this.observe(
+			this.treeContext.location,
+			(location) => {
+				if (location.includes(this.unique)) {
+					const treeItem = this.#treeItem.getValue();
+					if (treeItem?.hasChildren) {
+						this.loadChildren();
+						this.showChildren();
+					}
+				}
+			},
+			'observePath',
+		);
 	}
 
 	#onReloadRequest = (event: UmbEntityActionEvent) => {
