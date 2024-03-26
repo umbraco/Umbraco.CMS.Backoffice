@@ -29,6 +29,9 @@ export class UmbDefaultTreeContext<TreeItemType extends UmbTreeItemModelBase>
 	#rootItems = new UmbArrayState<TreeItemType>([], (x) => x.unique);
 	rootItems = this.#rootItems.asObservable();
 
+	#location = new UmbArrayState<string | null>([], (x) => x);
+	location = this.#location.asObservable();
+
 	public selectableFilter?: (item: TreeItemType) => boolean = () => true;
 	public filter?: (item: TreeItemType) => boolean = () => true;
 	public readonly selection = new UmbSelectionManager(this._host);
@@ -138,6 +141,14 @@ export class UmbDefaultTreeContext<TreeItemType extends UmbTreeItemModelBase>
 			this.#rootItems.setValue(data.items);
 			this.pagination.setTotalItems(data.total);
 		}
+	}
+
+	setLocation(path: Array<string | null>): void {
+		this.#location.setValue(path);
+	}
+
+	getLocation(): Array<string | null> {
+		return this.#location.getValue();
 	}
 
 	#consumeContexts() {
