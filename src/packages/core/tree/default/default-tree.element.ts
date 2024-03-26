@@ -25,6 +25,9 @@ export class UmbDefaultTreeElement extends UmbLitElement {
 	@property({ attribute: false })
 	filter: (item: UmbTreeItemModelBase) => boolean = () => true;
 
+	@property({ attribute: false })
+	location: Array<string | null> = [];
+
 	@state()
 	private _rootItems: UmbTreeItemModelBase[] = [];
 
@@ -80,6 +83,10 @@ export class UmbDefaultTreeElement extends UmbLitElement {
 
 		if (_changedProperties.has('filter')) {
 			this.#treeContext!.filter = this.filter;
+		}
+
+		if (_changedProperties.has('location')) {
+			this.#treeContext!.setLocation(this.location);
 		}
 	}
 
