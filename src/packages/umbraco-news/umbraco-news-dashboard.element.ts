@@ -28,6 +28,17 @@ export class UmbUmbracoNewsDashboardElement extends UmbLitElement {
 	render() {
 		return html`
 			<uui-box class="uui-text">
+				<umb-tree
+					alias="Umb.Tree.DataType"
+					.props=${{
+						location: [
+							null,
+							'20c43cc3-e05c-4566-9b8f-6a1aa7eadaa3',
+							'69898470-6bce-4fb3-a4cb-6bdb875066c1',
+							'a839b8ac-d1af-464d-a720-7f68e6f3b654',
+						],
+					}}></umb-tree>
+
 				<h1 class="uui-h2" style="margin-top: var(--uui-size-layout-1);">
 					<umb-localize key="dashboard_welcome">Welcome</umb-localize>, ${this._name}
 				</h1>
