@@ -101,7 +101,7 @@ export class UmbMemberGroupWorkspaceContext
 		return { data };
 	}
 
-	async save() {
+	async submit() {
 		const data = this.getData();
 		if (!data) throw new Error('No data to save');
 
@@ -112,7 +112,7 @@ export class UmbMemberGroupWorkspaceContext
 		}
 
 		this.setIsNew(false);
-		this.workspaceComplete(data);
+		return true;
 	}
 
 	getData() {

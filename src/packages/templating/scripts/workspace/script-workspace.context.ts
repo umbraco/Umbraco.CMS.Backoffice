@@ -127,7 +127,7 @@ export class UmbScriptWorkspaceContext
 		}
 	}
 
-	async save() {
+	async submit() {
 		if (!this.#data.value) throw new Error('Data is missing');
 
 		let newData = undefined;
@@ -162,8 +162,8 @@ export class UmbScriptWorkspaceContext
 			this.#data.setValue(newData);
 
 			this.setIsNew(false);
-			this.workspaceComplete(newData);
 		}
+		return true;
 	}
 
 	destroy(): void {

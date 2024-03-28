@@ -123,7 +123,7 @@ export class UmbDictionaryWorkspaceContext
 		this.#data.setValue(data);
 	}
 
-	async save() {
+	async submit() {
 		if (!this.#data.value) return;
 		if (!this.#data.value.unique) return;
 
@@ -160,7 +160,7 @@ export class UmbDictionaryWorkspaceContext
 		if (!data) return;
 
 		this.setIsNew(false);
-		this.workspaceComplete(data);
+		return true;
 	}
 
 	public destroy(): void {

@@ -404,12 +404,12 @@ export class UmbMediaWorkspaceContext
 		}
 	}
 
-	async save() {
+	async submit() {
 		const data = this.getData();
 		if (!data) throw new Error('Data is missing');
 		await this.#createOrSave();
 		this.setIsNew(false);
-		this.workspaceComplete(data);
+		return true;
 	}
 
 	async delete() {

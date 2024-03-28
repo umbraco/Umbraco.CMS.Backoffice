@@ -186,7 +186,7 @@ ${currentContent}`;
 		await this.setMasterTemplate(parent.unique);
 	}
 
-	async save() {
+	async submit() {
 		if (!this.#data.value) throw new Error('Data is missing');
 
 		let newData = undefined;
@@ -220,8 +220,8 @@ ${currentContent}`;
 		if (newData) {
 			this.#data.setValue(newData);
 			this.setIsNew(false);
-			this.workspaceComplete(newData);
 		}
+		return true;
 	}
 
 	public destroy() {

@@ -170,7 +170,7 @@ export class UmbMemberTypeWorkspaceContext
 		}
 	}
 
-	async save() {
+	async submit() {
 		const data = this.getData();
 		if (data === undefined) throw new Error('Cannot save, no data');
 
@@ -199,7 +199,7 @@ export class UmbMemberTypeWorkspaceContext
 		}
 
 		this.setIsNew(false);
-		this.workspaceComplete(data);
+		return true;
 	}
 
 	public destroy(): void {

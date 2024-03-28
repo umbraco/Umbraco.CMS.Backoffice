@@ -85,7 +85,7 @@ export class UmbUserWorkspaceContext
 		this.#currentData.update({ [propertyName]: value });
 	}
 
-	async save() {
+	async submit() {
 		if (!this.#currentData.value) throw new Error('Data is missing');
 		if (!this.#currentData.value.unique) throw new Error('Unique is missing');
 
@@ -103,8 +103,8 @@ export class UmbUserWorkspaceContext
 			this.#persistedData.setValue(newData);
 			this.#currentData.setValue(newData);
 			this.setIsNew(false);
-			this.workspaceComplete(newData);
 		}
+		return true;
 	}
 
 	// TODO: implement upload progress

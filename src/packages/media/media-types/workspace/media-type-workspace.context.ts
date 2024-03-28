@@ -195,7 +195,7 @@ export class UmbMediaTypeWorkspaceContext
 	/**
 	 * Save or creates the media type, based on wether its a new one or existing.
 	 */
-	async save() {
+	async submit() {
 		const data = this.getData();
 
 		if (!data) {
@@ -228,7 +228,7 @@ export class UmbMediaTypeWorkspaceContext
 		}
 
 		this.setIsNew(false);
-		this.workspaceComplete(data);
+		return true;
 	}
 
 	public destroy(): void {

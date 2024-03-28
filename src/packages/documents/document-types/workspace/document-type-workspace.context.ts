@@ -218,7 +218,7 @@ export class UmbDocumentTypeWorkspaceContext
 	/**
 	 * Save or creates the document type, based on wether its a new one or existing.
 	 */
-	async save() {
+	async submit() {
 		const data = this.getData();
 		if (data === undefined) throw new Error('Cannot save, no data');
 
@@ -250,7 +250,7 @@ export class UmbDocumentTypeWorkspaceContext
 		}
 
 		this.setIsNew(false);
-		this.workspaceComplete(data);
+		return true;
 	}
 
 	public destroy(): void {

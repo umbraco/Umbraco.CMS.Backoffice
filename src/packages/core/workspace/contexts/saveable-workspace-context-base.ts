@@ -7,6 +7,7 @@ import { UmbBooleanState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbModalContext } from '@umbraco-cms/backoffice/modal';
 import { UMB_MODAL_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import type { Observable } from '@umbraco-cms/backoffice/external/rxjs';
+import { UmbValidationContext } from '@umbraco-cms/backoffice/validation';
 
 export abstract class UmbSaveableWorkspaceContextBase<WorkspaceDataModelType>
 	extends UmbContextBase<UmbSaveableWorkspaceContextBase<WorkspaceDataModelType>>
@@ -16,6 +17,14 @@ export abstract class UmbSaveableWorkspaceContextBase<WorkspaceDataModelType>
 
 	// TODO: We could make a base type for workspace modal data, and use this here: As well as a base for the result, to make sure we always include the unique (instead of the object type)
 	public readonly modalContext?: UmbModalContext<{ preset: object }>;
+
+	readonly #validation = new UmbValidationContext(this);
+
+	#submitPromise: Promise<void> | undefined;
+	#submitResolve: (() => void) | undefined;
+	#submitReject: (() => void) | undefined;
+
+	abstract readonly unique: Observable<string | null | undefined>;
 
 	#isNew = new UmbBooleanState(undefined);
 	isNew = this.#isNew.asObservable();
@@ -33,10 +42,20 @@ export abstract class UmbSaveableWorkspaceContextBase<WorkspaceDataModelType>
 	constructor(host: UmbControllerHost, workspaceAlias: string) {
 		super(host, UMB_WORKSPACE_CONTEXT.toString());
 		this.workspaceAlias = workspaceAlias;
+		// TODO: Consider if we can turn this consumption to submitComplete, just as a getContext. [NL]
 		this.consumeContext(UMB_MODAL_CONTEXT, (context) => {
 			(this.modalContext as UmbModalContext) = context;
 		});
 	}
+
+	/*
+	protected passValidation() {
+		this.#validation.preventFail();
+	}
+	protected failValidation() {
+		this.#validation.allowFail();
+	}
+	*/
 
 	protected resetState() {
 		this.#isNew.setValue(undefined);
@@ -50,11 +69,50 @@ export abstract class UmbSaveableWorkspaceContextBase<WorkspaceDataModelType>
 		this.#isNew.setValue(isNew);
 	}
 
-	protected workspaceComplete(data: WorkspaceDataModelType | undefined) {
-		if (this.modalContext) {
-			if (data) {
-				this.modalContext?.setValue(data);
+	async requestSubmit(): Promise<void> {
+		return this.validateAndSubmit((valid) => (valid ? this.submit() : this.invalidSubmit()));
+	}
+
+	protected async validateAndSubmit(callback: (valid: boolean) => Promise<boolean | undefined>): Promise<void> {
+		if (this.#submitPromise) {
+			return this.#submitPromise;
+		}
+		this.#submitPromise = new Promise<void>((resolve, reject) => {
+			this.#submitResolve = resolve;
+			this.#submitReject = reject;
+		});
+		this.#validation.validate().then(async (valid: boolean) => {
+			if ((await callback(valid)) === true) {
+				this.#submitComplete();
+			} else {
+				this.#submitFailed();
 			}
+		});
+
+		return this.#submitPromise;
+	}
+
+	#submitFailed() {
+		if (this.#submitPromise) {
+			this.#submitReject?.();
+			this.#submitPromise = undefined;
+			this.#submitResolve = undefined;
+			this.#submitReject = undefined;
+		}
+	}
+
+	#submitComplete() {
+		// Resolve the submit promise:
+		this.#submitResolve?.();
+		this.#submitPromise = undefined;
+		this.#submitResolve = undefined;
+		this.#submitReject = undefined;
+
+		// Calling reset on the validation context here. [NL]
+		this.#validation.reset();
+
+		if (this.modalContext) {
+			this.modalContext?.setValue(this.getData());
 			this.modalContext?.submit();
 		}
 	}
@@ -63,8 +121,10 @@ export abstract class UmbSaveableWorkspaceContextBase<WorkspaceDataModelType>
 	abstract getUnique(): string | undefined;
 	abstract getEntityType(): string;
 	abstract getData(): WorkspaceDataModelType | undefined;
-	abstract save(): Promise<void>;
-	abstract readonly unique: Observable<string | null | undefined>;
+	protected abstract submit(): Promise<boolean | undefined>;
+	protected invalidSubmit(): Promise<boolean | undefined> {
+		return false;
+	}
 }
 
 /*

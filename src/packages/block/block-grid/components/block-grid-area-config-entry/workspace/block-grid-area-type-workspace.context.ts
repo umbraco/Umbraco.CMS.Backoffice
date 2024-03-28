@@ -108,7 +108,7 @@ export class UmbBlockGridAreaTypeWorkspaceContext
 		}
 	}
 
-	async save() {
+	async submit() {
 		if (!this.#data.value) return;
 
 		this.consumeContext(UMB_PROPERTY_CONTEXT, (context) => {
@@ -117,7 +117,7 @@ export class UmbBlockGridAreaTypeWorkspaceContext
 		});
 
 		this.setIsNew(false);
-		this.workspaceComplete(this.#data.value);
+		return true;
 	}
 
 	public destroy(): void {

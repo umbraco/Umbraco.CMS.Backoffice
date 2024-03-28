@@ -300,7 +300,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 		}
 	}
 
-	async save() {
+	async submit() {
 		const layoutData = this.#layout.value;
 		const contentData = this.content.getData();
 		if (!layoutData || !this.#blockManager || !this.#blockEntries || !contentData || !this.#modalContext) return;
@@ -333,7 +333,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 		}
 
 		this.setIsNew(false);
-		this.workspaceComplete(layoutData);
+		return true;
 	}
 
 	#modalRejected = () => {

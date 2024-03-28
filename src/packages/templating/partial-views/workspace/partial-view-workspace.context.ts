@@ -147,7 +147,7 @@ export class UmbPartialViewWorkspaceContext
 		}
 	}
 
-	public async save() {
+	public async submit() {
 		if (!this.#data.value) throw new Error('Data is missing');
 
 		let newData = undefined;
@@ -183,8 +183,8 @@ export class UmbPartialViewWorkspaceContext
 		if (newData) {
 			this.#data.setValue(newData);
 			this.setIsNew(false);
-			this.workspaceComplete(newData);
 		}
+		return true;
 	}
 
 	public destroy(): void {

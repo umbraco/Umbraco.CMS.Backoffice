@@ -1,6 +1,6 @@
 import type { UmbSaveableWorkspaceContext } from '../../contexts/tokens/saveable-workspace-context.interface.js';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
-import { html, customElement, state } from '@umbraco-cms/backoffice/external/lit';
+import { html, customElement, state, css } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { UmbRoute } from '@umbraco-cms/backoffice/router';
 import { UmbExtensionsApiInitializer } from '@umbraco-cms/backoffice/extension-api';
@@ -17,12 +17,16 @@ export class UmbEditableWorkspaceElement extends UmbLitElement {
 	}
 
 	render() {
-		return html`<uui-form>
-			<form>
-				<umb-router-slot .routes="${this._routes}"></umb-router-slot>
-			</form>
-		</uui-form>`;
+		return html` <umb-router-slot .routes="${this._routes}"></umb-router-slot>`;
 	}
+
+	static styles = [
+		css`
+			form {
+				display: contents;
+			}
+		`,
+	];
 }
 
 export default UmbEditableWorkspaceElement;
