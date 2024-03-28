@@ -81,6 +81,10 @@ const workspaceActions: Array<ManifestWorkspaceActions> = [
 				alias: 'Umb.Condition.WorkspaceAlias',
 				match: workspace.alias,
 			},
+			{
+				alias: 'Umb.Condition.UserPermission',
+				verbs: ['Umb.Document.Update', 'Umb.Document.Publish'],
+			},
 		],
 	},
 	{
@@ -99,6 +103,10 @@ const workspaceActions: Array<ManifestWorkspaceActions> = [
 			{
 				alias: 'Umb.Condition.WorkspaceAlias',
 				match: workspace.alias,
+			},
+			{
+				alias: 'Umb.Condition.UserPermission',
+				verbs: ['Umb.Document.Update'],
 			},
 		],
 	},
