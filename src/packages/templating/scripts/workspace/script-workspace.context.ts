@@ -33,7 +33,6 @@ export class UmbScriptWorkspaceContext
 	readonly unique = this.#data.asObservablePart((data) => data?.unique);
 	readonly name = this.#data.asObservablePart((data) => data?.name);
 	readonly content = this.#data.asObservablePart((data) => data?.content);
-	readonly path = this.#data.asObservablePart((data) => data?.path);
 
 	#isCodeEditorReady = new UmbBooleanState(false);
 	readonly isCodeEditorReady = this.#isCodeEditorReady.asObservable();
@@ -109,11 +108,18 @@ export class UmbScriptWorkspaceContext
 
 	async load(unique: string) {
 		this.resetState();
-		const { data } = await this.repository.requestByUnique(unique);
+		const { data, asObservable } = await this.repository.requestByUnique(unique);
+
+		this.observe(asObservable(), (data) => this.onDetailStoreChanges(data), 'umbDetailStoreObserver');
+
 		if (data) {
 			this.setIsNew(false);
 			this.#data.setValue(data);
 		}
+	}
+
+	onDetailStoreChanges(data: UmbScriptDetailModel | undefined) {
+		console.log(data);
 	}
 
 	async create(parent: { entityType: string; unique: string | null }) {
