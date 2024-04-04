@@ -1,4 +1,8 @@
-import type { UserItemResponseModel, UserResponseModel } from '@umbraco-cms/backoffice/external/backend-api';
+import type {
+	UserItemResponseModel,
+	UserResponseModel,
+	UserTwoFactorProviderModel,
+} from '@umbraco-cms/backoffice/external/backend-api';
 import { UserStateModel } from '@umbraco-cms/backoffice/external/backend-api';
 
 export type UmbMockUserModel = UserResponseModel & UserItemResponseModel;
@@ -21,6 +25,7 @@ export const data: Array<UmbMockUserModel> = [
 		userGroupIds: ['user-group-administrators-id', 'user-group-editors-id'],
 		userName: '',
 		avatarUrls: [],
+		isAdmin: true,
 	},
 	{
 		id: '82e11d3d-b91d-43c9-9071-34d28e62e81d',
@@ -39,6 +44,7 @@ export const data: Array<UmbMockUserModel> = [
 		userGroupIds: ['user-group-administrators-id'],
 		userName: '',
 		avatarUrls: [],
+		isAdmin: true,
 	},
 	{
 		id: 'aa1d83a9-bc7f-47d2-b288-58d8a31f5017',
@@ -57,6 +63,7 @@ export const data: Array<UmbMockUserModel> = [
 		userGroupIds: ['user-group-administrators-id'],
 		userName: '',
 		avatarUrls: [],
+		isAdmin: true,
 	},
 	{
 		id: 'ff2f4a50-d3d4-4bc4-869d-c7948c160e54',
@@ -75,6 +82,7 @@ export const data: Array<UmbMockUserModel> = [
 		userGroupIds: ['user-group-administrators-id'],
 		userName: '',
 		avatarUrls: [],
+		isAdmin: true,
 	},
 	{
 		id: 'c290c6d9-9f12-4838-8567-621b52a178de',
@@ -93,5 +101,21 @@ export const data: Array<UmbMockUserModel> = [
 		userGroupIds: ['user-group-administrators-id'],
 		userName: '',
 		avatarUrls: [],
+		isAdmin: true,
+	},
+];
+
+export const mfaLoginProviders: Array<UserTwoFactorProviderModel> = [
+	{
+		isEnabledOnUser: true,
+		providerName: 'Google Authenticator',
+	},
+	{
+		isEnabledOnUser: false,
+		providerName: 'sms',
+	},
+	{
+		isEnabledOnUser: true,
+		providerName: 'Email',
 	},
 ];
