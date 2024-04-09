@@ -11,5 +11,11 @@
 		"allowImportingTsExtensions": false
 	},
 	"include": ["./**/*.ts", "./**/*.json", "./**/*.js"],
-	"exclude": ["./**/*.test.ts", "./**/*.stories.ts", "tsconfig.json", "rollup.config.js"]
+	"exclude": [
+		"./**/*.test.ts",
+		"./**/*.stories.ts",
+		"tsconfig.json",
+		"rollup.config.js",
+		"./external/backend-api/request.custom.ts"
+	]
 }

@@ -5,5 +5,6 @@ dist-cms
 schemas
 temp-schema-generator
 APP_PLUGINS
+/src/external/backend-api/request.custom.ts
 /src/external/router-slot
 /examples
