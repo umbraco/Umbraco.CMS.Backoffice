@@ -19,9 +19,14 @@ export class UmbContextConsumerController<BaseType = unknown, ResultType extends
 		contextAlias: string | UmbContextToken<BaseType, ResultType>,
 		callback?: UmbContextCallback<ResultType>,
 	) {
-		super(host.getHostElement(), contextAlias, callback);
+		// There is no need to actually parse a host, as we instead provide the host via our getHostElement method.
+		super(undefined as unknown as Element, contextAlias, callback);
 		this.#host = host;
 		host.addUmbController(this);
+	}
+
+	getHostElement(): Element {
+		return this.#host.getHostElement();
 	}
 
 	public destroy(): void {

@@ -51,6 +51,10 @@ export class UmbContextConsumer<BaseType = unknown, ResultType extends BaseType 
 		this.#discriminator = (contextIdentifier as UmbContextToken<BaseType, ResultType>).getDiscriminator?.();
 	}
 
+	getHostElement(): Element {
+		return this._host;
+	}
+
 	/**
 	 * @public
 	 * @memberof UmbContextConsumer
@@ -124,7 +128,7 @@ export class UmbContextConsumer<BaseType = unknown, ResultType extends BaseType 
 			this._onResponse,
 			this.#stopAtContextMatch,
 		);
-		(this.#skipHost ? this._host.parentNode : this._host)?.dispatchEvent(event);
+		(this.#skipHost ? this.getHostElement().parentNode : this.getHostElement())?.dispatchEvent(event);
 	}
 
 	public hostConnected(): void {
