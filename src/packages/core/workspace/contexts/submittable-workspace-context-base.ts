@@ -9,6 +9,10 @@ import { UMB_MODAL_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import type { Observable } from '@umbraco-cms/backoffice/external/rxjs';
 import { UmbValidationContext } from '@umbraco-cms/backoffice/validation';
 
+// TODO: Move this feature into a keyboard shortcuts feature [NL]
+//const macOsPattern = /Mac|iPod|iPhone|iPad/;
+//const isMac = macOsPattern.test(window.navigator.platform);
+
 export abstract class UmbSubmittableWorkspaceContextBase<WorkspaceDataModelType>
 	extends UmbContextBase<UmbSubmittableWorkspaceContextBase<WorkspaceDataModelType>>
 	implements UmbSubmittableWorkspaceContext
@@ -45,6 +49,16 @@ export abstract class UmbSubmittableWorkspaceContextBase<WorkspaceDataModelType>
 		// TODO: Consider if we can turn this consumption to submitComplete, just as a getContext. [NL]
 		this.consumeContext(UMB_MODAL_CONTEXT, (context) => {
 			(this.modalContext as UmbModalContext) = context;
+		});
+
+		// TODO: Temporary keyboard shortcut solution, should be changed to a better generic shortcut solution. [NL]
+		(this.getHostElement() as HTMLElement).addEventListener('keyup', (e: KeyboardEvent) => {
+			if (e.key === 's' && e.ctrlKey) {
+				//e.metaKey when its mac, but I could not make this work in MacOS Chrome [NL]
+				e.preventDefault();
+				e.stopPropagation();
+				this.requestSubmit();
+			}
 		});
 	}
 
