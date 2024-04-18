@@ -197,7 +197,7 @@ export class UmbInputMemberGroupElement extends UUIFormControlMixin(UmbLitElemen
 		// TODO: get the correct variant name
 		const name = item.name;
 		return html`
-			<uui-ref-node name=${ifDefined(item.name)} detail=${ifDefined(item.unique)}>
+			<uui-ref-node name=${ifDefined(item.name)}>
 				<uui-action-bar slot="actions">
 					${this.#renderOpenButton(item)}
 					<uui-button
