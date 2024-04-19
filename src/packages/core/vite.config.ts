@@ -4,7 +4,7 @@ export default defineConfig({
 	build: {
 		lib: {
 			entry: {
-				manifest: 'manifests.ts',
+				manifests: 'manifests.ts',
 				'entry-point': 'entry-point.ts',
 				'action/index': './action/index.ts',
 				'auth/index': './auth/index.ts',

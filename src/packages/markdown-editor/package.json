@@ -1,5 +1,5 @@
 {
-	"name": "@umbraco-backoffice/core",
+	"name": "@umbraco-backoffice/markdown-editor",
 	"private": true,
 	"type": "module",
 	"scripts": {

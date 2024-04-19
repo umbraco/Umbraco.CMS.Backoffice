@@ -1,5 +1,5 @@
 {
-	"name": "@umbraco-backoffice/core",
+	"name": "@umbraco-backoffice/webhook",
 	"private": true,
 	"type": "module",
 	"scripts": {

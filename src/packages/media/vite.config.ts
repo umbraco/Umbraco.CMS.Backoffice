@@ -6,9 +6,8 @@ export default defineConfig({
 			entry: {
 				manifests: 'manifests.ts',
 				'umbraco-package': 'umbraco-package.ts',
-				'documents/index': './documents/index.ts',
-				'document-types/index': './document-types/index.ts',
-				'document-blueprints/index': './document-blueprints/index.ts',
+				'media/index': './media/index.ts',
+				'media-types/index': './media-types/index.ts',
 			},
 			formats: ['es'],
 		},
