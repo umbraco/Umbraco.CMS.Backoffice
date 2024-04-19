@@ -11,6 +11,11 @@ import type {
 	ManifestTreeItem,
 	ManifestTreeStore,
 } from '@umbraco-cms/backoffice/extension-registry';
+import {
+	UMB_DATA_TYPE_ENTITY_TYPE,
+	UMB_DATA_TYPE_FOLDER_ENTITY_TYPE,
+	UMB_DATA_TYPE_ROOT_ENTITY_TYPE,
+} from '../entity.js';
 
 const treeRepository: ManifestRepository = {
 	type: 'repository',
@@ -41,7 +46,7 @@ const treeItem: ManifestTreeItem = {
 	kind: 'default',
 	alias: 'Umb.TreeItem.DataType',
 	name: 'Data Type Tree Item',
-	forEntityTypes: ['data-type-root', 'data-type', 'data-type-folder'],
+	forEntityTypes: [UMB_DATA_TYPE_ROOT_ENTITY_TYPE, UMB_DATA_TYPE_ENTITY_TYPE, UMB_DATA_TYPE_FOLDER_ENTITY_TYPE],
 };
 
 export const manifests = [treeRepository, treeStore, tree, treeItem, ...folderManifests, ...reloadManifests];
