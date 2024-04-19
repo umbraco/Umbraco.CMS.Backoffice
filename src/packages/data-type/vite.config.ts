@@ -7,7 +7,7 @@ export default defineConfig({
 			formats: ['es'],
 		},
 		outDir: 'dist',
-		sourcemap: true,
+		//sourcemap: true,
 		rollupOptions: {
 			external: [/^@umbraco/],
 		},
