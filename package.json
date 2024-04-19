@@ -121,6 +121,9 @@
 		"email": "backoffice@umbraco.com",
 		"url": "https://umbraco.com"
 	},
+	"workspaces": [
+		"./src/packages/data-type"
+	],
 	"scripts": {
 		"backoffice:test:e2e": "npx playwright test",
 		"build-storybook": "npm run wc-analyze && storybook build",
