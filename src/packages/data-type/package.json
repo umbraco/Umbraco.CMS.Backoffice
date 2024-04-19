@@ -1,0 +1,9 @@
+{
+	"name": "@umbraco-backoffice/data-type",
+	"license": "MIT",
+	"version": "14.0.0-rc1",
+	"type": "module",
+	"scripts": {
+		"build": "vite build"
+	}
+}
