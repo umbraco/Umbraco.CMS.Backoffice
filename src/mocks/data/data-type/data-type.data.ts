@@ -491,6 +491,29 @@ export const data: Array<UmbMockDataTypeModel> = [
 		],
 	},
 	{
+		name: 'Code Editor',
+		id: 'dt-codeEditor',
+		parent: null,
+		editorAlias: 'Umbraco.CodeEditor',
+		editorUiAlias: 'Umb.PropertyEditorUi.CodeEditor',
+		hasChildren: false,
+		isFolder: false,
+		values: [
+			{
+				alias: 'language',
+				value: {
+					0: { sortOrder: 1, value: 'Razor' },
+					1: { sortOrder: 2, value: 'HTML' },
+					2: { sortOrder: 3, value: 'CSS' },
+					3: { sortOrder: 4, value: 'JavaScript' },
+					4: { sortOrder: 3, value: 'TypeScript' },
+					5: { sortOrder: 3, value: 'Markdown' },
+					6: { sortOrder: 3, value: 'JSON' },
+				},
+			},
+		],
+	},
+	{
 		name: 'Markdown Editor',
 		id: 'dt-markdownEditor',
 		parent: null,
