@@ -3,10 +3,33 @@
   "compilerOptions": {
     "noEmit": false,
     "composite": true,
-    "outDir": "./types",
+    "outDir": "./dist",
     "declaration": true,
     "emitDeclarationOnly": true,
   },
   "include": ["./**/*.ts"],
   "exclude": ["./**/*.test.ts", "./**/*.stories.ts"],
+  "references": [
+    { 
+      "path": "../../libs/context-api" 
+    },
+    { 
+      "path": "../../libs/controller-api"
+    },
+    { 
+      "path": "../../libs/element-api"
+    },
+    { 
+      "path": "../../libs/extension-api"
+    },
+    { 
+      "path": "../../libs/extension-api"
+    },
+    { 
+      "path": "../../libs/observable-api"
+    },
+    { 
+      "path": "../core"
+    },
+  ]
 }
