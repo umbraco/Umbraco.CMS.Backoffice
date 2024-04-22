@@ -1,0 +1,32 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "composite": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["./**/*.test.ts", "./**/*.stories.ts"],
+  "references": [
+    {
+      "path": "../class-api"
+    },
+    {
+      "path": "../context-api"
+    },
+    {
+      "path": "../controller-api"
+    },
+    {
+      "path": "../extension-api"
+    },
+    {
+      "path": "../localization-api"
+    },
+    {
+      "path": "../observable-api"
+    },
+  ]
+}
