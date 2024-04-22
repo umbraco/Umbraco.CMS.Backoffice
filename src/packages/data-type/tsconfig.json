@@ -1,16 +1,12 @@
 {
-  "extends": "../../tsconfig.build.json",
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
+    "noEmit": false,
     "composite": true,
-    "outDir": "./dist",
+    "outDir": "./types",
     "declaration": true,
     "emitDeclarationOnly": true,
   },
-  /*
-  "references": [
-    { 
-      "path": "../core" 
-    },
-  ]
-  */
+  "include": ["./**/*.ts"],
+  "exclude": ["./**/*.test.ts", "./**/*.stories.ts"],
 }
