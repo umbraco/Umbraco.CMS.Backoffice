@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.build.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist",
+		"rootDir": "./",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+  },
+  "include": ["./**/*.ts", "./**/*.json", "./**/*.js"],
+	"exclude": ["./**/*.test.ts", "./**/*.stories.ts", "tsconfig.json", "rollup.config.js"]
+  /*
+  "references": [
+    { 
+      "path": "../core" 
+    },
+  ]
+  */
+}
