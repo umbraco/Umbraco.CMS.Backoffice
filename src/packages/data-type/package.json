@@ -3,6 +3,6 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "vite build"
+		"build": "tsc && vite build"
 	}
 }
