@@ -3,6 +3,6 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "tsc && vite build"
+		"build": "tsc --project tsconfig.json --showConfig"
 	}
 }
