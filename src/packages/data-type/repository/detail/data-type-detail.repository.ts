@@ -4,6 +4,7 @@ import type { UmbDataTypeDetailModel } from '../../types.js';
 import { UmbDataTypeServerDataSource } from './data-type-detail.server.data-source.js';
 import type { UmbDataTypeDetailStore } from './data-type-detail.store.js';
 import { UMB_DATA_TYPE_DETAIL_STORE_CONTEXT } from './data-type-detail.store.js';
+
 export class UmbDataTypeDetailRepository extends UmbDetailRepositoryBase<UmbDataTypeDetailModel> {
 	#init: Promise<unknown>;
 	#detailStore?: UmbDataTypeDetailStore;
