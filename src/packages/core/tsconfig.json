@@ -32,25 +32,25 @@
       "path": "../../libs/observable-api"
     },
     {
-      "path": "../../extenal/backend-api"
+      "path": "../../external/backend-api"
     },
     {
-      "path": "../../extenal/lit"
+      "path": "../../external/lit"
     },
     {
-      "path": "../../extenal/openid"
+      "path": "../../external/openid"
     },
     {
-      "path": "../../extenal/router-slot"
+      "path": "../../external/router-slot"
     },
     {
-      "path": "../../extenal/rxjs"
+      "path": "../../external/rxjs"
     },
     {
-      "path": "../../extenal/uui"
+      "path": "../../external/uui"
     },
     {
-      "path": "../../extenal/uuid"
+      "path": "../../external/uuid"
     }
   ]
 }
