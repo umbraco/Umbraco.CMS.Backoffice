@@ -57,37 +57,37 @@
       "path": "../../../apps/app"
     },
     {
-      "path": "../../packages/block"
+      "path": "../block"
     },
     {
-      "path": "../../packages/code-editor"
+      "path": "../code-editor"
     },
     {
-      "path": "../../packages/user"
+      "path": "../user"
     },
     {
-      "path": "../../packages/data-type"
+      "path": "../data-type"
     },
     {
-      "path": "../../packages/document-type"
+      "path": "../document-type"
     },
     {
-      "path": "../../packages/document"
+      "path": "../document"
     },
     {
-      "path": "../../packages/language"
+      "path": "../language"
     },
     {
-      "path": "../../packages/media-type"
+      "path": "../media-type"
     },
     {
-      "path": "../../packages/media"
+      "path": "../media"
     },
     {
-      "path": "../../packages/member-type"
+      "path": "../member-type"
     },
     {
-      "path": "../../packages/tiny-mce"
+      "path": "../tiny-mce"
     }
   ]
 }
