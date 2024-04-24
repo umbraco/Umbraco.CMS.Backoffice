@@ -39,7 +39,7 @@
       "path": "../../external/uui"
     },
     { 
-      "path": "../core"
+      "path": "../../packages/core"
     },
   ]
 }

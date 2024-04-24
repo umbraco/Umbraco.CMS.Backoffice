@@ -69,22 +69,16 @@
       "path": "../data-type"
     },
     {
-      "path": "../document-type"
-    },
-    {
-      "path": "../document"
+      "path": "../documents"
     },
     {
       "path": "../language"
     },
     {
-      "path": "../media-type"
-    },
-    {
       "path": "../media"
     },
     {
-      "path": "../member-type"
+      "path": "../members"
     },
     {
       "path": "../tiny-mce"
