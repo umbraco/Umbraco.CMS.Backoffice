@@ -1,0 +1,21 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "composite": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["./**/*.test.ts", "./**/*.stories.ts"],
+  "references": [
+    {
+      "path": "../../external/lit"
+    },
+    { 
+      "path": "../core"
+    },
+  ]
+}
