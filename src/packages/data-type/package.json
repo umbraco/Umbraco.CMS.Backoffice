@@ -2,7 +2,9 @@
 	"name": "@umbraco-backoffice/data-type",
 	"private": true,
 	"type": "module",
+	"typings": "./dist/index.d.ts",
 	"scripts": {
-		"build": "tsc --project tsconfig.json"
+		"build": "tsc --project tsconfig.json && npm run api-extractor",
+		"api-extractor": "api-extractor run --local --verbose"
 	}
 }
