@@ -9,7 +9,7 @@
     "emitDeclarationOnly": true,
   },
   "include": ["./**/*.ts"],
-  "exclude": ["./**/*.test.ts", "./**/*.stories.ts"],
+  "exclude": ["./**/*.test.ts", "./**/*.stories.ts", "./vite.config.ts", "umbraco-package.ts"],
   "references": [
     { 
       "path": "../../external/backend-api"
