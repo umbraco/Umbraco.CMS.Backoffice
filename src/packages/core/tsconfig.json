@@ -53,7 +53,6 @@
     {
       "path": "../../external/uuid"
     },
-    // TODO: fighure out how to get rid of these. The core can't be dependent on individual packages.
     {
       "path": "../../../apps/app"
     },
