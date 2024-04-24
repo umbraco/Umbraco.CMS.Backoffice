@@ -51,6 +51,43 @@
     },
     {
       "path": "../../external/uuid"
+    },
+    // TODO: fighure out how to get rid of these. The core can't be dependent on individual packages.
+    {
+      "path": "../../../apps/app"
+    },
+    {
+      "path": "../../packages/block"
+    },
+    {
+      "path": "../../packages/code-editor"
+    },
+    {
+      "path": "../../packages/user"
+    },
+    {
+      "path": "../../packages/data-type"
+    },
+    {
+      "path": "../../packages/document-type"
+    },
+    {
+      "path": "../../packages/document"
+    },
+    {
+      "path": "../../packages/language"
+    },
+    {
+      "path": "../../packages/media-type"
+    },
+    {
+      "path": "../../packages/media"
+    },
+    {
+      "path": "../../packages/member-type"
+    },
+    {
+      "path": "../../packages/tiny-mce"
     }
   ]
 }
