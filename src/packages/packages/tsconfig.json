@@ -21,13 +21,7 @@
       "path": "../../libs/controller-api"
     },
     {
-      "path": "../../libs/element-api"
-    },
-    {
       "path": "../../libs/extension-api"
-    },
-    {
-      "path": "../../libs/localization-api"
     },
     {
       "path": "../../libs/observable-api"
@@ -39,55 +33,13 @@
       "path": "../../external/lit"
     },
     {
-      "path": "../../external/openid"
-    },
-    {
-      "path": "../../external/router-slot"
-    },
-    {
       "path": "../../external/rxjs"
     },
     {
       "path": "../../external/uui"
     },
-    {
-      "path": "../../external/uuid"
+    { 
+      "path": "../core"
     },
-    {
-      "path": "../../apps/app"
-    },
-    {
-      "path": "../block"
-    },
-    {
-      "path": "../code-editor"
-    },
-    {
-      "path": "../user"
-    },
-    {
-      "path": "../data-type"
-    },
-    {
-      "path": "../document-type"
-    },
-    {
-      "path": "../document"
-    },
-    {
-      "path": "../language"
-    },
-    {
-      "path": "../media-type"
-    },
-    {
-      "path": "../media"
-    },
-    {
-      "path": "../member-type"
-    },
-    {
-      "path": "../tiny-mce"
-    }
   ]
 }

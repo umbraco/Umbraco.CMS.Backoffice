@@ -1,0 +1,27 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "composite": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["./**/*.test.ts", "./**/*.stories.ts"],
+  "references": [
+    {
+      "path": "../../libs/observable-api"
+    },
+    {
+      "path": "../../external/lit"
+    },
+    {
+      "path": "../../external/uui"
+    },
+    { 
+      "path": "../core"
+    },
+  ]
+}
