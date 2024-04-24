@@ -11,6 +11,9 @@
   "exclude": ["./**/*.test.ts", "./**/*.stories.ts"],
   "references": [
     { 
+      "path": "../../external/backend-api"
+    },
+    { 
       "path": "../../libs/context-api" 
     },
     { 
@@ -18,9 +21,6 @@
     },
     { 
       "path": "../../libs/element-api"
-    },
-    { 
-      "path": "../../libs/extension-api"
     },
     { 
       "path": "../../libs/extension-api"
