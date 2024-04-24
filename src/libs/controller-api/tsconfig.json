@@ -5,6 +5,7 @@
     "composite": true,
     "outDir": "./dist",
     "declaration": true,
+    "declarationMap": true,
     "emitDeclarationOnly": true,
   },
   "include": ["./**/*.ts"],
