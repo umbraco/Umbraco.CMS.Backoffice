@@ -3,6 +3,6 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "tsc --project tsconfig.json --showConfig"
+		"build": "tsc --project tsconfig.json"
 	}
 }
