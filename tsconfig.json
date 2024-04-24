@@ -131,9 +131,6 @@
 		"storybook/stories/**/*.ts",
 		"examples/**/*.ts"
 	],
-	"exclude": [
-		"src/packages/data-type",
-	],
 	"references": [
 		{
 			"path": "./tsconfig.node.json"
