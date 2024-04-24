@@ -4,7 +4,7 @@
 	"type": "module",
 	"typings": "./dist/index.d.ts",
 	"scripts": {
-		"build": "tsc --project tsconfig.json",
+		"build": "tsc --build --clean",
 		"api-extractor": "api-extractor run --local --verbose"
 	}
 }
