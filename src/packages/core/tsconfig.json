@@ -60,7 +60,7 @@
       "path": "../block"
     },
     {
-      "path": "../code-editor"
+      "path": "../templating"
     },
     {
       "path": "../user"
