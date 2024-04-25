@@ -20,9 +20,9 @@ export class UmbPropertyEditorUINumberElement extends UmbLitElement implements U
 
 	public set config(config: UmbPropertyEditorConfigCollection | undefined) {
 		if (!config) return;
-		this._min = this.#parseInt(config.getValueByAlias('min'));
-		this._max = this.#parseInt(config.getValueByAlias('max'));
-		this._step = this.#parseInt(config.getValueByAlias('step'));
+		this._min = config.getValueByAlias('min', this.#parseInt);
+		this._max = config.getValueByAlias('max', this.#parseInt);
+		this._step = config.getValueByAlias('step', this.#parseInt);
 	}
 
 	#parseInt(input: unknown): number | undefined {
