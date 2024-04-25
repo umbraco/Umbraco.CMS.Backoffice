@@ -13,11 +13,15 @@ export class UmbPropertyEditorConfigCollection extends Array<UmbPropertyEditorCo
 		return Array;
 	}
 
-	getValueByAlias<T>(alias: string): T | undefined {
+	getValueByAlias<T>(alias: string, converter?: (value: unknown) => T): T | undefined {
 		const property = this.getByAlias(alias);
 
 		if (property?.value === undefined || property?.value === null) {
 			return;
+		}
+
+		if (converter) {
+			return converter(property.value) as T;
 		}
 
 		return property.value as T;
