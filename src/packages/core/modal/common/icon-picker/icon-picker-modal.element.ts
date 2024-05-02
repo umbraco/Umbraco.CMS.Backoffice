@@ -5,7 +5,7 @@ import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 
 import type { UmbIconPickerModalData, UmbIconPickerModalValue } from '@umbraco-cms/backoffice/modal';
 import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
-import { extractUmbColorVariable, umbracoColors } from '@umbraco-cms/backoffice/resources';
+import { extractUmbColorVariable, getUniqueUmbracoColors } from '@umbraco-cms/backoffice/resources';
 import { umbFocus } from '@umbraco-cms/backoffice/lit-element';
 import { UMB_ICON_REGISTRY_CONTEXT, type UmbIconDefinition } from '@umbraco-cms/backoffice/icon';
 
@@ -20,7 +20,7 @@ export class UmbIconPickerModalElement extends UmbModalBaseElement<UmbIconPicker
 	private _iconsFiltered?: Array<UmbIconDefinition>;
 
 	@state()
-	private _colorList = umbracoColors.filter((color) => !color.legacy);
+	private _colorList = getUniqueUmbracoColors();
 
 	@state()
 	private _currentIcon?: string;
