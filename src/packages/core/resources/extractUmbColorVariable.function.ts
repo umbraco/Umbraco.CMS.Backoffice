@@ -26,3 +26,15 @@ export function extractUmbColorVariable(colorAlias: string): string | undefined 
 	const found = umbracoColors.find((umbColor) => umbColor.alias === colorAlias);
 	return found?.varName;
 }
+
+
+/** 
+ * Gets `umbracoColors` unique by their `varName` property
+ */
+export function getUniqueUmbracoColors() {
+	const uniqueBy = 'varName'
+	const colorVariablesUniqueBy_varName = [...new Map(umbracoColors.map(item => 
+		[item[uniqueBy], item]
+	)).values()];
+	return colorVariablesUniqueBy_varName;
+}
