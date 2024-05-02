@@ -57,9 +57,6 @@
       "path": "../../apps/app"
     },
     {
-      "path": "../block"
-    },
-    {
       "path": "../templating"
     },
     {
