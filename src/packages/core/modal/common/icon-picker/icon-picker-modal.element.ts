@@ -26,7 +26,7 @@ export class UmbIconPickerModalElement extends UmbModalBaseElement<UmbIconPicker
 	private _currentIcon?: string;
 
 	@state()
-	private _currentColor = 'text';
+	private _currentColor = 'black';
 
 	constructor() {
 		super();
@@ -57,7 +57,7 @@ export class UmbIconPickerModalElement extends UmbModalBaseElement<UmbIconPicker
 				this.modalContext?.value,
 				(newValue) => {
 					this._currentIcon = newValue?.icon;
-					this._currentColor = newValue?.color ?? 'text';
+					this._currentColor = newValue?.color ?? 'black';
 				},
 				'_observeModalContextValue',
 			);
