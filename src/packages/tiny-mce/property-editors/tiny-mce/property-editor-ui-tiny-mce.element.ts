@@ -1,10 +1,11 @@
-import { customElement, html, property } from '@umbraco-cms/backoffice/external/lit';
+import { customElement, html, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbPropertyValueChangeEvent } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 
 import '../../components/input-tiny-mce/input-tiny-mce.element.js';
+import { UMB_PROPERTY_CONTEXT } from '@umbraco-cms/backoffice/property';
 
 type RichTextEditorValue = {
 	blocks: object;
@@ -23,6 +24,20 @@ export class UmbPropertyEditorUITinyMceElement extends UmbLitElement implements 
 		blocks: {},
 		markup: '',
 	};
+
+	@state()
+	private _alias?: string;
+
+	@state()
+	private _variantId?: string;
+
+	constructor() {
+		super();
+		this.consumeContext(UMB_PROPERTY_CONTEXT, (context) => {
+			this.observe(context.alias, (alias) => (this._alias = alias));
+			this.observe(context.variantId, (variantId) => (this._variantId = variantId?.toString() || 'invariant'));
+		});
+	}
 
 	@property({ attribute: false })
 	public set config(config: UmbPropertyEditorConfigCollection | undefined) {
@@ -45,6 +60,8 @@ export class UmbPropertyEditorUITinyMceElement extends UmbLitElement implements 
 			<umb-input-tiny-mce
 				.configuration=${this.#configuration}
 				.value=${this.value?.markup ?? ''}
+				.propertyAlias=${this._alias}
+				.variantId=${this._variantId}
 				@change=${this.#onChange}>
 			</umb-input-tiny-mce>
 		`;

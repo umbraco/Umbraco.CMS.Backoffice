@@ -2,7 +2,7 @@ import type { UmbMediaPathModel } from '../types.js';
 import type { UmbMediaDetailModel } from '../../../types.js';
 import { UmbMediaDetailRepository } from '../../../repository/index.js';
 import { UmbMediaTreeRepository } from '../../../tree/media-tree.repository.js';
-import { css, html, customElement, state, repeat, property } from '@umbraco-cms/backoffice/external/lit';
+import { css, html, customElement, state, repeat, property, query } from '@umbraco-cms/backoffice/external/lit';
 import type { UUIInputElement, UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { UmbId } from '@umbraco-cms/backoffice/id';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
@@ -37,9 +37,18 @@ export class UmbMediaPickerFolderPathElement extends UmbLitElement {
 	@state()
 	private _typingNewFolder = false;
 
+	@query('#path')
+	private _pathContainer?: HTMLElement;
+
 	connectedCallback(): void {
 		super.connectedCallback();
 		this.#loadPath();
+	}
+
+	#scroll() {
+		requestAnimationFrame(() => {
+			if (this._pathContainer) this._pathContainer.scrollLeft = this._pathContainer.scrollWidth;
+		});
 	}
 
 	async #loadPath() {
@@ -48,11 +57,18 @@ export class UmbMediaPickerFolderPathElement extends UmbLitElement {
 				descendantUnique: this.currentPath,
 			});
 			if (data) {
-				this._paths = [root, ...data.map((item) => ({ name: item.name, unique: item.unique }))];
+				this._paths = [
+					root,
+					...data.map((item) => {
+						const name = item.name.length > 15 ? item.name.slice(0, 12) + '...' : item.name;
+						return { name, unique: item.unique };
+					}),
+				];
 			} else {
 				this._paths = [root];
 			}
 		}
+		this.#scroll();
 	}
 
 	#goToFolder(unique: string | null) {
@@ -108,7 +124,7 @@ export class UmbMediaPickerFolderPathElement extends UmbLitElement {
 	}
 
 	render() {
-		return html`<div id="path">
+		return html`<uui-scroll-container id="path">
 			${repeat(
 				this._paths,
 				(path) => path.unique,
@@ -127,21 +143,27 @@ export class UmbMediaPickerFolderPathElement extends UmbLitElement {
 						@blur=${this.#addFolder}
 						auto-width></uui-input>`
 				: html`<uui-button label="add folder" compact @click=${this.#focusFolderInput}>+</uui-button>`}
-		</div>`;
+		</uui-scroll-container>`;
 	}
 
 	static styles = [
 		css`
+			:host {
+				display: flex;
+			}
 			#path {
 				display: flex;
+				overflow: auto;
 				align-items: center;
 				margin: 0 var(--uui-size-3);
 			}
 			#path uui-button {
 				font-weight: bold;
+				flex: 0 0 auto;
 			}
 			#path uui-input {
-				height: 100%;
+				height: max-content;
+				overflow: hidden;
 			}
 		`,
 	];

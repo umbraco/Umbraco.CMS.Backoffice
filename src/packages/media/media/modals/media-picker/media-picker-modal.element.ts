@@ -3,7 +3,11 @@ import { UmbMediaTreeRepository } from '../../tree/media-tree.repository.js';
 import type { UmbMediaCardItemModel } from './types.js';
 import type { UmbMediaPickerFolderPathElement } from './components/media-picker-folder-path.element.js';
 import type { UmbMediaPickerModalData, UmbMediaPickerModalValue } from './media-picker-modal.token.js';
-import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
+import {
+	UMB_WORKSPACE_MODAL,
+	UmbModalBaseElement,
+	UmbModalRouteRegistrationController,
+} from '@umbraco-cms/backoffice/modal';
 import { css, html, customElement, state, repeat, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 import type { UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 
@@ -26,6 +30,24 @@ export class UmbMediaPickerModalElement extends UmbModalBaseElement<UmbMediaPick
 
 	@state()
 	private _currentNode: string | null = null;
+
+	@state()
+	private _createMediaPath = '';
+
+	constructor() {
+		super();
+		new UmbModalRouteRegistrationController(this, UMB_WORKSPACE_MODAL)
+			.addAdditionalPath('media')
+			.onSetup(() => {
+				return { data: { entityType: 'media', preset: {} } };
+			})
+			.onSubmit(() => {
+				this.#loadMediaFolder();
+			})
+			.observeRouteBuilder((routeBuilder) => {
+				this._createMediaPath = routeBuilder({});
+			});
+	}
 
 	connectedCallback(): void {
 		super.connectedCallback();
@@ -56,6 +78,7 @@ export class UmbMediaPickerModalElement extends UmbModalBaseElement<UmbMediaPick
 
 			return { name: item.name, unique: item.unique, url, extension };
 		});
+		//Technically we could sort the items so that those without urls (likely considered a folder) appears first.
 	}
 
 	#onOpen(item: UmbMediaCardItemModel) {
@@ -115,7 +138,7 @@ export class UmbMediaPickerModalElement extends UmbModalBaseElement<UmbMediaPick
 		return html`
 			<umb-body-layout headline=${this.localize.term('defaultdialogs_selectMedia')}>
 				${this.#renderBody()} ${this.#renderPath()}
-				<div slot="actions">
+				<div slot="actions" id="actions">
 					<uui-button label=${this.localize.term('general_close')} @click=${this._rejectModal}></uui-button>
 					<uui-button
 						label=${this.localize.term('general_submit')}
@@ -146,7 +169,9 @@ export class UmbMediaPickerModalElement extends UmbModalBaseElement<UmbMediaPick
 
 	#renderToolbar() {
 		return html`<div id="toolbar">
-			<umb-media-picker-create-item .node=${this._currentNode}></umb-media-picker-create-item>
+			<umb-media-picker-create-item
+				.node=${this._currentNode}
+				.workspacePath=${this._createMediaPath}></umb-media-picker-create-item>
 			<div id="search">
 				<uui-input
 					label=${this.localize.term('general_search')}
@@ -213,6 +238,10 @@ export class UmbMediaPickerModalElement extends UmbModalBaseElement<UmbMediaPick
 				grid-template-rows: repeat(auto-fill, 200px);
 				gap: var(--uui-size-space-5);
 				padding-bottom: 5px; /** The modal is a bit jumpy due to the img card focus/hover border. This fixes the issue. */
+			}
+
+			#actions {
+				width: max-content;
 			}
 		`,
 	];

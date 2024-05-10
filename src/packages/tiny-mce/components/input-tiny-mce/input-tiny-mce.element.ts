@@ -15,6 +15,8 @@ import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import type { EditorEvent, Editor, RawEditorOptions } from '@umbraco-cms/backoffice/external/tinymce';
 import type { ManifestTinyMcePlugin } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
+import { UmbStringState } from '@umbraco-cms/backoffice/observable-api';
+import type { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 
 /**
  * Handles the resize event
@@ -58,6 +60,28 @@ export class UmbInputTinyMceElement extends UUIFormControlMixin(UmbLitElement, '
 	#editorRef?: Editor | null = null;
 	#stylesheetRepository = new UmbStylesheetDetailRepository(this);
 	#umbStylesheetRuleManager = new UmbStylesheetRuleManager();
+
+	@property()
+	public set propertyAlias(value: string | undefined) {
+		this.#propertyAlias.setValue(value ?? '');
+	}
+	public get propertyAlias() {
+		return this.#propertyAlias.getValue();
+	}
+
+	@property()
+	public set variantId(value: UmbVariantId | undefined | string) {
+		this.#variantId.setValue(value?.toString() ?? '');
+	}
+	public get variantId() {
+		return this.#variantId.getValue();
+	}
+
+	#propertyAlias = new UmbStringState('');
+	readonly alias = this.#propertyAlias.asObservable();
+
+	#variantId = new UmbStringState('');
+	readonly variant = this.#variantId.asObservable();
 
 	protected getFormElement() {
 		return this._editorElement?.querySelector('iframe') ?? undefined;

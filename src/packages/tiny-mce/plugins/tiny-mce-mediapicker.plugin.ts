@@ -1,17 +1,12 @@
 import { getGuid } from '../utils.js';
 import { UMB_MEDIA_CAPTION_ALT_TEXT_MODAL } from '../modals/media-caption-alt-text/media-caption-alt-text-modal.token.js';
 import { type TinyMcePluginArguments, UmbTinyMcePluginBase } from '../components/input-tiny-mce/tiny-mce-plugin.js';
-import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import { UMB_MODAL_MANAGER_CONTEXT, UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/modal';
 import type { UMB_CURRENT_USER_CONTEXT, UmbCurrentUserModel } from '@umbraco-cms/backoffice/current-user';
 import type { RawEditorOptions } from '@umbraco-cms/backoffice/external/tinymce';
 import { UmbTemporaryFileRepository } from '@umbraco-cms/backoffice/temporary-file';
 import { UmbId } from '@umbraco-cms/backoffice/id';
-import {
-	sizeImageInEditor,
-	uploadBlobImages,
-	UMB_MEDIA_TREE_PICKER_MODAL,
-	UMB_MEDIA_PICKER_MODAL,
-} from '@umbraco-cms/backoffice/media';
+import { sizeImageInEditor, uploadBlobImages, UMB_MEDIA_PICKER_MODAL } from '@umbraco-cms/backoffice/media';
 
 interface MediaPickerTargetData {
 	altText?: string;
@@ -35,14 +30,38 @@ export default class UmbTinyMceMediaPickerPlugin extends UmbTinyMcePluginBase {
 	#currentUserContext?: typeof UMB_CURRENT_USER_CONTEXT.TYPE;
 	#modalManager?: typeof UMB_MODAL_MANAGER_CONTEXT.TYPE;
 	#temporaryFileRepository;
+	#host;
+
+	#mediaPickerModal;
 
 	constructor(args: TinyMcePluginArguments) {
 		super(args);
+		this.#host = args.host;
 
 		this.#temporaryFileRepository = new UmbTemporaryFileRepository(args.host);
 
 		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (instance) => {
 			this.#modalManager = instance;
+		});
+
+		this.#mediaPickerModal = new UmbModalRouteRegistrationController(this.#host, UMB_MEDIA_PICKER_MODAL)
+			.addAdditionalPath(`:startNode/:selection`)
+			.addUniquePaths(['propertyAlias', 'variantId'])
+			.onSetup((params) => {
+				const startNode = UmbId.validate(params.startNode) ? params.startNode : null;
+				const selection = params.selection === 'null' ? [] : params.selection.split(',');
+				return { data: { multiple: false, startNode }, value: { selection } };
+			})
+			.onSubmit((value) => {
+				if (!value) return;
+				this.#showMediaCaptionAltText(value.selection[0]);
+			});
+
+		this.observe(this.#host.alias, (alias) => {
+			this.#mediaPickerModal?.setUniquePathValue('propertyAlias', alias);
+		});
+		this.observe(this.#host.variant, (variantId) => {
+			this.#mediaPickerModal?.setUniquePathValue('variantId', variantId?.toString());
 		});
 
 		// TODO => this breaks tests. disabling for now
@@ -143,23 +162,9 @@ export default class UmbTinyMceMediaPickerPlugin extends UmbTinyMcePluginBase {
 
 		// TODO => startNodeId and startNodeIsVirtual do not exist on ContentTreeItemResponseModel
 
-		const modalHandler = this.#modalManager?.open(this, UMB_MEDIA_PICKER_MODAL, {
-			data: {
-				multiple: false,
-				//startNodeIsVirtual,
-			},
-			value: {
-				selection: currentTarget.udi ? [getGuid(currentTarget.udi)] : [],
-			},
-		});
-
-		if (!modalHandler) return;
-
-		const { selection } = await modalHandler.onSubmit().catch(() => ({ selection: undefined }));
-		if (!selection || !selection.length) return;
-
-		this.#showMediaCaptionAltText(selection[0]);
-		this.editor.dispatch('Change');
+		const unique = this.configuration?.getByAlias('startNodeId')?.value;
+		const startNode = unique ? (unique as string) : 'null';
+		this.#mediaPickerModal?.open({ startNode, selection: currentTarget.udi ? getGuid(currentTarget.udi) : 'null' });
 	}
 
 	async #showMediaCaptionAltText(mediaUnique: string | null) {
@@ -177,6 +182,7 @@ export default class UmbTinyMceMediaPickerPlugin extends UmbTinyMcePluginBase {
 			udi: 'umb://media/' + mediaUnique?.replace(/-/g, ''),
 		};
 
+		this.editor.dispatch('Change');
 		this.#insertInEditor(media);
 	}
 

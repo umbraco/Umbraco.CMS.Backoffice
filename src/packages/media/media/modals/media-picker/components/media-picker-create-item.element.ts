@@ -8,6 +8,7 @@ export class UmbMediaPickerCreateItemElement extends UmbLitElement {
 	#mediaTypeStructure = new UmbMediaTypeStructureRepository(this); // used to get allowed media items
 	#mediaDetailRepository = new UmbMediaDetailRepository(this); // used to get media type of node
 
+	private _workspacePath = '';
 	private _node: string | null = null;
 
 	@property()
@@ -15,9 +16,17 @@ export class UmbMediaPickerCreateItemElement extends UmbLitElement {
 		this._node = value;
 		this.#getAllowedMediaTypes();
 	}
-
 	public get node() {
 		return this._node;
+	}
+
+	@property()
+	public set workspacePath(value: string) {
+		this._workspacePath = value;
+		this.requestUpdate();
+	}
+	public get workspacePath() {
+		return this._workspacePath;
 	}
 
 	@state()
@@ -68,10 +77,7 @@ export class UmbMediaPickerCreateItemElement extends UmbLitElement {
 									(item) =>
 										html`<uui-menu-item
 											label=${item.name}
-											@click=${() =>
-												alert(
-													'TODO: Open workspace (create) from modal. You can drop the files into this modal for now.',
-												)}>
+											.href="${this.workspacePath}create/parent/media-root/${this.node ?? 'null'}/${item.unique}">
 											<umb-icon slot="icon" name=${item.icon ?? 'icon-circle-dotted'}></umb-icon>
 										</uui-menu-item>`,
 								)}
