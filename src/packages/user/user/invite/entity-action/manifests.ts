@@ -14,7 +14,7 @@ const entityActions: Array<ManifestTypes> = [
 		forEntityTypes: [UMB_USER_ENTITY_TYPE],
 		meta: {
 			icon: 'icon-message',
-			label: 'Resend Invite',
+			label: '#actions_resendInvite',
 		},
 		conditions: [
 			{
@@ -25,4 +25,4 @@ const entityActions: Array<ManifestTypes> = [
 	conditionManifest,
 ];
 
-export const manifests = [...entityActions];
+export const manifests: Array<ManifestTypes> = [...entityActions];

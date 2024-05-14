@@ -4,22 +4,22 @@ import { UmbTemplateDetailRepository, UmbTemplateItemRepository } from '../repos
 import { UMB_TEMPLATE_WORKSPACE_ALIAS } from './manifests.js';
 import { UmbTemplateWorkspaceEditorElement } from './template-workspace-editor.element.js';
 import { loadCodeEditor } from '@umbraco-cms/backoffice/code-editor';
-import type { UmbRoutableWorkspaceContext, UmbSaveableWorkspaceContext } from '@umbraco-cms/backoffice/workspace';
+import type { UmbRoutableWorkspaceContext, UmbSubmittableWorkspaceContext } from '@umbraco-cms/backoffice/workspace';
 import {
-	UmbSaveableWorkspaceContextBase,
+	UmbSubmittableWorkspaceContextBase,
 	UmbWorkspaceIsNewRedirectController,
 	UmbWorkspaceRouteManager,
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbBooleanState, UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
-import { UmbReloadTreeItemChildrenRequestEntityActionEvent } from '@umbraco-cms/backoffice/tree';
-import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/event';
+import { UmbRequestReloadTreeItemChildrenEvent } from '@umbraco-cms/backoffice/tree';
+import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
 import type { IRoutingInfo, PageComponent } from '@umbraco-cms/backoffice/router';
 
 export class UmbTemplateWorkspaceContext
-	extends UmbSaveableWorkspaceContextBase<UmbTemplateDetailModel>
-	implements UmbSaveableWorkspaceContext, UmbRoutableWorkspaceContext
+	extends UmbSubmittableWorkspaceContextBase<UmbTemplateDetailModel>
+	implements UmbSubmittableWorkspaceContext, UmbRoutableWorkspaceContext
 {
 	public readonly detailRepository = new UmbTemplateDetailRepository(this);
 	public readonly itemRepository = new UmbTemplateItemRepository(this);
@@ -186,27 +186,28 @@ ${currentContent}`;
 		await this.setMasterTemplate(parent.unique);
 	}
 
-	async save() {
+	async submit() {
 		if (!this.#data.value) throw new Error('Data is missing');
-
-		let newData = undefined;
 
 		if (this.getIsNew()) {
 			const parent = this.#parent.getValue();
 			if (!parent) throw new Error('Parent is not set');
-			const { data } = await this.detailRepository.create(this.#data.value, parent.unique);
-			newData = data;
+			const { error, data } = await this.detailRepository.create(this.#data.value, parent.unique);
+			if (error) throw new Error(error.message);
+			this.#data.setValue(data);
+			this.setIsNew(false);
 
 			// TODO: this might not be the right place to alert the tree, but it works for now
 			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-			const event = new UmbReloadTreeItemChildrenRequestEntityActionEvent({
+			const event = new UmbRequestReloadTreeItemChildrenEvent({
 				entityType: parent.entityType,
 				unique: parent.unique,
 			});
 			eventContext.dispatchEvent(event);
 		} else {
-			const { data } = await this.detailRepository.save(this.#data.value);
-			newData = data;
+			const { error, data } = await this.detailRepository.save(this.#data.value);
+			if (error) throw new Error(error.message);
+			this.#data.setValue(data);
 
 			const actionEventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
 			const event = new UmbRequestReloadStructureForEntityEvent({
@@ -215,12 +216,6 @@ ${currentContent}`;
 			});
 
 			actionEventContext.dispatchEvent(event);
-		}
-
-		if (newData) {
-			this.#data.setValue(newData);
-			this.setIsNew(false);
-			this.workspaceComplete(newData);
 		}
 	}
 

@@ -2,7 +2,7 @@ import type { UmbBlockDataType, UmbBlockLayoutBaseModel } from '../types.js';
 import { UmbBlockElementManager } from './block-element-manager.js';
 import { UmbBlockWorkspaceEditorElement } from './block-workspace-editor.element.js';
 import {
-	UmbSaveableWorkspaceContextBase,
+	UmbSubmittableWorkspaceContextBase,
 	UmbWorkspaceRouteManager,
 	type UmbRoutableWorkspaceContext,
 	UmbWorkspaceIsNewRedirectController,
@@ -20,7 +20,7 @@ import { decodeFilePath } from '@umbraco-cms/backoffice/utils';
 
 export type UmbBlockWorkspaceElementManagerNames = 'content' | 'settings';
 export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseModel = UmbBlockLayoutBaseModel>
-	extends UmbSaveableWorkspaceContextBase<LayoutDataType>
+	extends UmbSubmittableWorkspaceContextBase<LayoutDataType>
 	implements UmbRoutableWorkspaceContext
 {
 	// Just for context token safety:
@@ -131,7 +131,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 			this.#blockEntries.layoutOf(unique),
 			(layoutData) => {
 				this.#initialLayout ??= layoutData as LayoutDataType;
-				this.removeControllerByAlias('observeLayoutInitially');
+				this.removeUmbControllerByAlias('observeLayoutInitially');
 			},
 			'observeLayoutInitially',
 		);
@@ -156,7 +156,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 							this.#blockManager!.contentOf(contentUdi),
 							(contentData) => {
 								this.#initialContent ??= contentData;
-								this.removeControllerByAlias('observeContentInitially');
+								this.removeUmbControllerByAlias('observeContentInitially');
 							},
 							'observeContentInitially',
 						);
@@ -178,7 +178,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 							this.#blockManager!.contentOf(settingsUdi),
 							(settingsData) => {
 								this.#initialSettings ??= settingsData;
-								this.removeControllerByAlias('observeSettingsInitially');
+								this.removeUmbControllerByAlias('observeSettingsInitially');
 							},
 							'observeSettingsInitially',
 						);
@@ -300,10 +300,12 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 		}
 	}
 
-	async save() {
+	async submit() {
 		const layoutData = this.#layout.value;
 		const contentData = this.content.getData();
-		if (!layoutData || !this.#blockManager || !this.#blockEntries || !contentData || !this.#modalContext) return;
+		if (!layoutData || !this.#blockManager || !this.#blockEntries || !contentData || !this.#modalContext) {
+			throw new Error('Missing data');
+		}
 
 		const settingsData = this.settings.getData();
 
@@ -333,7 +335,6 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 		}
 
 		this.setIsNew(false);
-		this.workspaceComplete(layoutData);
 	}
 
 	#modalRejected = () => {

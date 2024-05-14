@@ -1,5 +1,5 @@
-import { UMB_DEFAULT_COLLECTION_CONTEXT } from '../default/collection-default.context.js';
-import type { MetaEntityBulkAction, ManifestEntityBulkAction } from '../../index.js';
+import { UMB_COLLECTION_CONTEXT } from '../default/collection-default.context.js';
+import type { ManifestEntityBulkAction, MetaEntityBulkAction } from '../../extension-registry/models/index.js';
 import type { UmbActionExecutedEvent } from '@umbraco-cms/backoffice/event';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, nothing, customElement, state } from '@umbraco-cms/backoffice/external/lit';
@@ -22,11 +22,11 @@ export class UmbCollectionSelectionActionsElement extends UmbLitElement {
 
 	private _selection: Array<string | null> = [];
 
-	private _collectionContext?: typeof UMB_DEFAULT_COLLECTION_CONTEXT.TYPE;
+	private _collectionContext?: typeof UMB_COLLECTION_CONTEXT.TYPE;
 
 	constructor() {
 		super();
-		this.consumeContext(UMB_DEFAULT_COLLECTION_CONTEXT, (instance) => {
+		this.consumeContext(UMB_COLLECTION_CONTEXT, (instance) => {
 			this._collectionContext = instance;
 			this._observeCollectionContext();
 		});

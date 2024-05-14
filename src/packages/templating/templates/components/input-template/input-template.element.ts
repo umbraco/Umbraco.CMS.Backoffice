@@ -4,7 +4,7 @@ import type { UmbTemplateItemModel } from '../../repository/item/index.js';
 import { UmbTemplateItemRepository } from '../../repository/item/index.js';
 import { UMB_TEMPLATE_PICKER_MODAL } from '../../modals/index.js';
 import { css, html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
-import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
+import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import {
 	UMB_MODAL_MANAGER_CONTEXT,
 	UMB_WORKSPACE_MODAL,
@@ -14,7 +14,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 
 @customElement('umb-input-template')
-export class UmbInputTemplateElement extends FormControlMixin(UmbLitElement) {
+export class UmbInputTemplateElement extends UUIFormControlMixin(UmbLitElement, '') {
 	/**
 	 * This is a minimum amount of selected items in this input.
 	 * @type {number}
@@ -129,7 +129,6 @@ export class UmbInputTemplateElement extends FormControlMixin(UmbLitElement) {
 		const modalManager = await this.getContext(UMB_MODAL_MANAGER_CONTEXT);
 		const modalContext = modalManager.open(this, UMB_TEMPLATE_PICKER_MODAL, {
 			data: {
-				hideTreeRoot: true,
 				multiple: true,
 				pickableFilter: (template) => template.unique !== null && !this._selection.includes(template.unique),
 			},
@@ -192,7 +191,7 @@ export class UmbInputTemplateElement extends FormControlMixin(UmbLitElement) {
 				`,
 			)}
 			<uui-button
-				id="add-button"
+				id="btn-add"
 				look="placeholder"
 				label="${this.localize.term('general_add')}"
 				@click="${this.#openPicker}"></uui-button>
@@ -208,7 +207,7 @@ export class UmbInputTemplateElement extends FormControlMixin(UmbLitElement) {
 				grid-template-rows: repeat(auto-fill, minmax(160px, 1fr));
 			}
 
-			#add-button {
+			#btn-add {
 				text-align: center;
 				height: 100%;
 			}

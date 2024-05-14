@@ -5,12 +5,9 @@ import { UmbMediaDetailRepository } from '../repository/index.js';
 import type { UmbMediaDetailModel, UmbMediaVariantModel, UmbMediaVariantOptionModel } from '../types.js';
 import { UMB_INVARIANT_CULTURE, UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import { UmbContentTypeStructureManager } from '@umbraco-cms/backoffice/content-type';
-import type {
-	UmbCollectionWorkspaceContext,
-	UmbVariantDatasetWorkspaceContext,
-} from '@umbraco-cms/backoffice/workspace';
 import {
-	UmbSaveableWorkspaceContextBase,
+	type UmbCollectionWorkspaceContext,
+	UmbSubmittableWorkspaceContextBase,
 	UmbWorkspaceIsNewRedirectController,
 	UmbWorkspaceRouteManager,
 	UmbWorkspaceSplitViewManager,
@@ -24,17 +21,22 @@ import {
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbLanguageCollectionRepository, type UmbLanguageDetailModel } from '@umbraco-cms/backoffice/language';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
-import { UmbReloadTreeItemChildrenRequestEntityActionEvent } from '@umbraco-cms/backoffice/tree';
-import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/event';
+import { UmbRequestReloadTreeItemChildrenEvent } from '@umbraco-cms/backoffice/tree';
+import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
 import type { UmbMediaTypeDetailModel } from '@umbraco-cms/backoffice/media-type';
-import UmbMediaWorkspaceEditorElement from './media-workspace-editor.element.js';
+import type { UmbContentWorkspaceContext } from '@umbraco-cms/backoffice/content';
+import { UmbEntityContext } from '@umbraco-cms/backoffice/entity';
+import { UmbIsTrashedEntityContext } from '@umbraco-cms/backoffice/recycle-bin';
 
 type EntityType = UmbMediaDetailModel;
 export class UmbMediaWorkspaceContext
-	extends UmbSaveableWorkspaceContextBase<EntityType>
-	implements UmbVariantDatasetWorkspaceContext, UmbCollectionWorkspaceContext<UmbMediaTypeDetailModel>
+	extends UmbSubmittableWorkspaceContextBase<EntityType>
+	implements
+		UmbContentWorkspaceContext<UmbMediaTypeDetailModel, UmbMediaVariantModel>,
+		UmbCollectionWorkspaceContext<UmbMediaTypeDetailModel>
 {
-	//
+	public readonly IS_CONTENT_WORKSPACE_CONTEXT = true as const;
+
 	public readonly repository = new UmbMediaDetailRepository(this);
 
 	#parent = new UmbObjectState<{ entityType: string; unique: string | null } | undefined>(undefined);
@@ -107,6 +109,11 @@ export class UmbMediaWorkspaceContext
 		},
 	);
 
+	// TODO: this should be set up for all entity workspace contexts in a base class
+	#entityContext = new UmbEntityContext(this);
+	// TODO: this might not be the correct place to spin this up
+	#isTrashedContext = new UmbIsTrashedEntityContext(this);
+
 	constructor(host: UmbControllerHost) {
 		super(host, 'Umb.Workspace.Media');
 
@@ -118,7 +125,7 @@ export class UmbMediaWorkspaceContext
 		this.routes.setRoutes([
 			{
 				path: 'create/parent/:entityType/:parentUnique/:mediaTypeUnique',
-				component: UmbMediaWorkspaceEditorElement,
+				component: () => import('./media-workspace-editor.element.js'),
 				setup: async (_component, info) => {
 					const parentEntityType = info.match.params.entityType;
 					const parentUnique = info.match.params.parentUnique === 'null' ? null : info.match.params.parentUnique;
@@ -134,7 +141,7 @@ export class UmbMediaWorkspaceContext
 			},
 			{
 				path: 'edit/:unique',
-				component: UmbMediaWorkspaceEditorElement,
+				component: () => import('./media-workspace-editor.element.js'),
 				setup: (_component, info) => {
 					const unique = info.match.params.unique;
 					this.load(unique);
@@ -162,6 +169,9 @@ export class UmbMediaWorkspaceContext
 		const { data, asObservable } = (await this.#getDataPromise) as GetDataType;
 
 		if (data) {
+			this.#entityContext.setEntityType(UMB_MEDIA_ENTITY_TYPE);
+			this.#entityContext.setUnique(unique);
+			this.#isTrashedContext.setIsTrashed(data.isTrashed);
 			this.setIsNew(false);
 			this.#persistedData.update(data);
 			this.#currentData.update(data);
@@ -184,6 +194,8 @@ export class UmbMediaWorkspaceContext
 		const { data } = await this.#getDataPromise;
 		if (!data) return undefined;
 
+		this.#entityContext.setEntityType(UMB_MEDIA_ENTITY_TYPE);
+		this.#entityContext.setUnique(data.unique);
 		this.setIsNew(true);
 		this.#persistedData.setValue(data);
 		this.#currentData.setValue(data);
@@ -385,7 +397,7 @@ export class UmbMediaWorkspaceContext
 
 				// TODO: this might not be the right place to alert the tree, but it works for now
 				const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-				const event = new UmbReloadTreeItemChildrenRequestEntityActionEvent({
+				const event = new UmbRequestReloadTreeItemChildrenEvent({
 					entityType: parent.entityType,
 					unique: parent.unique,
 				});
@@ -404,12 +416,13 @@ export class UmbMediaWorkspaceContext
 		}
 	}
 
-	async save() {
+	async submit() {
 		const data = this.getData();
-		if (!data) throw new Error('Data is missing');
+		if (!data) {
+			throw new Error('Data is missing');
+		}
 		await this.#createOrSave();
 		this.setIsNew(false);
-		this.workspaceComplete(data);
 	}
 
 	async delete() {

@@ -1,11 +1,10 @@
 import type { UmbInputDocumentElement } from '../../components/input-document/input-document.element.js';
 import { html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
-import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import {
-	UmbPropertyValueChangeEvent,
-	type UmbPropertyEditorConfigCollection,
-} from '@umbraco-cms/backoffice/property-editor';
+import { UmbPropertyValueChangeEvent } from '@umbraco-cms/backoffice/property-editor';
+import type { NumberRangeValueType } from '@umbraco-cms/backoffice/models';
+import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
+import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 
 @customElement('umb-property-editor-ui-document-picker')
 export class UmbPropertyEditorUIDocumentPickerElement extends UmbLitElement implements UmbPropertyEditorUiElement {
@@ -13,34 +12,50 @@ export class UmbPropertyEditorUIDocumentPickerElement extends UmbLitElement impl
 	public value?: string;
 
 	public set config(config: UmbPropertyEditorConfigCollection | undefined) {
-		const validationLimit = config?.find((x) => x.alias === 'validationLimit');
+		if (!config) return;
 
-		this._limitMin = (validationLimit?.value as any)?.min;
-		this._limitMax = (validationLimit?.value as any)?.max;
-	}
-	public get config() {
-		return undefined;
+		const minMax = config.getValueByAlias<NumberRangeValueType>('validationLimit');
+		if (minMax) {
+			this._min = minMax.min && minMax.min > 0 ? minMax.min : 0;
+			this._max = minMax.max && minMax.max > 0 ? minMax.max : Infinity;
+		}
+
+		this._ignoreUserStartNodes = config.getValueByAlias('ignoreUserStartNodes') ?? false;
+		this._startNodeId = config.getValueByAlias('startNodeId');
+		this._showOpenButton = config.getValueByAlias('showOpenButton') ?? false;
 	}
 
 	@state()
-	private _limitMin?: number;
-	@state()
-	private _limitMax?: number;
+	private _min = 0;
 
-	private _onChange(event: CustomEvent) {
-		this.value = (event.target as UmbInputDocumentElement).selection.join(',');
+	@state()
+	private _max = Infinity;
+
+	@state()
+	private _startNodeId?: string;
+
+	@state()
+	private _showOpenButton?: boolean;
+
+	@state()
+	private _ignoreUserStartNodes?: boolean;
+
+	#onChange(event: CustomEvent & { target: UmbInputDocumentElement }) {
+		this.value = event.target.selection.join(',');
 		this.dispatchEvent(new UmbPropertyValueChangeEvent());
 	}
 
-	// TODO: Implement mandatory?
 	render() {
+		const startNode = this._startNodeId ? { unique: this._startNodeId } : undefined;
 		return html`
 			<umb-input-document
-				@change=${this._onChange}
+				.min=${this._min}
+				.max=${this._max}
+				.startNode=${startNode}
 				.value=${this.value ?? ''}
-				.min=${this._limitMin ?? 0}
-				.max=${this._limitMax ?? Infinity}>
-				<umb-localize key="general_add">Add</umb-localize>
+				?ignoreUserStartNodes=${this._ignoreUserStartNodes}
+				?showOpenButton=${this._showOpenButton}
+				@change=${this.#onChange}>
 			</umb-input-document>
 		`;
 	}

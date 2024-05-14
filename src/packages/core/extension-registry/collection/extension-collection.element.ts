@@ -1,6 +1,7 @@
 import { umbExtensionsRegistry } from '../registry.js';
 import { html, customElement, css } from '@umbraco-cms/backoffice/external/lit';
-import { UMB_DEFAULT_COLLECTION_CONTEXT, UmbCollectionDefaultElement } from '@umbraco-cms/backoffice/collection';
+import { fromCamelCase } from '@umbraco-cms/backoffice/utils';
+import { UMB_COLLECTION_CONTEXT, UmbCollectionDefaultElement } from '@umbraco-cms/backoffice/collection';
 import type { UmbDefaultCollectionContext } from '@umbraco-cms/backoffice/collection';
 import type { UUISelectEvent } from '@umbraco-cms/backoffice/external/uui';
 
@@ -16,22 +17,15 @@ export class UmbExtensionCollectionElement extends UmbCollectionDefaultElement {
 	constructor() {
 		super();
 
-		this.consumeContext(UMB_DEFAULT_COLLECTION_CONTEXT, (collectionContext) => {
+		this.consumeContext(UMB_COLLECTION_CONTEXT, (collectionContext) => {
 			this.#collectionContext = collectionContext;
 		});
 
 		this.observe(umbExtensionsRegistry.extensions, (extensions) => {
 			const types = [...new Set(extensions.map((x) => x.type))];
-			const options = types.sort().map((x) => ({ name: this.#camelCaseToWords(x), value: x }));
+			const options = types.sort().map((x) => ({ name: fromCamelCase(x), value: x }));
 			this.#options = [{ name: 'All', value: '' }, ...options];
 		});
-	}
-
-	// TODO: make this a utility function, please check that we do not already have on for this: [NL]
-	// credit: https://stackoverflow.com/a/7225450/12787 [LK]
-	#camelCaseToWords(input: string) {
-		const result = input.replace(/([A-Z])/g, ' $1');
-		return result.charAt(0).toUpperCase() + result.slice(1);
 	}
 
 	#onChange(event: UUISelectEvent) {

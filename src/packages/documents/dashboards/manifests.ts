@@ -1,14 +1,14 @@
-import type { ManifestDashboard } from '@umbraco-cms/backoffice/extension-registry';
+import type { ManifestDashboard, ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 
 const dashboards: Array<ManifestDashboard> = [
 	{
 		type: 'dashboard',
 		alias: 'Umb.Dashboard.RedirectManagement',
 		name: 'Redirect Management Dashboard',
-		js: () => import('./redirect-management/dashboard-redirect-management.element.js'),
+		element: () => import('./redirect-management/dashboard-redirect-management.element.js'),
 		weight: 10,
 		meta: {
-			label: 'Redirect Management',
+			label: '#dashboardTabs_contentRedirectManager',
 			pathname: 'redirect-management',
 		},
 		conditions: [
@@ -20,4 +20,4 @@ const dashboards: Array<ManifestDashboard> = [
 	},
 ];
 
-export const manifests = [...dashboards];
+export const manifests: Array<ManifestTypes> = [...dashboards];

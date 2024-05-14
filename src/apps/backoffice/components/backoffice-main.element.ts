@@ -1,7 +1,7 @@
 import type { UmbBackofficeContext } from '../backoffice.context.js';
 import { UMB_BACKOFFICE_CONTEXT } from '../backoffice.context.js';
-import { css, html, customElement, state } from '@umbraco-cms/backoffice/external/lit';
-import { UmbSectionContext, UMB_SECTION_CONTEXT } from '@umbraco-cms/backoffice/section';
+import { css, html, customElement, state, nothing } from '@umbraco-cms/backoffice/external/lit';
+import { UmbSectionContext, UMB_SECTION_CONTEXT, UMB_SECTION_PATH_PATTERN } from '@umbraco-cms/backoffice/section';
 import type { UmbRoute, UmbRouterSlotChangeEvent } from '@umbraco-cms/backoffice/router';
 import type { ManifestSection, UmbSectionElement } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbExtensionManifestInitializer } from '@umbraco-cms/backoffice/extension-api';
@@ -16,7 +16,6 @@ export class UmbBackofficeMainElement extends UmbLitElement {
 	@state()
 	private _sections: Array<UmbExtensionManifestInitializer<ManifestSection>> = [];
 
-	private _routePrefix = 'section/';
 	private _backofficeContext?: UmbBackofficeContext;
 	private _sectionContext?: UmbSectionContext;
 
@@ -56,7 +55,7 @@ export class UmbBackofficeMainElement extends UmbLitElement {
 				} else {
 					return {
 						alias: section.alias,
-						path: this._routePrefix + (section.manifest as ManifestSection).meta.pathname,
+						path: UMB_SECTION_PATH_PATTERN.generateLocal({ sectionName: section.manifest!.meta.pathname }),
 						component: () => createExtensionElement(section.manifest!, 'umb-section-default'),
 						setup: (component) => {
 							(component as UmbSectionElement).manifest = section.manifest as ManifestSection;
@@ -66,10 +65,18 @@ export class UmbBackofficeMainElement extends UmbLitElement {
 			});
 
 		if (this._sections.length > 0) {
+			const fallbackSectionPath = UMB_SECTION_PATH_PATTERN.generateLocal({
+				sectionName: this._sections[0].manifest!.meta.pathname,
+			});
 			this._routes.push({
 				alias: '__redirect',
 				path: '/',
-				redirectTo: 'section/content',
+				redirectTo: fallbackSectionPath,
+			});
+			this._routes.push({
+				alias: '__redirect',
+				path: '/section/',
+				redirectTo: fallbackSectionPath,
 			});
 		}
 
@@ -78,7 +85,9 @@ export class UmbBackofficeMainElement extends UmbLitElement {
 
 	private _onRouteChange = async (event: UmbRouterSlotChangeEvent) => {
 		const currentPath = event.target.localActiveViewPath || '';
-		const section = this._sections.find((s) => this._routePrefix + s.manifest?.meta.pathname === currentPath);
+		const section = this._sections.find(
+			(s) => UMB_SECTION_PATH_PATTERN.generateLocal({ sectionName: s.manifest!.meta.pathname }) === currentPath,
+		);
 		if (!section) return;
 		await section.asPromise();
 		if (section.manifest) {
@@ -99,17 +108,18 @@ export class UmbBackofficeMainElement extends UmbLitElement {
 	render() {
 		return this._routes.length > 0
 			? html`<umb-router-slot .routes=${this._routes} @change=${this._onRouteChange}></umb-router-slot>`
-			: '';
+			: nothing;
 	}
 
 	static styles = [
 		css`
 			:host {
-				background-color: var(--uui-color-background);
 				display: block;
+				background-color: var(--uui-color-background);
+				width: 100%;
 				height: calc(
 					100% - 60px
-				); // 60 => top header height, TODO: Make sure this comes from somewhere so it is maintainable and eventually responsive.
+				); /* 60 => top header height, TODO: Make sure this comes from somewhere so it is maintainable and eventually responsive. */
 			}
 		`,
 	];

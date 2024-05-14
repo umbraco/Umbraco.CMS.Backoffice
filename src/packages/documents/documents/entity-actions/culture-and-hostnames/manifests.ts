@@ -1,4 +1,6 @@
+import { UMB_ENTITY_IS_NOT_TRASHED_CONDITION_ALIAS } from '@umbraco-cms/backoffice/recycle-bin';
 import { UMB_DOCUMENT_ENTITY_TYPE } from '../../entity.js';
+import { UMB_USER_PERMISSION_DOCUMENT_CULTURE_AND_HOSTNAMES } from '../../user-permissions/index.js';
 import { UmbDocumentCultureAndHostnamesEntityAction } from './culture-and-hostnames.action.js';
 import type { ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 
@@ -13,8 +15,17 @@ const entityActions: Array<ManifestTypes> = [
 		forEntityTypes: [UMB_DOCUMENT_ENTITY_TYPE],
 		meta: {
 			icon: 'icon-home',
-			label: 'Culture and Hostnames...',
+			label: '#actions_assigndomain',
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.UserPermission.Document',
+				allOf: [UMB_USER_PERMISSION_DOCUMENT_CULTURE_AND_HOSTNAMES],
+			},
+			{
+				alias: UMB_ENTITY_IS_NOT_TRASHED_CONDITION_ALIAS,
+			},
+		],
 	},
 ];
 
@@ -27,4 +38,4 @@ const manifestModals: Array<ManifestTypes> = [
 	},
 ];
 
-export const manifests = [...entityActions, ...manifestModals];
+export const manifests: Array<ManifestTypes> = [...entityActions, ...manifestModals];

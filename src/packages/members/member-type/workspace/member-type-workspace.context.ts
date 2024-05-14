@@ -3,7 +3,7 @@ import type { UmbMemberTypeDetailModel } from '../types.js';
 import { UMB_MEMBER_TYPE_ENTITY_TYPE } from '../index.js';
 import { UmbMemberTypeWorkspaceEditorElement } from './member-type-workspace-editor.element.js';
 import {
-	UmbSaveableWorkspaceContextBase,
+	UmbSubmittableWorkspaceContextBase,
 	type UmbRoutableWorkspaceContext,
 	UmbWorkspaceRouteManager,
 	UmbWorkspaceIsNewRedirectController,
@@ -15,13 +15,13 @@ import {
 	type UmbContentTypeWorkspaceContext,
 } from '@umbraco-cms/backoffice/content-type';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
-import { UmbReloadTreeItemChildrenRequestEntityActionEvent } from '@umbraco-cms/backoffice/tree';
+import { UmbRequestReloadTreeItemChildrenEvent } from '@umbraco-cms/backoffice/tree';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
-import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/event';
+import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
 
 type EntityType = UmbMemberTypeDetailModel;
 export class UmbMemberTypeWorkspaceContext
-	extends UmbSaveableWorkspaceContextBase<EntityType>
+	extends UmbSubmittableWorkspaceContextBase<EntityType>
 	implements UmbContentTypeWorkspaceContext<EntityType>, UmbRoutableWorkspaceContext
 {
 	readonly IS_CONTENT_TYPE_WORKSPACE_CONTEXT = true;
@@ -37,6 +37,9 @@ export class UmbMemberTypeWorkspaceContext
 	readonly data;
 	readonly unique;
 	readonly name;
+	getName(): string | undefined {
+		return this.structure.getOwnerContentType()?.name;
+	}
 	readonly alias;
 	readonly description;
 	readonly icon;
@@ -170,22 +173,28 @@ export class UmbMemberTypeWorkspaceContext
 		}
 	}
 
-	async save() {
+	/**
+	 * Save or creates the member type, based on wether its a new one or existing.
+	 */
+	async submit() {
 		const data = this.getData();
-		if (data === undefined) throw new Error('Cannot save, no data');
+		if (!data) {
+			throw new Error('Something went wrong, there is no data for media type you want to save...');
+		}
 
 		if (this.getIsNew()) {
 			const parent = this.#parent.getValue();
 			if (!parent) throw new Error('Parent is not set');
-			await this.repository.create(data, parent.unique);
 
-			// TODO: this might not be the right place to alert the tree, but it works for now
+			await this.structure.create(parent.unique);
+
 			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-			const event = new UmbReloadTreeItemChildrenRequestEntityActionEvent({
+			const event = new UmbRequestReloadTreeItemChildrenEvent({
 				entityType: parent.entityType,
 				unique: parent.unique,
 			});
 			eventContext.dispatchEvent(event);
+			this.setIsNew(false);
 		} else {
 			await this.structure.save();
 
@@ -197,9 +206,6 @@ export class UmbMemberTypeWorkspaceContext
 
 			actionEventContext.dispatchEvent(event);
 		}
-
-		this.setIsNew(false);
-		this.workspaceComplete(data);
 	}
 
 	public destroy(): void {

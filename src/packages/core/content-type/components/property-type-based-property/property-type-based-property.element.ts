@@ -22,6 +22,9 @@ export class UmbPropertyTypeBasedPropertyElement extends UmbLitElement {
 	}
 	private _property?: UmbPropertyTypeModel;
 
+	@property({ type: String, attribute: 'data-path' })
+	public dataPath?: string;
+
 	@state()
 	private _propertyEditorUiAlias?: string;
 
@@ -50,12 +53,12 @@ export class UmbPropertyTypeBasedPropertyElement extends UmbLitElement {
 							(extension) => {
 								if (!extension) return;
 								this._propertyEditorUiAlias = extension?.meta.defaultPropertyEditorUiAlias;
-								this.removeControllerByAlias('_observePropertyEditorSchema');
+								this.removeUmbControllerByAlias('_observePropertyEditorSchema');
 							},
 							'_observePropertyEditorSchema',
 						);
 					} else {
-						this.removeControllerByAlias('_observePropertyEditorSchema');
+						this.removeUmbControllerByAlias('_observePropertyEditorSchema');
 					}
 				},
 				'_observeDataType',
@@ -64,12 +67,15 @@ export class UmbPropertyTypeBasedPropertyElement extends UmbLitElement {
 	}
 
 	render() {
-		return html`<umb-property
-			alias=${ifDefined(this._property?.alias)}
-			label=${ifDefined(this._property?.name)}
-			description=${ifDefined(this._property?.description || undefined)}
-			property-editor-ui-alias=${ifDefined(this._propertyEditorUiAlias)}
-			.config=${this._dataTypeData}></umb-property>`;
+		return this._propertyEditorUiAlias && this._property?.alias
+			? html`<umb-property
+					.dataPath=${this.dataPath}
+					.alias=${this._property.alias}
+					.label=${this._property.name}
+					.description=${this._property.description ?? undefined}
+					property-editor-ui-alias=${ifDefined(this._propertyEditorUiAlias)}
+					.config=${this._dataTypeData}></umb-property>`
+			: '';
 	}
 
 	static styles = [

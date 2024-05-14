@@ -2,8 +2,8 @@ import { UmbLanguageDetailRepository } from '../../repository/index.js';
 import type { UmbLanguageDetailModel } from '../../types.js';
 import { UmbLanguageWorkspaceEditorElement } from './language-workspace-editor.element.js';
 import {
-	type UmbSaveableWorkspaceContext,
-	UmbSaveableWorkspaceContextBase,
+	type UmbSubmittableWorkspaceContext,
+	UmbSubmittableWorkspaceContextBase,
 	UmbWorkspaceRouteManager,
 	UmbWorkspaceIsNewRedirectController,
 	type UmbRoutableWorkspaceContext,
@@ -12,8 +12,8 @@ import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
 export class UmbLanguageWorkspaceContext
-	extends UmbSaveableWorkspaceContextBase<UmbLanguageDetailModel>
-	implements UmbSaveableWorkspaceContext, UmbRoutableWorkspaceContext
+	extends UmbSubmittableWorkspaceContextBase<UmbLanguageDetailModel>
+	implements UmbSubmittableWorkspaceContext, UmbRoutableWorkspaceContext
 {
 	public readonly repository: UmbLanguageDetailRepository = new UmbLanguageDetailRepository(this);
 
@@ -50,7 +50,7 @@ export class UmbLanguageWorkspaceContext
 				path: 'edit/:unique',
 				component: UmbLanguageWorkspaceEditorElement,
 				setup: (_component, info) => {
-					this.removeControllerByAlias('isNewRedirectController');
+					this.removeUmbControllerByAlias('isNewRedirectController');
 					this.load(info.match.params.unique);
 				},
 			},
@@ -113,18 +113,23 @@ export class UmbLanguageWorkspaceContext
 		this.#data.update({ fallbackIsoCode: unique });
 	}
 
-	async save() {
+	async submit() {
 		const newData = this.getData();
-		if (!newData) return;
+		if (!newData) {
+			throw new Error('No data to submit');
+		}
 
 		if (this.getIsNew()) {
-			const { data } = await this.repository.create(newData);
-			if (data) {
-				this.setIsNew(false);
+			const { error } = await this.repository.create(newData);
+			if (error) {
+				throw new Error(error.message);
 			}
+			this.setIsNew(false);
 		} else {
-			await this.repository.save(newData);
-			// TODO: Show validation errors as warnings?
+			const { error } = await this.repository.save(newData);
+			if (error) {
+				throw new Error(error.message);
+			}
 		}
 	}
 

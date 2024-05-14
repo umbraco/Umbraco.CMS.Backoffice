@@ -1,10 +1,11 @@
-import { html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
-import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
+import { customElement, html, property } from '@umbraco-cms/backoffice/external/lit';
+import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import type { UUIColorPickerChangeEvent } from '@umbraco-cms/backoffice/external/uui';
 
 @customElement('umb-input-eye-dropper')
-export class UmbInputEyeDropperElement extends FormControlMixin(UmbLitElement) {
+export class UmbInputEyeDropperElement extends UUIFormControlMixin(UmbLitElement, '') {
 	protected getFormElement() {
 		return undefined;
 	}
@@ -12,7 +13,7 @@ export class UmbInputEyeDropperElement extends FormControlMixin(UmbLitElement) {
 	#onChange(e: UUIColorPickerChangeEvent) {
 		e.stopPropagation();
 		this.value = e.target.value;
-		this.dispatchEvent(new CustomEvent('change'));
+		this.dispatchEvent(new UmbChangeEvent());
 	}
 
 	@property({ type: Boolean })
@@ -25,12 +26,15 @@ export class UmbInputEyeDropperElement extends FormControlMixin(UmbLitElement) {
 	// BTW in the old backoffice "palette" seemed to be true/false setting, but here its an array.
 
 	render() {
-		return html`<uui-color-picker
-			label="Eye dropper"
-			.opacity=${this.opacity}
-			.swatches=${this.swatches}
-			.value=${this.value as string}
-			@change=${this.#onChange}></uui-color-picker>`;
+		return html`
+			<uui-color-picker
+				label="Eye dropper"
+				.opacity=${this.opacity}
+				.swatches=${this.swatches}
+				.value=${this.value as string}
+				@change=${this.#onChange}>
+			</uui-color-picker>
+		`;
 	}
 }
 

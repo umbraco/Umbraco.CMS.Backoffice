@@ -1,12 +1,12 @@
 import type { UmbSectionItemModel } from '../../repository/index.js';
 import { UmbSectionPickerContext } from './input-section.context.js';
 import { css, html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
-import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
+import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 
 @customElement('umb-input-section')
-export class UmbInputSectionElement extends FormControlMixin(UmbLitElement) {
+export class UmbInputSectionElement extends UUIFormControlMixin(UmbLitElement, '') {
 	/**
 	 * This is a minimum amount of selected items in this input.
 	 * @type {number}
@@ -91,7 +91,7 @@ export class UmbInputSectionElement extends FormControlMixin(UmbLitElement) {
 			() => !!this.max && this.#pickerContext.getSelection().length > this.max,
 		);
 
-		this.observe(this.#pickerContext.selection, (selection) => (super.value = selection.join(',')));
+		this.observe(this.#pickerContext.selection, (selection) => (this.value = selection.join(',')));
 		this.observe(this.#pickerContext.selectedItems, (selectedItems) => (this._items = selectedItems));
 	}
 
@@ -102,9 +102,11 @@ export class UmbInputSectionElement extends FormControlMixin(UmbLitElement) {
 	render() {
 		return html`
 			<uui-ref-list>${this._items?.map((item) => this._renderItem(item))}</uui-ref-list>
-			<uui-button id="add-button" look="placeholder" @click=${() => this.#pickerContext.openPicker()} label="open"
-				>Add</uui-button
-			>
+			<uui-button
+				id="btn-add"
+				look="placeholder"
+				@click=${() => this.#pickerContext.openPicker()}
+				label=${this.localize.term('general_choose')}></uui-button>
 		`;
 	}
 
@@ -121,7 +123,7 @@ export class UmbInputSectionElement extends FormControlMixin(UmbLitElement) {
 
 	static styles = [
 		css`
-			#add-button {
+			#btn-add {
 				width: 100%;
 			}
 		`,

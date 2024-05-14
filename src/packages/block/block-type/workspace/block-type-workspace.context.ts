@@ -7,7 +7,7 @@ import type {
 	UmbRoutableWorkspaceContext,
 } from '@umbraco-cms/backoffice/workspace';
 import {
-	UmbSaveableWorkspaceContextBase,
+	UmbSubmittableWorkspaceContextBase,
 	UmbInvariantWorkspacePropertyDatasetContext,
 	UmbWorkspaceIsNewRedirectController,
 	UmbWorkspaceRouteManager,
@@ -17,7 +17,7 @@ import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import type { ManifestWorkspace, PropertyEditorSettingsProperty } from '@umbraco-cms/backoffice/extension-registry';
 
 export class UmbBlockTypeWorkspaceContext<BlockTypeData extends UmbBlockTypeWithGroupKey = UmbBlockTypeWithGroupKey>
-	extends UmbSaveableWorkspaceContextBase<BlockTypeData>
+	extends UmbSubmittableWorkspaceContextBase<BlockTypeData>
 	implements UmbInvariantDatasetWorkspaceContext, UmbRoutableWorkspaceContext
 {
 	// Just for context token safety:
@@ -85,18 +85,17 @@ export class UmbBlockTypeWorkspaceContext<BlockTypeData extends UmbBlockTypeWith
 
 	async load(unique: string) {
 		this.resetState();
-		this.consumeContext(UMB_PROPERTY_CONTEXT, (context) => {
-			this.observe(context.value, (value) => {
-				if (value) {
-					const blockTypeData = value.find((x: UmbBlockTypeBaseModel) => x.contentElementTypeKey === unique);
-					if (blockTypeData) {
-						this.#data.setValue(blockTypeData);
-						return;
-					}
+		const context = await this.getContext(UMB_PROPERTY_CONTEXT);
+		this.observe(context.value, (value) => {
+			if (value) {
+				const blockTypeData = value.find((x: UmbBlockTypeBaseModel) => x.contentElementTypeKey === unique);
+				if (blockTypeData) {
+					this.#data.setValue(blockTypeData);
+					return;
 				}
-				// Fallback to undefined:
-				this.#data.setValue(undefined);
-			});
+			}
+			// Fallback to undefined:
+			this.#data.setValue(undefined);
 		});
 	}
 
@@ -147,22 +146,23 @@ export class UmbBlockTypeWorkspaceContext<BlockTypeData extends UmbBlockTypeWith
 		}
 	}
 
-	async save() {
-		if (!this.#data.value) return;
+	async submit() {
+		if (!this.#data.value) {
+			throw new Error('No data to submit.');
+		}
 
-		this.consumeContext(UMB_PROPERTY_CONTEXT, (context) => {
-			// TODO: We should most likely consume already, in this way I avoid having the reset this consumption.
-			context.setValue(
-				appendToFrozenArray(context.getValue() ?? [], this.#data.getValue(), (x) => x?.contentElementTypeKey),
-			);
-		});
+		const context = await this.getContext(UMB_PROPERTY_CONTEXT);
+
+		context.setValue(
+			appendToFrozenArray(context.getValue() ?? [], this.#data.getValue(), (x) => x?.contentElementTypeKey),
+		);
 
 		this.setIsNew(false);
-		this.workspaceComplete(this.#data.value);
 	}
 
 	public destroy(): void {
 		this.#data.destroy();
+		this.#properties.destroy();
 		super.destroy();
 	}
 }

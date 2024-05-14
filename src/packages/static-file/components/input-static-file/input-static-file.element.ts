@@ -1,12 +1,12 @@
 import type { UmbStaticFileItemModel } from '../../repository/item/types.js';
 import { UmbStaticFilePickerContext } from './input-static-file.context.js';
-import { css, html, customElement, property, state, ifDefined, repeat } from '@umbraco-cms/backoffice/external/lit';
-import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
-import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { css, customElement, html, nothing, property, repeat, state } from '@umbraco-cms/backoffice/external/lit';
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 
 @customElement('umb-input-static-file')
-export class UmbInputStaticFileElement extends FormControlMixin(UmbLitElement) {
+export class UmbInputStaticFileElement extends UUIFormControlMixin(UmbLitElement, '') {
 	/**
 	 * This is a minimum amount of selected files in this input.
 	 * @type {number}
@@ -90,7 +90,7 @@ export class UmbInputStaticFileElement extends FormControlMixin(UmbLitElement) {
 			() => !!this.max && this.#pickerContext.getSelection().length > this.max,
 		);
 
-		this.observe(this.#pickerContext.selection, (selection) => (super.value = selection.join(',')));
+		this.observe(this.#pickerContext.selection, (selection) => (this.value = selection.join(',')));
 		this.observe(this.#pickerContext.selectedItems, (selectedItems) => (this._items = selectedItems));
 	}
 
@@ -99,40 +99,39 @@ export class UmbInputStaticFileElement extends FormControlMixin(UmbLitElement) {
 	}
 
 	render() {
+		if (!this._items) return nothing;
 		return html`
-			${this._items
-				? html` <uui-ref-list
-						>${repeat(
-							this._items,
-							(item) => item.unique,
-							(item) => this._renderItem(item),
-						)}
-					</uui-ref-list>`
-				: ''}
+			<uui-ref-list>
+				${repeat(
+					this._items,
+					(item) => item.unique,
+					(item) => this._renderItem(item),
+				)}
+			</uui-ref-list>
 			${this.#renderAddButton()}
 		`;
 	}
 
 	#renderAddButton() {
 		if (this.max === 1 && this.selection.length >= this.max) return;
-		return html`<uui-button
-			id="add-button"
-			look="placeholder"
-			@click=${() => this.#pickerContext.openPicker()}
-			label=${this.localize.term('general_add')}></uui-button>`;
+		return html`
+			<uui-button
+				id="btn-add"
+				look="placeholder"
+				@click=${() => this.#pickerContext.openPicker()}
+				label=${this.localize.term('general_choose')}></uui-button>
+		`;
 	}
 
 	private _renderItem(item: UmbStaticFileItemModel) {
 		if (!item.unique) return;
 		return html`
-			<uui-ref-node name=${ifDefined(item.name)} detail=${ifDefined(item.unique)}>
+			<uui-ref-node name=${item.name} detail=${item.unique}>
 				<!-- TODO: implement is trashed <uui-tag size="s" slot="tag" color="danger">Trashed</uui-tag> -->
 				<uui-action-bar slot="actions">
 					<uui-button
-						@click=${() => this.#pickerContext.requestRemoveItem(item.unique)}
-						label="Remove file ${item.name}"
-						>Remove</uui-button
-					>
+						label=${this.localize.term('general_remove')}
+						@click=${() => this.#pickerContext.requestRemoveItem(item.unique)}></uui-button>
 				</uui-action-bar>
 			</uui-ref-node>
 		`;
@@ -140,7 +139,7 @@ export class UmbInputStaticFileElement extends FormControlMixin(UmbLitElement) {
 
 	static styles = [
 		css`
-			#add-button {
+			#btn-add {
 				width: 100%;
 			}
 		`,

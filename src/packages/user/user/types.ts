@@ -1,25 +1,30 @@
 import type { UmbUserEntityType } from './entity.js';
-import { UserStateModel } from '@umbraco-cms/backoffice/external/backend-api';
+import { UserStateModel, type UserTwoFactorProviderModel } from '@umbraco-cms/backoffice/external/backend-api';
 
 export type UmbUserStateEnum = UserStateModel;
 export const UmbUserStateEnum = UserStateModel;
 
 export interface UmbUserDetailModel {
-	entityType: UmbUserEntityType;
-	email: string;
-	userName: string;
-	name: string;
-	userGroupUniques: Array<string>;
-	unique: string;
-	languageIsoCode: string | null;
-	documentStartNodeUniques: Array<string>;
-	mediaStartNodeUniques: Array<string>;
 	avatarUrls: Array<string>;
-	state: UmbUserStateEnum | null;
-	failedLoginAttempts: number;
 	createDate: string | null;
-	updateDate: string | null;
-	lastLoginDate: string | null;
+	documentStartNodeUniques: Array<string>;
+	email: string;
+	entityType: UmbUserEntityType;
+	failedLoginAttempts: number;
+	hasDocumentRootAccess: boolean;
+	hasMediaRootAccess: boolean;
+	isAdmin: boolean;
+	languageIsoCode: string | null;
 	lastLockoutDate: string | null;
+	lastLoginDate: string | null;
 	lastPasswordChangeDate: string | null;
+	mediaStartNodeUniques: Array<string>;
+	name: string;
+	state: UmbUserStateEnum | null;
+	unique: string;
+	updateDate: string | null;
+	userGroupUniques: Array<string>;
+	userName: string;
 }
+
+export type UmbUserMfaProviderModel = UserTwoFactorProviderModel;

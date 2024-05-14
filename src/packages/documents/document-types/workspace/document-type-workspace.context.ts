@@ -1,15 +1,25 @@
 import { UmbDocumentTypeDetailRepository } from '../repository/detail/document-type-detail.repository.js';
 import { UMB_DOCUMENT_TYPE_ENTITY_TYPE } from '../entity.js';
 import type { UmbDocumentTypeDetailModel } from '../types.js';
+import {
+	UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN,
+	UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PRESET_ELEMENT,
+	UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PRESET_TEMPLATE,
+	UMB_EDIT_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN,
+	type UmbCreateDocumentTypeWorkspacePresetType,
+} from '../paths.js';
 import { UmbDocumentTypeWorkspaceEditorElement } from './document-type-workspace-editor.element.js';
 import { UmbContentTypeStructureManager } from '@umbraco-cms/backoffice/content-type';
+import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
+import { UmbRequestReloadTreeItemChildrenEvent } from '@umbraco-cms/backoffice/tree';
+import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
 import {
-	UmbSaveableWorkspaceContextBase,
-	type UmbRoutableWorkspaceContext,
+	UmbSubmittableWorkspaceContextBase,
 	UmbWorkspaceIsNewRedirectController,
 	UmbWorkspaceRouteManager,
 } from '@umbraco-cms/backoffice/workspace';
-import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
+import { UmbTemplateDetailRepository } from '@umbraco-cms/backoffice/template';
+import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
 import type {
 	UmbContentTypeCompositionModel,
 	UmbContentTypeSortModel,
@@ -17,13 +27,12 @@ import type {
 } from '@umbraco-cms/backoffice/content-type';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import type { UmbReferenceByUnique } from '@umbraco-cms/backoffice/models';
-import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
-import { UmbReloadTreeItemChildrenRequestEntityActionEvent } from '@umbraco-cms/backoffice/tree';
-import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/event';
+import type { UmbRoutableWorkspaceContext } from '@umbraco-cms/backoffice/workspace';
+import type { UmbPathPatternTypeAsEncodedParamsType } from '@umbraco-cms/backoffice/router';
 
 type EntityType = UmbDocumentTypeDetailModel;
 export class UmbDocumentTypeWorkspaceContext
-	extends UmbSaveableWorkspaceContextBase<EntityType>
+	extends UmbSubmittableWorkspaceContextBase<EntityType>
 	implements UmbContentTypeWorkspaceContext<EntityType>, UmbRoutableWorkspaceContext
 {
 	readonly IS_CONTENT_TYPE_WORKSPACE_CONTEXT = true;
@@ -40,6 +49,9 @@ export class UmbDocumentTypeWorkspaceContext
 	//readonly data;
 	readonly unique;
 	readonly name;
+	getName(): string | undefined {
+		return this.structure.getOwnerContentType()?.name;
+	}
 	readonly alias;
 	readonly description;
 	readonly icon;
@@ -59,6 +71,8 @@ export class UmbDocumentTypeWorkspaceContext
 
 	readonly routes = new UmbWorkspaceRouteManager(this);
 	readonly structure = new UmbContentTypeStructureManager<EntityType>(this, this.repository);
+
+	createTemplateMode: boolean = false;
 
 	constructor(host: UmbControllerHost) {
 		super(host, 'Umb.Workspace.DocumentType');
@@ -86,12 +100,19 @@ export class UmbDocumentTypeWorkspaceContext
 
 		this.routes.setRoutes([
 			{
-				path: 'create/parent/:entityType/:parentUnique',
+				path: UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN.toString(),
 				component: UmbDocumentTypeWorkspaceEditorElement,
 				setup: (_component, info) => {
-					const parentEntityType = info.match.params.entityType;
-					const parentUnique = info.match.params.parentUnique === 'null' ? null : info.match.params.parentUnique;
-					this.create({ entityType: parentEntityType, unique: parentUnique });
+					const params = info.match.params as unknown as UmbPathPatternTypeAsEncodedParamsType<
+						typeof UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN.PARAMS
+					>;
+					const parentEntityType = params.parentEntityType;
+					const parentUnique = params.parentUnique === 'null' ? null : params.parentUnique;
+					const presetAlias = params.presetAlias === 'null' ? null : params.presetAlias ?? null;
+					if (parentUnique === undefined) {
+						throw new Error('ParentUnique url parameter is required to create a document type');
+					}
+					this.create({ entityType: parentEntityType, unique: parentUnique }, presetAlias);
 
 					new UmbWorkspaceIsNewRedirectController(
 						this,
@@ -101,12 +122,12 @@ export class UmbDocumentTypeWorkspaceContext
 				},
 			},
 			{
-				path: 'edit/:id',
+				path: UMB_EDIT_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN.toString(),
 				component: UmbDocumentTypeWorkspaceEditorElement,
 				setup: (_component, info) => {
-					this.removeControllerByAlias('isNewRedirectController');
-					const id = info.match.params.id;
-					this.load(id);
+					this.removeUmbControllerByAlias('isNewRedirectController');
+					const unique = info.match.params.unique;
+					this.load(unique);
 				},
 			},
 		]);
@@ -175,6 +196,10 @@ export class UmbDocumentTypeWorkspaceContext
 	}
 
 	// Document type specific:
+	getAllowedTemplateIds() {
+		return this.structure.getOwnerContentType()?.allowedTemplates;
+	}
+
 	setAllowedTemplateIds(allowedTemplates: Array<{ id: string }>) {
 		this.structure.updateOwnerContentType({ allowedTemplates });
 	}
@@ -183,14 +208,31 @@ export class UmbDocumentTypeWorkspaceContext
 		this.structure.updateOwnerContentType({ defaultTemplate });
 	}
 
-	async create(parent: { entityType: string; unique: string | null }) {
+	async create(parent: { entityType: string; unique: string | null }, presetAlias: string | null) {
 		this.resetState();
 		this.#parent.setValue(parent);
 		const { data } = await this.structure.createScaffold();
 		if (!data) return undefined;
 
+		switch (presetAlias) {
+			case UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PRESET_TEMPLATE satisfies UmbCreateDocumentTypeWorkspacePresetType: {
+				this.setIcon('icon-notepad');
+				this.createTemplateMode = true;
+				break;
+			}
+			case UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PRESET_ELEMENT satisfies UmbCreateDocumentTypeWorkspacePresetType: {
+				this.setIcon('icon-plugin');
+				this.setIsElement(true);
+				break;
+			}
+			default:
+				break;
+		}
+
 		this.setIsNew(true);
-		this.#persistedData.setValue(data);
+
+		this.#persistedData.setValue(this.structure.getOwnerContentType());
+
 		return data;
 	}
 
@@ -218,25 +260,45 @@ export class UmbDocumentTypeWorkspaceContext
 	/**
 	 * Save or creates the document type, based on wether its a new one or existing.
 	 */
-	async save() {
+	async submit() {
 		const data = this.getData();
-		if (data === undefined) throw new Error('Cannot save, no data');
+		if (data === undefined) {
+			throw new Error('Cannot save, no data');
+		}
 
 		if (this.getIsNew()) {
 			const parent = this.#parent.getValue();
 			if (!parent) throw new Error('Parent is not set');
 
-			if ((await this.structure.create(parent.unique)) === true) {
-				// TODO: this might not be the right place to alert the tree, but it works for now
-				const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-				const event = new UmbReloadTreeItemChildrenRequestEntityActionEvent({
-					entityType: parent.entityType,
-					unique: parent.unique,
-				});
-				eventContext.dispatchEvent(event);
+			if (this.createTemplateMode) {
+				const repo = new UmbTemplateDetailRepository(this);
+				const { data: templateScaffold } = await repo.createScaffold();
+				if (!templateScaffold) throw new Error('Could not create template scaffold');
 
-				this.setIsNew(false);
+				templateScaffold.name = data.name;
+				templateScaffold.alias = data.alias;
+
+				const { data: template } = await repo.create(templateScaffold, null);
+				if (!template) throw new Error('Could not create template');
+
+				const templateEntity = { id: template.unique };
+				const allowedTemplates = this.getAllowedTemplateIds() ?? [];
+				this.setAllowedTemplateIds([templateEntity, ...allowedTemplates]);
+				this.setDefaultTemplate(templateEntity);
 			}
+
+			await this.structure.create(parent.unique);
+
+			// TODO: this might not be the right place to alert the tree, but it works for now
+			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
+			const event = new UmbRequestReloadTreeItemChildrenEvent({
+				entityType: parent.entityType,
+				unique: parent.unique,
+			});
+			eventContext.dispatchEvent(event);
+
+			this.setIsNew(false);
+			this.createTemplateMode = false;
 		} else {
 			await this.structure.save();
 
@@ -248,9 +310,6 @@ export class UmbDocumentTypeWorkspaceContext
 
 			actionEventContext.dispatchEvent(event);
 		}
-
-		this.setIsNew(false);
-		this.workspaceComplete(data);
 	}
 
 	public destroy(): void {

@@ -1,16 +1,23 @@
+import { onInit } from '../../packages/core/entry-point.js';
 import type { UmbAppErrorElement } from './app-error.element.js';
 import { UmbAppContext } from './app.context.js';
 import { UmbServerConnection } from './server-connection.js';
+import { UmbAppAuthController } from './app-auth.controller.js';
 import type { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
-import { UMB_STORAGE_REDIRECT_URL, UmbAuthContext } from '@umbraco-cms/backoffice/auth';
+import { UmbAuthContext } from '@umbraco-cms/backoffice/auth';
 import { css, html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
 import { UUIIconRegistryEssential } from '@umbraco-cms/backoffice/external/uui';
-import { UmbIconRegistry } from '@umbraco-cms/backoffice/icon';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { Guard, UmbRoute } from '@umbraco-cms/backoffice/router';
 import { pathWithoutBasePath } from '@umbraco-cms/backoffice/router';
 import { OpenAPI, RuntimeLevelModel } from '@umbraco-cms/backoffice/external/backend-api';
 import { UmbContextDebugController } from '@umbraco-cms/backoffice/debug';
+import { UmbBundleExtensionInitializer, UmbServerExtensionRegistrator } from '@umbraco-cms/backoffice/extension-api';
+import {
+	UmbAppEntryPointExtensionInitializer,
+	umbExtensionsRegistry,
+} from '@umbraco-cms/backoffice/extension-registry';
+import { filter, first, firstValueFrom } from '@umbraco-cms/backoffice/external/rxjs';
 
 @customElement('umb-app')
 export class UmbAppElement extends UmbLitElement {
@@ -21,7 +28,12 @@ export class UmbAppElement extends UmbLitElement {
 	 * @remarks This is the base URL of the Umbraco server, not the base URL of the backoffice.
 	 */
 	@property({ type: String })
-	serverUrl = window.location.origin;
+	set serverUrl(url: string) {
+		OpenAPI.BASE = url;
+	}
+	get serverUrl() {
+		return OpenAPI.BASE;
+	}
 
 	/**
 	 * The base path of the backoffice.
@@ -29,7 +41,6 @@ export class UmbAppElement extends UmbLitElement {
 	 * @attr
 	 */
 	@property({ type: String })
-	// TODO: get from base element or maybe move to UmbAuthContext.#getRedirectUrl since it is only used there
 	backofficePath = '/umbraco';
 
 	/**
@@ -40,13 +51,71 @@ export class UmbAppElement extends UmbLitElement {
 
 	private _routes: UmbRoute[] = [
 		{
+			path: 'error',
+			component: () => import('./app-error.element.js'),
+		},
+		{
 			path: 'install',
 			component: () => import('../installer/installer.element.js'),
+		},
+		{
+			path: 'oauth_complete',
+			component: () => import('./app-error.element.js'),
+			setup: (component) => {
+				if (!this.#authContext) {
+					throw new Error('[Fatal] Auth context is not available');
+				}
+
+				const searchParams = new URLSearchParams(window.location.search);
+				const hasCode = searchParams.has('code');
+				(component as UmbAppErrorElement).hideBackButton = true;
+				(component as UmbAppErrorElement).errorHeadline = this.localize.term('general_login');
+
+				// If there is an opener, we are in a popup window, and we should show a different message
+				// than if we are in the main window. If we are in the main window, we should redirect to the root.
+				// The authorization request will be completed in the active window (main or popup) and the authorization signal will be sent.
+				// If we are in a popup window, the storage event in UmbAuthContext will catch the signal and close the window.
+				// If we are in the main window, the signal will be caught right here and the user will be redirected to the root.
+				if (window.opener) {
+					(component as UmbAppErrorElement).errorMessage = hasCode
+						? this.localize.term('errors_externalLoginSuccess')
+						: this.localize.term('errors_externalLoginFailed');
+				} else {
+					(component as UmbAppErrorElement).errorMessage = hasCode
+						? this.localize.term('errors_externalLoginRedirectSuccess')
+						: this.localize.term('errors_externalLoginFailed');
+
+					this.observe(this.#authContext.authorizationSignal, () => {
+						window.location.href = '/';
+					});
+				}
+
+				// Complete the authorization request, which will send the authorization signal
+				this.#authContext.completeAuthorizationRequest();
+			},
 		},
 		{
 			path: 'upgrade',
 			component: () => import('../upgrader/upgrader.element.js'),
 			guards: [this.#isAuthorizedGuard()],
+		},
+		{
+			path: 'logout',
+			resolve: () => {
+				this.#authContext?.clearTokenStorage();
+				this.#authController.makeAuthorizationRequest('loggedOut');
+
+				// Listen for the user to be authorized
+				this.#authContext?.isAuthorized
+					.pipe(
+						filter((x) => !!x),
+						first(),
+					)
+					.subscribe(() => {
+						// Redirect to the root
+						history.replaceState(null, '', '');
+					});
+			},
 		},
 		{
 			path: '**',
@@ -56,17 +125,19 @@ export class UmbAppElement extends UmbLitElement {
 	];
 
 	#authContext?: typeof UMB_AUTH_CONTEXT.TYPE;
-	#umbIconRegistry = new UmbIconRegistry();
-	#uuiIconRegistry = new UUIIconRegistryEssential();
 	#serverConnection?: UmbServerConnection;
+	#authController = new UmbAppAuthController(this);
 
 	constructor() {
 		super();
 
-		new UmbContextDebugController(this);
+		OpenAPI.BASE = window.location.origin;
 
-		this.#umbIconRegistry.attach(this);
-		this.#uuiIconRegistry.attach(this);
+		new UmbBundleExtensionInitializer(this, umbExtensionsRegistry);
+
+		new UUIIconRegistryEssential().attach(this);
+
+		new UmbContextDebugController(this);
 	}
 
 	connectedCallback(): void {
@@ -75,18 +146,18 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	async #setup() {
-		if (this.serverUrl === undefined) throw new Error('No serverUrl provided');
-
-		/* All requests to the server requires the base URL to be set.
-		We make sure it happens before we get the server status.
-		TODO: find the right place to set this
-		*/
-		OpenAPI.BASE = this.serverUrl;
-
 		this.#serverConnection = await new UmbServerConnection(this.serverUrl).connect();
 
 		this.#authContext = new UmbAuthContext(this, this.serverUrl, this.backofficePath, this.bypassAuth);
 		new UmbAppContext(this, { backofficePath: this.backofficePath, serverUrl: this.serverUrl });
+
+		// Register Core extensions (this is specifically done here because we need these extensions to be registered before the application is initialized)
+		onInit(this, umbExtensionsRegistry);
+
+		// Register public extensions (login extensions)
+		await new UmbServerExtensionRegistrator(this, umbExtensionsRegistry).registerPublicExtensions();
+		const initializer = new UmbAppEntryPointExtensionInitializer(this, umbExtensionsRegistry);
+		await firstValueFrom(initializer.loaded);
 
 		// Try to initialise the auth flow and get the runtime status
 		try {
@@ -136,16 +207,15 @@ export class UmbAppElement extends UmbLitElement {
 		// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
 		OpenAPI.TOKEN = () => this.#authContext!.getLatestToken();
 		OpenAPI.WITH_CREDENTIALS = true;
-		OpenAPI.CREDENTIALS = 'include';
 	}
 
 	#redirect() {
-		// If there is a ?code parameter in the url, then we are in the middle of the oauth flow
-		// and we need to complete the login (the authorization notifier will redirect after this is done
-		// essentially hitting this method again)
-		const queryParams = new URLSearchParams(window.location.search);
-		if (queryParams.has('code')) {
-			this.#authContext?.completeAuthorizationRequest();
+		const pathname = pathWithoutBasePath({ start: true, end: false });
+
+		// If we are on the oauth_complete or error page, we should not redirect
+		if (pathname === '/oauth_complete' || pathname === '/error') {
+			// Initialize the router
+			history.replaceState(null, '', location.href);
 			return;
 		}
 
@@ -163,8 +233,6 @@ export class UmbAppElement extends UmbLitElement {
 				break;
 
 			case RuntimeLevelModel.RUN: {
-				const pathname = pathWithoutBasePath({ start: true, end: false });
-
 				// If we are on installer or upgrade page, redirect to the root since we are in the RUN state
 				if (pathname === '/install' || pathname === '/upgrade') {
 					history.replaceState(null, '', '/');
@@ -184,24 +252,7 @@ export class UmbAppElement extends UmbLitElement {
 	}
 
 	#isAuthorizedGuard(): Guard {
-		return () => {
-			if (!this.#authContext) {
-				throw new Error('[Fatal] AuthContext requested before it was initialized');
-			}
-
-			if (this.#authContext.getIsAuthorized()) {
-				return true;
-			}
-
-			// Save location.href so we can redirect to it after login
-			window.sessionStorage.setItem(UMB_STORAGE_REDIRECT_URL, location.href);
-
-			// Make a request to the auth server to start the auth flow
-			this.#authContext.makeAuthorizationRequest();
-
-			// Return false to prevent the route from being rendered
-			return false;
-		};
+		return () => this.#authController.isAuthorized() ?? false;
 	}
 
 	#errorPage(errorMsg: string, error?: unknown) {

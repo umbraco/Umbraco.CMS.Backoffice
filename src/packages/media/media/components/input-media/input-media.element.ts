@@ -1,30 +1,29 @@
 import type { UmbMediaItemModel } from '../../repository/index.js';
 import { UmbMediaPickerContext } from './input-media.context.js';
 import { css, html, customElement, property, state, ifDefined, repeat } from '@umbraco-cms/backoffice/external/lit';
-import { FormControlMixin } from '@umbraco-cms/backoffice/external/uui';
-import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { UMB_WORKSPACE_MODAL, UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/modal';
-import { type UmbSorterConfig, UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
-
-const SORTER_CONFIG: UmbSorterConfig<string> = {
-	getUniqueOfElement: (element) => {
-		return element.getAttribute('detail');
-	},
-	getUniqueOfModel: (modelEntry) => {
-		return modelEntry;
-	},
-	identifier: 'Umb.SorterIdentifier.InputMedia',
-	itemSelector: 'uui-card-media',
-	containerSelector: '.container',
-};
+import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbModalRouteRegistrationController, UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
+import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
+import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 
 @customElement('umb-input-media')
-export class UmbInputMediaElement extends FormControlMixin(UmbLitElement) {
-	#sorter = new UmbSorterController(this, {
-		...SORTER_CONFIG,
+export class UmbInputMediaElement extends UUIFormControlMixin(UmbLitElement, '') {
+	#sorter = new UmbSorterController<string>(this, {
+		getUniqueOfElement: (element) => {
+			return element.getAttribute('detail');
+		},
+		getUniqueOfModel: (modelEntry) => {
+			return modelEntry;
+		},
+		identifier: 'Umb.SorterIdentifier.InputMedia',
+		itemSelector: 'uui-card-media',
+		containerSelector: '.container',
 		onChange: ({ model }) => {
 			this.selection = model;
+
+			this.dispatchEvent(new UmbChangeEvent());
 		},
 	});
 
@@ -120,7 +119,7 @@ export class UmbInputMediaElement extends FormControlMixin(UmbLitElement) {
 				this._editMediaPath = routeBuilder({});
 			});
 
-		this.observe(this.#pickerContext.selection, (selection) => (super.value = selection.join(',')));
+		this.observe(this.#pickerContext.selection, (selection) => (this.value = selection.join(',')));
 		this.observe(this.#pickerContext.selectedItems, (selectedItems) => (this._items = selectedItems));
 
 		this.addValidator(
@@ -141,26 +140,18 @@ export class UmbInputMediaElement extends FormControlMixin(UmbLitElement) {
 	}
 
 	#pickableFilter: (item: UmbMediaItemModel) => boolean = (item) => {
-		/* TODO: Media item doesn't have the content/media-type ID available to query.
-			 Commenting out until the Management API model is updated. [LK]
-		*/
-		// if (this.allowedContentTypeIds && this.allowedContentTypeIds.length > 0) {
-		// 	return this.allowedContentTypeIds.includes(item.contentTypeId);
-		// }
+		if (this.allowedContentTypeIds && this.allowedContentTypeIds.length > 0) {
+			return this.allowedContentTypeIds.includes(item.mediaType.unique);
+		}
 		return true;
 	};
 
 	#openPicker() {
-		// TODO: Configure the media picker, with `allowedContentTypeIds` and `ignoreUserStartNodes` [LK]
+		// TODO: Configure the media picker, with `ignoreUserStartNodes` [LK]
 		this.#pickerContext.openPicker({
 			hideTreeRoot: true,
 			pickableFilter: this.#pickableFilter,
 		});
-	}
-
-	#openItem(item: UmbMediaItemModel) {
-		// TODO: Implement the Media editing infinity editor. [LK]
-		console.log('TODO: _openItem', item);
 	}
 
 	render() {
@@ -180,7 +171,7 @@ export class UmbInputMediaElement extends FormControlMixin(UmbLitElement) {
 		if (this._items && this.max && this._items.length >= this.max) return;
 		return html`
 			<uui-button
-				id="add-button"
+				id="btn-add"
 				look="placeholder"
 				@click=${this.#openPicker}
 				label=${this.localize.term('general_choose')}>
@@ -215,9 +206,11 @@ export class UmbInputMediaElement extends FormControlMixin(UmbLitElement) {
 
 	#renderIsTrashed(item: UmbMediaItemModel) {
 		if (!item.isTrashed) return;
-		return html`<uui-tag size="s" slot="tag" color="danger"
-			><umb-localize key="mediaPicker_trashed">Trashed</umb-localize></uui-tag
-		>`;
+		return html`
+			<uui-tag size="s" slot="tag" color="danger">
+				<umb-localize key="mediaPicker_trashed">Trashed</umb-localize>
+			</uui-tag>
+		`;
 	}
 
 	#renderOpenButton(item: UmbMediaItemModel) {
@@ -241,7 +234,7 @@ export class UmbInputMediaElement extends FormControlMixin(UmbLitElement) {
 				grid-template-rows: repeat(auto-fill, minmax(160px, 1fr));
 			}
 
-			#add-button {
+			#btn-add {
 				text-align: center;
 				height: 100%;
 			}

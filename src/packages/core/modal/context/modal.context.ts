@@ -6,6 +6,7 @@ import type { UUIModalSidebarSize } from '@umbraco-cms/backoffice/external/uui';
 import { UmbId } from '@umbraco-cms/backoffice/id';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
+import { type UmbDeepPartialObject, umbDeepMerge } from '@umbraco-cms/backoffice/utils';
 
 export interface UmbModalRejectReason {
 	type: string;
@@ -13,7 +14,9 @@ export interface UmbModalRejectReason {
 
 export type UmbModalContextClassArgs<
 	ModalAliasType extends string | UmbModalToken,
-	ModalAliasTypeAsToken extends UmbModalToken = ModalAliasType extends UmbModalToken ? ModalAliasType : UmbModalToken,
+	ModalAliasTypeAsToken extends UmbModalToken = ModalAliasType extends UmbModalToken
+		? ModalAliasType
+		: UmbModalToken<never, never>,
 > = {
 	router?: IRouterSlot | null;
 	data?: ModalAliasTypeAsToken['DATA'];
@@ -22,7 +25,10 @@ export type UmbModalContextClassArgs<
 };
 
 // TODO: consider splitting this into two separate handlers
-export class UmbModalContext<ModalPreset extends object = object, ModalValue = any> extends UmbControllerBase {
+export class UmbModalContext<
+	ModalPreset extends { [key: string]: any } = { [key: string]: any },
+	ModalValue = any,
+> extends UmbControllerBase {
 	//
 	#submitPromise: Promise<ModalValue>;
 	#submitResolver?: (value: ModalValue) => void;
@@ -32,6 +38,7 @@ export class UmbModalContext<ModalPreset extends object = object, ModalValue = a
 	public readonly data: ModalPreset;
 	public readonly type: UmbModalType = 'dialog';
 	public readonly size: UUIModalSidebarSize = 'small';
+	public readonly backdropBackground?: string;
 	public readonly router: IRouterSlot | null = null;
 	public readonly alias: string | UmbModalToken<ModalPreset, ModalValue>;
 
@@ -51,13 +58,21 @@ export class UmbModalContext<ModalPreset extends object = object, ModalValue = a
 		if (this.alias instanceof UmbModalToken) {
 			this.type = this.alias.getDefaultModal()?.type || this.type;
 			this.size = this.alias.getDefaultModal()?.size || this.size;
+			this.backdropBackground = this.alias.getDefaultModal()?.backdropBackground || this.backdropBackground;
 		}
 
 		this.type = args.modal?.type || this.type;
 		this.size = args.modal?.size || this.size;
+		this.backdropBackground = args.modal?.backdropBackground || this.backdropBackground;
 
 		const defaultData = this.alias instanceof UmbModalToken ? this.alias.getDefaultData() : undefined;
-		this.data = Object.freeze({ ...defaultData, ...args.data } as ModalPreset);
+		this.data = Object.freeze(
+			// If we have both data and defaultData perform a deep merge
+			args.data && defaultData
+				? (umbDeepMerge(args.data as UmbDeepPartialObject<ModalPreset>, defaultData) as ModalPreset)
+				: // otherwise pick one of them:
+					(args.data as ModalPreset) ?? defaultData,
+		);
 
 		const initValue =
 			args.value ?? (this.alias instanceof UmbModalToken ? (this.alias as UmbModalToken).getDefaultValue() : undefined);
@@ -119,7 +134,7 @@ export class UmbModalContext<ModalPreset extends object = object, ModalValue = a
 	 * @memberof UmbModalContext
 	 */
 	public setValue(value: ModalValue) {
-		this.#value.update(value);
+		this.#value.setValue(value);
 	}
 
 	/**

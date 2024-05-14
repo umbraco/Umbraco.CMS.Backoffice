@@ -1,20 +1,20 @@
 import type {
+	UmbContentTypeCompositionRepository,
+	UmbContentTypeCompositionCompatibleModel,
+	UmbContentTypeCompositionReferenceModel,
+} from '../../composition/index.js';
+import type {
 	UmbCompositionPickerModalData,
 	UmbCompositionPickerModalValue,
 } from './composition-picker-modal.token.js';
 import { css, html, customElement, state, repeat, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
-import type {
-	UmbDocumentTypeCompositionRepository,
-	UmbDocumentTypeCompositionCompatibleModel,
-	UmbDocumentTypeCompositionReferenceModel,
-} from '@umbraco-cms/backoffice/document-type';
 import { UmbExtensionApiInitializer } from '@umbraco-cms/backoffice/extension-api';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 
 interface CompatibleCompositions {
 	path: string;
-	compositions: Array<UmbDocumentTypeCompositionCompatibleModel>;
+	compositions: Array<UmbContentTypeCompositionCompatibleModel>;
 }
 
 @customElement('umb-composition-picker-modal')
@@ -23,12 +23,12 @@ export class UmbCompositionPickerModalElement extends UmbModalBaseElement<
 	UmbCompositionPickerModalValue
 > {
 	// TODO: Loosen this from begin specific to Document Types, so we can have a general interface for composition repositories. [NL]
-	#compositionRepository?: UmbDocumentTypeCompositionRepository;
-	#unique?: string;
+	#compositionRepository?: UmbContentTypeCompositionRepository;
+	#unique: string | null = null;
 	#init?: Promise<void>;
 
 	@state()
-	private _references: Array<UmbDocumentTypeCompositionReferenceModel> = [];
+	private _references: Array<UmbContentTypeCompositionReferenceModel> = [];
 
 	@state()
 	private _compatibleCompositions?: Array<CompatibleCompositions>;
@@ -41,7 +41,7 @@ export class UmbCompositionPickerModalElement extends UmbModalBaseElement<
 		const alias = this.data?.compositionRepositoryAlias;
 		if (alias) {
 			this.#init = new UmbExtensionApiInitializer(this, umbExtensionsRegistry, alias, [this], (permitted, ctrl) => {
-				this.#compositionRepository = permitted ? (ctrl.api as UmbDocumentTypeCompositionRepository) : undefined;
+				this.#compositionRepository = permitted ? (ctrl.api as UmbContentTypeCompositionRepository) : undefined;
 			}).asPromise();
 		} else {
 			throw new Error('No composition repository alias provided');
@@ -50,32 +50,33 @@ export class UmbCompositionPickerModalElement extends UmbModalBaseElement<
 		this._selection = this.data?.selection ?? [];
 		this.modalContext?.setValue({ selection: this._selection });
 
+		const isNew = this.data!.isNew;
+		this.#unique = !isNew ? this.data!.unique : null;
+
 		this.#requestReference();
+		this.#requestAvailableCompositions();
 	}
 
 	async #requestReference() {
 		await this.#init;
-		this.#unique = this.data?.unique;
 		if (!this.#unique || !this.#compositionRepository) return;
 
 		const { data } = await this.#compositionRepository.getReferences(this.#unique);
-
 		this._references = data ?? [];
-
-		if (!this._references.length) {
-			this.#requestAvailableCompositions();
-		}
 	}
 
 	async #requestAvailableCompositions() {
 		await this.#init;
-		if (!this.#unique || !this.#compositionRepository) return;
+		if (!this.#compositionRepository) return;
 
 		const isElement = this.data?.isElement;
 		const currentPropertyAliases = this.data?.currentPropertyAliases;
 
 		const { data } = await this.#compositionRepository.availableCompositions({
 			unique: this.#unique,
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			// TODO: isElement is not available on all types that can be composed.
 			isElement: isElement ?? false,
 			currentCompositeUniques: this._selection,
 			currentPropertyAliases: currentPropertyAliases ?? [],
@@ -170,7 +171,7 @@ export class UmbCompositionPickerModalElement extends UmbModalBaseElement<
 		}
 	}
 
-	#renderCompositionsItems(compositionsList: Array<UmbDocumentTypeCompositionCompatibleModel>) {
+	#renderCompositionsItems(compositionsList: Array<UmbContentTypeCompositionCompatibleModel>) {
 		return repeat(
 			compositionsList,
 			(compositions) => compositions.unique,
