@@ -10,8 +10,8 @@ import { LitElement, css, html, nothing, customElement, property, query } from '
 @customElement('umb-image-cropper-focus-setter')
 export class UmbImageCropperFocusSetterElement extends LitElement {
 	@query('#image') imageElement!: HTMLImageElement;
-	@query('#wrapper') wrapperElement?: HTMLImageElement;
-	@query('#focal-point') focalPointElement!: HTMLImageElement;
+	@query('#wrapper') wrapperElement?: HTMLElement;
+	@query('#focal-point') focalPointElement!: HTMLElement;
 
 	@state() private isDraggingGridHandle = false;
 
@@ -93,6 +93,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			}
 
 			this.#resetCoords();
+			
 			this.imageElement.style.aspectRatio = `${imageAspectRatio}`;
 			this.wrapperElement.style.aspectRatio = `${imageAspectRatio}`;
 		};
@@ -102,13 +103,13 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	async #addEventListeners() {
 		await this.updateComplete; // Wait for the @query to be resolved
-		this.imageElement?.addEventListener('mousedown', this.#onStartDrag);
-		window.addEventListener('mouseup', this.#onEndDrag);
+		//this.imageElement?.addEventListener('mousedown', this.#onStartDrag);
+		//window.addEventListener('mouseup', this.#onEndDrag);
 	}
 
 	#removeEventListeners() {
-		this.imageElement?.removeEventListener('mousedown', this.#onStartDrag);
-		window.removeEventListener('mouseup', this.#onEndDrag);
+		//this.imageElement?.removeEventListener('mousedown', this.#onStartDrag);
+		//window.removeEventListener('mouseup', this.#onEndDrag);
 	}
 
 	#coordsToFactor(x: number, y: number) {
