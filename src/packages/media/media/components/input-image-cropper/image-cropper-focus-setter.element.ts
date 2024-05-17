@@ -1,6 +1,7 @@
 import type { UmbImageCropperFocalPoint } from './index.js';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
-import { drag, clamp } from '@umbraco-cms/backoffice/utils';
+import { drag } from '@umbraco-cms/backoffice/external/uui';
+import { clamp } from '@umbraco-cms/backoffice/utils';
 import { state } from '@umbraco-cms/backoffice/external/lit';
 import { classMap, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 
