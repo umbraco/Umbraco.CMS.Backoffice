@@ -24,10 +24,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 	set focalPoint(value) {
 		this.#focalPoint = value;
-		console.log("value", value);
 
 		if (this.#isCentered(this.#focalPoint)) {
-			console.log("center")
 			this.#resetCoords();
 			this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
 		}
@@ -78,10 +76,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	async #initializeImage() {
 		await this.updateComplete; // Wait for the @query to be resolved
 
-		if (this.focalPointElement) {
-			this.focalPointElement.style.left = `calc(${this.focalPoint.left * 100}% - ${this.#DOT_RADIUS}px)`;
-			this.focalPointElement.style.top = `calc(${this.focalPoint.top * 100}% - ${this.#DOT_RADIUS}px)`;
-		}
+		this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
 
 		this.imageElement.onload = () => {
 			if (!this.imageElement || !this.wrapperElement) return;
@@ -122,34 +117,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		return { top, left }; 
 	}
 
-	/*#onSetFocalPoint(event: MouseEvent) {
-		event.preventDefault();
-		if (!this.focalPointElement || !this.imageElement) return;
-
-		const grid = this.wrapperElement;
-		const { width, height } = grid.getBoundingClientRect();
-
-		const left = clamp((x / width), 0, 1);
-		const top = clamp((y / height), 0, 1);
-
-		this.#coordsToFactor(x, y);
-		this.#setFocalPointStyle(left, top);
-
-		this.dispatchEvent(
-			new CustomEvent('change', {
-				detail: { left, top },
-				bubbles: false,
-				composed: false,
-			}),
-		);
-	}*/
-
 	#setFocalPoint(x: number, y: number, width: number, height: number) {
-		//const image = this.imageElement.getBoundingClientRect();
-		//const x = clamp(event.clientX - image.left, 0, image.width);
-		//const y = clamp(event.clientY - image.top, 0, image.height);
-		//const left = clamp((x / width) * 100, 0, 100);
-		//const top = clamp(100 - (y / height) * 100, 0, 100);
+		
 		const left = clamp((x / width), 0, 1);
 		const top = clamp((y / height), 0, 1);
 
