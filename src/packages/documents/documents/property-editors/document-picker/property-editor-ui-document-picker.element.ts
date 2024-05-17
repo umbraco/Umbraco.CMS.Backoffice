@@ -1,10 +1,12 @@
 import type { UmbInputDocumentElement } from '../../components/input-document/input-document.element.js';
+import { UMB_DOCUMENT_ENTITY_TYPE } from '../../entity.js';
 import { html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbPropertyValueChangeEvent } from '@umbraco-cms/backoffice/property-editor';
 import type { NumberRangeValueType } from '@umbraco-cms/backoffice/models';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
+import type { UmbTreeStartNode } from '@umbraco-cms/backoffice/tree';
 
 @customElement('umb-property-editor-ui-document-picker')
 export class UmbPropertyEditorUIDocumentPickerElement extends UmbLitElement implements UmbPropertyEditorUiElement {
@@ -20,7 +22,6 @@ export class UmbPropertyEditorUIDocumentPickerElement extends UmbLitElement impl
 			this._max = minMax.max && minMax.max > 0 ? minMax.max : Infinity;
 		}
 
-		this._ignoreUserStartNodes = config.getValueByAlias('ignoreUserStartNodes') ?? false;
 		this._startNodeId = config.getValueByAlias('startNodeId');
 		this._showOpenButton = config.getValueByAlias('showOpenButton') ?? false;
 	}
@@ -37,23 +38,22 @@ export class UmbPropertyEditorUIDocumentPickerElement extends UmbLitElement impl
 	@state()
 	private _showOpenButton?: boolean;
 
-	@state()
-	private _ignoreUserStartNodes?: boolean;
-
 	#onChange(event: CustomEvent & { target: UmbInputDocumentElement }) {
 		this.value = event.target.selection.join(',');
 		this.dispatchEvent(new UmbPropertyValueChangeEvent());
 	}
 
 	render() {
-		const startNode = this._startNodeId ? { unique: this._startNodeId } : undefined;
+		const startNode: UmbTreeStartNode | undefined = this._startNodeId
+			? { unique: this._startNodeId, entityType: UMB_DOCUMENT_ENTITY_TYPE }
+			: undefined;
+
 		return html`
 			<umb-input-document
 				.min=${this._min}
 				.max=${this._max}
 				.startNode=${startNode}
 				.value=${this.value ?? ''}
-				?ignoreUserStartNodes=${this._ignoreUserStartNodes}
 				?showOpenButton=${this._showOpenButton}
 				@change=${this.#onChange}>
 			</umb-input-document>

@@ -30,20 +30,30 @@ export class UmbCurrentUserServerDataSource {
 
 		if (data) {
 			const user: UmbCurrentUserModel = {
-				unique: data.id,
-				email: data.email,
-				userName: data.userName,
-				name: data.name,
-				languageIsoCode: data.languageIsoCode || 'en-us', // TODO: make global variable
-				documentStartNodeUniques: data.documentStartNodeIds,
-				mediaStartNodeUniques: data.mediaStartNodeIds,
-				avatarUrls: data.avatarUrls,
-				languages: data.languages,
-				hasAccessToAllLanguages: data.hasAccessToAllLanguages,
-				fallbackPermissions: data.fallbackPermissions,
-				permissions: data.permissions,
 				allowedSections: data.allowedSections,
+				avatarUrls: data.avatarUrls,
+				documentStartNodeUniques: data.documentStartNodeIds.map((node) => {
+					return {
+						unique: node.id,
+					};
+				}),
+				email: data.email,
+				fallbackPermissions: data.fallbackPermissions,
+				hasAccessToAllLanguages: data.hasAccessToAllLanguages,
+				hasDocumentRootAccess: data.hasDocumentRootAccess,
+				hasMediaRootAccess: data.hasMediaRootAccess,
 				isAdmin: data.isAdmin,
+				languageIsoCode: data.languageIsoCode || 'en-us', // TODO: make global variable
+				languages: data.languages,
+				mediaStartNodeUniques: data.mediaStartNodeIds.map((node) => {
+					return {
+						unique: node.id,
+					};
+				}),
+				name: data.name,
+				permissions: data.permissions,
+				unique: data.id,
+				userName: data.userName,
 			};
 			return { data: user };
 		}
