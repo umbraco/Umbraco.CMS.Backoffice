@@ -1,5 +1,5 @@
 import type { UmbImageCropperFocalPoint } from './index.js';
-import { drag, clamp } from '@umbraco-cms/backoffice/external/uui';
+import { drag, clamp } from '@umbraco-cms/backoffice/utils';
 import { state } from '@umbraco-cms/backoffice/external/lit';
 import { classMap, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 
@@ -8,9 +8,9 @@ import { LitElement, css, html, nothing, customElement, property, query } from '
 
 @customElement('umb-image-cropper-focus-setter')
 export class UmbImageCropperFocusSetterElement extends LitElement {
-	@query('#image') imageElement?: HTMLImageElement;
-	@query('#wrapper') wrapperElement?: HTMLElement;
-	@query('#focal-point') focalPointElement?: HTMLElement;
+	@query('#image') imageElement!: HTMLImageElement;
+	@query('#wrapper') wrapperElement?: HTMLImageElement;
+	@query('#focal-point') focalPointElement!: HTMLImageElement;
 
 	@state() private isDraggingGridHandle = false;
 
@@ -41,11 +41,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	#DOT_RADIUS = 8 as const;
 
-	connectedCallback() {
-		super.connectedCallback();
-		this.#addEventListeners();
-	}
-
 	disconnectedCallback() {
 		super.disconnectedCallback();
 		this.#removeEventListeners();
@@ -64,43 +59,60 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		}
 	}
 
+	protected update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+		super.update(changedProperties);
+
+		if (changedProperties.has('src')) {
+			if (this.src) {
+				this.#initializeImage();
+			}
+		}
+	}
+
 	protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
 		super.firstUpdated(_changedProperties);
 
 		this.style.setProperty('--dot-radius', `${this.#DOT_RADIUS}px`);
+	}
+
+	async #initializeImage() {
+		await this.updateComplete; // Wait for the @query to be resolved
 
 		if (this.focalPointElement) {
-			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
+			this.focalPointElement.style.left = `calc(${this.focalPoint.left * 100}% - ${this.#DOT_RADIUS}px)`;
+			this.focalPointElement.style.top = `calc(${this.focalPoint.top * 100}% - ${this.#DOT_RADIUS}px)`;
 		}
-		if (this.imageElement) {
-			this.imageElement.onload = () => {
-				if (!this.imageElement || !this.wrapperElement) return;
 
-				const imageAspectRatio = this.imageElement.naturalWidth / this.imageElement.naturalHeight;
-				const hostRect = this.getBoundingClientRect();
-				const image = this.imageElement.getBoundingClientRect();
+		this.imageElement.onload = () => {
+			if (!this.imageElement || !this.wrapperElement) return;
+			const imageAspectRatio = this.imageElement.naturalWidth / this.imageElement.naturalHeight;
+			const hostRect = this.getBoundingClientRect();
+			const image = this.imageElement.getBoundingClientRect();
 
-				if (image.width > hostRect.width) {
-					this.imageElement.style.width = '100%';
-				}
-				if (image.height > hostRect.height) {
-					this.imageElement.style.height = '100%';
-				}
+			if (image.width > hostRect.width) {
+				this.imageElement.style.width = '100%';
+			}
+			if (image.height > hostRect.height) {
+				this.imageElement.style.height = '100%';
+			}
 
-				this.#resetCoords();
+			this.#resetCoords();
+			this.imageElement.style.aspectRatio = `${imageAspectRatio}`;
+			this.wrapperElement.style.aspectRatio = `${imageAspectRatio}`;
+		};
 
-				this.imageElement.style.aspectRatio = `${imageAspectRatio}`;
-				this.wrapperElement.style.aspectRatio = `${imageAspectRatio}`;
-			};
-		}
+		this.#addEventListeners();
 	}
 
 	async #addEventListeners() {
 		await this.updateComplete; // Wait for the @query to be resolved
+		this.imageElement?.addEventListener('mousedown', this.#onStartDrag);
+		window.addEventListener('mouseup', this.#onEndDrag);
 	}
 
 	#removeEventListeners() {
-
+		this.imageElement?.removeEventListener('mousedown', this.#onStartDrag);
+		window.removeEventListener('mouseup', this.#onEndDrag);
 	}
 
 	#coordsToFactor(x: number, y: number) {
@@ -269,14 +281,15 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		}
 		/* Wrapper is used to make the focal point position responsive to the image size */
 		#wrapper {
+			overflow: hidden;
 			position: relative;
 			display: flex;
 			margin: auto;
 			max-width: 100%;
 			max-height: 100%;
 			box-sizing: border-box;
-        	cursor: crosshair;
-        	forced-color-adjust: none;
+        		cursor: crosshair;
+        		forced-color-adjust: none;
 		}
 		#image {
 			margin: auto;
@@ -291,12 +304,12 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			//outline: 3px solid black;
 			top: 0;
 			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
-        	border: solid 2px white;
+        		border: solid 2px white;
 			border-radius: 50%;
 			pointer-events: none;
 			background-color: var(--uui-palette-spanish-pink-light);
 			transition: 150ms transform;
-        	box-sizing: inherit;
+        		box-sizing: inherit;
 		}
 		.focal-point--dragging {
 			cursor: none;
