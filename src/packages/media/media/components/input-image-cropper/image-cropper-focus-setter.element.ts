@@ -43,7 +43,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	disconnectedCallback() {
 		super.disconnectedCallback();
-		this.#removeEventListeners();
 	}
 
 	protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -93,19 +92,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			this.imageElement.style.aspectRatio = `${imageAspectRatio}`;
 			this.wrapperElement.style.aspectRatio = `${imageAspectRatio}`;
 		};
-
-		this.#addEventListeners();
-	}
-
-	async #addEventListeners() {
-		await this.updateComplete; // Wait for the @query to be resolved
-		//this.imageElement?.addEventListener('mousedown', this.#onStartDrag);
-		//window.addEventListener('mouseup', this.#onEndDrag);
-	}
-
-	#removeEventListeners() {
-		//this.imageElement?.removeEventListener('mousedown', this.#onStartDrag);
-		//window.removeEventListener('mouseup', this.#onEndDrag);
 	}
 
 	#coordsToFactor(x: number, y: number) {
