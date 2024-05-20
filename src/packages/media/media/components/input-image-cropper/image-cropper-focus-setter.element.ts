@@ -51,11 +51,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 		if (_changedProperties.has('focalPoint') && this.focalPointElement) {
 			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
-
-			// Reset coords if focal point change to center.
-			/*if (this.#isCentered(this.focalPoint)) {
-				this.#resetCoords();
-			}*/
 		}
 	}
 
