@@ -26,13 +26,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 	set focalPoint(value) {
 		this.#focalPoint = value;
-
-		if (this.#isCentered(this.#focalPoint)) {
-			this.#resetCoords();
-			this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
-		}
-
-		this.requestUpdate();
+		this.#onFocalPointUpdated();
 	}
 
 	#focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
@@ -48,7 +42,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
 		super.updated(_changedProperties);
 
-		if (_changedProperties.has('focalPoint') && this.focalPointElement) {
+		if (_changedProperties.has('focalPoint') && this.focalPoint && this.focalPointElement) {
 			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
 		}
 	}
@@ -72,7 +66,9 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	async #initializeImage() {
 		await this.updateComplete; // Wait for the @query to be resolved
 
-		this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
+		if (this.focalPoint) {
+			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
+		}
 
 		this.imageElement.onload = () => {
 			if (!this.imageElement || !this.wrapperElement) return;
@@ -92,6 +88,15 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			this.imageElement.style.aspectRatio = `${imageAspectRatio}`;
 			this.wrapperElement.style.aspectRatio = `${imageAspectRatio}`;
 		};
+	}
+
+	#onFocalPointUpdated() {
+		if (!this.#focalPoint) return;
+
+		if (this.#isCentered(this.#focalPoint)) {
+			this.#resetCoords();
+			this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
+		}
 	}
 
 	#coordsToFactor(x: number, y: number) {
@@ -235,8 +240,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			max-width: 100%;
 			max-height: 100%;
 			box-sizing: border-box;
-        		cursor: crosshair;
-        		forced-color-adjust: none;
+			cursor: crosshair;
+			forced-color-adjust: none;
 		}
 		#image {
 			margin: auto;
