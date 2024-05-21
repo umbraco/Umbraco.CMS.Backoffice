@@ -2,35 +2,7 @@ import { manifests as decimalSchemaManifests } from './Umbraco.Decimal.js';
 import { manifests as integerSchemaManifests } from './Umbraco.Integer.js';
 import type { ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 
-// TODO: we don't really want this config value to be changed from the UI. We need a way to handle hidden config properties.
-const allowDecimalsConfig = {
-	alias: 'allowDecimals',
-	label: 'Allow decimals',
-	propertyEditorUiAlias: 'Umb.PropertyEditorUi.Toggle',
-};
-
 export const manifests: Array<ManifestTypes> = [
-	{
-		type: 'propertyEditorUi',
-		alias: 'Umb.PropertyEditorUi.Integer',
-		name: 'Integer Property Editor UI',
-		element: () => import('./property-editor-ui-number.element.js'),
-		meta: {
-			label: 'Integer',
-			propertyEditorSchemaAlias: 'Umbraco.Integer',
-			icon: 'icon-autofill',
-			group: 'common',
-			settings: {
-				properties: [allowDecimalsConfig],
-				defaultData: [
-					{
-						alias: 'allowDecimals',
-						value: false,
-					},
-				],
-			},
-		},
-	},
 	{
 		type: 'propertyEditorUi',
 		alias: 'Umb.PropertyEditorUi.Decimal',
@@ -42,12 +14,15 @@ export const manifests: Array<ManifestTypes> = [
 			icon: 'icon-autofill',
 			group: 'common',
 			settings: {
-				properties: [allowDecimalsConfig],
-				defaultData: [
+				properties: [
 					{
-						alias: 'allowDecimals',
-						value: true,
+						alias: 'placeholder',
+						label: 'Placeholder text',
+						description: 'Enter the text to be displayed when the value is empty',
+						propertyEditorUiAlias: 'Umb.PropertyEditorUi.TextBox',
 					},
+				],
+				defaultData: [
 					{
 						alias: 'step',
 						value: '0.01',
@@ -58,11 +33,11 @@ export const manifests: Array<ManifestTypes> = [
 	},
 	{
 		type: 'propertyEditorUi',
-		alias: 'Umb.PropertyEditorUi.Number',
-		name: 'Number Property Editor UI',
+		alias: 'Umb.PropertyEditorUi.Integer',
+		name: 'Numeric Property Editor UI',
 		element: () => import('./property-editor-ui-number.element.js'),
 		meta: {
-			label: 'Number',
+			label: 'Numeric',
 			icon: 'icon-autofill',
 			group: 'common',
 			propertyEditorSchemaAlias: 'Umbraco.Integer',

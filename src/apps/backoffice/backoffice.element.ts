@@ -7,6 +7,7 @@ import {
 } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbServerExtensionRegistrator } from '@umbraco-cms/backoffice/extension-api';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
 
 import './components/index.js';
 
@@ -22,6 +23,7 @@ const CORE_PACKAGES = [
 	import('../../packages/media/umbraco-package.js'),
 	import('../../packages/members/umbraco-package.js'),
 	import('../../packages/models-builder/umbraco-package.js'),
+	import('../../packages/multi-url-picker/umbraco-package.js'),
 	import('../../packages/packages/umbraco-package.js'),
 	import('../../packages/property-editors/umbraco-package.js'),
 	import('../../packages/relations/umbraco-package.js'),
@@ -58,7 +60,15 @@ export class UmbBackofficeElement extends UmbLitElement {
 			umbExtensionsRegistry.registerMany(packageModule.extensions);
 		});
 
-		new UmbServerExtensionRegistrator(this, umbExtensionsRegistry).registerPrivateExtensions();
+		const serverExtensions = new UmbServerExtensionRegistrator(this, umbExtensionsRegistry);
+
+		// TODO: We need to ensure this request is called every time the user logs in, but this should be done somewhere across the app and not here [JOV]
+		this.consumeContext(UMB_AUTH_CONTEXT, (authContext) => {
+			this.observe(authContext.isAuthorized, (isAuthorized) => {
+				if (!isAuthorized) return;
+				serverExtensions.registerPrivateExtensions();
+			});
+		});
 	}
 
 	render() {

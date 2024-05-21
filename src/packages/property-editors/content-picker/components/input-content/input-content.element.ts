@@ -7,6 +7,7 @@ import type { UmbInputDocumentElement } from '@umbraco-cms/backoffice/document';
 import type { UmbInputMediaElement } from '@umbraco-cms/backoffice/media';
 import type { UmbInputMemberElement } from '@umbraco-cms/backoffice/member';
 import type { UmbReferenceByUniqueAndType } from '@umbraco-cms/backoffice/models';
+import type { UmbTreeStartNode } from '@umbraco-cms/backoffice/tree';
 
 const elementName = 'umb-input-content';
 @customElement(elementName)
@@ -28,14 +29,14 @@ export class UmbInputContentElement extends UUIFormControlMixin(UmbLitElement, '
 		return this._type;
 	}
 
-	@property({ type: String })
-	startNodeId?: string;
-
 	@property({ type: Number })
 	min = 0;
 
 	@property({ type: Number })
 	max = 0;
+
+	@property({ type: Object, attribute: false })
+	startNode?: UmbTreeStartNode;
 
 	private _allowedContentTypeIds: Array<string> = [];
 	@property()
@@ -48,9 +49,6 @@ export class UmbInputContentElement extends UUIFormControlMixin(UmbLitElement, '
 
 	@property({ type: Boolean })
 	showOpenButton?: boolean;
-
-	@property({ type: Boolean })
-	ignoreUserStartNodes?: boolean;
 
 	#entityTypeLookup = { content: 'document', media: 'media', member: 'member' };
 
@@ -93,10 +91,6 @@ export class UmbInputContentElement extends UUIFormControlMixin(UmbLitElement, '
 		this.dispatchEvent(new UmbChangeEvent());
 	}
 
-	constructor() {
-		super();
-	}
-
 	render() {
 		switch (this._type) {
 			case 'content':
@@ -113,12 +107,11 @@ export class UmbInputContentElement extends UUIFormControlMixin(UmbLitElement, '
 	#renderDocumentPicker() {
 		return html`<umb-input-document
 			.selection=${this.#selection}
-			.startNodeId=${this.startNodeId}
+			.startNode=${this.startNode}
 			.allowedContentTypeIds=${this._allowedContentTypeIds}
 			.min=${this.min}
 			.max=${this.max}
 			?showOpenButton=${this.showOpenButton}
-			?ignoreUserStartNodes=${this.ignoreUserStartNodes}
 			@change=${this.#onChange}></umb-input-document>`;
 	}
 
@@ -129,7 +122,6 @@ export class UmbInputContentElement extends UUIFormControlMixin(UmbLitElement, '
 			.min=${this.min}
 			.max=${this.max}
 			?showOpenButton=${this.showOpenButton}
-			?ignoreUserStartNodes=${this.ignoreUserStartNodes}
 			@change=${this.#onChange}></umb-input-media>`;
 	}
 

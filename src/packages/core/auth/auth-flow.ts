@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-import { UMB_STORAGE_REDIRECT_URL, UMB_STORAGE_TOKEN_RESPONSE_NAME } from './auth.context.token.js';
+import { UMB_STORAGE_TOKEN_RESPONSE_NAME } from './auth.context.token.js';
 import type { LocationLike, StringMap } from '@umbraco-cms/backoffice/external/openid';
 import {
 	BaseTokenRequestHandler,
@@ -30,6 +30,7 @@ import {
 	TokenRequest,
 	TokenResponse,
 } from '@umbraco-cms/backoffice/external/openid';
+import { Subject } from '@umbraco-cms/backoffice/external/rxjs';
 
 const requestor = new FetchRequestor();
 
@@ -92,19 +93,33 @@ export class UmbAuthFlow {
 	readonly #postLogoutRedirectUri: string;
 	readonly #clientId: string;
 	readonly #scope: string;
+	readonly #timeoutSignal;
 
 	// tokens
 	#tokenResponse?: TokenResponse;
+
+	// external login
+	#link_endpoint;
+	#link_key_endpoint;
+	#unlink_endpoint;
+
+	/**
+	 * This signal will emit when the authorization flow is complete.
+	 * @remark It will also emit if there is an error during the authorization flow.
+	 */
+	readonly authorizationSignal = new Subject<void>();
 
 	constructor(
 		openIdConnectUrl: string,
 		redirectUri: string,
 		postLogoutRedirectUri: string,
+		timeoutSignal: Subject<void>,
 		clientId = 'umbraco-back-office',
 		scope = 'offline_access',
 	) {
 		this.#redirectUri = redirectUri;
 		this.#postLogoutRedirectUri = postLogoutRedirectUri;
+		this.#timeoutSignal = timeoutSignal;
 		this.#clientId = clientId;
 		this.#scope = scope;
 
@@ -115,14 +130,14 @@ export class UmbAuthFlow {
 			end_session_endpoint: `${openIdConnectUrl}/umbraco/management/api/v1/security/back-office/signout`,
 		});
 
+		this.#link_endpoint = `${openIdConnectUrl}/umbraco/management/api/v1/security/back-office/link-login`;
+		this.#link_key_endpoint = `${openIdConnectUrl}/umbraco/management/api/v1/security/back-office/link-login-key`;
+		this.#unlink_endpoint = `${openIdConnectUrl}/umbraco/management/api/v1/security/back-office/unlink-login`;
+
 		this.#notifier = new AuthorizationNotifier();
 		this.#tokenHandler = new BaseTokenRequestHandler(requestor);
 		this.#storageBackend = new LocalStorageBackend();
-		this.#authorizationHandler = new RedirectRequestHandler(
-			this.#storageBackend,
-			new UmbNoHashQueryStringUtils(),
-			window.location,
-		);
+		this.#authorizationHandler = new RedirectRequestHandler(this.#storageBackend, new UmbNoHashQueryStringUtils());
 
 		// set notifier to deliver responses
 		this.#authorizationHandler.setAuthorizationNotifier(this.#notifier);
@@ -131,6 +146,7 @@ export class UmbAuthFlow {
 		this.#notifier.setAuthorizationListener(async (request, response, error) => {
 			if (error) {
 				console.error('Authorization error', error);
+				this.authorizationSignal.next();
 				throw error;
 			}
 
@@ -143,16 +159,9 @@ export class UmbAuthFlow {
 				await this.#makeTokenRequest(response.code, codeVerifier);
 				await this.performWithFreshTokens();
 				await this.#saveTokenState();
-
-				// Redirect to the saved state or root
-				let currentRoute = '/';
-				const savedRoute = sessionStorage.getItem(UMB_STORAGE_REDIRECT_URL);
-				if (savedRoute) {
-					sessionStorage.removeItem(UMB_STORAGE_REDIRECT_URL);
-					currentRoute = savedRoute;
-				}
-				history.replaceState(null, '', currentRoute);
 			}
+
+			this.authorizationSignal.next();
 		});
 	}
 
@@ -171,11 +180,7 @@ export class UmbAuthFlow {
 		const tokenResponseJson = await this.#storageBackend.getItem(UMB_STORAGE_TOKEN_RESPONSE_NAME);
 		if (tokenResponseJson) {
 			const response = new TokenResponse(JSON.parse(tokenResponseJson));
-			if (response.isValid()) {
-				this.#tokenResponse = response;
-			} else {
-				this.signOut();
-			}
+			this.#tokenResponse = response;
 		}
 	}
 
@@ -196,7 +201,7 @@ export class UmbAuthFlow {
 	 * @param identityProvider The identity provider to use for the authorization request.
 	 * @param usernameHint (Optional) The username to use for the authorization request. It will be provided to the OpenID server as a hint.
 	 */
-	makeAuthorizationRequest(identityProvider: string, usernameHint?: string): void {
+	makeAuthorizationRequest(identityProvider: string, usernameHint?: string) {
 		const extras: StringMap = { prompt: 'consent', access_type: 'offline' };
 
 		// If the identity provider is not 'Umbraco', we will add it to the extras.
@@ -223,17 +228,17 @@ export class UmbAuthFlow {
 			true,
 		);
 
-		this.#authorizationHandler.performAuthorizationRequest(this.#configuration, request);
+		return this.#authorizationHandler.performAuthorizationRequest(this.#configuration, request);
 	}
 
 	/**
-	 * This method will check if the user is logged in by validating the timestamp of the stored token.
+	 * This method will check if the user is logged in by validating if there is a token stored.
 	 * If no token is stored, it will return false.
 	 *
 	 * @returns true if the user is logged in, false otherwise.
 	 */
 	isAuthorized(): boolean {
-		return !!this.#tokenResponse && this.#tokenResponse.isValid();
+		return !!this.#tokenResponse;
 	}
 
 	/**
@@ -311,26 +316,66 @@ export class UmbAuthFlow {
 			return Promise.resolve(this.#tokenResponse.accessToken);
 		}
 
-		// if the refresh token is not set (maybe the provider doesn't support them), sign out
-		if (!this.#tokenResponse?.refreshToken) {
-			this.signOut();
-			return Promise.reject('Missing refreshToken.');
+		const success = await this.makeRefreshTokenRequest();
+
+		if (!success) {
+			this.clearTokenStorage();
+			this.#timeoutSignal.next();
+			return Promise.reject('Missing tokenResponse.');
 		}
-
-		const request = new TokenRequest({
-			client_id: this.#clientId,
-			redirect_uri: this.#redirectUri,
-			grant_type: GRANT_TYPE_REFRESH_TOKEN,
-			code: undefined,
-			refresh_token: this.#tokenResponse.refreshToken,
-			extras: undefined,
-		});
-
-		await this.#performTokenRequest(request);
 
 		return this.#tokenResponse
 			? Promise.resolve(this.#tokenResponse.accessToken)
-			: Promise.reject('Missing accessToken.');
+			: Promise.reject('Missing tokenResponse.');
+	}
+
+	/**
+	 * This method will link the current user to the specified provider by redirecting the user to the link endpoint.
+	 * @param provider The provider to link to.
+	 */
+	async linkLogin(provider: string): Promise<void> {
+		const linkKey = await this.#makeLinkTokenRequest(provider);
+
+		const form = document.createElement('form');
+		form.method = 'POST';
+		form.action = this.#link_endpoint;
+		form.style.display = 'none';
+
+		const providerInput = document.createElement('input');
+		providerInput.name = 'provider';
+		providerInput.value = provider;
+		form.appendChild(providerInput);
+
+		const linkKeyInput = document.createElement('input');
+		linkKeyInput.name = 'linkKey';
+		linkKeyInput.value = linkKey;
+		form.appendChild(linkKeyInput);
+
+		document.body.appendChild(form);
+		form.submit();
+	}
+
+	/**
+	 * This method will unlink the current user from the specified provider.
+	 */
+	async unlinkLogin(loginProvider: string, providerKey: string): Promise<boolean> {
+		const token = await this.performWithFreshTokens();
+		const request = new Request(this.#unlink_endpoint, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+			body: JSON.stringify({ loginProvider, providerKey }),
+		});
+
+		const result = await fetch(request);
+
+		if (!result.ok) {
+			const error = await result.json();
+			throw error;
+		}
+
+		await this.signOut();
+
+		return true;
 	}
 
 	/**
@@ -365,17 +410,53 @@ export class UmbAuthFlow {
 		await this.#performTokenRequest(request);
 	}
 
+	async makeRefreshTokenRequest(): Promise<boolean> {
+		if (!this.#tokenResponse?.refreshToken) {
+			return false;
+		}
+
+		const request = new TokenRequest({
+			client_id: this.#clientId,
+			redirect_uri: this.#redirectUri,
+			grant_type: GRANT_TYPE_REFRESH_TOKEN,
+			code: undefined,
+			refresh_token: this.#tokenResponse.refreshToken,
+			extras: undefined,
+		});
+
+		return this.#performTokenRequest(request);
+	}
+
 	/**
 	 * This method will make a token request to the server using the refresh token.
 	 * If the request fails, it will sign the user out (clear the token state).
 	 */
-	async #performTokenRequest(request: TokenRequest): Promise<void> {
+	async #performTokenRequest(request: TokenRequest): Promise<boolean> {
 		try {
 			this.#tokenResponse = await this.#tokenHandler.performTokenRequest(this.#configuration, request);
+			this.#saveTokenState();
+			return true;
 		} catch (error) {
-			// If the token request fails, it means the refresh token is invalid, so we sign the user out.
 			console.error('Token request error', error);
-			this.signOut();
+			this.clearTokenStorage();
+			return false;
 		}
+	}
+
+	async #makeLinkTokenRequest(provider: string) {
+		const token = await this.performWithFreshTokens();
+
+		const request = await fetch(`${this.#link_key_endpoint}?provider=${provider}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+		});
+
+		if (!request.ok) {
+			throw new Error('Failed to link login');
+		}
+
+		return request.json();
 	}
 }

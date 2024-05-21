@@ -25,8 +25,10 @@ import {
 	UmbDocumentTypeDetailRepository,
 } from '@umbraco-cms/backoffice/document-type';
 import { UmbLanguageCollectionRepository } from '@umbraco-cms/backoffice/language';
-import { UmbRequestReloadTreeItemChildrenEvent } from '@umbraco-cms/backoffice/tree';
-import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
+import {
+	UmbRequestReloadChildrenOfEntityEvent,
+	UmbRequestReloadStructureForEntityEvent,
+} from '@umbraco-cms/backoffice/entity-action';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
 import { UMB_INVARIANT_CULTURE, UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
@@ -45,6 +47,7 @@ export class UmbDocumentBlueprintWorkspaceContext
 
 	#parent = new UmbObjectState<{ entityType: string; unique: string | null } | undefined>(undefined);
 	readonly parentUnique = this.#parent.asObservablePart((parent) => (parent ? parent.unique : undefined));
+	readonly parentEntityType = this.#parent.asObservablePart((parent) => (parent ? parent.entityType : undefined));
 
 	/**
 	 */
@@ -62,6 +65,8 @@ export class UmbDocumentBlueprintWorkspaceContext
 	}
 
 	readonly unique = this.#currentData.asObservablePart((data) => data?.unique);
+	readonly entityType = this.#currentData.asObservablePart((data) => data?.entityType);
+
 	readonly contentTypeUnique = this.#currentData.asObservablePart((data) => data?.documentType.unique);
 
 	readonly variants = this.#currentData.asObservablePart((data) => data?.variants || []);
@@ -395,7 +400,7 @@ export class UmbDocumentBlueprintWorkspaceContext
 
 				// TODO: this might not be the right place to alert the tree, but it works for now
 				const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-				const event = new UmbRequestReloadTreeItemChildrenEvent({
+				const event = new UmbRequestReloadChildrenOfEntityEvent({
 					entityType: parent.entityType,
 					unique: parent.unique,
 				});
@@ -426,20 +431,6 @@ export class UmbDocumentBlueprintWorkspaceContext
 			await this.repository.delete(id);
 		}
 	}
-
-	/*
-	concept notes:
-
-	public saveAndPreview() {
-
-	}
-	*/
-
-	/*public createPropertyDatasetContext(host: UmbControllerHost, variantId: UmbVariantId) {
-		// TODO: [LK] Temporary workaround/hack to get the workspace to load.
-		const docCxt = new UmbDocumentWorkspaceContext(host);
-		return new UmbDocumentPropertyDataContext(host, docCxt, variantId);
-	}*/
 
 	public createPropertyDatasetContext(host: UmbControllerHost, variantId: UmbVariantId) {
 		return new UmbDocumentBlueprintPropertyDataContext(host, this, variantId);

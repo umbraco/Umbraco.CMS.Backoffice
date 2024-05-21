@@ -13,8 +13,10 @@ import {
 import { UmbBooleanState, UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
-import { UmbRequestReloadTreeItemChildrenEvent } from '@umbraco-cms/backoffice/tree';
-import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
+import {
+	UmbRequestReloadChildrenOfEntityEvent,
+	UmbRequestReloadStructureForEntityEvent,
+} from '@umbraco-cms/backoffice/entity-action';
 import type { IRoutingInfo, PageComponent } from '@umbraco-cms/backoffice/router';
 
 export class UmbTemplateWorkspaceContext
@@ -26,6 +28,7 @@ export class UmbTemplateWorkspaceContext
 
 	#parent = new UmbObjectState<{ entityType: string; unique: string | null } | undefined>(undefined);
 	readonly parentUnique = this.#parent.asObservablePart((parent) => (parent ? parent.unique : undefined));
+	readonly parentEntityType = this.#parent.asObservablePart((parent) => (parent ? parent.entityType : undefined));
 
 	#data = new UmbObjectState<UmbTemplateDetailModel | undefined>(undefined);
 	data = this.#data.asObservable();
@@ -35,6 +38,7 @@ export class UmbTemplateWorkspaceContext
 	alias = this.#data.asObservablePart((data) => data?.alias);
 	content = this.#data.asObservablePart((data) => data?.content);
 	readonly unique = this.#data.asObservablePart((data) => data?.unique);
+	readonly entityType = this.#data.asObservablePart((data) => data?.entityType);
 	masterTemplateUnique = this.#data.asObservablePart((data) => data?.masterTemplate?.unique);
 
 	#isCodeEditorReady = new UmbBooleanState(false);
@@ -199,7 +203,7 @@ ${currentContent}`;
 
 			// TODO: this might not be the right place to alert the tree, but it works for now
 			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-			const event = new UmbRequestReloadTreeItemChildrenEvent({
+			const event = new UmbRequestReloadChildrenOfEntityEvent({
 				entityType: parent.entityType,
 				unique: parent.unique,
 			});

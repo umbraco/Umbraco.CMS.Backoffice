@@ -21,10 +21,14 @@ import {
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbLanguageCollectionRepository, type UmbLanguageDetailModel } from '@umbraco-cms/backoffice/language';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
-import { UmbRequestReloadTreeItemChildrenEvent } from '@umbraco-cms/backoffice/tree';
-import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
+import {
+	UmbRequestReloadChildrenOfEntityEvent,
+	UmbRequestReloadStructureForEntityEvent,
+} from '@umbraco-cms/backoffice/entity-action';
 import type { UmbMediaTypeDetailModel } from '@umbraco-cms/backoffice/media-type';
 import type { UmbContentWorkspaceContext } from '@umbraco-cms/backoffice/content';
+import { UmbEntityContext } from '@umbraco-cms/backoffice/entity';
+import { UmbIsTrashedEntityContext } from '@umbraco-cms/backoffice/recycle-bin';
 
 type EntityType = UmbMediaDetailModel;
 export class UmbMediaWorkspaceContext
@@ -39,6 +43,7 @@ export class UmbMediaWorkspaceContext
 
 	#parent = new UmbObjectState<{ entityType: string; unique: string | null } | undefined>(undefined);
 	readonly parentUnique = this.#parent.asObservablePart((parent) => (parent ? parent.unique : undefined));
+	readonly parentEntityType = this.#parent.asObservablePart((parent) => (parent ? parent.entityType : undefined));
 
 	/**
 	 * The media is the current state/draft version of the media.
@@ -56,6 +61,7 @@ export class UmbMediaWorkspaceContext
 	}
 
 	readonly unique = this.#currentData.asObservablePart((data) => data?.unique);
+	readonly entityType = this.#currentData.asObservablePart((data) => data?.entityType);
 	readonly contentTypeUnique = this.#currentData.asObservablePart((data) => data?.mediaType.unique);
 	readonly contentTypeHasCollection = this.#currentData.asObservablePart((data) => !!data?.mediaType.collection);
 
@@ -106,6 +112,11 @@ export class UmbMediaWorkspaceContext
 			return [] as Array<UmbMediaVariantOptionModel>;
 		},
 	);
+
+	// TODO: this should be set up for all entity workspace contexts in a base class
+	#entityContext = new UmbEntityContext(this);
+	// TODO: this might not be the correct place to spin this up
+	#isTrashedContext = new UmbIsTrashedEntityContext(this);
 
 	constructor(host: UmbControllerHost) {
 		super(host, 'Umb.Workspace.Media');
@@ -162,6 +173,9 @@ export class UmbMediaWorkspaceContext
 		const { data, asObservable } = (await this.#getDataPromise) as GetDataType;
 
 		if (data) {
+			this.#entityContext.setEntityType(UMB_MEDIA_ENTITY_TYPE);
+			this.#entityContext.setUnique(unique);
+			this.#isTrashedContext.setIsTrashed(data.isTrashed);
 			this.setIsNew(false);
 			this.#persistedData.update(data);
 			this.#currentData.update(data);
@@ -184,6 +198,8 @@ export class UmbMediaWorkspaceContext
 		const { data } = await this.#getDataPromise;
 		if (!data) return undefined;
 
+		this.#entityContext.setEntityType(UMB_MEDIA_ENTITY_TYPE);
+		this.#entityContext.setUnique(data.unique);
 		this.setIsNew(true);
 		this.#persistedData.setValue(data);
 		this.#currentData.setValue(data);
@@ -385,7 +401,7 @@ export class UmbMediaWorkspaceContext
 
 				// TODO: this might not be the right place to alert the tree, but it works for now
 				const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-				const event = new UmbRequestReloadTreeItemChildrenEvent({
+				const event = new UmbRequestReloadChildrenOfEntityEvent({
 					entityType: parent.entityType,
 					unique: parent.unique,
 				});

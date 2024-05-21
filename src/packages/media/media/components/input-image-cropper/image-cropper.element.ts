@@ -1,16 +1,7 @@
 import type { UmbImageCropperCrop, UmbImageCropperFocalPoint } from './index.js';
 import { calculateExtrapolatedValue, clamp, inverseLerp, lerp } from '@umbraco-cms/backoffice/utils';
-import type {
-	PropertyValueMap} from '@umbraco-cms/backoffice/external/lit';
-import {
-	customElement,
-	property,
-	query,
-	state,
-	LitElement,
-	css,
-	html,
-} from '@umbraco-cms/backoffice/external/lit';
+import type { PropertyValueMap } from '@umbraco-cms/backoffice/external/lit';
+import { customElement, property, query, state, LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 
 @customElement('umb-image-cropper')
 export class UmbImageCropperElement extends LitElement {
@@ -385,6 +376,7 @@ export class UmbImageCropperElement extends LitElement {
 		#image {
 			display: block;
 			position: absolute;
+			user-select: none;
 		}
 
 		#slider {

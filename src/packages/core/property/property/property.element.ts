@@ -1,5 +1,6 @@
-import { umbExtensionsRegistry, type ManifestPropertyEditorUi } from '../../extension-registry/index.js';
 import { UmbPropertyContext } from './property.context.js';
+import type { ManifestPropertyEditorUi } from '@umbraco-cms/backoffice/extension-registry';
+import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, property, state, ifDefined, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { createExtensionElement } from '@umbraco-cms/backoffice/extension-api';
@@ -234,7 +235,10 @@ export class UmbPropertyElement extends UmbLitElement {
 				this.#valueObserver = this.observe(
 					this.#propertyContext.value,
 					(value) => {
+						// Set the value on the element:
 						this._element!.value = value;
+						// Set the value on the context as well, to ensure that any default values are stored right away:
+						this.#propertyContext.setValue(value);
 						if (this.#validationMessageBinder) {
 							this.#validationMessageBinder.value = value;
 						}

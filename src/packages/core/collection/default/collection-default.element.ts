@@ -1,9 +1,9 @@
-import { UMB_COLLECTION_CONTEXT, UmbDefaultCollectionContext } from './collection-default.context.js';
+import { UmbDefaultCollectionContext } from './collection-default.context.js';
+import { UMB_COLLECTION_CONTEXT } from './collection-default.context-token.js';
 import { css, html, customElement, state } from '@umbraco-cms/backoffice/external/lit';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import type { PropertyValueMap } from '@umbraco-cms/backoffice/external/lit';
 import type { UmbBackofficeManifestKind } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbRoute } from '@umbraco-cms/backoffice/router';
 
@@ -32,13 +32,9 @@ export class UmbCollectionDefaultElement extends UmbLitElement {
 		super();
 		this.consumeContext(UMB_COLLECTION_CONTEXT, (context) => {
 			this.#collectionContext = context;
+			this.#collectionContext?.requestCollection();
 			this.#observeCollectionRoutes();
 		});
-	}
-
-	protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-		super.firstUpdated(_changedProperties);
-		this.#collectionContext?.requestCollection();
 	}
 
 	#observeCollectionRoutes() {

@@ -34,15 +34,18 @@ export class UmbUserServerDataSource implements UmbDetailDataSource<UmbUserDetai
 	async createScaffold() {
 		const data: UmbUserDetailModel = {
 			avatarUrls: [],
-			documentStartNodeUniques: [],
 			createDate: null,
+			hasDocumentRootAccess: false,
+			documentStartNodeUniques: [],
 			email: '',
 			entityType: UMB_USER_ENTITY_TYPE,
 			failedLoginAttempts: 0,
+			isAdmin: false,
 			languageIsoCode: '',
 			lastLockoutDate: null,
 			lastLoginDate: null,
 			lastPasswordChangeDate: null,
+			hasMediaRootAccess: false,
 			mediaStartNodeUniques: [],
 			name: '',
 			state: null,
@@ -50,7 +53,6 @@ export class UmbUserServerDataSource implements UmbDetailDataSource<UmbUserDetai
 			updateDate: null,
 			userGroupUniques: [],
 			userName: '',
-			isAdmin: false,
 		};
 
 		return { data };
@@ -72,28 +74,42 @@ export class UmbUserServerDataSource implements UmbDetailDataSource<UmbUserDetai
 		}
 
 		// TODO: make data mapper to prevent errors
-		const dataType: UmbUserDetailModel = {
+		const user: UmbUserDetailModel = {
 			avatarUrls: data.avatarUrls,
-			documentStartNodeUniques: data.documentStartNodeIds,
 			createDate: data.createDate,
+			hasDocumentRootAccess: data.hasDocumentRootAccess,
+			documentStartNodeUniques: data.documentStartNodeIds.map((node) => {
+				return {
+					unique: node.id,
+				};
+			}),
 			email: data.email,
 			entityType: UMB_USER_ENTITY_TYPE,
 			failedLoginAttempts: data.failedLoginAttempts,
+			isAdmin: data.isAdmin,
 			languageIsoCode: data.languageIsoCode || null,
 			lastLockoutDate: data.lastLockoutDate || null,
 			lastLoginDate: data.lastLoginDate || null,
 			lastPasswordChangeDate: data.lastPasswordChangeDate || null,
-			mediaStartNodeUniques: data.mediaStartNodeIds,
+			hasMediaRootAccess: data.hasMediaRootAccess,
+			mediaStartNodeUniques: data.mediaStartNodeIds.map((node) => {
+				return {
+					unique: node.id,
+				};
+			}),
 			name: data.name,
 			state: data.state,
 			unique: data.id,
 			updateDate: data.updateDate,
-			userGroupUniques: data.userGroupIds,
+			userGroupUniques: data.userGroupIds.map((reference) => {
+				return {
+					unique: reference.id,
+				};
+			}),
 			userName: data.userName,
-			isAdmin: data.isAdmin,
 		};
 
-		return { data: dataType };
+		return { data: user };
 	}
 
 	/**
@@ -109,7 +125,11 @@ export class UmbUserServerDataSource implements UmbDetailDataSource<UmbUserDetai
 		const requestBody: CreateUserRequestModel = {
 			email: model.email,
 			name: model.name,
-			userGroupIds: model.userGroupUniques,
+			userGroupIds: model.userGroupUniques.map((reference) => {
+				return {
+					id: reference.unique,
+				};
+			}),
 			userName: model.userName,
 		};
 
@@ -138,12 +158,26 @@ export class UmbUserServerDataSource implements UmbDetailDataSource<UmbUserDetai
 
 		// TODO: make data mapper to prevent errors
 		const requestBody: UpdateUserRequestModel = {
-			documentStartNodeIds: model.documentStartNodeUniques,
+			documentStartNodeIds: model.documentStartNodeUniques.map((node) => {
+				return {
+					id: node.unique,
+				};
+			}),
 			email: model.email,
+			hasDocumentRootAccess: model.hasDocumentRootAccess,
+			hasMediaRootAccess: model.hasMediaRootAccess,
 			languageIsoCode: model.languageIsoCode || '',
-			mediaStartNodeIds: model.mediaStartNodeUniques,
+			mediaStartNodeIds: model.mediaStartNodeUniques.map((node) => {
+				return {
+					id: node.unique,
+				};
+			}),
 			name: model.name,
-			userGroupIds: model.userGroupUniques,
+			userGroupIds: model.userGroupUniques.map((reference) => {
+				return {
+					id: reference.unique,
+				};
+			}),
 			userName: model.userName,
 		};
 

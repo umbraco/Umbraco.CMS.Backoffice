@@ -1,4 +1,4 @@
-import type { UmbTreeItemModelBase } from '../types.js';
+import type { UmbTreeItemModelBase, UmbTreeItemModel } from '../types.js';
 import type { UmbTreeDataSource } from './tree-data-source.interface.js';
 import type {
 	UmbTreeAncestorsOfRequestArgs,
@@ -12,10 +12,13 @@ import type { UmbPagedModel } from '@umbraco-cms/backoffice/repository';
 export interface UmbTreeServerDataSourceBaseArgs<
 	ServerTreeItemType extends { hasChildren: boolean },
 	ClientTreeItemType extends UmbTreeItemModelBase,
+	TreeRootItemsRequestArgsType extends UmbTreeRootItemsRequestArgs = UmbTreeRootItemsRequestArgs,
+	TreeChildrenOfRequestArgsType extends UmbTreeChildrenOfRequestArgs = UmbTreeChildrenOfRequestArgs,
+	TreeAncestorsOfRequestArgsType extends UmbTreeAncestorsOfRequestArgs = UmbTreeAncestorsOfRequestArgs,
 > {
-	getRootItems: (args: UmbTreeRootItemsRequestArgs) => Promise<UmbPagedModel<ServerTreeItemType>>;
-	getChildrenOf: (args: UmbTreeChildrenOfRequestArgs) => Promise<UmbPagedModel<ServerTreeItemType>>;
-	getAncestorsOf: (args: UmbTreeAncestorsOfRequestArgs) => Promise<Array<ServerTreeItemType>>;
+	getRootItems: (args: TreeRootItemsRequestArgsType) => Promise<UmbPagedModel<ServerTreeItemType>>;
+	getChildrenOf: (args: TreeChildrenOfRequestArgsType) => Promise<UmbPagedModel<ServerTreeItemType>>;
+	getAncestorsOf: (args: TreeAncestorsOfRequestArgsType) => Promise<Array<ServerTreeItemType>>;
 	mapper: (item: ServerTreeItemType) => ClientTreeItemType;
 }
 
@@ -27,8 +30,17 @@ export interface UmbTreeServerDataSourceBaseArgs<
  */
 export abstract class UmbTreeServerDataSourceBase<
 	ServerTreeItemType extends { hasChildren: boolean },
-	ClientTreeItemType extends UmbTreeItemModelBase,
-> implements UmbTreeDataSource<ClientTreeItemType>
+	ClientTreeItemType extends UmbTreeItemModel,
+	TreeRootItemsRequestArgsType extends UmbTreeRootItemsRequestArgs = UmbTreeRootItemsRequestArgs,
+	TreeChildrenOfRequestArgsType extends UmbTreeChildrenOfRequestArgs = UmbTreeChildrenOfRequestArgs,
+	TreeAncestorsOfRequestArgsType extends UmbTreeAncestorsOfRequestArgs = UmbTreeAncestorsOfRequestArgs,
+> implements
+		UmbTreeDataSource<
+			ClientTreeItemType,
+			TreeRootItemsRequestArgsType,
+			TreeChildrenOfRequestArgsType,
+			TreeAncestorsOfRequestArgsType
+		>
 {
 	#host;
 	#getRootItems;
@@ -41,7 +53,16 @@ export abstract class UmbTreeServerDataSourceBase<
 	 * @param {UmbControllerHost} host
 	 * @memberof UmbTreeServerDataSourceBase
 	 */
-	constructor(host: UmbControllerHost, args: UmbTreeServerDataSourceBaseArgs<ServerTreeItemType, ClientTreeItemType>) {
+	constructor(
+		host: UmbControllerHost,
+		args: UmbTreeServerDataSourceBaseArgs<
+			ServerTreeItemType,
+			ClientTreeItemType,
+			TreeRootItemsRequestArgsType,
+			TreeChildrenOfRequestArgsType,
+			TreeAncestorsOfRequestArgsType
+		>,
+	) {
 		this.#host = host;
 		this.#getRootItems = args.getRootItems;
 		this.#getChildrenOf = args.getChildrenOf;
@@ -55,7 +76,7 @@ export abstract class UmbTreeServerDataSourceBase<
 	 * @return {*}
 	 * @memberof UmbTreeServerDataSourceBase
 	 */
-	async getRootItems(args: UmbTreeRootItemsRequestArgs) {
+	async getRootItems(args: TreeRootItemsRequestArgsType) {
 		const { data, error } = await tryExecuteAndNotify(this.#host, this.#getRootItems(args));
 
 		if (data) {
@@ -72,8 +93,8 @@ export abstract class UmbTreeServerDataSourceBase<
 	 * @return {*}
 	 * @memberof UmbTreeServerDataSourceBase
 	 */
-	async getChildrenOf(args: UmbTreeChildrenOfRequestArgs) {
-		if (args.parentUnique === undefined) throw new Error('Parent unique is missing');
+	async getChildrenOf(args: TreeChildrenOfRequestArgsType) {
+		if (args.parent.unique === undefined) throw new Error('Parent unique is missing');
 
 		const { data, error } = await tryExecuteAndNotify(this.#host, this.#getChildrenOf(args));
 
@@ -91,8 +112,8 @@ export abstract class UmbTreeServerDataSourceBase<
 	 * @return {*}
 	 * @memberof UmbTreeServerDataSourceBase
 	 */
-	async getAncestorsOf(args: UmbTreeAncestorsOfRequestArgs) {
-		if (!args.descendantUnique) throw new Error('Parent unique is missing');
+	async getAncestorsOf(args: TreeAncestorsOfRequestArgsType) {
+		if (!args.treeItem.entityType) throw new Error('Parent unique is missing');
 
 		const { data, error } = await tryExecuteAndNotify(this.#host, this.#getAncestorsOf(args));
 

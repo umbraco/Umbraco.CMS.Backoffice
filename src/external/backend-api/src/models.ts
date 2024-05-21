@@ -113,7 +113,7 @@ export type CopyMediaTypeRequestModel = {
 export type CreateDataTypeRequestModel = {
         name: string
 editorAlias: string
-editorUiAlias?: string | null
+editorUiAlias: string
 values: Array<DataTypePropertyPresentationModel>
 id?: string | null
 parent?: ReferenceByIdModel | null
@@ -333,6 +333,7 @@ stylesheets: Array<string>
 scripts: Array<string>
 languages: Array<string>
 dictionaryItems: Array<string>
+id?: string | null
     };
 
 export type CreatePartialViewFolderRequestModel = {
@@ -384,6 +385,7 @@ key?: string | null
 
 export type CreateUserGroupRequestModel = {
         name: string
+alias: string
 icon?: string | null
 sections: Array<string>
 languages: Array<string>
@@ -394,13 +396,14 @@ mediaStartNode?: ReferenceByIdModel | null
 mediaRootAccess: boolean
 fallbackPermissions: Array<string>
 permissions: Array<DocumentPermissionPresentationModel | UnknownTypePermissionPresentationModel>
+id?: string | null
     };
 
 export type CreateUserRequestModel = {
         email: string
 userName: string
 name: string
-userGroupIds: Array<string>
+userGroupIds: Array<ReferenceByIdModel>
 id?: string | null
     };
 
@@ -435,8 +438,10 @@ email: string
 userName: string
 name: string
 languageIsoCode?: string | null
-documentStartNodeIds: Array<string>
-mediaStartNodeIds: Array<string>
+documentStartNodeIds: Array<ReferenceByIdModel>
+hasDocumentRootAccess: boolean
+mediaStartNodeIds: Array<ReferenceByIdModel>
+hasMediaRootAccess: boolean
 avatarUrls: Array<string>
 languages: Array<string>
 hasAccessToAllLanguages: boolean
@@ -479,7 +484,7 @@ properties: Array<DataTypePropertyReferenceModel>
 export type DataTypeResponseModel = {
         name: string
 editorAlias: string
-editorUiAlias?: string | null
+editorUiAlias: string
 values: Array<DataTypePropertyPresentationModel>
 id: string
 isDeletable: boolean
@@ -536,11 +541,11 @@ icon?: string | null
     };
 
 export type DeleteUserGroupsRequestModel = {
-        userGroupIds: Array<string>
+        userGroupIds: Array<ReferenceByIdModel>
     };
 
 export type DeleteUsersRequestModel = {
-        userIds: Array<string>
+        userIds: Array<ReferenceByIdModel>
     };
 
 export type DictionaryItemItemResponseModel = {
@@ -572,7 +577,7 @@ export enum DirectionModel {
 }
 
 export type DisableUserRequestModel = {
-        userIds: Array<string>
+        userIds: Array<ReferenceByIdModel>
     };
 
 export type DocumentBlueprintItemResponseModel = {
@@ -893,7 +898,7 @@ secret: string
     };
 
 export type EnableUserRequestModel = {
-        userIds: Array<string>
+        userIds: Array<ReferenceByIdModel>
     };
 
 export enum EventMessageTypeModel {
@@ -974,12 +979,26 @@ export enum HealthStatusModel {
     REBUILDING = 'Rebuilding'
 }
 
+export type HealthStatusResponseModel = {
+        status: HealthStatusModel
+message?: string | null
+    };
+
 export type HelpPageResponseModel = {
         name?: string | null
 description?: string | null
 url?: string | null
 type?: string | null
     };
+
+export enum ImageCropModeModel {
+    CROP = 'Crop',
+    MAX = 'Max',
+    STRETCH = 'Stretch',
+    PAD = 'Pad',
+    BOX_PAD = 'BoxPad',
+    MIN = 'Min'
+}
 
 export type ImportDictionaryRequestModel = {
         temporaryFile: ReferenceByIdModel
@@ -988,7 +1007,7 @@ parent?: ReferenceByIdModel | null
 
 export type IndexResponseModel = {
         name: string
-healthStatus: HealthStatusModel
+healthStatus: HealthStatusResponseModel
 canRebuild: boolean
 searcherName: string
 documentCount: number
@@ -1011,7 +1030,7 @@ export type InviteUserRequestModel = {
         email: string
 userName: string
 name: string
-userGroupIds: Array<string>
+userGroupIds: Array<ReferenceByIdModel>
 id?: string | null
 message?: string | null
     };
@@ -1036,15 +1055,6 @@ isDefault: boolean
 isMandatory: boolean
 fallbackIsoCode?: string | null
 isoCode: string
-    };
-
-export type LinkedLoginModel = {
-        providerName: string
-providerKey: string
-    };
-
-export type LinkedLoginsRequestModel = {
-        linkedLogins: Array<LinkedLoginModel>
     };
 
 export type LogLevelCountsReponseModel = {
@@ -1811,6 +1821,11 @@ export type PagedUserResponseModel = {
 items: Array<UserResponseModel>
     };
 
+export type PagedWebhookEventModel = {
+        total: number
+items: Array<WebhookEventModel>
+    };
+
 export type PagedWebhookResponseModel = {
         total: number
 items: Array<WebhookResponseModel>
@@ -2253,7 +2268,7 @@ context: string
     };
 
 export type UnlockUsersRequestModel = {
-        userIds: Array<string>
+        userIds: Array<ReferenceByIdModel>
     };
 
 export type UnpublishDocumentRequestModel = {
@@ -2263,7 +2278,7 @@ export type UnpublishDocumentRequestModel = {
 export type UpdateDataTypeRequestModel = {
         name: string
 editorAlias: string
-editorUiAlias?: string | null
+editorUiAlias: string
 values: Array<DataTypePropertyPresentationModel>
     };
 
@@ -2488,6 +2503,7 @@ key: string
 
 export type UpdateUserGroupRequestModel = {
         name: string
+alias: string
 icon?: string | null
 sections: Array<string>
 languages: Array<string>
@@ -2501,18 +2517,20 @@ permissions: Array<DocumentPermissionPresentationModel | UnknownTypePermissionPr
     };
 
 export type UpdateUserGroupsOnUserRequestModel = {
-        userIds: Array<string>
-userGroupIds: Array<string>
+        userIds: Array<ReferenceByIdModel>
+userGroupIds: Array<ReferenceByIdModel>
     };
 
 export type UpdateUserRequestModel = {
         email: string
 userName: string
 name: string
-userGroupIds: Array<string>
+userGroupIds: Array<ReferenceByIdModel>
 languageIsoCode: string
-documentStartNodeIds: Array<string>
-mediaStartNodeIds: Array<string>
+documentStartNodeIds: Array<ReferenceByIdModel>
+hasDocumentRootAccess: boolean
+mediaStartNodeIds: Array<ReferenceByIdModel>
+hasMediaRootAccess: boolean
     };
 
 export type UpdateWebhookRequestModel = {
@@ -2556,14 +2574,23 @@ value: string
 key: string
     };
 
+export type UserExternalLoginProviderModel = {
+        providerSchemeName: string
+providerKey?: string | null
+isLinkedOnUser: boolean
+hasManualLinkingEnabled: boolean
+    };
+
 export type UserGroupItemResponseModel = {
         id: string
 name: string
 icon?: string | null
+alias?: string | null
     };
 
 export type UserGroupResponseModel = {
         name: string
+alias: string
 icon?: string | null
 sections: Array<string>
 languages: Array<string>
@@ -2575,7 +2602,8 @@ mediaRootAccess: boolean
 fallbackPermissions: Array<string>
 permissions: Array<DocumentPermissionPresentationModel | UnknownTypePermissionPresentationModel>
 id: string
-isSystemGroup: boolean
+isDeletable: boolean
+aliasCanBeChanged: boolean
     };
 
 export type UserInstallRequestModel = {
@@ -2617,11 +2645,13 @@ export type UserResponseModel = {
         email: string
 userName: string
 name: string
-userGroupIds: Array<string>
+userGroupIds: Array<ReferenceByIdModel>
 id: string
 languageIsoCode?: string | null
-documentStartNodeIds: Array<string>
-mediaStartNodeIds: Array<string>
+documentStartNodeIds: Array<ReferenceByIdModel>
+hasDocumentRootAccess: boolean
+mediaStartNodeIds: Array<ReferenceByIdModel>
+hasMediaRootAccess: boolean
 avatarUrls: Array<string>
 state: UserStateModel
 failedLoginAttempts: number
@@ -2674,6 +2704,12 @@ export type VerifyResetPasswordResponseModel = {
 export type VerifyResetPasswordTokenRequestModel = {
         user: ReferenceByIdModel
 resetCode: string
+    };
+
+export type WebhookEventModel = {
+        eventName: string
+eventType: string
+alias: string
     };
 
 export type WebhookEventResponseModel = {
@@ -3476,6 +3512,26 @@ tree?: string
         
         responses: {
             GetHelp: PagedHelpPageResponseModel
+                
+        }
+        
+    }
+
+export type ImagingData = {
+        
+        payloads: {
+            GetImagingResizeUrls: {
+                        height?: number
+id?: Array<string>
+mode?: ImageCropModeModel
+width?: number
+                        
+                    };
+        }
+        
+        
+        responses: {
+            GetImagingResizeUrls: Array<MediaUrlInfoResponseModel>
                 
         }
         
@@ -4986,12 +5042,12 @@ requestBody?: UpdateUserGroupRequestModel
                     };
 DeleteUserGroupByIdUsers: {
                         id: string
-requestBody?: Array<string>
+requestBody?: Array<ReferenceByIdModel>
                         
                     };
 PostUserGroupByIdUsers: {
                         id: string
-requestBody?: Array<string>
+requestBody?: Array<ReferenceByIdModel>
                         
                     };
         }
@@ -5176,7 +5232,7 @@ PostUserUnlock: {
                 ,PostUserCurrentAvatar: string
                 ,PostUserCurrentChangePassword: string
                 ,GetUserCurrentConfiguration: CurrenUserConfigurationResponseModel
-                ,GetUserCurrentLogins: LinkedLoginsRequestModel
+                ,GetUserCurrentLoginProviders: Array<UserExternalLoginProviderModel>
                 ,GetUserCurrentPermissions: UserPermissionsResponseModel
                 ,GetUserCurrentPermissionsDocument: Array<UserPermissionsResponseModel>
                 ,GetUserCurrentPermissionsMedia: UserPermissionsResponseModel
@@ -5213,13 +5269,18 @@ GetWebhookById: {
                         id: string
                         
                     };
+DeleteWebhookById: {
+                        id: string
+                        
+                    };
 PutWebhookById: {
                         id: string
 requestBody?: UpdateWebhookRequestModel
                         
                     };
-DeleteWebhookById: {
-                        id: string
+GetWebhookEvents: {
+                        skip?: number
+take?: number
                         
                     };
         }
@@ -5230,8 +5291,9 @@ DeleteWebhookById: {
                 ,GetWebhook: PagedWebhookResponseModel
                 ,PostWebhook: string
                 ,GetWebhookById: WebhookResponseModel
-                ,PutWebhookById: string
                 ,DeleteWebhookById: string
+                ,PutWebhookById: string
+                ,GetWebhookEvents: PagedWebhookEventModel
                 
         }
         

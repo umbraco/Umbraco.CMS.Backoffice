@@ -6,7 +6,10 @@ import '@umbraco-cms/backoffice/static-file';
 import { html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
+import {
+	UmbPropertyValueChangeEvent,
+	type UmbPropertyEditorConfigCollection,
+} from '@umbraco-cms/backoffice/property-editor';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 
 @customElement('umb-property-editor-ui-block-grid-layout-stylesheet')
@@ -29,7 +32,7 @@ export class UmbPropertyEditorUIBlockGridLayoutStylesheetElement
 
 	private _onChange(event: CustomEvent) {
 		this.value = (event.target as UmbInputStaticFileElement).selection;
-		this.dispatchEvent(new CustomEvent('property-value-change'));
+		this.dispatchEvent(new UmbPropertyValueChangeEvent());
 	}
 
 	// TODO: Implement mandatory?
@@ -41,7 +44,7 @@ export class UmbPropertyEditorUIBlockGridLayoutStylesheetElement
 				.min=${0}
 				.max=${1}></umb-input-static-file>
 			<br />
-			<a href="#Missinhg_link_to_default_layout_stylesheet">Link to default layout stylesheet</a>
+			<a href="/umbraco/backoffice/assets/css/umbraco-blockgridlayout.css">Link to default layout stylesheet</a>
 		`;
 	}
 

@@ -27,8 +27,10 @@ import type {
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UMB_PROPERTY_EDITOR_SCHEMA_ALIAS_DEFAULT } from '@umbraco-cms/backoffice/property-editor';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
-import { UmbRequestReloadTreeItemChildrenEvent } from '@umbraco-cms/backoffice/tree';
-import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
+import {
+	UmbRequestReloadChildrenOfEntityEvent,
+	UmbRequestReloadStructureForEntityEvent,
+} from '@umbraco-cms/backoffice/entity-action';
 
 type EntityType = UmbDataTypeDetailModel;
 export class UmbDataTypeWorkspaceContext
@@ -40,6 +42,7 @@ export class UmbDataTypeWorkspaceContext
 
 	#parent = new UmbObjectState<{ entityType: string; unique: string | null } | undefined>(undefined);
 	readonly parentUnique = this.#parent.asObservablePart((parent) => (parent ? parent.unique : undefined));
+	readonly parentEntityType = this.#parent.asObservablePart((parent) => (parent ? parent.entityType : undefined));
 
 	#persistedData = new UmbObjectState<EntityType | undefined>(undefined);
 	#currentData = new UmbObjectState<EntityType | undefined>(undefined);
@@ -52,11 +55,14 @@ export class UmbDataTypeWorkspaceContext
 
 	readonly name = this.#currentData.asObservablePart((data) => data?.name);
 	readonly unique = this.#currentData.asObservablePart((data) => data?.unique);
+	readonly entityType = this.#currentData.asObservablePart((data) => data?.entityType);
 
 	readonly propertyEditorUiAlias = this.#currentData.asObservablePart((data) => data?.editorUiAlias);
 	readonly propertyEditorSchemaAlias = this.#currentData.asObservablePart((data) => data?.editorAlias);
 
-	#properties = new UmbArrayState<PropertyEditorSettingsProperty>([], (x) => x.alias);
+	#properties = new UmbArrayState<PropertyEditorSettingsProperty>([], (x) => x.alias).sortBy(
+		(a, b) => (a.weight || 0) - (b.weight || 0),
+	);
 	readonly properties = this.#properties.asObservable();
 
 	#defaults = new UmbArrayState<PropertyEditorSettingsDefaultData>([], (entry) => entry.alias);
@@ -162,7 +168,11 @@ export class UmbDataTypeWorkspaceContext
 		return this.observe(
 			umbExtensionsRegistry.byTypeAndAlias('propertyEditorSchema', propertyEditorSchemaAlias),
 			(manifest) => {
-				this.#propertyEditorSchemaSettingsProperties = manifest?.meta.settings?.properties || [];
+				// Maps properties to have a weight, so they can be sorted
+				this.#propertyEditorSchemaSettingsProperties = (manifest?.meta.settings?.properties ?? []).map((x, i) => ({
+					...x,
+					weight: x.weight ?? i,
+				}));
 				this.#propertyEditorSchemaSettingsDefaultData = manifest?.meta.settings?.defaultData || [];
 				this.#propertyEditorSchemaConfigDefaultUIAlias = manifest?.meta.defaultPropertyEditorUiAlias || null;
 			},
@@ -178,7 +188,11 @@ export class UmbDataTypeWorkspaceContext
 				this.#propertyEditorUiName.setValue(manifest?.name || null);
 
 				this.#propertyEditorUISettingsSchemaAlias = manifest?.meta.propertyEditorSchemaAlias;
-				this.#propertyEditorUISettingsProperties = manifest?.meta.settings?.properties || [];
+				// Maps properties to have a weight, so they can be sorted, notice UI properties have a +1000 weight compared to schema properties.
+				this.#propertyEditorUISettingsProperties = (manifest?.meta.settings?.properties ?? []).map((x, i) => ({
+					...x,
+					weight: x.weight ?? 1000 + i,
+				}));
 				this.#propertyEditorUISettingsDefaultData = manifest?.meta.settings?.defaultData || [];
 			},
 			'editorUi',
@@ -335,7 +349,7 @@ export class UmbDataTypeWorkspaceContext
 
 			// TODO: this might not be the right place to alert the tree, but it works for now
 			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-			const event = new UmbRequestReloadTreeItemChildrenEvent({
+			const event = new UmbRequestReloadChildrenOfEntityEvent({
 				entityType: parent.entityType,
 				unique: parent.unique,
 			});

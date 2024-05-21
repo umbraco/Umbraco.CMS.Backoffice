@@ -488,8 +488,8 @@ export default {
 		confirmlogout: 'Are you sure?',
 		confirmSure: 'Are you sure?',
 		cut: 'Cut',
-		editdictionary: 'Edit Dictionary Item',
-		editlanguage: 'Edit Language',
+		editDictionary: 'Edit Dictionary Item',
+		editLanguage: 'Edit Language',
 		editSelectedMedia: 'Edit selected media',
 		insertAnchor: 'Insert local link',
 		insertCharacter: 'Insert character',
@@ -559,13 +559,16 @@ export default {
 		noIconsFound: 'No icons were found',
 		noMacroParams: 'There are no parameters for this macro',
 		noMacros: 'There are no macros available to insert',
-		externalLoginProviders: 'External login providers',
+		externalLoginProviders: 'External logins',
 		exceptionDetail: 'Exception Details',
 		stacktrace: 'Stacktrace',
 		innerException: 'Inner Exception',
-		linkYour: 'Link your',
-		unLinkYour: 'Un-link your',
-		account: 'account',
+		linkYour: 'Link your {0} account',
+		linkYourConfirm:
+			'You are about to link your Umbraco and {0} accounts and you will be redirected to {0} to confirm.',
+		unLinkYour: 'Un-link your {0} account',
+		unLinkYourConfirm: 'You are about to un-link your Umbraco and {0} accounts and you will be logged out.',
+		linkedToService: 'Your account is linked to this service',
 		selectEditor: 'Select editor',
 		selectEditorConfiguration: 'Select configuration',
 		selectSnippet: 'Select snippet',
@@ -597,7 +600,7 @@ export default {
 	examineManagement: {
 		configuredSearchers: 'Configured Searchers',
 		configuredSearchersDescription:
-			'Shows properties and tools for any configured Searcher (i.e. such as a\n      multi-index searcher)\n    ',
+			'Shows properties and tools for any configured Searcher (i.e. such as a multi-index searcher)',
 		fieldValues: 'Field values',
 		healthStatus: 'Health status',
 		healthStatusDescription: 'The health status of the index and if it can be read',
@@ -607,10 +610,10 @@ export default {
 		indexInfoDescription: 'Lists the properties of the index',
 		manageIndexes: "Manage Examine's indexes",
 		manageIndexesDescription:
-			'Allows you to view the details of each index and provides some tools for\n      managing the indexes\n    ',
+			'Allows you to view the details of each index and provides some tools for managing the indexes',
 		rebuildIndex: 'Rebuild index',
 		rebuildIndexWarning:
-			'\n      This will cause the index to be rebuilt.<br />\n      Depending on how much content there is in your site this could take a while.<br />\n      It is not recommended to rebuild an index during times of high website traffic or when editors are editing content.\n     ',
+			'This will cause the index to be rebuilt.<br /> Depending on how much content there is in your site this could take a while.<br /> It is not recommended to rebuild an index during times of high website traffic or when editors are editing content.',
 		searchers: 'Searchers',
 		searchDescription: 'Search the index and view the results',
 		tools: 'Tools',
@@ -618,7 +621,7 @@ export default {
 		fields: 'fields',
 		indexCannotRead: 'The index cannot be read and will need to be rebuilt',
 		processIsTakingLonger:
-			'The process is taking longer than expected, check the Umbraco log to see if there\n      have been any errors during this operation\n    ',
+			'The process is taking longer than expected, check the Umbraco log to see if there have been any errors during this operation',
 		indexCannotRebuild: 'This index cannot be rebuilt because it has no assigned',
 		iIndexPopulator: 'IIndexPopulator',
 	},
@@ -717,7 +720,10 @@ export default {
 		unauthorized: 'You were not authorized before performing this action',
 		userNotFound: 'The local user was not found in the database',
 		externalInfoNotFound: 'The server did not succeed in communicating with the external login provider',
-		externalLoginFailed: 'The server failed to authorize you against the external login provider',
+		externalLoginFailed:
+			'The server failed to authorize you against the external login provider. Please close the window and try again.',
+		externalLoginSuccess: 'You have successfully logged in. You may now close this window.',
+		externalLoginRedirectSuccess: 'You have successfully logged in. You will be redirected shortly.',
 	},
 	openidErrors: {
 		accessDenied: 'Access denied',
@@ -1241,8 +1247,8 @@ export default {
 		openMediaPicker: 'Open media picker',
 	},
 	propertyEditorPicker: {
-		title: 'Select Property Editor',
-		openPropertyEditorPicker: 'Select Property Editor',
+		title: 'Select a property editor',
+		openPropertyEditorPicker: 'Select a property editor UI',
 	},
 	relatedlinks: {
 		enterExternal: 'enter external link',
@@ -2305,10 +2311,11 @@ export default {
 		documentationHeader: 'Documentation',
 		documentationDescription: 'Read more about working with the items in Settings in our Documentation.',
 		communityHeader: 'Community',
+		communityDescription: 'Ask a question in the community forum or our Discord community.',
 		trainingHeader: 'Training',
 		trainingDescription: 'Find out about real-life training and certification opportunities',
 		supportHeader: 'Support',
-		supportDescription: 'Ask a question in the community forum or our Discord community.',
+		supportDescription: 'Extend your team with a highly skilled and passionate bunch of Umbraco know-it-alls.',
 		videosHeader: 'Videos',
 		videosDescription:
 			'Watch our free tutorial videos on the Umbraco Learning Base YouTube channel, to get up to speed quickly with Umbraco.',
