@@ -1,3 +1,4 @@
+import type { UmbDocumentVariantModel } from '../types.js';
 import type { UmbCollectionFilterModel } from '@umbraco-cms/backoffice/collection';
 
 export interface UmbDocumentCollectionFilterModel extends UmbCollectionFilterModel {
@@ -22,6 +23,7 @@ export interface UmbDocumentCollectionItemModel {
 	updateDate: Date;
 	updater?: string | null;
 	values: Array<{ alias: string; value: string }>;
+	variants: Array<UmbDocumentVariantModel>;
 }
 
 export interface UmbEditableDocumentCollectionItemModel {
