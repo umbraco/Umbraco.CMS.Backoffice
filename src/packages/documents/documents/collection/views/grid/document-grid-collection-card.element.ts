@@ -10,12 +10,20 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UMB_WORKSPACE_MODAL, UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/modal';
 import type { UUIInterfaceColor } from '@umbraco-cms/backoffice/external/uui';
+import { UmbActiveVariantItemNameController } from '@umbraco-cms/backoffice/variant';
 
 const elementName = 'umb-document-grid-collection-card';
 @customElement(elementName)
 export class UmbDocumentGridCollectionCardElement extends UmbLitElement {
-	@property({ type: Object })
-	item?: UmbDocumentCollectionItemModel;
+	#item?: UmbDocumentCollectionItemModel | undefined;
+	@property({ type: Object, attribute: false })
+	public get item(): UmbDocumentCollectionItemModel | undefined {
+		return this.#item;
+	}
+	public set item(value: UmbDocumentCollectionItemModel | undefined) {
+		this.#item = value;
+		this.#variantNameController.setVariants(value?.variants || []);
+	}
 
 	@state()
 	private _editDocumentPath = '';
@@ -26,7 +34,11 @@ export class UmbDocumentGridCollectionCardElement extends UmbLitElement {
 	@state()
 	private _userDefinedProperties?: Array<UmbCollectionColumnConfiguration>;
 
+	@state()
+	_name: string | undefined;
+
 	#collectionContext?: UmbDefaultCollectionContext<UmbDocumentCollectionItemModel, UmbDocumentCollectionFilterModel>;
+	#variantNameController = new UmbActiveVariantItemNameController(this);
 
 	constructor() {
 		super();
@@ -68,6 +80,14 @@ export class UmbDocumentGridCollectionCardElement extends UmbLitElement {
 			},
 			'_observeUserDefinedProperties',
 		);
+
+		this.observe(
+			this.#variantNameController.name,
+			(value) => {
+				this._name = value;
+			},
+			'',
+		);
 	}
 
 	#onOpen(event: Event, unique: string) {
@@ -94,7 +114,7 @@ export class UmbDocumentGridCollectionCardElement extends UmbLitElement {
 		if (!this.item) return nothing;
 
 		return html` <uui-card-content-node
-			.name=${this.item.name ?? 'Unnamed Document'}
+			.name=${this._name ?? 'Unnamed Document'}
 			selectable
 			?select-only=${this._selection.length > 0}
 			?selected=${this.#isSelected(this.item)}
