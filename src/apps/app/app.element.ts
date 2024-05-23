@@ -18,6 +18,7 @@ import {
 	umbExtensionsRegistry,
 } from '@umbraco-cms/backoffice/extension-registry';
 import { filter, first, firstValueFrom } from '@umbraco-cms/backoffice/external/rxjs';
+import { retrieveStoredPath } from '@umbraco-cms/backoffice/utils';
 
 @customElement('umb-app')
 export class UmbAppElement extends UmbLitElement {
@@ -86,7 +87,15 @@ export class UmbAppElement extends UmbLitElement {
 						: this.localize.term('errors_externalLoginFailed');
 
 					this.observe(this.#authContext.authorizationSignal, () => {
-						history.replaceState(null, '', '');
+						// Redirect to the saved state or root
+						const url = retrieveStoredPath();
+						const isBackofficePath = url?.pathname.startsWith(this.backofficePath) ?? true;
+
+						if (isBackofficePath) {
+							history.replaceState(null, '', url?.toString() ?? '');
+						} else {
+							window.location.href = url?.toString() ?? this.backofficePath;
+						}
 					});
 				}
 
@@ -166,9 +175,13 @@ export class UmbAppElement extends UmbLitElement {
 
 		// Try to initialise the auth flow and get the runtime status
 		try {
-			// If the runtime level is "install" we should clear any cached tokens
+			// If the runtime level is "install" or ?status=false is set, we should clear any cached tokens
 			// else we should try and set the auth status
-			if (this.#serverConnection.getStatus() === RuntimeLevelModel.INSTALL) {
+			const searchParams = new URLSearchParams(window.location.search);
+			if (
+				(searchParams.has('status') && searchParams.get('status') === 'false') ||
+				this.#serverConnection.getStatus() === RuntimeLevelModel.INSTALL
+			) {
 				await this.#authContext.clearTokenStorage();
 			} else {
 				await this.#setAuthStatus();

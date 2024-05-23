@@ -120,7 +120,7 @@ export class UmbBlockGridEntriesContext
 	protected _gotBlockManager() {
 		if (!this._manager) return;
 
-		this.#allowedBlockTypes.setValue(this.#retrieveAllowedElementTypes());
+		this.#getAllowedBlockTypes();
 
 		this.observe(
 			this._manager.propertyAlias,
@@ -154,6 +154,7 @@ export class UmbBlockGridEntriesContext
 			await this._retrieveManager;
 			if (!this._manager) return;
 
+			this.removeUmbControllerByAlias('observeParentUnique');
 			this.setParentUnique(null);
 			this.observe(
 				this._manager.layouts,
@@ -181,6 +182,9 @@ export class UmbBlockGridEntriesContext
 				hostEl.style.removeProperty('--umb-block-grid--area-column-span');
 				hostEl.style.removeProperty('--umb-block-grid--area-row-span');
 			}
+
+			this.removeUmbControllerByAlias('observeAreaType');
+			this.#getAllowedBlockTypes();
 		} else {
 			if (!this.#parentEntry) return;
 
@@ -194,7 +198,9 @@ export class UmbBlockGridEntriesContext
 			this.observe(
 				this.#parentEntry.layoutsOfArea(this.#areaKey),
 				(layouts) => {
-					this._layoutEntries.setValue(layouts);
+					if (layouts) {
+						this._layoutEntries.setValue(layouts);
+					}
 				},
 				'observeParentLayouts',
 			);
@@ -221,10 +227,17 @@ export class UmbBlockGridEntriesContext
 					hostEl.style.setProperty('--umb-block-grid--grid-columns', areaType?.columnSpan?.toString() ?? '');
 					hostEl.style.setProperty('--umb-block-grid--area-column-span', areaType?.columnSpan?.toString() ?? '');
 					hostEl.style.setProperty('--umb-block-grid--area-row-span', areaType?.rowSpan?.toString() ?? '');
+					this.#getAllowedBlockTypes();
 				},
 				'observeAreaType',
 			);
 		}
+	}
+
+	#getAllowedBlockTypes() {
+		if (this.#areaKey === undefined || !this._manager) return;
+
+		this.#allowedBlockTypes.setValue(this.#retrieveAllowedElementTypes());
 	}
 
 	getPathForCreateBlock(index: number) {
@@ -234,6 +247,20 @@ export class UmbBlockGridEntriesContext
 	getPathForClipboard(index: number) {
 		return this._catalogueRouteBuilderState.getValue()?.({ view: 'clipboard', index: index });
 	}
+
+	/*
+	async setLayouts(layouts: Array<UmbBlockGridLayoutModel>) {
+		await this._retrieveManager;
+		if (this.#areaKey === null) {
+			this._manager?.setLayouts(layouts);
+		} else {
+			if (!this.#parentUnique || !this.#areaKey) {
+				throw new Error('ParentUnique or AreaKey not set');
+			}
+			this._manager?.setLayoutsOfArea(this.#parentUnique, this.#areaKey, layouts);
+		}
+	}
+	*/
 
 	async create(
 		contentElementTypeKey: string,

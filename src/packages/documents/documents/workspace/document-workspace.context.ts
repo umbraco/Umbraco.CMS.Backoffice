@@ -48,8 +48,10 @@ import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbLanguageCollectionRepository, type UmbLanguageDetailModel } from '@umbraco-cms/backoffice/language';
 import { type Observable, firstValueFrom } from '@umbraco-cms/backoffice/external/rxjs';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
-import { UmbRequestReloadTreeItemChildrenEvent } from '@umbraco-cms/backoffice/tree';
-import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
+import {
+	UmbRequestReloadChildrenOfEntityEvent,
+	UmbRequestReloadStructureForEntityEvent,
+} from '@umbraco-cms/backoffice/entity-action';
 import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import {
 	UmbServerModelValidationContext,
@@ -115,9 +117,7 @@ export class UmbDocumentWorkspaceContext
 
 	readonly structure = new UmbContentTypeStructureManager(this, new UmbDocumentTypeDetailRepository(this));
 	readonly variesByCulture = this.structure.ownerContentTypePart((x) => x?.variesByCulture);
-	//#variesByCulture?: boolean;
 	readonly variesBySegment = this.structure.ownerContentTypePart((x) => x?.variesBySegment);
-	//#variesBySegment?: boolean;
 	readonly varies = this.structure.ownerContentTypePart((x) =>
 		x ? x.variesByCulture || x.variesBySegment : undefined,
 	);
@@ -340,15 +340,6 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	setName(name: string, variantId?: UmbVariantId) {
-		/*
-		const oldVariants = this.#currentData.getValue()?.variants || [];
-		const variants = partialUpdateFrozenArray(
-			oldVariants,
-			{ name },
-			variantId ? (x) => variantId.compare(x) : () => true,
-		);
-		this.#currentData.update({ variants });
-		*/
 		// TODO: We should move this type of logic to the act of saving [NL]
 		this.#updateVariantData(variantId ?? UmbVariantId.CreateInvariant(), { name });
 	}
@@ -376,6 +367,7 @@ export class UmbDocumentWorkspaceContext
 		);
 	}
 	// TODO: Re-evaluate if this is begin used, i wrote this as part of a POC... [NL]
+	/*
 	async propertyIndexByAlias(
 		propertyAlias: string,
 		variantId?: UmbVariantId,
@@ -384,6 +376,7 @@ export class UmbDocumentWorkspaceContext
 			data?.values?.findIndex((x) => x?.alias === propertyAlias && (variantId ? variantId.compare(x) : true)),
 		);
 	}
+	*/
 
 	/**
 	 * Get the current value of the property with the given alias and variantId.
@@ -416,6 +409,25 @@ export class UmbDocumentWorkspaceContext
 
 			// TODO: We should move this type of logic to the act of saving [NL]
 			this.#updateVariantData(variantId);
+		}
+	}
+
+	#updateLock = 0;
+	initiatePropertyValueChange() {
+		this.#updateLock++;
+		this.#currentData.mute();
+		// TODO: When ready enable this code will enable handling a finish automatically by this implementation 'using myState.initiatePropertyValueChange()' (Relies on TS support of Using) [NL]
+		/*return {
+			[Symbol.dispose]: this.finishPropertyValueChange,
+		};*/
+	}
+	finishPropertyValueChange = () => {
+		this.#updateLock--;
+		this.#triggerPropertyValueChanges();
+	};
+	#triggerPropertyValueChanges() {
+		if (this.#updateLock === 0) {
+			this.#currentData.unmute();
 		}
 	}
 
@@ -580,7 +592,7 @@ export class UmbDocumentWorkspaceContext
 
 			// TODO: this might not be the right place to alert the tree, but it works for now
 			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-			const event = new UmbRequestReloadTreeItemChildrenEvent({
+			const event = new UmbRequestReloadChildrenOfEntityEvent({
 				entityType: parent.entityType,
 				unique: parent.unique,
 			});
