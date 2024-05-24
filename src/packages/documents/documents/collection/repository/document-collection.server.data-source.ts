@@ -50,6 +50,17 @@ export class UmbDocumentCollectionServerDataSource implements UmbCollectionDataS
 					values: item.values.map((item) => {
 						return { alias: item.alias, value: item.value as string };
 					}),
+					variants: item.variants.map((variant) => {
+						return {
+							state: variant.state,
+							culture: variant.culture || null,
+							segment: variant.segment || null,
+							name: variant.name,
+							publishDate: variant.publishDate || null,
+							createDate: variant.createDate,
+							updateDate: variant.updateDate,
+						};
+					}),
 				};
 				return model;
 			});
