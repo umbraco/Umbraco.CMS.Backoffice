@@ -2,9 +2,6 @@
 	"name": "@umbraco-backoffice/data-type",
 	"private": true,
 	"type": "module",
-	"typings": "./dist/index.d.ts",
 	"scripts": {
-		"build": "tsc --build --clean",
-		"api-extractor": "api-extractor run --local --verbose"
 	}
 }
