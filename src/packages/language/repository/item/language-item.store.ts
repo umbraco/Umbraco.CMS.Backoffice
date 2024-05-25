@@ -1,7 +1,7 @@
-import type { UmbLanguageItemModel } from './types.js';
-import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbItemStoreBase } from '@umbraco-cms/backoffice/store';
+import type { UmbLanguageItemModel } from './types.js';
+import { UMB_LANGUAGE_ITEM_STORE_CONTEXT } from './language-item.store.context-token.js';
 
 /**
  * @export
@@ -22,5 +22,3 @@ export class UmbLanguageItemStore extends UmbItemStoreBase<UmbLanguageItemModel>
 }
 
 export default UmbLanguageItemStore;
-
-export const UMB_LANGUAGE_ITEM_STORE_CONTEXT = new UmbContextToken<UmbLanguageItemStore>('UmbLanguageItemStore');
