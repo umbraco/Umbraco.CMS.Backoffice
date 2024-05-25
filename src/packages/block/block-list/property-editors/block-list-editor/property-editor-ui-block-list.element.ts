@@ -1,5 +1,4 @@
 import { UmbBlockListManagerContext } from '../../context/block-list-manager.context.js';
-import '../../components/block-list-entry/index.js';
 import type { UmbBlockListEntryElement } from '../../components/block-list-entry/index.js';
 import type { UmbBlockListLayoutModel, UmbBlockListValueModel } from '../../types.js';
 import { UmbBlockListEntriesContext } from '../../context/block-list-entries.context.js';
@@ -15,9 +14,11 @@ import {
 import type { UmbBlockLayoutBaseModel } from '@umbraco-cms/backoffice/block';
 import type { UmbBlockTypeBaseModel } from '@umbraco-cms/backoffice/block-type';
 import type { NumberRangeValueType } from '@umbraco-cms/backoffice/models';
-import type { UmbModalRouteBuilder } from '@umbraco-cms/backoffice/modal';
+import type { UmbModalRouteBuilder } from '@umbraco-cms/backoffice/router';
 import type { UmbSorterConfig } from '@umbraco-cms/backoffice/sorter';
 import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
+
+import '../../components/block-list-entry/index.js';
 
 const SORTER_CONFIG: UmbSorterConfig<UmbBlockListLayoutModel, UmbBlockListEntryElement> = {
 	getUniqueOfElement: (element) => {
@@ -121,17 +122,6 @@ export class UmbPropertyEditorUIBlockListElement extends UmbLitElement implement
 	constructor() {
 		super();
 
-		/*
-		this.consumeContext(UMB_PROPERTY_CONTEXT, (propertyContext) => {
-			this.observe(
-				propertyContext?.alias,
-				(alias) => {
-					this.#catalogueModal.setUniquePathValue('propertyAlias', alias);
-				},
-				'observePropertyAlias',
-			);
-		});
-		*/
 		this.observe(this.#entriesContext.layoutEntries, (layouts) => {
 			this._layouts = layouts;
 			// Update sorter.
@@ -167,34 +157,10 @@ export class UmbPropertyEditorUIBlockListElement extends UmbLitElement implement
 		this.observe(this.#entriesContext.catalogueRouteBuilder, (routeBuilder) => {
 			this._catalogueRouteBuilder = routeBuilder;
 		});
-
-		/*
-		this.#catalogueModal = new UmbModalRouteRegistrationController(this, UMB_BLOCK_CATALOGUE_MODAL)
-			.addUniquePaths(['propertyAlias'])
-			.addAdditionalPath(':view/:index')
-			.onSetup((routingInfo) => {
-				const index = routingInfo.index ? parseInt(routingInfo.index) : -1;
-				return {
-					data: {
-						blocks: this._blocks ?? [],
-						openClipboard: routingInfo.view === 'clipboard',
-						blockOriginData: { index: index },
-					},
-				};
-			})
-			.observeRouteBuilder((routeBuilder) => {
-				this._catalogueRouteBuilder = routeBuilder;
-			});
-			*/
 	}
 
-	#debounceChangeEvent?: boolean;
-	#fireChangeEvent = async () => {
-		if (this.#debounceChangeEvent) return;
-		this.#debounceChangeEvent = true;
-		await Promise.resolve();
+	#fireChangeEvent = () => {
 		this.dispatchEvent(new UmbPropertyValueChangeEvent());
-		this.#debounceChangeEvent = false;
 	};
 
 	render() {
@@ -211,6 +177,7 @@ export class UmbPropertyEditorUIBlockListElement extends UmbLitElement implement
 				(x) => x.contentUdi,
 				(layoutEntry, index) =>
 					html`<uui-button-inline-create
+							label=${this._createButtonLabel}
 							href=${this._catalogueRouteBuilder?.({ view: 'create', index: index }) ?? ''}></uui-button-inline-create>
 						<umb-block-list-entry .contentUdi=${layoutEntry.contentUdi} .layout=${layoutEntry}>
 						</umb-block-list-entry> `,

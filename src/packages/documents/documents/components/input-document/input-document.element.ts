@@ -4,7 +4,8 @@ import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
-import { UMB_WORKSPACE_MODAL, UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/modal';
+import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
+import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
 import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import type { UmbDocumentItemModel } from '@umbraco-cms/backoffice/document';
 import type { UmbTreeStartNode } from '@umbraco-cms/backoffice/tree';
@@ -118,13 +119,6 @@ export class UmbInputDocumentElement extends UUIFormControlMixin(UmbLitElement, 
 				this._editDocumentPath = routeBuilder({});
 			});
 
-		this.observe(this.#pickerContext.selection, (selection) => (this.value = selection.join(',')), '_observeSelection');
-		this.observe(this.#pickerContext.selectedItems, (selectedItems) => (this._items = selectedItems), '_observerItems');
-	}
-
-	connectedCallback(): void {
-		super.connectedCallback();
-
 		this.addValidator(
 			'rangeUnderflow',
 			() => this.minMessage,
@@ -136,6 +130,9 @@ export class UmbInputDocumentElement extends UUIFormControlMixin(UmbLitElement, 
 			() => this.maxMessage,
 			() => !!this.max && this.#pickerContext.getSelection().length > this.max,
 		);
+
+		this.observe(this.#pickerContext.selection, (selection) => (this.value = selection.join(',')), '_observeSelection');
+		this.observe(this.#pickerContext.selectedItems, (selectedItems) => (this._items = selectedItems), '_observerItems');
 	}
 
 	protected getFormElement() {

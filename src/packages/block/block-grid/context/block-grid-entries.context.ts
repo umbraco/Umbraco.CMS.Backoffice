@@ -6,7 +6,7 @@ import { UMB_BLOCK_GRID_MANAGER_CONTEXT } from './block-grid-manager.context.js'
 import type { UmbBlockGridScalableContainerContext } from './block-grid-scale-manager/block-grid-scale-manager.controller.js';
 import { UmbArrayState, UmbNumberState, UmbStringState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/modal';
+import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
 import { pathFolderName } from '@umbraco-cms/backoffice/utils';
 
 export class UmbBlockGridEntriesContext
@@ -171,6 +171,8 @@ export class UmbBlockGridEntriesContext
 				'observeThisLayouts',
 			);
 
+			this.removeUmbControllerByAlias('observeAreaType');
+
 			const hostEl = this.getHostElement() as HTMLElement | undefined;
 			if (hostEl) {
 				hostEl.removeAttribute('data-area-alias');
@@ -196,7 +198,9 @@ export class UmbBlockGridEntriesContext
 			this.observe(
 				this.#parentEntry.layoutsOfArea(this.#areaKey),
 				(layouts) => {
-					this._layoutEntries.setValue(layouts);
+					if (layouts) {
+						this._layoutEntries.setValue(layouts);
+					}
 				},
 				'observeParentLayouts',
 			);
@@ -243,6 +247,20 @@ export class UmbBlockGridEntriesContext
 	getPathForClipboard(index: number) {
 		return this._catalogueRouteBuilderState.getValue()?.({ view: 'clipboard', index: index });
 	}
+
+	/*
+	async setLayouts(layouts: Array<UmbBlockGridLayoutModel>) {
+		await this._retrieveManager;
+		if (this.#areaKey === null) {
+			this._manager?.setLayouts(layouts);
+		} else {
+			if (!this.#parentUnique || !this.#areaKey) {
+				throw new Error('ParentUnique or AreaKey not set');
+			}
+			this._manager?.setLayoutsOfArea(this.#parentUnique, this.#areaKey, layouts);
+		}
+	}
+	*/
 
 	async create(
 		contentElementTypeKey: string,
