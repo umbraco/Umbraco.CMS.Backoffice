@@ -5,17 +5,17 @@ import type {
 	ManifestWorkspaceView,
 	ManifestTypes,
 } from '@umbraco-cms/backoffice/extension-registry';
-
-const DATA_TYPE_WORKSPACE_ALIAS = 'Umb.Workspace.DataType';
+import { UMB_DATA_TYPE_ENTITY_TYPE } from '../entity.js';
+import { UMB_DATA_TYPE_WORKSPACE_ALIAS } from './constants.js';
 
 const workspace: ManifestWorkspaces = {
 	type: 'workspace',
 	kind: 'editable',
-	alias: DATA_TYPE_WORKSPACE_ALIAS,
+	alias: UMB_DATA_TYPE_WORKSPACE_ALIAS,
 	name: 'Data Type Workspace',
 	api: () => import('./data-type-workspace.context.js'),
 	meta: {
-		entityType: 'data-type',
+		entityType: UMB_DATA_TYPE_ENTITY_TYPE,
 	},
 };
 

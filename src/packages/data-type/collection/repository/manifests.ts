@@ -1,6 +1,5 @@
 import type { ManifestRepository, ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
-
-export const UMB_DATA_TYPE_COLLECTION_REPOSITORY_ALIAS = 'Umb.Repository.DataType.Collection';
+import { UMB_DATA_TYPE_COLLECTION_REPOSITORY_ALIAS } from './constants.js';
 
 const repository: ManifestRepository = {
 	type: 'repository',
