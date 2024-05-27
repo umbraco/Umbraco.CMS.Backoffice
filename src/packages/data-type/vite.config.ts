@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import { cpSync, rmSync } from 'fs';
+import { rmSync } from 'fs';
 
 const dist = '../../../dist-cms/packages/data-type';
 
