@@ -87,6 +87,7 @@ export class UmbSectionDefaultElement extends UmbLitElement implements UmbSectio
 			undefined,
 			(sectionRouteExtensions) => {
 				const routes: Array<IRoute> = sectionRouteExtensions.map((extensionController) => {
+					let controller: any = undefined;
 					let element: any = undefined;
 					let api: any = undefined;
 
@@ -104,6 +105,8 @@ export class UmbSectionDefaultElement extends UmbLitElement implements UmbSectio
 								info.slot.removeChild(element);
 								element = undefined;
 							}
+
+							controller?.destroy?.();
 
 							new UmbExtensionElementAndApiInitializer(
 								this,
