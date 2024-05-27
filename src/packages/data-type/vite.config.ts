@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite';
+import { cpSync, rmSync } from 'fs';
 
 const dist = '../../../dist-cms/packages/data-type';
+
+rmSync(dist, { recursive: true, force: true });
 
 export default defineConfig({
 	build: {
