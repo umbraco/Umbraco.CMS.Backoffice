@@ -125,7 +125,8 @@
 		"url": "https://umbraco.com"
 	},
 	"workspaces": [
-		"./src/packages/data-type"
+		"./src/packages/data-type",
+		"./src/packages/language"
 	],
 	"scripts": {
 		"backoffice:test:e2e": "npx playwright test",
