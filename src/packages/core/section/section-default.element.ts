@@ -13,6 +13,7 @@ import type { IRoute, IRoutingInfo, PageComponent, UmbRoute } from '@umbraco-cms
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { UmbExtensionElementInitializer } from '@umbraco-cms/backoffice/extension-api';
 import {
+	UmbExtensionElementAndApiInitializer,
 	UmbExtensionsElementAndApiInitializer,
 	UmbExtensionsElementInitializer,
 } from '@umbraco-cms/backoffice/extension-api';
@@ -86,16 +87,41 @@ export class UmbSectionDefaultElement extends UmbLitElement implements UmbSectio
 			undefined,
 			(sectionRouteExtensions) => {
 				const routes: Array<IRoute> = sectionRouteExtensions.map((extensionController) => {
-					return {
+					let element: any = undefined;
+					let api: any = undefined;
+
+					const entry = {
 						path:
 							extensionController.api?.getPath?.() ||
 							extensionController.manifest.meta?.path ||
 							aliasToPath(extensionController.manifest.alias),
-						component: extensionController.component,
 						setup: (element: PageComponent, info: IRoutingInfo) => {
-							extensionController.api?.setup?.(element, info);
+							api?.setup?.(element, info);
+						},
+						resolve: (info: IRoutingInfo) => {
+							if (element) {
+								element.destroy?.();
+								info.slot.removeChild(element);
+								element = undefined;
+							}
+
+							new UmbExtensionElementAndApiInitializer(
+								this,
+								umbExtensionsRegistry,
+								extensionController.manifest.alias,
+								undefined,
+								(isPermitted, controller) => {
+									if (!isPermitted) return;
+									element = controller.component;
+									api = controller.api;
+									info.slot.appendChild(element);
+									entry.setup(element, info);
+								},
+							);
 						},
 					};
+
+					return entry;
 				});
 
 				this.#debouncedCreateRoutes(routes);
