@@ -1,4 +1,9 @@
 import { defineConfig } from 'vite';
+import { rmSync } from 'fs';
+
+const dist = '../../../dist-cms/packages/umbraco-news';
+
+rmSync(dist, { recursive: true, force: true });
 
 export default defineConfig({
 	build: {
@@ -6,7 +11,7 @@ export default defineConfig({
 			entry: ['manifests.ts', 'umbraco-package.ts'],
 			formats: ['es'],
 		},
-		outDir: 'dist',
+		outDir: dist,
 		//sourcemap: true,
 		rollupOptions: {
 			external: [/^@umbraco/],

@@ -126,7 +126,8 @@
 	},
 	"workspaces": [
 		"./src/packages/data-type",
-		"./src/packages/language"
+		"./src/packages/language",
+		"./src/packages/umbraco-news"
 	],
 	"scripts": {
 		"backoffice:test:e2e": "npx playwright test",
