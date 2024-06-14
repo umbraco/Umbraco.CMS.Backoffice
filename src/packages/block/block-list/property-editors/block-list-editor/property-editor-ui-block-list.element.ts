@@ -1,5 +1,4 @@
 import { UmbBlockListManagerContext } from '../../context/block-list-manager.context.js';
-import '../../components/block-list-entry/index.js';
 import type { UmbBlockListEntryElement } from '../../components/block-list-entry/index.js';
 import type { UmbBlockListLayoutModel, UmbBlockListValueModel } from '../../types.js';
 import { UmbBlockListEntriesContext } from '../../context/block-list-entries.context.js';
@@ -14,10 +13,12 @@ import {
 } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbBlockLayoutBaseModel } from '@umbraco-cms/backoffice/block';
 import type { UmbBlockTypeBaseModel } from '@umbraco-cms/backoffice/block-type';
-import type { NumberRangeValueType } from '@umbraco-cms/backoffice/models';
-import type { UmbModalRouteBuilder } from '@umbraco-cms/backoffice/modal';
+import type { UmbNumberRangeValueType } from '@umbraco-cms/backoffice/models';
+import type { UmbModalRouteBuilder } from '@umbraco-cms/backoffice/router';
 import type { UmbSorterConfig } from '@umbraco-cms/backoffice/sorter';
 import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
+
+import '../../components/block-list-entry/index.js';
 
 const SORTER_CONFIG: UmbSorterConfig<UmbBlockListLayoutModel, UmbBlockListEntryElement> = {
 	getUniqueOfElement: (element) => {
@@ -74,7 +75,7 @@ export class UmbPropertyEditorUIBlockListElement extends UmbLitElement implement
 	public set config(config: UmbPropertyEditorConfigCollection | undefined) {
 		if (!config) return;
 
-		const validationLimit = config.getValueByAlias<NumberRangeValueType>('validationLimit');
+		const validationLimit = config.getValueByAlias<UmbNumberRangeValueType>('validationLimit');
 
 		this._limitMin = validationLimit?.min;
 		this._limitMax = validationLimit?.max;
@@ -132,21 +133,14 @@ export class UmbPropertyEditorUIBlockListElement extends UmbLitElement implement
 		// TODO: Prevent initial notification from these observes:
 		this.observe(this.#managerContext.layouts, (layouts) => {
 			this._value = { ...this._value, layout: { [UMB_BLOCK_LIST_PROPERTY_EDITOR_ALIAS]: layouts } };
-			// Notify that the value has changed.
-			// TODO: idea: consider inserting an await here, so other changes could appear first? Maybe some mechanism to only fire change event onces?
-			//this.#entriesContext.setLayoutEntries(layouts);
 			this.#fireChangeEvent();
 		});
 		this.observe(this.#managerContext.contents, (contents) => {
 			this._value = { ...this._value, contentData: contents };
-			// Notify that the value has changed.
-			//console.log('content changed', this._value);
 			this.#fireChangeEvent();
 		});
 		this.observe(this.#managerContext.settings, (settings) => {
 			this._value = { ...this._value, settingsData: settings };
-			// Notify that the value has changed.
-			//console.log('settings changed', this._value);
 			this.#fireChangeEvent();
 		});
 		this.observe(this.#managerContext.blockTypes, (blockTypes) => {

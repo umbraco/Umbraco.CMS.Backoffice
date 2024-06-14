@@ -1,5 +1,5 @@
 import { closestColumnSpanOption } from '../utils/index.js';
-import { UMB_BLOCK_GRID_MANAGER_CONTEXT } from './block-grid-manager.context.js';
+import { UMB_BLOCK_GRID_MANAGER_CONTEXT } from './block-grid-manager.context-token.js';
 import { UMB_BLOCK_GRID_ENTRIES_CONTEXT } from './block-grid-entries.context-token.js';
 import {
 	type UmbBlockGridScalableContext,
@@ -206,9 +206,9 @@ export class UmbBlockGridEntryContext
 
 		// Secure columnSpan fits options:
 		this.observe(
-			observeMultiple([this.layout, this.columnSpan, this.relevantColumnSpanOptions, this._entries.layoutColumns]),
-			([layout, columnSpan, relevantColumnSpanOptions, layoutColumns]) => {
-				if (!layout || !layoutColumns) return;
+			observeMultiple([this.columnSpan, this.relevantColumnSpanOptions, this._entries.layoutColumns]),
+			([columnSpan, relevantColumnSpanOptions, layoutColumns]) => {
+				if (!layoutColumns) return;
 				const newColumnSpan = this.#calcColumnSpan(
 					columnSpan ?? layoutColumns,
 					relevantColumnSpanOptions,

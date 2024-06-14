@@ -59,7 +59,7 @@ export default {
 		sendToTranslate: 'Send To Translation',
 		setGroup: 'Set group',
 		setPermissions: 'Set permissions',
-		sort: 'Sort children of',
+		sort: 'Sort children',
 		toInTheTreeStructureBelow: 'to in the tree structure below',
 		translate: 'Translate',
 		trash: 'Trash',
@@ -177,6 +177,7 @@ export default {
 		save: 'Media saved',
 	},
 	auditTrails: {
+		assigndomain: 'Domain assigned: %0%',
 		atViewingFor: 'Viewing for',
 		delete: 'Content deleted',
 		unpublish: 'Content unpublished',
@@ -193,6 +194,7 @@ export default {
 		custom: '%0%',
 		contentversionpreventcleanup: 'Cleanup disabled for version: %0%',
 		contentversionenablecleanup: 'Cleanup enabled for version: %0%',
+		smallAssignDomain: 'Assign Domain',
 		smallCopy: 'Copy',
 		smallPublish: 'Publish',
 		smallPublishVariant: 'Publish',
@@ -960,6 +962,10 @@ export default {
 		font: 'Font',
 		text: 'Text',
 	},
+	globalSearch: {
+		navigateSearchProviders: 'Navigate search providers',
+		navigateSearchResults: 'Navigate search results',
+	},
 	headers: {
 		page: 'Page',
 	},
@@ -1682,6 +1688,7 @@ export default {
 		elementDoesNotSupport: 'This is not applicable for an Element Type',
 		propertyHasChanges: 'You have made changes to this property. Are you sure you want to discard them?',
 		displaySettingsHeadline: 'Appearance',
+		displaySettingsLabelOnLeft: 'Label to the left',
 		displaySettingsLabelOnTop: 'Label above (full-width)',
 		confirmDeleteTabMessage: 'Are you sure you want to delete the tab <strong>%0%</strong>?',
 		confirmDeleteGroupMessage: 'Are you sure you want to delete the group <strong>%0%</strong>?',
@@ -2034,6 +2041,7 @@ export default {
 	},
 	validation: {
 		validation: 'Validation',
+		validateNothing: 'No validation',
 		validateAsEmail: 'Validate as an email address',
 		validateAsNumber: 'Validate as a number',
 		validateAsUrl: 'Validate as a URL',

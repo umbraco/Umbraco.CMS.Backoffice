@@ -3,22 +3,24 @@ import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { drag } from '@umbraco-cms/backoffice/external/uui';
 import { clamp } from '@umbraco-cms/backoffice/utils';
 import { state } from '@umbraco-cms/backoffice/external/lit';
-import { classMap, ifDefined } from '@umbraco-cms/backoffice/external/lit';
+import { css, customElement, classMap, ifDefined, html, nothing, property, query, LitElement } from '@umbraco-cms/backoffice/external/lit';
 
 import type { PropertyValueMap } from '@umbraco-cms/backoffice/external/lit';
-import { LitElement, css, html, nothing, customElement, property, query } from '@umbraco-cms/backoffice/external/lit';
 
 @customElement('umb-image-cropper-focus-setter')
 export class UmbImageCropperFocusSetterElement extends LitElement {
-	@query('#image') imageElement!: HTMLImageElement;
-	@query('#wrapper') wrapperElement?: HTMLElement;
-	@query('#focal-point') focalPointElement!: HTMLElement;
+	@query('#image')
+	imageElement!: HTMLImageElement;
+
+	@query('#wrapper')
+	wrapperElement?: HTMLImageElement;
+
+	@query('#focal-point')
+	focalPointElement!: HTMLImageElement;
 
 	@state() private isDraggingGridHandle = false;
 
 	@state() private coords = { x: 0, y: 0 };
-
-	@property({ type: String }) src?: string;
 
 	@property({ attribute: false })
 	get focalPoint() {
@@ -29,9 +31,17 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		this.#onFocalPointUpdated();
 	}
 
-	#focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
+	@property({ attribute: false })
+	focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
 
+	// TODO: [LK] Temporary fix; to be reviewed.
+	@property({ type: Boolean })
+	hideFocalPoint = false;
+	
 	@property({ type: Boolean, reflect: true }) disabled = false;
+
+	@property({ type: String })
+	src?: string;
 
 	#DOT_RADIUS = 8 as const;
 
@@ -41,6 +51,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
 		super.updated(_changedProperties);
+
+		if (this.hideFocalPoint) return;
 
 		if (_changedProperties.has('focalPoint') && this.focalPoint && this.focalPointElement) {
 			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
@@ -66,7 +78,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	async #initializeImage() {
 		await this.updateComplete; // Wait for the @query to be resolved
 
-		if (this.focalPoint) {
+		if (!this.hideFocalPoint) {
 			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
 		}
 
@@ -91,7 +103,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 
 	#onFocalPointUpdated() {
-		if (!this.#focalPoint) return;
 
 		if (this.#isCentered(this.#focalPoint)) {
 			this.#resetCoords();
@@ -190,6 +201,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 		if (event.key === 'ArrowUp') {
 			event.preventDefault();
+		if (this.hideFocalPoint) return;
+
 			this.coords.y = clamp(this.coords.y - increment, 0, height);
 			this.#setFocalPoint(this.coords.x, this.coords.y, width, height);
 		}
@@ -203,15 +216,15 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	render() {
 		if (!this.src) return nothing;
-
 		return html`
 			<div id="wrapper"
 				@mousedown=${this.#handleGridDrag}
-        		@touchstart=${this.#handleGridDrag}>
+        			@touchstart=${this.#handleGridDrag}>
 				<img id="image" @keydown=${() => nothing} src=${this.src} alt="" />
 				<span id="focal-point"
 					class=${classMap({
 						'focal-point--dragging': this.isDraggingGridHandle,
+						'hidden': this.hideFocalPoint
 					})}
 					tabindex=${ifDefined(this.disabled ? undefined : '0')}
 					aria-label="Focal Point"
@@ -265,6 +278,9 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		.focal-point--dragging {
 			cursor: none;
 			transform: scale(1.5);
+		}
+		#focal-point.hidden {
+			display: none;
 		}
 	`;
 }

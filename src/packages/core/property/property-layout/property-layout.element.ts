@@ -33,11 +33,11 @@ export class UmbPropertyLayoutElement extends UmbLitElement {
 	/**
 	 * Orientation: Horizontal is the default where label goes left and editor right.
 	 * Vertical is where label goes above the editor.
-	 * @type {string}
+	 * @enum ['horizontal', 'vertical']
 	 * @attr
 	 * @default ''
 	 */
-	@property({ type: String })
+	@property({ type: String, reflect: true })
 	public orientation: 'horizontal' | 'vertical' = 'horizontal';
 
 	/**
@@ -128,6 +128,14 @@ export class UmbPropertyLayoutElement extends UmbLitElement {
 
 			#description {
 				color: var(--uui-color-text-alt);
+			}
+
+			#description * {
+				max-width: 100%;
+			}
+
+			#description pre {
+				overflow: auto;
 			}
 
 			#editorColumn {

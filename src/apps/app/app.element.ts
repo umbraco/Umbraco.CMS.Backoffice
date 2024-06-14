@@ -18,7 +18,7 @@ import {
 	umbExtensionsRegistry,
 } from '@umbraco-cms/backoffice/extension-registry';
 import { filter, first, firstValueFrom } from '@umbraco-cms/backoffice/external/rxjs';
-import { retrieveStoredPath } from '@umbraco-cms/backoffice/utils';
+import { hasOwnOpener, retrieveStoredPath } from '@umbraco-cms/backoffice/utils';
 
 @customElement('umb-app')
 export class UmbAppElement extends UmbLitElement {
@@ -77,7 +77,7 @@ export class UmbAppElement extends UmbLitElement {
 				// The authorization request will be completed in the active window (main or popup) and the authorization signal will be sent.
 				// If we are in a popup window, the storage event in UmbAuthContext will catch the signal and close the window.
 				// If we are in the main window, the signal will be caught right here and the user will be redirected to the root.
-				if (window.opener) {
+				if (hasOwnOpener(this.backofficePath)) {
 					(component as UmbAppErrorElement).errorMessage = hasCode
 						? this.localize.term('errors_externalLoginSuccess')
 						: this.localize.term('errors_externalLoginFailed');
@@ -225,6 +225,7 @@ export class UmbAppElement extends UmbLitElement {
 		// Instruct all requests to use the auth flow to get and use the access_token for all subsequent requests
 		OpenAPI.TOKEN = () => this.#authContext!.getLatestToken();
 		OpenAPI.WITH_CREDENTIALS = true;
+		OpenAPI.ENCODE_PATH = (path: string) => path;
 	}
 
 	#redirect() {
