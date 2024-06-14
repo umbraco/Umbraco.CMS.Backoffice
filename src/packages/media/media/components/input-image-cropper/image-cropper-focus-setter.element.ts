@@ -31,8 +31,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		this.#onFocalPointUpdated();
 	}
 
-	@property({ attribute: false })
-	focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
+	#focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
 
 	// TODO: [LK] Temporary fix; to be reviewed.
 	@property({ type: Boolean })
@@ -103,7 +102,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 
 	#onFocalPointUpdated() {
-
 		if (this.#isCentered(this.#focalPoint)) {
 			this.#resetCoords();
 			this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
