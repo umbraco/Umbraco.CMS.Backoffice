@@ -4,11 +4,11 @@ import { html, LitElement, nothing, customElement, property } from '@umbraco-cms
 @customElement('umb-language-table-name-column-layout')
 export class UmbLanguageTableNameColumnLayoutElement extends LitElement {
 	@property({ attribute: false })
-	value!: { unique: string; name: string };
+	value!: { unique: string; name: string; editPath: string };
 
 	render() {
 		if (!this.value) return nothing;
-		return html`<a href=${'section/settings/workspace/language/edit/' + this.value.unique}>${this.value.name}</a>`;
+		return html` <uui-button compact href=${this.value.editPath} label=${this.value.name}></uui-button> `;
 	}
 
 	static styles = [UmbTextStyles];

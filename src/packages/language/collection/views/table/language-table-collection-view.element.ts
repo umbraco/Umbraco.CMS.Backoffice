@@ -1,10 +1,13 @@
 import type { UmbLanguageDetailModel } from '../../../types.js';
+import { UMB_EDIT_LANGUAGE_WORKSPACE_PATH_PATTERN } from '../../../paths.js';
 import type { UmbDefaultCollectionContext } from '@umbraco-cms/backoffice/collection';
 import { UMB_COLLECTION_CONTEXT } from '@umbraco-cms/backoffice/collection';
 import type { UmbTableColumn, UmbTableConfig, UmbTableItem } from '@umbraco-cms/backoffice/components';
 import { css, html, customElement, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
+import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
 
 import './column-layouts/boolean/language-table-boolean-column-layout.element.js';
 import './column-layouts/name/language-table-name-column-layout.element.js';
@@ -54,14 +57,31 @@ export class UmbLanguageTableCollectionViewElement extends UmbLitElement {
 	private _cultureNames = new Intl.DisplayNames('en', { type: 'language' });
 
 	#collectionContext?: UmbDefaultCollectionContext<UmbLanguageDetailModel>;
+	#routeBuilder?: UmbModalRouteBuilder;
 
 	constructor() {
 		super();
 
 		this.consumeContext(UMB_COLLECTION_CONTEXT, (instance) => {
 			this.#collectionContext = instance;
-			this.#observeCollectionItems();
 		});
+
+		this.#registerModalRoute();
+	}
+
+	#registerModalRoute() {
+		new UmbModalRouteRegistrationController(this, UMB_WORKSPACE_MODAL)
+			.addAdditionalPath(':entityType')
+			.onSetup((params) => {
+				return { data: { entityType: params.entityType, preset: {} } };
+			})
+			.observeRouteBuilder((routeBuilder) => {
+				this.#routeBuilder = routeBuilder;
+
+				// NOTE: Configuring the observations AFTER the route builder is ready,
+				// otherwise there is a race condition and `#collectionContext.items` tends to win. [LK]
+				this.#observeCollectionItems();
+			});
 	}
 
 	#observeCollectionItems() {
@@ -71,6 +91,11 @@ export class UmbLanguageTableCollectionViewElement extends UmbLitElement {
 
 	#createTableItems(languages: Array<UmbLanguageDetailModel>) {
 		this._tableItems = languages.map((language) => {
+			const editPath = this.#routeBuilder
+				? this.#routeBuilder({ entityType: language.entityType }) +
+					UMB_EDIT_LANGUAGE_WORKSPACE_PATH_PATTERN.generateLocal({ unique: language.unique })
+				: '';
+
 			return {
 				id: language.unique,
 				icon: 'icon-globe',
@@ -80,6 +105,7 @@ export class UmbLanguageTableCollectionViewElement extends UmbLitElement {
 						value: {
 							name: language.name ? language.name : this._cultureNames.of(language.unique),
 							unique: language.unique,
+							editPath,
 						},
 					},
 					{
