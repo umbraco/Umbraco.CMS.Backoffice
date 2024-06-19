@@ -56,13 +56,13 @@ export abstract class UmbBlockManagerContext<
 	#settings = new UmbArrayState(<Array<UmbBlockDataType>>[], (x) => x.udi);
 	public readonly settings = this.#settings.asObservable();
 
-	//	TODO:	maybe	its	bad	to	consume	Property	Context,	and	instead	wire	this	up	manually	in	the	property	editor?	With	these:	(and	one	for	variant-id..)
-	/*setPropertyAlias(alias:	string)	{
-			this.#propertyAlias.setValue(alias);
-			this.#workspaceModal.setUniquePathValue('propertyAlias',	alias);
+	// TODO: maybe its bad to consume Property Context, and instead wire this up manually in the property editor? With these: (and one for variant-id..)
+	/*setPropertyAlias(alias: string) {
+		this.#propertyAlias.setValue(alias);
+		this.#workspaceModal.setUniquePathValue('propertyAlias', alias);
 	}
-	getPropertyAlias()	{
-			this.#propertyAlias.value;
+	getPropertyAlias() {
+		this.#propertyAlias.value;
 	}*/
 
 	setEditorConfiguration(configs: UmbPropertyEditorConfigCollection) {
@@ -119,7 +119,7 @@ export abstract class UmbBlockManagerContext<
 		});
 	}
 
-	async	#ensureContentType(unique: string) {
+	async #ensureContentType(unique: string) {
 		if (this.#contentTypes.getValue().find((x) => x.unique === unique)) return;
 
 		const contentTypeRequest = this.#contentTypeRepository.requestByUnique(unique);
@@ -130,8 +130,8 @@ export abstract class UmbBlockManagerContext<
 			return;
 		}
 
-		//	We	could	have	used	the	global	store	of	Document	Types,	but	to	ensure	we	first	react	ones	the	latest	is	loaded	then	we	have	our	own	local	store:
-		//	TODO:	Revisit	if	this	is	right	to	do.	Notice	this	can	potentially	be	proxied	to	the	global	store.	In	that	way	we	do	not	need	to	observe	and	we	can	just	use	the	global	store	for	data.
+		// We could have used the global store of Document Types, but to ensure we first react ones the latest is loaded then we have our own local store:
+		// TODO: Revisit if this is right to do. Notice this can potentially be proxied to the global store. In that way we do not need to observe and we can just use the global store for data.
 		this.#contentTypes.appendOne(data);
 	}
 
@@ -191,13 +191,13 @@ export abstract class UmbBlockManagerContext<
 	): UmbBlockDataObjectModel<BlockLayoutType> | undefined;
 
 	protected createBlockData(contentElementTypeKey: string, partialLayoutEntry?: Omit<BlockLayoutType, 'contentUdi'>) {
-		//	Find	block	type.
+		// Find block type.
 		const blockType = this.#blockTypes.value.find((x) => x.contentElementTypeKey === contentElementTypeKey);
 		if (!blockType) {
-			throw new Error(`Cannot	create	block,	missing	block	type	for	${contentElementTypeKey}`);
+			throw new Error(`Cannot create block, missing block type for ${contentElementTypeKey}`);
 		}
 
-		//	Create	layout	entry:
+		// Create layout entry:
 		const layout: BlockLayoutType = {
 			contentUdi: buildUdi('element', UmbId.new()),
 			...(partialLayoutEntry as Partial<BlockLayoutType>),
@@ -237,15 +237,15 @@ export abstract class UmbBlockManagerContext<
 		settings: UmbBlockDataType | undefined,
 		modalData: ModalDataType,
 	) {
-		//	Create	content	entry:
+		// Create content entry:
 		if (layoutEntry.contentUdi) {
 			this.#contents.appendOne(content);
 		} else {
-			throw new Error('Cannot	create	block,	missing	contentUdi');
+			throw new Error('Cannot create block, missing contentUdi');
 			return false;
 		}
 
-		//Create	settings	entry:
+		//Create settings entry:
 		if (settings && layoutEntry.settingsUdi) {
 			this.#settings.appendOne(settings);
 		}
