@@ -94,25 +94,30 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 				path: 'create/:elementTypeKey',
 				component: UmbBlockWorkspaceEditorElement,
 				setup: async (component, info) => {
-					(component as UmbBlockWorkspaceEditorElement).workspaceAlias = manifest.alias;
-
 					const elementTypeKey = info.match.params.elementTypeKey;
-					this.create(elementTypeKey);
+					await this.create(elementTypeKey);
 
 					new UmbWorkspaceIsNewRedirectController(
 						this,
 						this,
 						this.getHostElement().shadowRoot!.querySelector('umb-router-slot')!,
 					);
+
+					(component as UmbBlockWorkspaceEditorElement).workspaceAlias = manifest.alias;
+					const name = this.getName();
+					(component as UmbBlockWorkspaceEditorElement).label = name;
 				},
 			},
 			{
 				path: 'edit/:udi',
 				component: UmbBlockWorkspaceEditorElement,
-				setup: (component, info) => {
-					(component as UmbBlockWorkspaceEditorElement).workspaceAlias = manifest.alias;
+				setup: async (component, info) => {
 					const udi = decodeFilePath(info.match.params.udi);
-					this.load(udi);
+					await this.load(udi);
+
+					(component as UmbBlockWorkspaceEditorElement).workspaceAlias = manifest.alias;
+					const name = this.getName();
+					(component as UmbBlockWorkspaceEditorElement).label = name;
 				},
 			},
 		]);
@@ -147,7 +152,13 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 					this.observe(
 						this.#blockManager!.contentOf(contentUdi),
 						(contentData) => {
-							this.content.setData(contentData);
+							if (contentData) {
+								this.content.setData(contentData);
+								const blockType = this.#blockManager!.getBlockTypeOf(contentData.contentTypeKey);
+								if (blockType?.label) {
+									this.setName(blockType.label);
+								}
+							}
 						},
 						'observeContent',
 					);
@@ -218,6 +229,11 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 			throw new Error('Block Entries could not create block');
 		}
 
+		const blockType = this.#blockManager!.getBlockTypeOf(contentElementTypeId);
+		if (blockType?.label) {
+			this.setName(blockType.label);
+		}
+
 		this.#layout.setValue(blockCreated.layout as LayoutDataType);
 		this.content.setData(blockCreated.content);
 		if (blockCreated.settings) {
@@ -277,7 +293,10 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 	}
 
 	getName() {
-		return 'block name content element type here...';
+		return this.#label.value;
+	}
+	setName(value: string): void {
+		this.#label.setValue(value);
 	}
 
 	// NOTICE currently the property methods are for layout, but this could be seen as wrong, we might need to dedicate a data manager for the layout as well.
