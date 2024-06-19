@@ -1,5 +1,5 @@
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { customElement, css, html, property, ifDefined } from '@umbraco-cms/backoffice/external/lit';
+import { customElement, css, html, property } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
 @customElement('umb-block-workspace-editor')
@@ -12,8 +12,8 @@ export class UmbBlockWorkspaceEditorElement extends UmbLitElement {
   label?: string;
 
   render() {
-    return this.workspaceAlias
-      ? html` <umb-workspace-editor alias=${this.workspaceAlias} headline=${ifDefined(this.label)}> </umb-workspace-editor> `
+    return this.workspaceAlias && this.label
+      ? html` <umb-workspace-editor alias=${this.workspaceAlias} headline=${this.label}> </umb-workspace-editor> `
       : '';
   }
 
