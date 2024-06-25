@@ -1,7 +1,6 @@
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
-
-export const UMB_BADGE_CONTEXT = 'UMB_BADGE_CONTEXT';
+import { UMB_BADGE_CONTEXT } from './badge.context-token.js';
 
 export abstract class UmbBadgeContext extends UmbContextBase<UmbBadgeContext> {
 	public unique?: string;
