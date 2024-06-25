@@ -1,4 +1,5 @@
 import { manifests as authManifests } from './auth/manifests.js';
+import { manifests as badgeManifests } from './badge/manifests.js';
 import { manifests as collectionManifests } from './collection/manifests.js';
 import { manifests as contentManifests } from './content/manifests.js';
 import { manifests as contentTypeManifests } from './content-type/manifests.js';
@@ -22,22 +23,23 @@ import type { ManifestTypes, UmbBackofficeManifestKind } from './extension-regis
 
 export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 	...authManifests,
-	...extensionManifests,
-	...iconRegistryManifests,
-	...cultureManifests,
-	...localizationManifests,
-	...themeManifests,
-	...sectionManifests,
-	...treeManifests,
+	...badgeManifests,
 	...collectionManifests,
-	...workspaceManifests,
 	...contentManifests,
 	...contentTypeManifests,
-	...settingsManifests,
-	...modalManifests,
-	...entityActionManifests,
-	...propertyActionManifests,
-	...serverFileSystemManifests,
+	...cultureManifests,
 	...debugManifests,
+	...entityActionManifests,
+	...extensionManifests,
+	...iconRegistryManifests,
+	...localizationManifests,
+	...modalManifests,
+	...propertyActionManifests,
 	...recycleBinManifests,
+	...sectionManifests,
+	...serverFileSystemManifests,
+	...settingsManifests,
+	...themeManifests,
+	...treeManifests,
+	...workspaceManifests,
 ];
