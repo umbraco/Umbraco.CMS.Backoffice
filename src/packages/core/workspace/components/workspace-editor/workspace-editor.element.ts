@@ -5,6 +5,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { ManifestWorkspaceView } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbRoute, UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent } from '@umbraco-cms/backoffice/router';
+import { UMB_BADGE_CONTEXT, UmbBadge, UmbBadgeContext } from 'src/packages/core/badge';
 
 /**
  * @element umb-workspace-editor
@@ -46,8 +47,20 @@ export class UmbWorkspaceEditorElement extends UmbLitElement {
 	@state()
 	private _activePath?: string;
 
+	@state()
+	badges: Array<UmbBadge> = [];
+
+	#badgeContext?: UmbBadgeContext;
+
 	constructor() {
 		super();
+
+		this.consumeContext(UMB_BADGE_CONTEXT, (badgeContext) => {
+			this.#badgeContext = badgeContext as UmbBadgeContext;
+			this.observe(this.#badgeContext.badges, (badges) => {
+				this.badges = badges;
+			});
+		});
 
 		new UmbExtensionsManifestInitializer(this, umbExtensionsRegistry, 'workspaceView', null, (workspaceViews) => {
 			this._workspaceViews = workspaceViews.map((view) => view.manifest);
@@ -107,10 +120,28 @@ export class UmbWorkspaceEditorElement extends UmbLitElement {
 		`;
 	}
 
+	#TEST_OnButtonClick() {
+		this.#badgeContext?.setBadges([]);
+
+		const randomView = this._workspaceViews[Math.floor(Math.random() * this._workspaceViews.length)];
+
+		this.#badgeContext?.addBadge({ unique: randomView.alias, content: '!' });
+	}
+
+	#renderBadge(unique: string) {
+		if (!this.#badgeContext) return;
+
+		const badge = this.badges.find((b) => b.unique === unique);
+		if (!badge) return nothing;
+
+		return html`<uui-badge color="danger" style="top: 0; right: 0">${badge.content}</uui-badge>`;
+	}
+
 	#renderViews() {
 		return html`
 			${!this.hideNavigation && this._workspaceViews.length > 1
 				? html`
+						<button @click=${this.#TEST_OnButtonClick}>BADGE TEST</button>
 						<uui-tab-group slot="navigation">
 							${repeat(
 								this._workspaceViews,
@@ -122,6 +153,7 @@ export class UmbWorkspaceEditorElement extends UmbLitElement {
 										?active=${'view/' + view.meta.pathname === this._activePath}>
 										<umb-icon slot="icon" name=${view.meta.icon}></umb-icon>
 										${view.meta.label ? this.localize.string(view.meta.label) : view.name}
+										${this.#renderBadge(view.alias)}
 									</uui-tab>
 								`,
 							)}
