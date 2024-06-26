@@ -89,6 +89,7 @@ export abstract class UmbDetailRepositoryBase<
 			// TODO: how do we handle generic notifications? Is this the correct place to do it?
 			const notification = { data: { message: `Created` } };
 			this.#notificationContext!.peek('positive', notification);
+			this.#notificationContext?.append({ ...notification, group: 'create' });
 		}
 
 		return { data: createdData, error };
@@ -100,7 +101,7 @@ export abstract class UmbDetailRepositoryBase<
 	 * @return {*}
 	 * @memberof UmbDetailRepositoryBase
 	 */
-	async save(model: DetailModelType) {
+	async save(model: DetailModelType, appendAsGroupNotification?: string) {
 		if (!model) throw new Error('Data is missing');
 		if (!model.unique) throw new Error('Unique is missing');
 		await this.#init;
@@ -112,7 +113,11 @@ export abstract class UmbDetailRepositoryBase<
 
 			// TODO: how do we handle generic notifications? Is this the correct place to do it?
 			const notification = { data: { message: `Saved` } };
-			this.#notificationContext!.peek('positive', notification);
+			if (appendAsGroupNotification) {
+				this.#notificationContext?.append({ ...notification, group: appendAsGroupNotification });
+			} else {
+				this.#notificationContext!.peek('positive', notification);
+			}
 		}
 
 		return { data: model, error };
