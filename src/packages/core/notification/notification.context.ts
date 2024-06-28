@@ -91,7 +91,9 @@ export class UmbNotificationContext extends UmbContextBase<UmbNotificationContex
 
 	/**
 	 * Appends a notification to a group that can be opened later.
+	 * @param {UmbNotificationColor} color
 	 * @param {UmbNotificationOptions<UmbNotificationData>} options
+	 * @param {string} group
 	 * @return {*}
 	 * @memberof UmbNotificationContext
 	 */
@@ -100,14 +102,23 @@ export class UmbNotificationContext extends UmbContextBase<UmbNotificationContex
 	}
 
 	/**
-	 * Opens all notifications from given groups that automatically goes away after 6 sek.
-	 * @param {string} group
+	 * Get data of all unopened notifications.
+	 * @return {*}
+	 * @memberof UmbNotificationContext
+	 */
+	public getAvailable() {
+		return this.#toasts.getValue();
+	}
+
+	/**
+	 * Opens notifications combined by color that automatically goes away after 6 sek.
+	 * @param {Array<string>} groups the groups to combine and open
 	 * @param {string} headline override headline (optional)
 	 * @return {*}
 	 * @memberof UmbNotificationContext
 	 */
 	public peekGroups(groups: Array<string>, overrideHeadline?: string) {
-		const toasts = this.#toasts.getValue().filter((toast) => groups.includes(toast.group ?? ''));
+		const toasts = this.#toasts.getValue().filter((toast) => groups?.includes(toast.group ?? ''));
 
 		const builtNotifications: Array<UmbNotificationOptions> = [];
 
@@ -137,6 +148,16 @@ export class UmbNotificationContext extends UmbContextBase<UmbNotificationContex
 		});
 
 		builtNotifications.forEach((notification) => this.peek(notification.color!, notification));
+	}
+
+	/**
+	 * Removes all unopened notifications from a given group.
+	 * @param {string} group
+	 * @return {*}
+	 * @memberof UmbNotificationContext
+	 */
+	public removeGroup(group: string) {
+		this.#toasts.filter((toast) => toast.group !== group);
 	}
 
 	/**

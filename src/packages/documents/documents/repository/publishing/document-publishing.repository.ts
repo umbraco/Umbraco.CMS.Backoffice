@@ -29,7 +29,7 @@ export class UmbDocumentPublishingRepository extends UmbRepositoryBase {
 	 * @return {*}
 	 * @memberof UmbDocumentPublishingRepository
 	 */
-	async publish(unique: string, variants: Array<UmbDocumentVariantPublishModel>) {
+	async publish(unique: string, variants: Array<UmbDocumentVariantPublishModel>, asNotificationGroup?: string) {
 		if (!unique) throw new Error('id is missing');
 		if (!variants.length) throw new Error('variant IDs are missing');
 		await this.#init;
@@ -38,9 +38,12 @@ export class UmbDocumentPublishingRepository extends UmbRepositoryBase {
 
 		if (!error) {
 			const notification = { data: { message: `Document published` } };
-			this.#notificationContext?.append('positive', notification, 'document-publish');
+			if (asNotificationGroup) {
+				this.#notificationContext?.append('positive', notification, asNotificationGroup);
+			} else {
+				this.#notificationContext?.peek('positive', notification);
+			}
 		}
-		this.#notificationContext?.peekGroups(['document-save', 'document-publish']);
 
 		return { error };
 	}

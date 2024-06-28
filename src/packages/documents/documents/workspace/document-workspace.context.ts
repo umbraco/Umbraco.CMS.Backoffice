@@ -63,6 +63,8 @@ import { UmbDocumentBlueprintDetailRepository } from '@umbraco-cms/backoffice/do
 import type { UmbDocumentTypeDetailModel } from '@umbraco-cms/backoffice/document-type';
 
 type EntityType = UmbDocumentDetailModel;
+
+export const UMB_DOCUMENT_SUBMIT_NOTIFICATION = 'document-submit';
 export class UmbDocumentWorkspaceContext
 	extends UmbSubmittableWorkspaceContextBase<EntityType>
 	implements
@@ -215,6 +217,10 @@ export class UmbDocumentWorkspaceContext
 				},
 			},
 		]);
+	}
+
+	#peekNotifications() {
+		this.#notificationContext?.peekGroups([UMB_DOCUMENT_SUBMIT_NOTIFICATION]);
 	}
 
 	override resetState() {
@@ -581,7 +587,8 @@ export class UmbDocumentWorkspaceContext
 			const parent = this.#parent.getValue();
 			if (!parent) throw new Error('Parent is not set');
 
-			const { data, error } = await this.repository.create(saveData, parent.unique, 'document-create');
+			const { data, error } = await this.repository.create(saveData, parent.unique, UMB_DOCUMENT_SUBMIT_NOTIFICATION);
+
 			if (!data || error) {
 				console.error('Error creating document', error);
 				throw new Error('Error creating document');
@@ -599,7 +606,8 @@ export class UmbDocumentWorkspaceContext
 			});
 			eventContext.dispatchEvent(event);
 		} else {
-			const { data, error } = await this.repository.save(saveData, 'document-save');
+			const { data, error } = await this.repository.save(saveData, UMB_DOCUMENT_SUBMIT_NOTIFICATION);
+
 			if (!data || error) {
 				console.error('Error saving document', error);
 				throw new Error('Error saving document');
@@ -698,12 +706,13 @@ export class UmbDocumentWorkspaceContext
 				// If data of the selection is not valid Then just save:
 				await this.#performSaveOrCreate(saveData);
 				// Notifying that the save was successful, but we did not publish, which is what we want to symbolize here. [NL]
-				const notificationContext = await this.getContext(UMB_NOTIFICATION_CONTEXT);
-				// TODO: Get rid of the save notification.
 				// TODO: Translate this message [NL]
-				notificationContext.peek('danger', {
-					data: { message: 'Document was not published, but we saved it for you.' },
-				});
+				const notification = { data: { message: 'Document was not published, but we saved it for you.' } };
+				// TODO: This removes the save notification, but also others if someone appended to the submit notification group.
+				this.#notificationContext?.removeGroup(UMB_DOCUMENT_SUBMIT_NOTIFICATION);
+				this.#notificationContext?.append('danger', notification, UMB_DOCUMENT_SUBMIT_NOTIFICATION);
+
+				this.#peekNotifications();
 				// Reject even thought the save was successful, but we did not publish, which is what we want to symbolize here. [NL]
 				return await Promise.reject();
 			},
@@ -719,6 +728,7 @@ export class UmbDocumentWorkspaceContext
 		await this.publishingRepository.publish(
 			unique,
 			variantIds.map((variantId) => ({ variantId })),
+			UMB_DOCUMENT_SUBMIT_NOTIFICATION,
 		);
 	}
 
@@ -757,18 +767,18 @@ export class UmbDocumentWorkspaceContext
 
 	public override async requestSubmit() {
 		await this.#handleSave();
-		this.#notificationContext?.peekGroups(['document-save']);
+		this.#peekNotifications();
 		return;
 	}
 
 	public async submit() {
 		await this.#handleSave();
-		this.#notificationContext?.peekGroups(['document-save']);
+		this.#peekNotifications();
 		return;
 	}
 	public override async invalidSubmit() {
 		await this.#handleSave();
-		this.#notificationContext?.peekGroups(['document-save']);
+		this.#peekNotifications();
 		return;
 	}
 
@@ -778,13 +788,13 @@ export class UmbDocumentWorkspaceContext
 
 	public async saveAndPreview(): Promise<void> {
 		await this.#handleSaveAndPreview();
-		this.#notificationContext?.peekGroups(['document-save']);
+		this.#peekNotifications();
 		return;
 	}
 
 	public async saveAndPublish(): Promise<void> {
 		await this.#handleSaveAndPublish();
-		this.#notificationContext?.peekGroups(['document-save', 'document-publish']);
+		this.#peekNotifications();
 		return;
 	}
 
@@ -815,7 +825,8 @@ export class UmbDocumentWorkspaceContext
 
 		const unique = this.getUnique();
 		if (!unique) throw new Error('Unique is missing');
-		await this.publishingRepository.publish(unique, variants);
+		await this.publishingRepository.publish(unique, variants, UMB_DOCUMENT_SUBMIT_NOTIFICATION);
+		this.#peekNotifications();
 	}
 
 	public async unpublish() {
