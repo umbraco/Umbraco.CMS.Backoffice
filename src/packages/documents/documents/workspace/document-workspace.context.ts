@@ -221,9 +221,7 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	#peekNotifications() {
-		console.log('available:', this.#notificationContext?.getAvailable());
 		this.#notificationContext?.peekGroups([UMB_DOCUMENT_SUBMIT_NOTIFICATION, UMB_DOCUMENT_SAVE_NOTIFICATION]);
-		console.log('after peeking:', this.#notificationContext?.getAvailable());
 	}
 
 	override resetState() {
