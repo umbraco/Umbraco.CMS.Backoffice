@@ -1,12 +1,16 @@
+import { html } from '@umbraco-cms/backoffice/external/lit';
+import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
+import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UMB_AUTH_CONTEXT } from '../auth/index.js';
 import { isApiError, isCancelError, isCancelablePromise } from './apiTypeValidators.function.js';
-import { UMB_NOTIFICATION_CONTEXT, type UmbNotificationOptions } from '@umbraco-cms/backoffice/notification';
-import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
-import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import type { UmbDataSourceResponse } from '@umbraco-cms/backoffice/repository';
-
+import { UMB_NOTIFICATION_CONTEXT, type UmbNotificationOptions } from '@umbraco-cms/backoffice/notification';
+interface UmbNotificationErrorLayout {
+	property: string;
+	description: Array<string>;
+}
 export class UmbResourceController extends UmbControllerBase {
 	#promise: Promise<any>;
 
@@ -117,6 +121,7 @@ export class UmbResourceController extends UmbControllerBase {
 									'The Umbraco object cache is corrupt, but your action may still have been executed. Please restart the server to reset the cache. This is a work in progress.';
 							}
 
+							console.log('peeky');
 							this.#notificationContext.peek('danger', {
 								data: {
 									headline,
@@ -129,10 +134,12 @@ export class UmbResourceController extends UmbControllerBase {
 					default:
 						// Other errors
 						if (this.#notificationContext) {
+							const message = error.body?.errors ? this.#buildErrorLayout(error.body.errors) : undefined;
+
 							this.#notificationContext.peek('danger', {
 								data: {
 									headline: error.body?.title ?? error.name ?? 'Server Error',
-									message: error.body?.detail ?? error.message ?? 'Something went wrong',
+									message: message ?? error.body?.detail ?? error.message ?? 'Something went wrong',
 								},
 								...options,
 							});
@@ -161,6 +168,31 @@ export class UmbResourceController extends UmbControllerBase {
 		if (isCancelablePromise(this.#promise)) {
 			this.#promise.cancel();
 		}
+	}
+
+	#buildErrorLayout(error: any) {
+		const errors: Array<UmbNotificationErrorLayout> = [];
+		Object.entries(error).forEach(([property, message]) => {
+			errors.push({ property, description: message as string[] });
+		});
+		return html`Hey: <umb-notification-layout-error .model=${error}></umb-notification-layout-error>`;
+
+		const template = html`
+			${errors.map((error) => {
+				if (error.description.length > 1) {
+					return html`<ul>
+						${error.property}:
+						<li>(Arrow)</li>
+					</ul>`;
+				} else {
+					return html` ${error.property}: <uui-button look="primary" color="danger" label="Show more">^</uui-button>
+						<ul>
+							<li>${error.description[0]}</li>
+						</ul>`;
+				}
+			})}
+		`;
+		return template;
 	}
 
 	override destroy(): void {

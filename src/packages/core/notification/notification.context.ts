@@ -122,10 +122,11 @@ export class UmbNotificationContext extends UmbContextBase<UmbNotificationContex
 
 		const builtNotifications: Array<UmbNotificationOptions> = [];
 
+		console.log('all', toasts);
 		toasts.forEach((toast) => {
 			// We only group matching colors.
 			const mergeIndex = builtNotifications.findIndex((notification) => notification.color === toast.color);
-
+			console.log(mergeIndex);
 			if (mergeIndex === -1) {
 				// Not found. Create new toast.
 				builtNotifications.push(toast);
@@ -147,6 +148,7 @@ export class UmbNotificationContext extends UmbContextBase<UmbNotificationContex
 			this.#toasts.removeOne(toast);
 		});
 
+		console.log(builtNotifications);
 		builtNotifications.forEach((notification) => this.peek(notification.color!, notification));
 	}
 

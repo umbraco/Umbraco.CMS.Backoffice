@@ -11,6 +11,7 @@ import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import type { UmbModalRouteBuilder } from '@umbraco-cms/backoffice/router';
 import type { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import type { UUIModalSidebarSize } from '@umbraco-cms/backoffice/external/uui';
+import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
 
 /**
  * @element umb-input-multi-url
@@ -237,8 +238,17 @@ export class UmbMultiUrlPickerElement extends UUIFormControlMixin(UmbLitElement,
 		this.dispatchEvent(new UmbChangeEvent());
 	}
 
+	// override render() {
+	// 	return html`${this.#renderItems()} ${this.#renderAddButton()}`;
+	// }
+
+	async #hey() {
+		const context = await this.getContext(UMB_NOTIFICATION_CONTEXT);
+		context.append('positive', { data: { message: 'My special action' } }, 'document-submit');
+	}
+
 	override render() {
-		return html`${this.#renderItems()} ${this.#renderAddButton()}`;
+		return html`<uui-button label="Custom Notification" @click=${this.#hey}></uui-button>`;
 	}
 
 	#renderAddButton() {
