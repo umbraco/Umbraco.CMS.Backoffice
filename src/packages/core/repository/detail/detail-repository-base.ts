@@ -17,9 +17,9 @@ export abstract class UmbDetailRepositoryBase<
 {
 	#init: Promise<unknown>;
 
-	#detailStore?: UmbDetailStore<DetailModelType>;
+	protected detailStore?: UmbDetailStore<DetailModelType>;
 	protected detailDataSource: UmbDetailDataSourceType;
-	#notificationContext?: UmbNotificationContext;
+	protected notificationContext?: UmbNotificationContext;
 
 	constructor(
 		host: UmbControllerHost,
@@ -32,11 +32,11 @@ export abstract class UmbDetailRepositoryBase<
 
 		this.#init = Promise.all([
 			this.consumeContext(detailStoreContextAlias, (instance) => {
-				this.#detailStore = instance;
+				this.detailStore = instance;
 			}).asPromise(),
 
 			this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
-				this.#notificationContext = instance;
+				this.notificationContext = instance;
 			}).asPromise(),
 		]);
 	}
@@ -64,10 +64,10 @@ export abstract class UmbDetailRepositoryBase<
 		const { data, error } = await this.detailDataSource.read(unique);
 
 		if (data) {
-			this.#detailStore!.append(data);
+			this.detailStore!.append(data);
 		}
 
-		return { data, error, asObservable: () => this.#detailStore!.byUnique(unique) };
+		return { data, error, asObservable: () => this.detailStore!.byUnique(unique) };
 	}
 
 	/**
@@ -77,19 +77,22 @@ export abstract class UmbDetailRepositoryBase<
 	 * @return {*}
 	 * @memberof UmbDetailRepositoryBase
 	 */
-	async create(model: DetailModelType, parentUnique: string | null) {
+	async create(model: DetailModelType, parentUnique: string | null, asNotificationGroup?: string) {
 		if (!model) throw new Error('Data is missing');
 		await this.#init;
 
 		const { data: createdData, error } = await this.detailDataSource.create(model, parentUnique);
 
 		if (createdData) {
-			this.#detailStore?.append(createdData);
+			this.detailStore?.append(createdData);
 
 			// TODO: how do we handle generic notifications? Is this the correct place to do it?
 			const notification = { data: { message: `Created` } };
-			this.#notificationContext!.peek('positive', notification);
-			this.#notificationContext?.append({ ...notification, group: 'create' });
+			if (asNotificationGroup) {
+				this.notificationContext!.append('positive', notification, asNotificationGroup);
+			} else {
+				this.notificationContext!.peek('positive', notification);
+			}
 		}
 
 		return { data: createdData, error };
@@ -101,7 +104,7 @@ export abstract class UmbDetailRepositoryBase<
 	 * @return {*}
 	 * @memberof UmbDetailRepositoryBase
 	 */
-	async save(model: DetailModelType, appendAsGroupNotification?: string) {
+	async save(model: DetailModelType, asNotificationGroup?: string) {
 		if (!model) throw new Error('Data is missing');
 		if (!model.unique) throw new Error('Unique is missing');
 		await this.#init;
@@ -109,14 +112,14 @@ export abstract class UmbDetailRepositoryBase<
 		const { data: updatedData, error } = await this.detailDataSource.update(model);
 
 		if (updatedData) {
-			this.#detailStore!.updateItem(model.unique, updatedData);
+			this.detailStore!.updateItem(model.unique, updatedData);
 
 			// TODO: how do we handle generic notifications? Is this the correct place to do it?
 			const notification = { data: { message: `Saved` } };
-			if (appendAsGroupNotification) {
-				this.#notificationContext?.append({ ...notification, group: appendAsGroupNotification });
+			if (asNotificationGroup) {
+				this.notificationContext!.append('positive', notification, asNotificationGroup);
 			} else {
-				this.#notificationContext!.peek('positive', notification);
+				this.notificationContext!.peek('positive', notification);
 			}
 		}
 
@@ -136,11 +139,11 @@ export abstract class UmbDetailRepositoryBase<
 		const { error } = await this.detailDataSource.delete(unique);
 
 		if (!error) {
-			this.#detailStore!.removeItem(unique);
+			this.detailStore!.removeItem(unique);
 
 			// TODO: how do we handle generic notifications? Is this the correct place to do it?
 			const notification = { data: { message: `Deleted` } };
-			this.#notificationContext!.peek('positive', notification);
+			this.notificationContext!.peek('positive', notification);
 		}
 
 		return { error };
@@ -155,11 +158,11 @@ export abstract class UmbDetailRepositoryBase<
 	async byUnique(unique: string) {
 		if (!unique) throw new Error('Unique is missing');
 		await this.#init;
-		return this.#detailStore!.byUnique(unique);
+		return this.detailStore!.byUnique(unique);
 	}
 
 	override destroy(): void {
-		this.#detailStore = undefined;
+		this.detailStore = undefined;
 		(this.detailDataSource as any) = undefined;
 		super.destroy();
 	}

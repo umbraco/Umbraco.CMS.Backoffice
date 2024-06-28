@@ -1,3 +1,36 @@
+import { UmbEntityContext } from '@umbraco-cms/backoffice/entity';
+import { UMB_INVARIANT_CULTURE, UmbVariantId } from '@umbraco-cms/backoffice/variant';
+import { UmbContentTypeStructureManager } from '@umbraco-cms/backoffice/content-type';
+import {
+	type UmbCollectionWorkspaceContext,
+	type UmbPublishableWorkspaceContext,
+	UmbSubmittableWorkspaceContextBase,
+	UmbWorkspaceIsNewRedirectController,
+	UmbWorkspaceSplitViewManager,
+} from '@umbraco-cms/backoffice/workspace';
+import {
+	appendToFrozenArray,
+	mergeObservables,
+	jsonStringComparison,
+	UmbArrayState,
+	UmbObjectState,
+} from '@umbraco-cms/backoffice/observable-api';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { UmbLanguageCollectionRepository, type UmbLanguageDetailModel } from '@umbraco-cms/backoffice/language';
+import { type Observable, firstValueFrom } from '@umbraco-cms/backoffice/external/rxjs';
+import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
+import {
+	UmbRequestReloadChildrenOfEntityEvent,
+	UmbRequestReloadStructureForEntityEvent,
+} from '@umbraco-cms/backoffice/entity-action';
+import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import {
+	UmbServerModelValidationContext,
+	UmbVariantValuesValidationMessageTranslator,
+} from '@umbraco-cms/backoffice/validation';
+import type { UmbContentWorkspaceContext } from '@umbraco-cms/backoffice/content';
+import { UmbIsTrashedEntityContext } from '@umbraco-cms/backoffice/recycle-bin';
+import { UMB_NOTIFICATION_CONTEXT, type UmbNotificationContext } from '@umbraco-cms/backoffice/notification';
 import { UmbDocumentTypeDetailRepository } from '../../document-types/repository/detail/document-type-detail.repository.js';
 import { UmbDocumentPropertyDatasetContext } from '../property-dataset-context/document-property-dataset-context.js';
 import { UMB_DOCUMENT_ENTITY_TYPE } from '../entity.js';
@@ -26,42 +59,8 @@ import {
 import { UMB_DOCUMENTS_SECTION_PATH } from '../../section/paths.js';
 import { UmbDocumentPreviewRepository } from '../repository/preview/index.js';
 import { UMB_DOCUMENT_WORKSPACE_ALIAS } from './manifests.js';
-import { UmbEntityContext } from '@umbraco-cms/backoffice/entity';
-import { UMB_INVARIANT_CULTURE, UmbVariantId } from '@umbraco-cms/backoffice/variant';
-import { UmbContentTypeStructureManager } from '@umbraco-cms/backoffice/content-type';
-import {
-	type UmbCollectionWorkspaceContext,
-	type UmbPublishableWorkspaceContext,
-	UmbSubmittableWorkspaceContextBase,
-	UmbWorkspaceIsNewRedirectController,
-	UmbWorkspaceRouteManager,
-	UmbWorkspaceSplitViewManager,
-} from '@umbraco-cms/backoffice/workspace';
-import {
-	appendToFrozenArray,
-	mergeObservables,
-	jsonStringComparison,
-	UmbArrayState,
-	UmbObjectState,
-} from '@umbraco-cms/backoffice/observable-api';
-import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UmbLanguageCollectionRepository, type UmbLanguageDetailModel } from '@umbraco-cms/backoffice/language';
-import { type Observable, firstValueFrom } from '@umbraco-cms/backoffice/external/rxjs';
-import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
-import {
-	UmbRequestReloadChildrenOfEntityEvent,
-	UmbRequestReloadStructureForEntityEvent,
-} from '@umbraco-cms/backoffice/entity-action';
-import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
-import {
-	UmbServerModelValidationContext,
-	UmbVariantValuesValidationMessageTranslator,
-} from '@umbraco-cms/backoffice/validation';
 import { UmbDocumentBlueprintDetailRepository } from '@umbraco-cms/backoffice/document-blueprint';
-import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
-import type { UmbContentWorkspaceContext } from '@umbraco-cms/backoffice/content';
 import type { UmbDocumentTypeDetailModel } from '@umbraco-cms/backoffice/document-type';
-import { UmbIsTrashedEntityContext } from '@umbraco-cms/backoffice/recycle-bin';
 
 type EntityType = UmbDocumentDetailModel;
 export class UmbDocumentWorkspaceContext
@@ -160,10 +159,13 @@ export class UmbDocumentWorkspaceContext
 	#entityContext = new UmbEntityContext(this);
 	// TODO: this might not be the correct place to spin this up
 	#isTrashedContext = new UmbIsTrashedEntityContext(this);
+	#notificationContext?: UmbNotificationContext;
 
 	constructor(host: UmbControllerHost) {
 		super(host, UMB_DOCUMENT_WORKSPACE_ALIAS);
-
+		this.consumeContext(UMB_NOTIFICATION_CONTEXT, (context) => {
+			this.#notificationContext = context;
+		});
 		this.observe(this.contentTypeUnique, (unique) => this.structure.loadType(unique));
 		this.observe(this.varies, (varies) => (this.#varies = varies));
 
@@ -579,7 +581,7 @@ export class UmbDocumentWorkspaceContext
 			const parent = this.#parent.getValue();
 			if (!parent) throw new Error('Parent is not set');
 
-			const { data, error } = await this.repository.create(saveData, parent.unique);
+			const { data, error } = await this.repository.create(saveData, parent.unique, 'document-create');
 			if (!data || error) {
 				console.error('Error creating document', error);
 				throw new Error('Error creating document');
@@ -597,7 +599,7 @@ export class UmbDocumentWorkspaceContext
 			});
 			eventContext.dispatchEvent(event);
 		} else {
-			const { data, error } = await this.repository.save(saveData);
+			const { data, error } = await this.repository.save(saveData, 'document-save');
 			if (!data || error) {
 				console.error('Error saving document', error);
 				throw new Error('Error saving document');
@@ -753,15 +755,21 @@ export class UmbDocumentWorkspaceContext
 		return await this.#performSaveOrCreate(saveData);
 	}
 
-	public override requestSubmit() {
-		return this.#handleSave();
+	public override async requestSubmit() {
+		await this.#handleSave();
+		this.#notificationContext?.peekGroups(['document-save']);
+		return;
 	}
 
-	public submit() {
-		return this.#handleSave();
+	public async submit() {
+		await this.#handleSave();
+		this.#notificationContext?.peekGroups(['document-save']);
+		return;
 	}
-	public override invalidSubmit() {
-		return this.#handleSave();
+	public override async invalidSubmit() {
+		await this.#handleSave();
+		this.#notificationContext?.peekGroups(['document-save']);
+		return;
 	}
 
 	public async publish() {
@@ -769,11 +777,15 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	public async saveAndPreview(): Promise<void> {
-		return this.#handleSaveAndPreview();
+		await this.#handleSaveAndPreview();
+		this.#notificationContext?.peekGroups(['document-save']);
+		return;
 	}
 
 	public async saveAndPublish(): Promise<void> {
-		return this.#handleSaveAndPublish();
+		await this.#handleSaveAndPublish();
+		this.#notificationContext?.peekGroups(['document-save', 'document-publish']);
+		return;
 	}
 
 	public async schedule() {

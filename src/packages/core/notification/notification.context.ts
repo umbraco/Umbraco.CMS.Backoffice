@@ -1,8 +1,9 @@
-import { UmbNotificationHandler } from './notification-handler.js';
+import { html, type TemplateResult } from '@umbraco-cms/backoffice/external/lit';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import { UmbArrayState, UmbBasicState } from '@umbraco-cms/backoffice/observable-api';
+import { UmbNotificationHandler } from './notification-handler.js';
 
 /**
  * The default data of notifications
@@ -10,8 +11,8 @@ import { UmbArrayState, UmbBasicState } from '@umbraco-cms/backoffice/observable
  * @interface UmbNotificationDefaultData
  */
 export interface UmbNotificationDefaultData {
-	message: string;
-	headline?: string;
+	message: string | TemplateResult;
+	headline?: string | TemplateResult;
 }
 
 /**
@@ -24,7 +25,10 @@ export interface UmbNotificationOptions<UmbNotificationData = UmbNotificationDef
 	duration?: number | null;
 	elementName?: string;
 	data?: UmbNotificationData;
-	group?: string;
+}
+
+interface UmbNotificationGroup extends UmbNotificationOptions {
+	group: string;
 }
 
 export type UmbNotificationColor = '' | 'default' | 'positive' | 'warning' | 'danger';
@@ -34,7 +38,7 @@ export class UmbNotificationContext extends UmbContextBase<UmbNotificationContex
 	private _notifications = new UmbBasicState(<Array<UmbNotificationHandler>>[]);
 	public readonly notifications = this._notifications.asObservable();
 
-	#toasts = new UmbArrayState<UmbNotificationOptions>([], (x) => x);
+	#toasts = new UmbArrayState<UmbNotificationGroup>([], (x) => x);
 
 	constructor(host: UmbControllerHost) {
 		super(host, UMB_NOTIFICATION_CONTEXT);
@@ -91,18 +95,19 @@ export class UmbNotificationContext extends UmbContextBase<UmbNotificationContex
 	 * @return {*}
 	 * @memberof UmbNotificationContext
 	 */
-	public append(options: UmbNotificationOptions) {
-		this.#toasts.appendOne(options);
+	public append(color: UmbNotificationColor, options: UmbNotificationOptions, group: string) {
+		this.#toasts.appendOne({ color, ...options, group });
 	}
 
 	/**
-	 * Opens all notifications from a specific group that automatically goes away after 6 sek.
+	 * Opens all notifications from given groups that automatically goes away after 6 sek.
 	 * @param {string} group
+	 * @param {string} headline override headline (optional)
 	 * @return {*}
 	 * @memberof UmbNotificationContext
 	 */
-	public peekAll(group: string) {
-		const toasts = this.#toasts.getValue().filter((toast) => toast.group === group);
+	public peekGroups(groups: Array<string>, overrideHeadline?: string) {
+		const toasts = this.#toasts.getValue().filter((toast) => groups.includes(toast.group ?? ''));
 
 		const builtNotifications: Array<UmbNotificationOptions> = [];
 
@@ -118,10 +123,12 @@ export class UmbNotificationContext extends UmbContextBase<UmbNotificationContex
 				const original = builtNotifications[mergeIndex];
 
 				let headline = original.data?.headline;
-				let message = original.data!.message!;
+				headline = toast.data?.headline ? html`${headline}<br />${toast.data.headline}` : headline;
 
-				headline = toast.data?.headline ? headline + ' \n' + toast.data.headline : headline;
-				message = toast.data?.message ? message + ' \n' + toast.data.message : message;
+				if (overrideHeadline) headline = overrideHeadline;
+
+				let message = original.data!.message!;
+				message = toast.data?.message ? html`${message}<br />${toast.data.message}` : message;
 
 				builtNotifications[mergeIndex] = { ...original, data: { headline, message } };
 			}
