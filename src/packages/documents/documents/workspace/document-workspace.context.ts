@@ -64,6 +64,7 @@ import type { UmbDocumentTypeDetailModel } from '@umbraco-cms/backoffice/documen
 
 type EntityType = UmbDocumentDetailModel;
 
+export const UMB_DOCUMENT_SAVE_NOTIFICATION = 'document-save';
 export const UMB_DOCUMENT_SUBMIT_NOTIFICATION = 'document-submit';
 export class UmbDocumentWorkspaceContext
 	extends UmbSubmittableWorkspaceContextBase<EntityType>
@@ -220,7 +221,9 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	#peekNotifications() {
-		this.#notificationContext?.peekGroups([UMB_DOCUMENT_SUBMIT_NOTIFICATION]);
+		console.log('available:', this.#notificationContext?.getAvailable());
+		this.#notificationContext?.peekGroups([UMB_DOCUMENT_SUBMIT_NOTIFICATION, UMB_DOCUMENT_SAVE_NOTIFICATION]);
+		console.log('after peeking:', this.#notificationContext?.getAvailable());
 	}
 
 	override resetState() {
@@ -587,7 +590,7 @@ export class UmbDocumentWorkspaceContext
 			const parent = this.#parent.getValue();
 			if (!parent) throw new Error('Parent is not set');
 
-			const { data, error } = await this.repository.create(saveData, parent.unique, UMB_DOCUMENT_SUBMIT_NOTIFICATION);
+			const { data, error } = await this.repository.create(saveData, parent.unique, UMB_DOCUMENT_SAVE_NOTIFICATION);
 
 			if (!data || error) {
 				console.error('Error creating document', error);
@@ -606,7 +609,7 @@ export class UmbDocumentWorkspaceContext
 			});
 			eventContext.dispatchEvent(event);
 		} else {
-			const { data, error } = await this.repository.save(saveData, UMB_DOCUMENT_SUBMIT_NOTIFICATION);
+			const { data, error } = await this.repository.save(saveData, UMB_DOCUMENT_SAVE_NOTIFICATION);
 
 			if (!data || error) {
 				console.error('Error saving document', error);
@@ -708,11 +711,10 @@ export class UmbDocumentWorkspaceContext
 				// Notifying that the save was successful, but we did not publish, which is what we want to symbolize here. [NL]
 				// TODO: Translate this message [NL]
 				const notification = { data: { message: 'Document was not published, but we saved it for you.' } };
-				// TODO: This removes the save notification, but also others if someone appended to the submit notification group.
-				this.#notificationContext?.removeGroup(UMB_DOCUMENT_SUBMIT_NOTIFICATION);
+				this.#notificationContext?.removeGroup(UMB_DOCUMENT_SAVE_NOTIFICATION);
 				this.#notificationContext?.append('danger', notification, UMB_DOCUMENT_SUBMIT_NOTIFICATION);
-
 				this.#peekNotifications();
+
 				// Reject even thought the save was successful, but we did not publish, which is what we want to symbolize here. [NL]
 				return await Promise.reject();
 			},
