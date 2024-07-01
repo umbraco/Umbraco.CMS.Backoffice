@@ -14,19 +14,30 @@ import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import type { UmbPropertyEditorConfigProperty } from '@umbraco-cms/backoffice/property-editor';
 import { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
-import type { UmbPropertyTypeAppearanceModel } from '@umbraco-cms/backoffice/content-type';
+import type {
+	UmbPropertyTypeAppearanceModel,
+	UmbPropertyTypeValidationModel,
+} from '@umbraco-cms/backoffice/content-type';
 
 export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPropertyContext<ValueType>> {
 	#alias = new UmbStringState(undefined);
 	public readonly alias = this.#alias.asObservable();
+
 	#label = new UmbStringState(undefined);
 	public readonly label = this.#label.asObservable();
+
 	#description = new UmbStringState(undefined);
 	public readonly description = this.#description.asObservable();
+
 	#appearance = new UmbObjectState<UmbPropertyTypeAppearanceModel | undefined>(undefined);
 	public readonly appearance = this.#appearance.asObservable();
+
+	#validation = new UmbObjectState<UmbPropertyTypeValidationModel | undefined>(undefined);
+	public readonly validation = this.#validation.asObservable();
+
 	#value = new UmbDeepState<ValueType | undefined>(undefined);
 	public readonly value = this.#value.asObservable();
+
 	#configValues = new UmbArrayState<UmbPropertyEditorConfigProperty>([], (x) => x.alias);
 	public readonly configValues = this.#configValues.asObservable();
 
@@ -125,6 +136,12 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 	}
 	public getAppearance(): UmbPropertyTypeAppearanceModel | undefined {
 		return this.#appearance.getValue();
+	}
+	public setValidation(validation: UmbPropertyTypeValidationModel | undefined): void {
+		this.#validation.setValue(validation);
+	}
+	public getValidation(): UmbPropertyTypeValidationModel | undefined {
+		return this.#validation.getValue();
 	}
 	/**
 	 * Set the value of this property.
