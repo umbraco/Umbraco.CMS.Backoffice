@@ -8,8 +8,8 @@ import { isApiError, isCancelError, isCancelablePromise } from './apiTypeValidat
 import type { UmbDataSourceResponse } from '@umbraco-cms/backoffice/repository';
 import { UMB_NOTIFICATION_CONTEXT, type UmbNotificationOptions } from '@umbraco-cms/backoffice/notification';
 interface UmbNotificationErrorLayout {
-	property: string;
-	description: Array<string>;
+	category: string;
+	messages: Array<string>;
 }
 export class UmbResourceController extends UmbControllerBase {
 	#promise: Promise<any>;
@@ -20,7 +20,6 @@ export class UmbResourceController extends UmbControllerBase {
 
 	constructor(host: UmbControllerHost, promise: Promise<any>, alias?: string) {
 		super(host, alias);
-
 		this.#promise = promise;
 
 		new UmbContextConsumerController(host, UMB_NOTIFICATION_CONTEXT, (_instance) => {
@@ -121,7 +120,6 @@ export class UmbResourceController extends UmbControllerBase {
 									'The Umbraco object cache is corrupt, but your action may still have been executed. Please restart the server to reset the cache. This is a work in progress.';
 							}
 
-							console.log('peeky');
 							this.#notificationContext.peek('danger', {
 								data: {
 									headline,
@@ -172,26 +170,15 @@ export class UmbResourceController extends UmbControllerBase {
 
 	#buildErrorLayout(error: any) {
 		const errors: Array<UmbNotificationErrorLayout> = [];
-		Object.entries(error).forEach(([property, message]) => {
-			errors.push({ property, description: message as string[] });
-		});
-		return html`Hey: <umb-notification-layout-error .model=${error}></umb-notification-layout-error>`;
 
-		const template = html`
-			${errors.map((error) => {
-				if (error.description.length > 1) {
-					return html`<ul>
-						${error.property}:
-						<li>(Arrow)</li>
-					</ul>`;
-				} else {
-					return html` ${error.property}: <uui-button look="primary" color="danger" label="Show more">^</uui-button>
-						<ul>
-							<li>${error.description[0]}</li>
-						</ul>`;
-				}
-			})}
-		`;
+		Object.entries(error).forEach(([category, message]) => {
+			errors.push({ category, messages: message as string[] });
+		});
+
+		/** TODO How do we this layout to be? Right now dont really look at the category and just prints all messages in a list without knowing which category it belongs to... */
+
+		const template = html`${errors.map((e) => e.messages.map((msg) => html`<li>${msg}</li>`))}`;
+
 		return template;
 	}
 
