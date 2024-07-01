@@ -80,6 +80,7 @@ export class UmbPropertyTypeBasedPropertyElement extends UmbLitElement {
 					.label=${this._property.name}
 					.description=${this._property.description ?? undefined}
 					.appearance=${this._property.appearance}
+					.validation=${this._property.validation}
 					property-editor-ui-alias=${ifDefined(this._propertyEditorUiAlias)}
 					.config=${this._dataTypeData}></umb-property>`
 			: '';
