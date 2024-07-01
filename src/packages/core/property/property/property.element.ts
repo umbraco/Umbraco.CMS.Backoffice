@@ -315,6 +315,7 @@ export class UmbPropertyElement extends UmbLitElement {
 				.label=${this._label}
 				.description=${this._description}
 				.orientation=${this._orientation ?? 'horizontal'}
+				.isMandatory=${this.validation?.mandatory}
 				?invalid=${this._invalid}>
 				${this.#renderPropertyActionMenu()}
 				${this._variantDifference
