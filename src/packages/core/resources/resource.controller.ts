@@ -39,7 +39,7 @@ export class UmbResourceController extends UmbControllerBase {
 		this.cancel();
 	}
 
-	#buildApiErrorLayout(error: any) {
+	#buildApiErrorMessage(error: any) {
 		const errors: Array<UmbNotificationErrorLayout> = [];
 
 		Object.entries(error).forEach(([category, message]) => {
@@ -142,7 +142,7 @@ export class UmbResourceController extends UmbControllerBase {
 					default:
 						// Other errors
 						if (this.#notificationContext) {
-							const message = error.body?.errors ? this.#buildApiErrorLayout(error.body.errors) : undefined;
+							const message = error.body?.errors ? this.#buildApiErrorMessage(error.body.errors) : undefined;
 
 							this.#notificationContext.peek('danger', {
 								data: {
