@@ -1,5 +1,5 @@
-import type { UmbBlockTypeCardElement } from '../block-type-card/index.js';
 import type { UmbBlockTypeBaseModel, UmbBlockTypeWithGroupKey } from '../../types.js';
+import type { UmbBlockTypeCardElement } from '../block-type-card/index.js';
 import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
 import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
 import { css, html, customElement, property, state, repeat } from '@umbraco-cms/backoffice/external/lit';
@@ -123,10 +123,6 @@ export class UmbInputBlockTypeElement<
 		this.dispatchEvent(new UmbDeleteEvent());
 	}
 
-	protected getFormElement() {
-		return undefined;
-	}
-
 	async #onRequestDelete(item: BlockType) {
 		const store = await this.getContext(UMB_DOCUMENT_TYPE_ITEM_STORE_CONTEXT);
 		const contentType = store.getItems([item.contentElementTypeKey]);
@@ -140,7 +136,7 @@ export class UmbInputBlockTypeElement<
 		this.deleteItem(item.contentElementTypeKey);
 	}
 
-	render() {
+	override render() {
 		return html`<div id="blocks">
 			${repeat(this.value, (block) => block.contentElementTypeKey, this.#renderItem)} ${this.#renderButton()}
 		</div>`;
@@ -176,7 +172,7 @@ export class UmbInputBlockTypeElement<
 			: null;
 	}
 
-	static styles = [
+	static override styles = [
 		css`
 			div {
 				display: grid;

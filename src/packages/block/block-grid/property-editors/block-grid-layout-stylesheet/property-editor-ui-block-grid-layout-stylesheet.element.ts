@@ -1,7 +1,7 @@
 // Needed to disable the import/no-duplicates rule, cause otherwise we do not get the custom element registered:
-// eslint-disable-next-line import/no-duplicates
+
 import type { UmbInputStaticFileElement } from '@umbraco-cms/backoffice/static-file';
-// eslint-disable-next-line import/no-duplicates
+
 import '@umbraco-cms/backoffice/static-file';
 import { html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
@@ -38,7 +38,7 @@ export class UmbPropertyEditorUIBlockGridLayoutStylesheetElement
 	}
 
 	// TODO: Implement mandatory?
-	render() {
+	override render() {
 		return html`
 			<umb-input-static-file
 				@change=${this._onChange}
@@ -51,7 +51,7 @@ export class UmbPropertyEditorUIBlockGridLayoutStylesheetElement
 		`;
 	}
 
-	static styles = [UmbTextStyles];
+	static override styles = [UmbTextStyles];
 }
 
 export default UmbPropertyEditorUIBlockGridLayoutStylesheetElement;

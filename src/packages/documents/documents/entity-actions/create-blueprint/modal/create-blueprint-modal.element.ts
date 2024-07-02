@@ -14,7 +14,6 @@ export class UmbCreateBlueprintModalElement extends UmbModalBaseElement<
 	#documentRepository = new UmbDocumentDetailRepository(this);
 
 	#documentUnique = '';
-	#document?: UmbDocumentDetailModel;
 
 	@state()
 	private _documentName = '';
@@ -22,7 +21,7 @@ export class UmbCreateBlueprintModalElement extends UmbModalBaseElement<
 	@state()
 	private _blueprintName = '';
 
-	firstUpdated() {
+	override firstUpdated() {
 		this.#documentUnique = this.data?.unique ?? '';
 		this.#getDocumentData();
 	}
@@ -31,7 +30,6 @@ export class UmbCreateBlueprintModalElement extends UmbModalBaseElement<
 		const { data } = await this.#documentRepository.requestByUnique(this.#documentUnique);
 		if (!data) return;
 
-		this.#document = data;
 		this._documentName = data.variants[0].name;
 		this._blueprintName = data.variants[0].name;
 	}
@@ -52,7 +50,7 @@ export class UmbCreateBlueprintModalElement extends UmbModalBaseElement<
 				@input=${(e: UUIInputEvent) => (this._blueprintName = e.target.value as string)}></uui-input>`;
 	}
 
-	render() {
+	override render() {
 		return html`
 			<umb-body-layout headline="Create Content Template">
 				${this.#renderBlueprintName()}
@@ -76,7 +74,7 @@ export class UmbCreateBlueprintModalElement extends UmbModalBaseElement<
 		this.modalContext?.reject();
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			strong,

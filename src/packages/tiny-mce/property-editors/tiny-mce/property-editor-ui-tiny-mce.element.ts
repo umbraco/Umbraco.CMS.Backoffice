@@ -75,7 +75,6 @@ export class UmbPropertyEditorUITinyMceElement extends UmbLitElement implements 
 	private _latestMarkup = ''; // The latest value gotten from the TinyMCE editor.
 
 	#managerContext = new UmbBlockRteManagerContext(this);
-	#entriesContext = new UmbBlockRteEntriesContext(this);
 
 	constructor() {
 		super();
@@ -138,7 +137,7 @@ export class UmbPropertyEditorUITinyMceElement extends UmbLitElement implements 
 		this.dispatchEvent(new UmbPropertyValueChangeEvent());
 	}
 
-	render() {
+	override render() {
 		return html`
 			<umb-input-tiny-mce .configuration=${this._config} .value=${this._markup} @change=${this.#onChange}>
 			</umb-input-tiny-mce>

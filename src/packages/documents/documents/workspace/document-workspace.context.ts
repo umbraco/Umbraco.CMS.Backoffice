@@ -92,7 +92,6 @@ export class UmbDocumentWorkspaceContext
 	public readonly languages = this.#languages.asObservable();
 
 	#serverValidation = new UmbServerModelValidationContext(this);
-	#serverValidationValuesTranslator = new UmbVariantValuesValidationMessageTranslator(this, this.#serverValidation);
 	#validationRepository?: UmbDocumentValidationRepository;
 
 	#blueprintRepository = new UmbDocumentBlueprintDetailRepository(this);
@@ -123,7 +122,6 @@ export class UmbDocumentWorkspaceContext
 	);
 	#varies?: boolean;
 
-	readonly routes = new UmbWorkspaceRouteManager(this);
 	readonly splitView = new UmbWorkspaceSplitViewManager();
 
 	readonly variantOptions = mergeObservables(
@@ -216,7 +214,7 @@ export class UmbDocumentWorkspaceContext
 		]);
 	}
 
-	resetState() {
+	override resetState() {
 		super.resetState();
 		this.#persistedData.setValue(undefined);
 		this.#currentData.setValue(undefined);
@@ -590,7 +588,6 @@ export class UmbDocumentWorkspaceContext
 			this.#persistedData.setValue(data);
 			this.#currentData.setValue(data);
 
-			// TODO: this might not be the right place to alert the tree, but it works for now
 			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
 			const event = new UmbRequestReloadChildrenOfEntityEvent({
 				entityType: parent.entityType,
@@ -719,6 +716,14 @@ export class UmbDocumentWorkspaceContext
 			unique,
 			variantIds.map((variantId) => ({ variantId })),
 		);
+
+		const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
+		const event = new UmbRequestReloadStructureForEntityEvent({
+			unique: this.getUnique()!,
+			entityType: this.getEntityType(),
+		});
+
+		eventContext.dispatchEvent(event);
 	}
 
 	async #handleSave() {
@@ -754,14 +759,14 @@ export class UmbDocumentWorkspaceContext
 		return await this.#performSaveOrCreate(saveData);
 	}
 
-	public requestSubmit() {
+	public override requestSubmit() {
 		return this.#handleSave();
 	}
 
 	public submit() {
 		return this.#handleSave();
 	}
-	public invalidSubmit() {
+	public override invalidSubmit() {
 		return this.#handleSave();
 	}
 
@@ -861,7 +866,7 @@ export class UmbDocumentWorkspaceContext
 		return new UmbDocumentPropertyDatasetContext(host, this, variantId);
 	}
 
-	public destroy(): void {
+	public override destroy(): void {
 		this.#persistedData.destroy();
 		this.#currentData.destroy();
 		this.structure.destroy();

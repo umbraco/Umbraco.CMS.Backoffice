@@ -79,7 +79,7 @@ export class UmbSectionSidebarContextMenuElement extends UmbLitElement {
 		}
 	}
 
-	render() {
+	override render() {
 		return html`
 			${this.#renderBackdrop()}
 			<div id="relative-wrapper">
@@ -91,7 +91,7 @@ export class UmbSectionSidebarContextMenuElement extends UmbLitElement {
 
 	#renderBackdrop() {
 		// TODO: add keyboard support (close on escape)
-		// eslint-disable-next-line lit-a11y/click-events-have-key-events
+
 		return this._isOpen ? html`<div id="backdrop" @click=${this.#closeContextMenu}></div>` : nothing;
 	}
 
@@ -107,7 +107,7 @@ export class UmbSectionSidebarContextMenuElement extends UmbLitElement {
 			: nothing;
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			:host {

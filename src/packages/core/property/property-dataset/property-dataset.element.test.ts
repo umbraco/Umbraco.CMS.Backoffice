@@ -1,7 +1,7 @@
-import { expect, fixture, oneEvent } from '@open-wc/testing';
 import type { UmbPropertyValueData } from '../types/property-value-data.type.js';
 import { UMB_PROPERTY_DATASET_CONTEXT } from './property-dataset-context.token.js';
 import { UmbPropertyDatasetElement } from './property-dataset.element.js';
+import { expect, fixture, oneEvent } from '@open-wc/testing';
 import { customElement, html, property, state, LitElement } from '@umbraco-cms/backoffice/external/lit';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
@@ -57,7 +57,7 @@ export class UmbTestPropertyEditorElement extends UmbElementMixin(LitElement) {
 // Adapter property editor, which tests what happens if a editor sets values of other editors.
 @customElement('test-adapter-property-editor')
 export class UmbTestAdapterPropertyEditorElement extends UmbTestPropertyEditorElement {
-	protected async _observeProperty() {
+	protected override async _observeProperty() {
 		super._observeProperty();
 		if (!this._datasetContext || !this._alias) return;
 		this.observe(

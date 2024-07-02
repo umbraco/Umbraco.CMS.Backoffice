@@ -7,18 +7,9 @@ import { UmbCreateFolderEntityAction } from '@umbraco-cms/backoffice/tree';
 
 @customElement('umb-script-create-options-modal')
 export class UmbScriptCreateOptionsModalElement extends UmbModalBaseElement<UmbScriptCreateOptionsModalData, string> {
-	#modalManager?: UmbModalManagerContext;
 	#createFolderAction?: UmbCreateFolderEntityAction;
 
-	constructor() {
-		super();
-
-		this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (instance) => {
-			this.#modalManager = instance;
-		});
-	}
-
-	connectedCallback(): void {
+	override connectedCallback(): void {
 		super.connectedCallback();
 		if (!this.data?.parent) throw new Error('A parent is required to create a folder');
 
@@ -55,7 +46,7 @@ export class UmbScriptCreateOptionsModalElement extends UmbModalBaseElement<UmbS
 		}`;
 	}
 
-	render() {
+	override render() {
 		return html`
 			<umb-body-layout headline="Create Script">
 				<uui-box>

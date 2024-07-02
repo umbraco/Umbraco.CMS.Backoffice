@@ -52,15 +52,13 @@ export class UmbPropertyTypeSettingsModalElement extends UmbModalBaseElement<
 	/** Indicates if the currently edited property is a new property or an existing */
 	#isNew = false;
 
-	#context = new UmbPropertyTypeWorkspaceContext(this);
-
 	@state()
 	private _contentTypeVariesByCulture?: boolean;
 
 	@state()
 	private _contentTypeVariesBySegment?: boolean;
 
-	connectedCallback(): void {
+	override connectedCallback(): void {
 		super.connectedCallback();
 
 		this.consumeContext(UMB_CONTENT_TYPE_WORKSPACE_CONTEXT, (instance) => {
@@ -208,7 +206,7 @@ export class UmbPropertyTypeSettingsModalElement extends UmbModalBaseElement<
 	// TODO: This would conceptually be a Property Type Workspace, should be changed at one point in the future. [NL]
 	// For now this is hacky made available by giving the element an fixed alias. [NL]
 	// This would allow for workspace views and workspace actions. [NL]
-	render() {
+	override render() {
 		return html`
 			<uui-form>
 				<form @submit="${this.#onSubmit}">
@@ -385,7 +383,7 @@ export class UmbPropertyTypeSettingsModalElement extends UmbModalBaseElement<
 			label=${this.localize.term('contentTypeEditor_cultureVariantLabel')}></uui-toggle> `;
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			:host {

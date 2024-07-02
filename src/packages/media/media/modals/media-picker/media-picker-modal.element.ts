@@ -22,7 +22,6 @@ export class UmbMediaPickerModalElement extends UmbModalBaseElement<
 	UmbMediaPickerModalValue
 > {
 	#mediaTreeRepository = new UmbMediaTreeRepository(this); // used to get file structure
-	#mediaUrlRepository = new UmbMediaUrlRepository(this); // used to get urls
 	#mediaItemRepository = new UmbMediaItemRepository(this); // used to search
 	#imagingRepository = new UmbImagingRepository(this); // used to get image renditions
 
@@ -61,7 +60,7 @@ export class UmbMediaPickerModalElement extends UmbModalBaseElement<
 		});
 	}
 
-	async connectedCallback(): Promise<void> {
+	override async connectedCallback(): Promise<void> {
 		super.connectedCallback();
 
 		if (this.data?.filter) this._filter = this.data?.filter;
@@ -173,7 +172,7 @@ export class UmbMediaPickerModalElement extends UmbModalBaseElement<
 		this.#loadMediaFolder();
 	}
 
-	render() {
+	override render() {
 		return html`
 			<umb-body-layout headline=${this.localize.term('defaultdialogs_selectMedia')}>
 				${this.#renderBody()} ${this.#renderPath()}
@@ -255,7 +254,7 @@ export class UmbMediaPickerModalElement extends UmbModalBaseElement<
 			@change=${this.#onPathChange}></umb-media-picker-folder-path>`;
 	}
 
-	static styles = [
+	static override styles = [
 		css`
 			#toolbar {
 				display: flex;

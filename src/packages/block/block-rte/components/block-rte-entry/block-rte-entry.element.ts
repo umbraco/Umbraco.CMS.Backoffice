@@ -91,12 +91,11 @@ export class UmbBlockRteEntryElement extends UmbLitElement implements UmbPropert
 		});
 	}
 
-	connectedCallback() {
+	override connectedCallback() {
 		super.connectedCallback();
 
-		// eslint-disable-next-line wc/no-self-class
 		this.classList.add('uui-font');
-		// eslint-disable-next-line wc/no-self-class
+
 		this.classList.add('uui-text');
 
 		this.setAttribute('contenteditable', 'false');
@@ -132,11 +131,11 @@ export class UmbBlockRteEntryElement extends UmbLitElement implements UmbPropert
 		`;
 	}
 
-	render() {
+	override render() {
 		return this.#renderBlock();
 	}
 
-	static styles = [
+	static override styles = [
 		css`
 			:host {
 				position: relative;

@@ -1,4 +1,3 @@
-/* eslint-disable lit/attribute-value-entities */
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
@@ -28,7 +27,7 @@ export class UmbUmbracoNewsDashboardElement extends UmbLitElement {
 		},
 	];
 
-	render() {
+	override render() {
 		return html`
 			<div id="info-links" class="uui-text">
 				<uui-box id="our-umbraco">
@@ -54,7 +53,7 @@ export class UmbUmbracoNewsDashboardElement extends UmbLitElement {
 		`;
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			:host {

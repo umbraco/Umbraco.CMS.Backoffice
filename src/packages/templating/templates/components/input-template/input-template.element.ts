@@ -100,7 +100,7 @@ export class UmbInputTemplateElement extends UUIFormControlMixin(UmbLitElement, 
 		);
 	}
 
-	protected getFormElement() {
+	protected override getFormElement() {
 		return this;
 	}
 
@@ -167,7 +167,7 @@ export class UmbInputTemplateElement extends UUIFormControlMixin(UmbLitElement, 
 		this.dispatchEvent(new UmbChangeEvent());
 	}
 
-	render() {
+	override render() {
 		return html`
 			${this._pickedTemplates.map(
 				(template) => html`
@@ -195,7 +195,7 @@ export class UmbInputTemplateElement extends UUIFormControlMixin(UmbLitElement, 
 		`;
 	}
 
-	static styles = [
+	static override styles = [
 		css`
 			:host {
 				display: grid;

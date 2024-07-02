@@ -36,7 +36,7 @@ export class UmbPropertyEditorUIToggleElement extends UmbLitElement implements U
 		this.value ??= config.getValueByAlias('default') ?? false;
 		this._labelOff = config.getValueByAlias('labelOff');
 		this._labelOn = config.getValueByAlias('labelOn');
-		this._showLabels = Boolean(config.getValueByAlias('showLabels')) ?? false;
+		this._showLabels = Boolean(config.getValueByAlias('showLabels'));
 	}
 
 	#onChange(event: CustomEvent & { target: UmbInputToggleElement }) {
@@ -44,7 +44,7 @@ export class UmbPropertyEditorUIToggleElement extends UmbLitElement implements U
 		this.dispatchEvent(new UmbPropertyValueChangeEvent());
 	}
 
-	render() {
+	override render() {
 		return html`
 			<umb-input-toggle
 				.labelOn=${this._labelOn}

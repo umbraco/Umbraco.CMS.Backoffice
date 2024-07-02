@@ -195,7 +195,7 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 		}
 	}
 
-	render() {
+	override render() {
 		// TODO: Only show alias on label if user has access to DocumentType within settings: [NL]
 		return this._inherited ? this.renderInheritedProperty() : this.renderEditableProperty();
 	}
@@ -337,7 +337,7 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 			: nothing;
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			:host(:not([sort-mode-active])) {
@@ -484,11 +484,13 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 				position: absolute;
 				top: var(--uui-size-space-2);
 				right: var(--uui-size-space-2);
-				display: none;
+				opacity: 0;
 			}
+
 			#editor:hover uui-action-bar,
-			#editor:focus uui-action-bar {
-				display: block;
+			#editor:focus uui-action-bar,
+			#editor:focus-within uui-action-bar {
+				opacity: 1;
 			}
 
 			a {

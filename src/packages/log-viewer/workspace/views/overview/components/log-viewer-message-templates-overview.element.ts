@@ -48,22 +48,7 @@ export class UmbLogViewerMessageTemplatesOverviewElement extends UmbLitElement {
 		this.#getMessageTemplates();
 	}
 
-	#renderSearchItem = (searchListItem: SavedLogSearchResponseModel) => {
-		return html` <li>
-			<uui-button
-				label="${searchListItem.name ?? ''}"
-				title="${searchListItem.name ?? ''}"
-				href=${`section/settings/workspace/logviewer/view/search/?lq=${searchListItem.query}`}>
-				<uui-icon name="icon-search"></uui-icon>${searchListItem.name}
-			</uui-button>
-		</li>`;
-	};
-
-	#setCurrentQuery = (query: string) => {
-		this.#logViewerContext?.setFilterExpression(query);
-	};
-
-	render() {
+	override render() {
 		return html`
 			<uui-box headline="Common Log Messages" id="saved-searches">
 				<p style="font-style: italic;">Total Unique Message types: ${this._total}</p>
@@ -95,7 +80,7 @@ export class UmbLogViewerMessageTemplatesOverviewElement extends UmbLitElement {
 		`;
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			uui-pagination {

@@ -15,7 +15,7 @@ import type { UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
  */
 @customElement('umb-input-date')
 export class UmbInputDateElement extends UUIFormControlMixin(UmbLitElement, '') {
-	protected getFormElement() {
+	protected override getFormElement() {
 		return undefined;
 	}
 
@@ -42,7 +42,7 @@ export class UmbInputDateElement extends UUIFormControlMixin(UmbLitElement, '') 
 		this.dispatchEvent(new UmbChangeEvent());
 	}
 
-	render() {
+	override render() {
 		return html`<uui-input
 			id="datetime"
 			.label=${this.localize.term('placeholders_enterdate')}

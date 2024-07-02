@@ -35,16 +35,16 @@ export class UmbPropertyEditorUIDocumentTypePickerElement extends UmbLitElement 
 	onlyElementTypes?: boolean;
 
 	#onChange(event: CustomEvent & { target: UmbInputDocumentTypeElement }) {
-		this.value = event.target.selection.join(',');
+		this.value = event.target.value;
 		this.dispatchEvent(new UmbPropertyValueChangeEvent());
 	}
 
-	render() {
+	override render() {
 		return html`
 			<umb-input-document-type
 				.min=${this.min}
 				.max=${this.max}
-				.value=${this.value ?? ''}
+				.value=${this.value}
 				?elementTypesOnly=${this.onlyElementTypes}
 				?showOpenButton=${this.showOpenButton}
 				@change=${this.#onChange}>
