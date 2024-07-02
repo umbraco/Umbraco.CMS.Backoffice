@@ -175,9 +175,12 @@ export class UmbResourceController extends UmbControllerBase {
 			errors.push({ category, messages: message as string[] });
 		});
 
-		/** TODO How do we this layout to be? Right now dont really look at the category and just prints all messages in a list without knowing which category it belongs to... */
+		// TODO How do we this layout to be? Right now we don't really look at the "category" and just prints all messages in a list without knowing which category it belongs to...
+		// Example trying to save a new template and adding nothing, it will throw error with category "Name" and "Alias" being empty, with one message for each.
 
-		const template = html`${errors.map((e) => e.messages.map((msg) => html`<li>${msg}</li>`))}`;
+		const template = html`<ul>
+			${errors.map((e) => e.messages.map((msg) => html`<li>${msg}</li>`))}
+		</ul>`;
 
 		return template;
 	}
