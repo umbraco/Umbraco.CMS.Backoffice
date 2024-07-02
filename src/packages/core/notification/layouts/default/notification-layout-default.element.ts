@@ -1,4 +1,4 @@
-import { html, LitElement, customElement, property, ifDefined, css } from '@umbraco-cms/backoffice/external/lit';
+import { html, LitElement, customElement, property, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { UmbNotificationDefaultData, UmbNotificationHandler } from '@umbraco-cms/backoffice/notification';
 
@@ -20,14 +20,7 @@ export class UmbNotificationLayoutDefaultElement extends LitElement {
 		`;
 	}
 
-	static override styles = [
-		UmbTextStyles,
-		css`
-			.uui-text ul {
-				margin-block: var(--uui-size-3);
-			}
-		`,
-	];
+	static override styles = [UmbTextStyles];
 }
 
 declare global {

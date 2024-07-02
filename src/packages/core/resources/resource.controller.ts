@@ -39,6 +39,17 @@ export class UmbResourceController extends UmbControllerBase {
 		this.cancel();
 	}
 
+	#buildApiErrorLayout(error: any) {
+		const errors: Array<UmbNotificationErrorLayout> = [];
+
+		Object.entries(error).forEach(([category, message]) => {
+			errors.push({ category, messages: message as string[] });
+		});
+		const template = html` ${errors.map((e) => e.messages.map((msg) => html`<div>${msg}</div>`))}`;
+
+		return template;
+	}
+
 	/**
 	 * Base execute function with a try/catch block and return a tuple with the result and the error.
 	 */
@@ -50,7 +61,6 @@ export class UmbResourceController extends UmbControllerBase {
 				return { error };
 			}
 
-			console.error('Unknown error', error);
 			throw new Error('Unknown error');
 		}
 	}
@@ -132,7 +142,7 @@ export class UmbResourceController extends UmbControllerBase {
 					default:
 						// Other errors
 						if (this.#notificationContext) {
-							const message = error.body?.errors ? this.#buildErrorLayout(error.body.errors) : undefined;
+							const message = error.body?.errors ? this.#buildApiErrorLayout(error.body.errors) : undefined;
 
 							this.#notificationContext.peek('danger', {
 								data: {
@@ -166,23 +176,6 @@ export class UmbResourceController extends UmbControllerBase {
 		if (isCancelablePromise(this.#promise)) {
 			this.#promise.cancel();
 		}
-	}
-
-	#buildErrorLayout(error: any) {
-		const errors: Array<UmbNotificationErrorLayout> = [];
-
-		Object.entries(error).forEach(([category, message]) => {
-			errors.push({ category, messages: message as string[] });
-		});
-
-		// TODO How do we this layout to be? Right now we don't really look at the "category" and just prints all messages in a list without knowing which category it belongs to...
-		// Example trying to save a new template and adding nothing, it will throw error with category "Name" and "Alias" being empty, with one message for each.
-
-		const template = html`<ul>
-			${errors.map((e) => e.messages.map((msg) => html`<li>${msg}</li>`))}
-		</ul>`;
-
-		return template;
 	}
 
 	override destroy(): void {
