@@ -15,7 +15,10 @@ import {
 	UmbFormControlValidator,
 	UmbObserveValidationStateController,
 } from '@umbraco-cms/backoffice/validation';
-import type { UmbPropertyTypeAppearanceModel } from '@umbraco-cms/backoffice/content-type';
+import type {
+	UmbPropertyTypeAppearanceModel,
+	UmbPropertyTypeValidationModel,
+} from '@umbraco-cms/backoffice/content-type';
 
 /**
  *  @element umb-property
@@ -63,6 +66,17 @@ export class UmbPropertyElement extends UmbLitElement {
 	}
 	public get appearance() {
 		return this.#propertyContext.getAppearance();
+	}
+
+	/**
+	 * Validation: validation settings for the property.
+	 */
+	@property({ type: Object, attribute: false })
+	public set validation(validation: UmbPropertyTypeValidationModel | undefined) {
+		this.#propertyContext.setValidation(validation);
+	}
+	public get validation() {
+		return this.#propertyContext.getValidation();
 	}
 
 	/**
@@ -301,6 +315,7 @@ export class UmbPropertyElement extends UmbLitElement {
 				.label=${this._label}
 				.description=${this._description}
 				.orientation=${this._orientation ?? 'horizontal'}
+				.isMandatory=${this.validation?.mandatory}
 				?invalid=${this._invalid}>
 				${this.#renderPropertyActionMenu()}
 				${this._variantDifference

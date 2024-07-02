@@ -51,6 +51,15 @@ export class UmbPropertyLayoutElement extends UmbLitElement {
 	public description = '';
 
 	/**
+	 * @description Render a marker on the label to indicate that the property is mandatory.
+	 * @type {boolean}
+	 * @attr
+	 * @default false
+	 */
+	@property({ type: Boolean, attribute: false })
+	public isMandatory = false;
+
+	/**
 	 * @description Make the property appear invalid
 	 * @type {boolean}
 	 * @attr
@@ -64,7 +73,7 @@ export class UmbPropertyLayoutElement extends UmbLitElement {
 		return html`
 			<div id="headerColumn">
 				<uui-label id="label" title=${this.alias}>
-					${this.localize.string(this.label)}
+					${this.localize.string(this.label)} ${this.#renderMandatoryMarker()}
 					${when(this.invalid, () => html`<uui-badge color="danger" attention>!</uui-badge>`)}
 				</uui-label>
 				<slot name="action-menu"></slot>
@@ -77,6 +86,11 @@ export class UmbPropertyLayoutElement extends UmbLitElement {
 				</uui-form-validation-message>
 			</div>
 		`;
+	}
+
+	#renderMandatoryMarker() {
+		if (!this.isMandatory) return;
+		return html`<span id="mandatory-marker">*</span>`;
 	}
 
 	#renderDescription() {
@@ -129,6 +143,10 @@ export class UmbPropertyLayoutElement extends UmbLitElement {
 			}
 			uui-badge {
 				right: -30px;
+			}
+
+			#mandatory-marker {
+				color: var(--uui-color-danger);
 			}
 
 			#description {
