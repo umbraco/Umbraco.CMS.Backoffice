@@ -5,7 +5,7 @@ import { LitElement, css, html, nothing, customElement, property, query } from '
 @customElement('umb-image-cropper-preview')
 export class UmbImageCropperPreviewElement extends LitElement {
 	@query('#image') imageElement!: HTMLImageElement;
-	@query('#container') imageContainerElement!: HTMLImageElement;
+	@query('#container') imageContainerElement!: HTMLElement;
 
 	@property({ type: Object, attribute: false })
 	crop?: UmbImageCropperCrop;
