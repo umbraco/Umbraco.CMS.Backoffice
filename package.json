@@ -138,7 +138,8 @@
 		"./src/packages/umbraco-news",
 		"./src/packages/webhook",
 		"./src/packages/health-check",
-		"./src/packages/tags"
+		"./src/packages/tags",
+		"./src/packages/templating"
 	],
 	"scripts": {
 		"backoffice:test:e2e": "npx playwright test",
@@ -158,9 +159,9 @@
 		"example": "node ./devops/example-runner/index.js",
 		"format:fix": "npm run format -- --write",
 		"format": "prettier 'src/**/*.ts' --check",
-		"generate:server-api-local": "openapi-ts --input ../Umbraco.Cms.Api.Management/OpenApi.json --output src/external/backend-api/src --debug true --enums typescript --lint true --schemas false",
-		"generate:server-api-dev": "openapi-ts --input http://localhost:11000/umbraco/swagger/management/swagger.json --output src/external/backend-api/src --debug true --enums typescript --lint true --schemas false",
-		"generate:server-api": "openapi-ts --input https://raw.githubusercontent.com/umbraco/Umbraco-CMS/v14/dev/src/Umbraco.Cms.Api.Management/OpenApi.json --output src/external/backend-api/src --debug true --enums typescript --lint true --schemas false",
+		"generate:server-api-local": "openapi-ts --file devops/openapi-ts/openapi-ts.local.config.js",
+		"generate:server-api-dev": "openapi-ts --file devops/openapi-ts/openapi-ts.dev.config.js",
+		"generate:server-api": "openapi-ts --file devops/openapi-ts/openapi-ts.config.js",
 		"generate:icons": "node ./devops/icons/index.js",
 		"generate:overrides": "node ./devops/tsc/index.js",
 		"generate:jsonschema:dist": "typescript-json-schema --required --include \"./src/packages/core/extension-registry/umbraco-package.ts\" --out dist-cms/umbraco-package-schema.json tsconfig.json UmbracoPackage",
@@ -210,7 +211,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.24.3",
 		"@eslint/js": "^9.6.0",
-		"@hey-api/openapi-ts": "^0.37.3",
+		"@hey-api/openapi-ts": "^0.48.1",
 		"@mdx-js/react": "^3.0.0",
 		"@open-wc/testing": "^4.0.0",
 		"@playwright/test": "^1.41.1",
@@ -256,7 +257,7 @@
 		"rollup-plugin-esbuild": "^6.1.1",
 		"rollup-plugin-import-css": "^3.5.0",
 		"rollup-plugin-web-worker-loader": "^1.6.1",
-		"simple-icons": "^12.0.0",
+		"simple-icons": "^13.0.0",
 		"storybook": "^7.6.17",
 		"tiny-glob": "^0.2.9",
 		"tsc-alias": "^1.8.8",
