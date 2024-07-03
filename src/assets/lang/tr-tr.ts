@@ -1705,8 +1705,8 @@ export default {
 		invalidNumber: 'Sayı değil',
 		invalidEmail: 'Geçersiz e-posta',
 		customValidation: 'Özel doğrulama',
-		entriesShort: 'Minimum %0% giriş, <strong>%1% </strong> daha fazla gerektirir.',
-		entriesExceed: 'Maksimum %0% giriş, <strong>%1% </strong> çok fazla.',
+		entriesShort: 'Minimum %0% giriş, %1% daha fazla gerektirir.',
+		entriesExceed: 'Maksimum %0% giriş, %1% çok fazla.',
 	},
 	healthcheck: {
 		checkSuccessMessage: "Değer, önerilen değere ayarlandı: '%0%'.",

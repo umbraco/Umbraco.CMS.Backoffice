@@ -1744,8 +1744,8 @@ export default {
 		invalidEmpty: 'La valeur ne peut pas être vide',
 		invalidPattern: 'Valeur non valide, elle ne correspond pas au modèle correct',
 		customValidation: 'Validation personnalisée',
-		entriesShort: 'Minimum %0% éléments, en nécessite <strong>%1%</strong> supplémentaires.',
-		entriesExceed: 'Maximum %0% éléments, <strong>%1%</strong> en trop.',
+		entriesShort: 'Minimum %0% éléments, en nécessite %1% supplémentaires.',
+		entriesExceed: 'Maximum %0% éléments, %1% en trop.',
 	},
 	healthcheck: {
 		checkSuccessMessage: "La valeur est égale à la valeur recommandée : '%0%'.",

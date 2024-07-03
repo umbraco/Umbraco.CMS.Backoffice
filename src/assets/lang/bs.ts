@@ -1857,8 +1857,8 @@ export default {
 		invalidEmpty: 'Vrijednost ne može biti prazna',
 		invalidPattern: 'Vrijednost je nevažeća, ne odgovara ispravnom uzorku',
 		customValidation: 'Prilagođena validacija',
-		entriesShort: 'Minimalno %0% unosa, potrebno <strong>%1%</strong> više.',
-		entriesExceed: 'Maksimalno %0% unosa, <strong>%1%</strong> previše.',
+		entriesShort: 'Minimalno %0% unosa, potrebno %1% više.',
+		entriesExceed: 'Maksimalno %0% unosa, %1% previše.',
 		entriesAreasMismatch: 'Zahtjevi za količinu sadržaja nisu ispunjeni za jedno ili više područja.',
 	},
 	healthcheck: {

@@ -1700,8 +1700,8 @@ export default {
 		invalidEmpty: 'Hodnota nemůže být prázdná',
 		invalidPattern: 'Hodnota je neplatná, neodpovídá správnému vzoru',
 		customValidation: 'Vlastní ověření',
-		entriesShort: 'Minimálně %0% záznamů, vyžaduje <strong>%1%</strong> více.',
-		entriesExceed: 'Maximálně %0% záznamů, <strong>%1%</strong> příliš mnoho.',
+		entriesShort: 'Minimálně %0% záznamů, vyžaduje %1% více.',
+		entriesExceed: 'Maximálně %0% záznamů, %1% příliš mnoho.',
 	},
 	healthcheck: {
 		checkSuccessMessage: "Hodnota je nastavena na doporučenou hodnotu: '%0%'.",

@@ -1816,8 +1816,8 @@ export default {
 		invalidEmpty: 'Waarde mag niet leeg zijn',
 		invalidPattern: 'Ongeldige waarde, het komt niet overeen met het correcte patroon',
 		customValidation: 'Aangepaste validatie',
-		entriesShort: 'Minimum %0% items, nog <strong>%1%</strong> nodig.',
-		entriesExceed: 'Maximum %0% items, <strong>%1%</strong> te veel.',
+		entriesShort: 'Minimum %0% items, nog %1% nodig.',
+		entriesExceed: 'Maximum %0% items, %1% te veel.',
 	},
 	healthcheck: {
 		checkSuccessMessage: "Waarde is insteld naar the aanbevolen waarde: '%0%'.",

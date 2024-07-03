@@ -2021,8 +2021,8 @@ export default {
 		duplicateMemberGroupName: "Member group name '%0%' is already taken",
 		duplicateUsername: "Username '%0%' is already taken",
 		customValidation: 'Custom validation',
-		entriesShort: 'Minimum %0% entries, requires <strong>%1%</strong> more.',
-		entriesExceed: 'Maximum %0% entries, <strong>%1%</strong> too many.',
+		entriesShort: 'Minimum %0% entries, requires %1% more.',
+		entriesExceed: 'Maximum %0% entries, %1% too many.',
 		entriesAreasMismatch: 'The content amount requirements are not met for one or more areas.',
 	},
 	healthcheck: {

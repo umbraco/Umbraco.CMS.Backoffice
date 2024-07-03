@@ -119,8 +119,8 @@ export default {
 		areaValidationEntriesExceed: '<strong>%0%</strong> måste maximalt finnas <strong>%3%</strong> time(s).',
 	},
 	validation: {
-		entriesShort: 'Minsta %0% poster, kräver <strong>%1%</strong> mer.',
-		entriesExceed: 'Max %0% poster, <strong>%1%</strong> för många.',
+		entriesShort: 'Minsta %0% poster, kräver %1% mer.',
+		entriesExceed: 'Max %0% poster, %1% för många.',
 	},
 	blueprints: {
 		createBlueprintFrom: 'Skapa en ny innehållsmall för <em>%0%</em>',

@@ -1869,8 +1869,8 @@ export default {
 		invalidEmpty: 'Il valore non può essere vuoto',
 		invalidPattern: 'Il valore non è valido, non corrisponde al pattern corretto',
 		customValidation: 'Validazione personalizzata',
-		entriesShort: 'Minimo %0% voci, ne richiede <strong>%1%</strong> in più.',
-		entriesExceed: 'Massimo %0% voci, <strong>%1%</strong> di troppo.',
+		entriesShort: 'Minimo %0% voci, ne richiede %1% in più.',
+		entriesExceed: 'Massimo %0% voci, %1% di troppo.',
 	},
 	healthcheck: {
 		checkSuccessMessage: "Il valore è impostato al valore raccomandato: '%0%'.",
