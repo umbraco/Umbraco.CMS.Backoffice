@@ -9,7 +9,7 @@ import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import { UmbLitElement, umbFocus } from '@umbraco-cms/backoffice/lit-element';
 import type { UmbCodeEditorElement } from '@umbraco-cms/backoffice/code-editor';
 import { UMB_TEMPLATE_PICKER_MODAL } from '@umbraco-cms/backoffice/template';
-import { UmbInputWithAliasElement } from '@umbraco-cms/backoffice/components';
+import type { UmbInputWithAliasElement } from '@umbraco-cms/backoffice/components';
 
 // import local components
 import '../../local-components/insert-menu/index.js';
