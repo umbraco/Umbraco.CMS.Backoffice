@@ -19,7 +19,7 @@ export default {
 	rootDir: '.',
 	files: ['./src/**/*.test.ts'],
 	nodeResolve: { exportConditions: mode === 'dev' ? ['development'] : [], preferBuiltins: false, browser: false },
-	browsers: [playwrightLauncher({ product: 'chromium' }), playwrightLauncher({ product: 'webkit' })],
+	browsers: [playwrightLauncher({ product: 'webkit' })],
 	coverageConfig: {
 		reporters: ['lcovonly', 'text-summary'],
 	},
