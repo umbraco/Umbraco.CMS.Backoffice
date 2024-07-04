@@ -7,7 +7,6 @@ import { css, html, customElement, query, state, nothing, ifDefined } from '@umb
 import type { UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
 import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import { UmbLitElement, umbFocus } from '@umbraco-cms/backoffice/lit-element';
-import { Subject, debounceTime } from '@umbraco-cms/backoffice/external/rxjs';
 import type { UmbCodeEditorElement } from '@umbraco-cms/backoffice/code-editor';
 import { UMB_TEMPLATE_PICKER_MODAL } from '@umbraco-cms/backoffice/template';
 import { UmbInputWithAliasElement } from '@umbraco-cms/backoffice/components';
