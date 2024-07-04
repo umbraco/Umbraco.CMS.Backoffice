@@ -27,6 +27,7 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 	#dataTypeDetailRepository = new UmbDataTypeDetailRepository(this);
 	#settingsModal;
 	#dataTypeUnique?: string;
+	#propertyUnique?: string;
 	#context = new UmbPropertyTypeContext(this);
 
 	@property({ attribute: false })
@@ -57,6 +58,7 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 		this.#context.setAlias(value?.alias);
 		this.#context.setLabel(value?.name);
 		this.#checkInherited();
+		this.#checkAliasAutoGenerate(this._property?.id);
 		this.#settingsModal.setUniquePathValue('propertyId', value?.id);
 		this.#setDataType(this._property?.dataType?.unique);
 		this.requestUpdate('property', oldValue);
@@ -84,8 +86,7 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 	@state()
 	private _dataTypeName?: string;
 
-	@state()
-	private _aliasLocked = true;
+	#autoGenerateAlias = true;
 
 	constructor() {
 		super();
@@ -106,6 +107,15 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 			.observeRouteBuilder((routeBuilder) => {
 				this._modalRoute = routeBuilder(null);
 			});
+	}
+
+	#checkAliasAutoGenerate(unique: string | undefined) {
+		if (unique === this.#propertyUnique) return;
+		this.#propertyUnique = unique;
+
+		if (this.#context.getAlias()) {
+			this.#autoGenerateAlias = false;
+		}
 	}
 
 	async #checkInherited() {
@@ -140,7 +150,7 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 	}
 
 	#onToggleAliasLock() {
-		this._aliasLocked = !this._aliasLocked;
+		this.#autoGenerateAlias = false;
 	}
 
 	async #setDataType(dataTypeUnique: string | undefined) {
@@ -183,7 +193,7 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 				const oldName = this.property?.name ?? '';
 				const oldAlias = this.property?.alias ?? '';
 				const newName = event.target.value.toString();
-				if (this._aliasLocked) {
+				if (this.#autoGenerateAlias) {
 					const expectedOldAlias = generateAlias(oldName ?? '');
 					// Only update the alias if the alias matches a generated alias of the old name (otherwise the alias is considered one written by the user.)
 					if (expectedOldAlias === oldAlias) {
@@ -295,22 +305,18 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 
 	renderPropertyAlias() {
 		return this.property
-			? html`<uui-input
+			? html`<uui-input-lock
 					name="alias"
 					id="alias-input"
 					label="alias"
 					placeholder=${this.localize.term('placeholders_alias')}
 					.value=${this.property.alias}
-					?disabled=${this._aliasLocked}
+					@lock-change=${this.#onToggleAliasLock}
 					@input=${(e: CustomEvent) => {
 						if (e.target) this.#singleValueUpdate('alias', (e.target as HTMLInputElement).value);
 					}}>
-					<!-- TODO: should use UUI-LOCK-INPUT, but that does not fire an event when its locked/unlocked -->
 					<!-- TODO: validation for bad characters -->
-					<div @click=${this.#onToggleAliasLock} @keydown=${() => ''} id="alias-lock" slot="prepend">
-						<uui-icon name=${this._aliasLocked ? 'icon-lock' : 'icon-unlocked'}></uui-icon>
-					</div>
-				</uui-input>`
+				</uui-input-lock>`
 			: '';
 	}
 

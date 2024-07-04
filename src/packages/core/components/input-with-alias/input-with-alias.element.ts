@@ -66,6 +66,9 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 
 	#onToggleAliasLock() {
 		this._aliasLocked = !this._aliasLocked;
+		if (!this.autoGenerateAlias) {
+			this.autoGenerateAlias = false;
+		}
 	}
 
 	override render() {
@@ -79,16 +82,14 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 				label=${nameLabel}
 				.value=${this.value}
 				@input=${this.#onNameChange}>
-				<!-- TODO: should use UUI-LOCK-INPUT, but that does not fire an event when its locked/unlocked -->
-				<uui-input
+				<uui-input-lock
 					auto-width
 					name="alias"
 					slot="append"
 					label=${aliasLabel}
 					.value=${this.alias}
 					placeholder=${aliasLabel}
-					?disabled=${this._aliasLocked && !this.aliasReadonly}
-					?readonly=${this.aliasReadonly}
+					@lock-change=${this.#onToggleAliasLock}
 					@input=${this.#onAliasChange}>
 					<!-- TODO: validation for bad characters -->
 					${this.aliasReadonly
@@ -98,7 +99,7 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 									<uui-icon name=${this._aliasLocked ? 'icon-lock' : 'icon-unlocked'}></uui-icon>
 								</div>
 							`}
-				</uui-input>
+				</uui-input-lock>
 			</uui-input>
 		`;
 	}
