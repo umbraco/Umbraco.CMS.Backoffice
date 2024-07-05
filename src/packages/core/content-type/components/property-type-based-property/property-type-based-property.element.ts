@@ -23,6 +23,12 @@ export class UmbPropertyTypeBasedPropertyElement extends UmbLitElement {
 	}
 	private _property?: UmbPropertyTypeModel;
 
+	@property({ type: Boolean })
+	public notSupported = false;
+
+	@property({ type: String })
+	public notSupportedMessage?: string;
+
 	@property({ type: String, attribute: 'data-path' })
 	public dataPath?: string;
 
@@ -75,6 +81,8 @@ export class UmbPropertyTypeBasedPropertyElement extends UmbLitElement {
 	override render() {
 		return this._propertyEditorUiAlias && this._property?.alias
 			? html`<umb-property
+					?notSupported=${this.notSupported}
+					.notSupportedMessage=${this.notSupportedMessage}
 					.dataPath=${this.dataPath}
 					.alias=${this._property.alias}
 					.label=${this._property.name}

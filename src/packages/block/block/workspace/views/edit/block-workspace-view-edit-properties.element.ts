@@ -5,12 +5,17 @@ import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { UmbContentTypeModel, UmbPropertyTypeModel } from '@umbraco-cms/backoffice/content-type';
 import { UmbContentTypePropertyStructureHelper } from '@umbraco-cms/backoffice/content-type';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbDataTypeItemRepository } from '@umbraco-cms/backoffice/data-type';
 
 @customElement('umb-block-workspace-view-edit-properties')
 export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
 	#managerName?: UmbBlockWorkspaceElementManagerNames;
 	#blockWorkspace?: typeof UMB_BLOCK_WORKSPACE_CONTEXT.TYPE;
 	#propertyStructureHelper = new UmbContentTypePropertyStructureHelper<UmbContentTypeModel>(this);
+	#dataTypeItemRepository = new UmbDataTypeItemRepository(this);
+
+	@state()
+	disallowed: Array<{ uiAlias: string; unique: string }> = [];
 
 	@property({ attribute: false })
 	public get managerName(): UmbBlockWorkspaceElementManagerNames | undefined {
@@ -46,18 +51,51 @@ export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
 		this.#propertyStructureHelper.setStructureManager(this.#blockWorkspace[this.#managerName].structure);
 		this.observe(
 			this.#propertyStructureHelper.propertyStructure,
-			(propertyStructure) => {
+			async (propertyStructure) => {
+				await this.#checkForDisallowed(propertyStructure);
 				this._propertyStructure = propertyStructure;
 			},
 			'observePropertyStructure',
 		);
 	}
 
+	async #checkForDisallowed(properties: Array<UmbPropertyTypeModel>) {
+		const { data } = await this.#dataTypeItemRepository.requestItems(
+			properties.map((property) => property.dataType.unique),
+		);
+
+		if (!data) {
+			this.disallowed = [];
+			return;
+		}
+
+		for (const datatype of data) {
+			// Are there any other property editors that are not supported in blocks?
+			if (datatype.propertyEditorUiAlias === 'Umb.PropertyEditorUi.ImageCropper') {
+				this.disallowed.push({ unique: datatype.unique, uiAlias: datatype.propertyEditorUiAlias });
+			}
+		}
+	}
+
 	override render() {
 		return repeat(
 			this._propertyStructure,
 			(property) => property.alias,
-			(property) => html`<umb-property-type-based-property .property=${property}></umb-property-type-based-property> `,
+			(property) => {
+				const disallowed = this.disallowed.find((disallowed) => disallowed.unique === property.dataType.unique);
+				if (disallowed) {
+					return html`<umb-property-type-based-property
+						.property=${property}
+						.notSupportedMessage=${this.localize.term(
+							'blockEditor_propertyEditorNotSupported',
+							property.alias,
+							disallowed?.uiAlias,
+						)}
+						notSupported></umb-property-type-based-property>`;
+				} else {
+					return html`<umb-property-type-based-property .property=${property}></umb-property-type-based-property>`;
+				}
+			},
 		);
 	}
 
