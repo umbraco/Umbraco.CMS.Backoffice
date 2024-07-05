@@ -197,7 +197,6 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 		this.observe(
 			this.#blockEntries.layoutOf(unique),
 			(layoutData) => {
-				console.log('layout data', layoutData);
 				this.#layout.setValue(layoutData as LayoutDataType);
 
 				// Content:
