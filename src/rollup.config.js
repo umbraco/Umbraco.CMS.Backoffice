@@ -6,6 +6,7 @@ import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import replace from '@rollup/plugin-replace';
 import { readdirSync, lstatSync, cpSync, copyFileSync, existsSync, unlinkSync } from 'fs';
 import * as globModule from 'tiny-glob';
+import typescript from '@rollup/plugin-typescript';
 
 const glob = globModule.default;
 
@@ -92,5 +93,32 @@ const libraries = allowed.map((module) => {
 	};
 });
 
+const components =  {
+	input: './src/apps/app/index.ts',
+	output: {
+		dir: `${DIST_DIRECTORY}/test/bundle`,
+		format: 'es'
+	},
+	plugins: [
+		commonjs(),
+		nodeResolve({ preferBuiltins: false, browser: true }),
+		webWorkerLoader({ target: 'browser', pattern: /^(.+)\?worker$/ }),
+		// Replace the vite specific inline query with nothing so that the import is valid
+		replace({
+			preventAssignment: true,
+			values: {
+				'?inline': '',
+			}
+		}),
+		css({ minify: true }),
+		esbuild({ minify: true, sourceMap: true }),
+		typescript({
+			tsconfig: './src/tsconfig.build.json',
+			outDir: `${DIST_DIRECTORY}/test/bundle/typescript`,
+		}),
+	],
+};
+
 /** @type {import('rollup').RollupOptions[]} */
-export default [...libraries];
+export default [...libraries, components];
+

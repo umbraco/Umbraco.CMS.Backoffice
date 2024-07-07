@@ -54,3 +54,5 @@ public/tinymce/*
 
 # Vite runtime files
 vite.config.ts.timestamp-*.mjs
+
+.rollup.cache
