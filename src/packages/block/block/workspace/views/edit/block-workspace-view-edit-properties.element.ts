@@ -6,6 +6,8 @@ import type { UmbContentTypeModel, UmbPropertyTypeModel } from '@umbraco-cms/bac
 import { UmbContentTypePropertyStructureHelper } from '@umbraco-cms/backoffice/content-type';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbDataTypeItemRepository } from '@umbraco-cms/backoffice/data-type';
+import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
+import { UMB_BLOCKS_PROPERTY_EDITOR_SCHEMAS_NOT_SUPPORTED } from '../../../index.js';
 
 @customElement('umb-block-workspace-view-edit-properties')
 export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
@@ -14,8 +16,11 @@ export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
 	#propertyStructureHelper = new UmbContentTypePropertyStructureHelper<UmbContentTypeModel>(this);
 	#dataTypeItemRepository = new UmbDataTypeItemRepository(this);
 
-	@state()
-	disallowed: Array<{ uiAlias: string; unique: string }> = [];
+	// The found UIs based schemas from UMB_BLOCKS_PROPERTY_EDITOR_SCHEMAS_NOT_SUPPORTED
+	#disallowedPropertyEditorUis: Array<{ schemaAlias: string; uiAlias: string }> = [];
+
+	// The found data types based on the disallowed PropertyEditorUIs.
+	#foundDisallowedDataTypes: Array<{ schemaAlias: string; unique: string }> = [];
 
 	@property({ attribute: false })
 	public get managerName(): UmbBlockWorkspaceElementManagerNames | undefined {
@@ -44,6 +49,18 @@ export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
 			this.#blockWorkspace = workspaceContext;
 			this.#setStructureManager();
 		});
+
+		// Finding the Property Editor UIs that are not allowed in blocks.
+		this.observe(
+			umbExtensionsRegistry.byTypeAndFilter('propertyEditorUi', (ui) =>
+				UMB_BLOCKS_PROPERTY_EDITOR_SCHEMAS_NOT_SUPPORTED.includes(ui.meta.propertyEditorSchemaAlias ?? ''),
+			),
+			(manifests) =>
+				(this.#disallowedPropertyEditorUis = manifests.map((manifest) => ({
+					uiAlias: manifest.alias,
+					schemaAlias: manifest.meta.propertyEditorSchemaAlias!,
+				}))),
+		);
 	}
 
 	#setStructureManager() {
@@ -65,14 +82,16 @@ export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
 		);
 
 		if (!data) {
-			this.disallowed = [];
+			this.#foundDisallowedDataTypes = [];
 			return;
 		}
 
 		for (const datatype of data) {
-			// Are there any other property editors that are not supported in blocks?
-			if (datatype.propertyEditorUiAlias === 'Umb.PropertyEditorUi.ImageCropper') {
-				this.disallowed.push({ unique: datatype.unique, uiAlias: datatype.propertyEditorUiAlias });
+			const propertyEditorUi = this.#disallowedPropertyEditorUis.find(
+				(propertyEditorUi) => propertyEditorUi.uiAlias === datatype.propertyEditorUiAlias,
+			);
+			if (propertyEditorUi?.uiAlias === datatype.propertyEditorUiAlias) {
+				this.#foundDisallowedDataTypes.push({ schemaAlias: propertyEditorUi.schemaAlias, unique: datatype.unique });
 			}
 		}
 	}
@@ -82,14 +101,16 @@ export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
 			this._propertyStructure,
 			(property) => property.alias,
 			(property) => {
-				const disallowed = this.disallowed.find((disallowed) => disallowed.unique === property.dataType.unique);
+				const disallowed = this.#foundDisallowedDataTypes.find(
+					(disallowed) => disallowed.unique === property.dataType.unique,
+				);
 				if (disallowed) {
 					return html`<umb-property-type-based-property
 						.property=${property}
 						.notSupportedMessage=${this.localize.term(
 							'blockEditor_propertyEditorNotSupported',
 							property.alias,
-							disallowed?.uiAlias,
+							disallowed?.schemaAlias,
 						)}
 						notSupported></umb-property-type-based-property>`;
 				} else {
