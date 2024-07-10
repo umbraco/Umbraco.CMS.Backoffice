@@ -1,6 +1,6 @@
 import { UmbPropertyTypeContext } from './content-type-design-editor-property.context.js';
 import { UmbDataTypeDetailRepository } from '@umbraco-cms/backoffice/data-type';
-import type { UUIInputElement } from '@umbraco-cms/backoffice/external/uui';
+import type { UUIInputElement, UUIInputLockElement } from '@umbraco-cms/backoffice/external/uui';
 import { UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { css, html, customElement, property, state, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
@@ -25,6 +25,7 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 	//
 	#dataTypeDetailRepository = new UmbDataTypeDetailRepository(this);
 	#dataTypeUnique?: string;
+	#propertyUnique?: string;
 	#context = new UmbPropertyTypeContext(this);
 
 	@property({ attribute: false })
@@ -55,6 +56,7 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 		this.#context.setAlias(value?.alias);
 		this.#context.setLabel(value?.name);
 		this.#checkInherited();
+		this.#checkAliasAutoGenerate(this._property?.id);
 		this.#setDataType(this._property?.dataType?.unique);
 		this.requestUpdate('property', oldValue);
 	}
@@ -82,6 +84,25 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 	private _dataTypeName?: string;
 
 	#autoGenerateAlias = true;
+
+	#checkAliasAutoGenerate(unique: string | undefined) {
+		if (unique === this.#propertyUnique) return;
+		this.#propertyUnique = unique;
+
+		// TODO: We are only getting what is auto-generated back, not what is written by the user??
+		// Test: Add new property. Give it name "Amazing". See that the alias is "amazing".
+		// Change alias to "cookie". Change name to "AmazingTour". Submit it and see we receive the "amazing" alias. Not "cookie" nor "amazingTour".
+		const name = this.property?.name ?? '';
+		const alias = this.property?.alias ?? '';
+
+		const expectedAlias = generateAlias(name ?? '');
+		if (expectedAlias === alias) {
+			// If the alias is the same as the expected alias, we assume it's untouched and will continue auto generating alias here.
+			this.#autoGenerateAlias = true;
+		} else {
+			this.#autoGenerateAlias = false;
+		}
+	}
 
 	async #checkInherited() {
 		if (this._propertyStructureHelper && this._property) {
@@ -114,8 +135,12 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 		this._propertyStructureHelper.partialUpdateProperty(this._property.id, partialObject);
 	}
 
-	#onToggleAliasLock() {
-		this.#autoGenerateAlias = false;
+	#onToggleAliasLock(e: CustomEvent) {
+		if (!this.property?.alias && (e.target as UUIInputLockElement).locked) {
+			this.#autoGenerateAlias = true;
+		} else {
+			this.#autoGenerateAlias = false;
+		}
 	}
 
 	async #setDataType(dataTypeUnique: string | undefined) {
@@ -155,15 +180,9 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 			const target = event.composedPath()[0] as UUIInputElement;
 
 			if (typeof target?.value === 'string') {
-				const oldName = this.property?.name ?? '';
-				const oldAlias = this.property?.alias ?? '';
 				const newName = event.target.value.toString();
 				if (this.#autoGenerateAlias) {
-					const expectedOldAlias = generateAlias(oldName ?? '');
-					// Only update the alias if the alias matches a generated alias of the old name (otherwise the alias is considered one written by the user.)
-					if (expectedOldAlias === oldAlias) {
-						this.#singleValueUpdate('alias', generateAlias(newName ?? ''));
-					}
+					this.#singleValueUpdate('alias', generateAlias(newName ?? ''));
 				}
 				this.#singleValueUpdate('name', newName);
 			}
