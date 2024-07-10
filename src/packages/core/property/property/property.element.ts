@@ -1,21 +1,24 @@
 import { UmbPropertyContext } from './property.context.js';
-import type { ManifestPropertyEditorUi } from '@umbraco-cms/backoffice/extension-registry';
-import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
-import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { css, html, customElement, property, state, nothing, ifDefined } from '@umbraco-cms/backoffice/external/lit';
+import { css, customElement, html, property, state, nothing, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 import { createExtensionElement } from '@umbraco-cms/backoffice/extension-api';
-import type { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
+import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import type {
-	UmbPropertyEditorConfigCollection,
-	UmbPropertyEditorConfig,
-} from '@umbraco-cms/backoffice/property-editor';
+import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import {
 	UmbBindValidationMessageToFormControl,
 	UmbFormControlValidator,
 	UmbObserveValidationStateController,
 } from '@umbraco-cms/backoffice/validation';
-import type { UmbPropertyTypeAppearanceModel } from '@umbraco-cms/backoffice/content-type';
+import type { ManifestPropertyEditorUi } from '@umbraco-cms/backoffice/extension-registry';
+import type {
+	UmbPropertyEditorConfigCollection,
+	UmbPropertyEditorConfig,
+} from '@umbraco-cms/backoffice/property-editor';
+import type {
+	UmbPropertyTypeAppearanceModel,
+	UmbPropertyTypeValidationModel,
+} from '@umbraco-cms/backoffice/content-type';
+import type { UmbObserverController } from '@umbraco-cms/backoffice/observable-api';
 
 /**
  *  @element umb-property
@@ -119,6 +122,17 @@ export class UmbPropertyElement extends UmbLitElement {
 	}
 
 	/**
+	 * Validation: Validation settings for the property.
+	 */
+	@property({ type: Object, attribute: false })
+	public set validation(validation: UmbPropertyTypeValidationModel | undefined) {
+		this.#propertyContext.setValidation(validation);
+	}
+	public get validation() {
+		return this.#propertyContext.getValidation();
+	}
+
+	/**
 	 * DataPath, declare the path to the value of the data that this property represents.
 	 * @public
 	 * @type {string}
@@ -158,6 +172,9 @@ export class UmbPropertyElement extends UmbLitElement {
 	@state()
 	private _orientation: 'horizontal' | 'vertical' = 'horizontal';
 
+	@state()
+	private _mandatory?: boolean;
+
 	#propertyContext = new UmbPropertyContext(this);
 
 	#controlValidator?: UmbFormControlValidator;
@@ -175,6 +192,7 @@ export class UmbPropertyElement extends UmbLitElement {
 			},
 			null,
 		);
+
 		this.observe(
 			this.#propertyContext.label,
 			(label) => {
@@ -182,6 +200,7 @@ export class UmbPropertyElement extends UmbLitElement {
 			},
 			null,
 		);
+
 		this.observe(
 			this.#propertyContext.description,
 			(description) => {
@@ -189,6 +208,7 @@ export class UmbPropertyElement extends UmbLitElement {
 			},
 			null,
 		);
+
 		this.observe(
 			this.#propertyContext.variantDifference,
 			(variantDifference) => {
@@ -196,10 +216,19 @@ export class UmbPropertyElement extends UmbLitElement {
 			},
 			null,
 		);
+
 		this.observe(
 			this.#propertyContext.appearance,
 			(appearance) => {
 				this._orientation = appearance?.labelOnTop ? 'vertical' : 'horizontal';
+			},
+			null,
+		);
+
+		this.observe(
+			this.#propertyContext.validation,
+			(validation) => {
+				this._mandatory = validation?.mandatory;
 			},
 			null,
 		);
@@ -307,6 +336,7 @@ export class UmbPropertyElement extends UmbLitElement {
 				label=${ifDefined(this._label)}
 				description=${ifDefined(this._description)}
 				.orientation=${this._orientation ?? 'horizontal'}
+				?mandatory=${this._mandatory}
 				?invalid=${this._invalid}>
 				${this.#renderPropertyActionMenu()}
 				${this._variantDifference
