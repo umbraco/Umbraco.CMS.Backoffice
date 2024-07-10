@@ -55,8 +55,8 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 		this._property = value;
 		this.#context.setAlias(value?.alias);
 		this.#context.setLabel(value?.name);
-		this.#checkInherited();
 		this.#checkAliasAutoGenerate(this._property?.id);
+		this.#checkInherited();
 		this.#setDataType(this._property?.dataType?.unique);
 		this.requestUpdate('property', oldValue);
 	}
@@ -88,20 +88,26 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 	#checkAliasAutoGenerate(unique: string | undefined) {
 		if (unique === this.#propertyUnique) return;
 		this.#propertyUnique = unique;
+		this.#autoGenerateAlias;
 
-		// TODO: We are only getting what is auto-generated back, not what is written by the user??
-		// Test: Add new property. Give it name "Amazing". See that the alias is "amazing".
-		// Change alias to "cookie". Change name to "AmazingTour". Submit it and see we receive the "amazing" alias. Not "cookie" nor "amazingTour".
-		const name = this.property?.name ?? '';
+		if (this.#context.getAlias()) {
+			this.#autoGenerateAlias = false;
+		}
+
+		/* TODO: Do we know if we are loading an existing property (do not auto generate alias) or added a new property (auto-generate only if matching expected alias)? 
+		Maybe its fine and we don't want to automatically auto-generate alias anymore at this stage. Can still auto-generate by deleting the alias + locking it.
+
 		const alias = this.property?.alias ?? '';
-
+		const name = this.property?.name ?? '';
 		const expectedAlias = generateAlias(name ?? '');
+
 		if (expectedAlias === alias) {
 			// If the alias is the same as the expected alias, we assume it's untouched and will continue auto generating alias here.
 			this.#autoGenerateAlias = true;
 		} else {
 			this.#autoGenerateAlias = false;
 		}
+		*/
 	}
 
 	async #checkInherited() {
