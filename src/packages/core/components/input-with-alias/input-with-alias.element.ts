@@ -36,8 +36,6 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 		const target = e.composedPath()[0] as UUIInputElement;
 
 		if (typeof target?.value === 'string') {
-			const oldName = this.value;
-			const oldAlias = this.alias ?? '';
 			this.value = e.target.value.toString();
 			if (this.autoGenerateAlias && this._aliasLocked) {
 				// Generate alias if it's locked and auto-generate is enabled
