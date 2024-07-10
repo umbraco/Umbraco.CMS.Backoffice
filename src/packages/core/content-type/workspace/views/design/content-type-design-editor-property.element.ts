@@ -25,7 +25,6 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 	//
 	#dataTypeDetailRepository = new UmbDataTypeDetailRepository(this);
 	#dataTypeUnique?: string;
-	#propertyUnique?: string;
 	#context = new UmbPropertyTypeContext(this);
 
 	@property({ attribute: false })
