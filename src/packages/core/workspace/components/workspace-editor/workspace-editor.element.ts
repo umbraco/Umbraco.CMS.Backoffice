@@ -1,9 +1,8 @@
+import { UmbWorkspaceEditorContext } from './workspace-editor.context.js';
+import type { UmbWorkspaceEditorView } from './workspace-editor.context.js';
 import { css, customElement, html, nothing, property, repeat, state, when } from '@umbraco-cms/backoffice/external/lit';
-import { createExtensionElement, UmbExtensionsManifestInitializer } from '@umbraco-cms/backoffice/extension-api';
-import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import type { ManifestWorkspaceView } from '@umbraco-cms/backoffice/workspace';
 import type { UmbRoute, UmbRouterSlotInitEvent, UmbRouterSlotChangeEvent } from '@umbraco-cms/backoffice/router';
 
 /**
@@ -33,7 +32,7 @@ export class UmbWorkspaceEditorElement extends UmbLitElement {
 	public backPath?: string;
 
 	@state()
-	private _workspaceViews: Array<ManifestWorkspaceView> = [];
+	private _workspaceViews: Array<UmbWorkspaceEditorView> = [];
 
 	@state()
 	private _routes?: UmbRoute[];
@@ -44,41 +43,18 @@ export class UmbWorkspaceEditorElement extends UmbLitElement {
 	@state()
 	private _activePath?: string;
 
+	#workspaceEditorContext = new UmbWorkspaceEditorContext(this);
+
 	constructor() {
 		super();
 
-		new UmbExtensionsManifestInitializer(this, umbExtensionsRegistry, 'workspaceView', null, (workspaceViews) => {
-			this._workspaceViews = workspaceViews.map((view) => view.manifest);
-			this._createRoutes();
+		this.observe(this.#workspaceEditorContext.views, (workspaceViews) => {
+			this._workspaceViews = [...workspaceViews].sort((a, b) => b.weight - a.weight);
 		});
-	}
 
-	private _createRoutes() {
-		let newRoutes: UmbRoute[] = [];
-
-		if (this._workspaceViews.length > 0) {
-			newRoutes = this._workspaceViews.map((manifest) => {
-				return {
-					path: `view/${manifest.meta.pathname}`,
-					component: () => createExtensionElement(manifest),
-					setup: (component) => {
-						if (component) {
-							(component as any).manifest = manifest;
-						}
-					},
-				} as UmbRoute;
-			});
-
-			// Duplicate first workspace and use it for the empty path scenario. [NL]
-			newRoutes.push({ ...newRoutes[0], path: '' });
-
-			newRoutes.push({
-				path: `**`,
-				component: async () => (await import('@umbraco-cms/backoffice/router')).UmbRouteNotFoundElement,
-			});
-		}
-
-		this._routes = newRoutes;
+		this.observe(this.#workspaceEditorContext.routes, (routes) => {
+			this._routes = routes;
+		});
 	}
 
 	override render() {
@@ -110,23 +86,24 @@ export class UmbWorkspaceEditorElement extends UmbLitElement {
 						<uui-tab-group slot="navigation">
 							${repeat(
 								this._workspaceViews,
-								(view) => view.alias,
-								(view, index) =>
-									// Notice how we use index 0 to determine which workspace that is active with empty path. [NL]
-									html`
-										<uui-tab
-											href="${this._routerPath}/view/${view.meta.pathname}"
-											.label="${view.meta.label ? this.localize.string(view.meta.label) : view.name}"
-											?active=${'view/' + view.meta.pathname === this._activePath ||
-											(index === 0 && this._activePath === '')}>
-											<umb-icon slot="icon" name=${view.meta.icon}></umb-icon>
-											${view.meta.label ? this.localize.string(view.meta.label) : view.name}
-										</uui-tab>
-									`,
+								(view) => view,
+								(view, index) => this.#renderView(view, index),
 							)}
 						</uui-tab-group>
 					`
 				: nothing}
+		`;
+	}
+
+	#renderView(view: UmbWorkspaceEditorView, index: number) {
+		// Notice how we use index 0 to determine which workspace that is active with empty path. [NL]
+		return html`
+			<uui-tab
+				href="${this._routerPath}/view/${view.pathName}"
+				?active=${'view/' + view.pathName === this._activePath || (index === 0 && this._activePath === '')}>
+				<umb-icon slot="icon" name=${view.icon}></umb-icon>
+				${this.localize.string(view.label)}
+			</uui-tab>
 		`;
 	}
 
