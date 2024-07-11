@@ -2230,7 +2230,7 @@ export default {
 		addCustomStylesheet: 'Tilføj stylesheet',
 		headlineEditorAppearance: 'Redigerings udseende',
 		headlineDataModels: 'Data modeller',
-		headlineCatalogueAppearance: 'katalog udseende',
+		headlineCatalogueAppearance: 'Katalog udseende',
 		labelBackgroundColor: 'Baggrunds farve',
 		labelIconColor: 'Ikon farve',
 		labelContentElementType: 'Indholds model',
