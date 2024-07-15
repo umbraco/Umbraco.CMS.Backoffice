@@ -1,6 +1,6 @@
 import { UmbPropertyValueChangeEvent } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
-import { html, customElement, property, state, ifDefined } from '@umbraco-cms/backoffice/external/lit';
+import { html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { UmbInputDateElement } from '@umbraco-cms/backoffice/components';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
@@ -77,26 +77,27 @@ export class UmbPropertyEditorUIDatePickerElement extends UmbLitElement implemen
 	 * Formats the value depending on the input type.
 	 */
 	#formatValue(value: string) {
-		// Check that the value is a valid date
-		const valueToDate = new Date(value);
-		if (isNaN(valueToDate.getTime())) {
-			console.warn('[Umbraco.DatePicker] The value is not a valid date.', value);
-			return;
-		}
-
-		// Replace the potential time demoninator 'T' with a whitespace for backwards compatibility
+		// Replace the T character with a whitespace to be backwards compatible with Umbraco.DateTime
 		value = value.replace('T', ' ');
 
-		// If the inputType is 'date', we need to make sure the value doesn't have a time
-		if (this._inputType === 'date' && value.includes(' ')) {
-			value = value.split(' ')[0];
+		// If we have a whitespace, we need special handling for "time" and "date"
+		// This could happen both on the way in and out
+		if (value.includes(' ')) {
+			// If the input type is "time", we need to remove the date part
+			if (this._inputType === 'time') {
+				value = value.split(' ')[1];
+			}
+
+			// If the input type is "date", we need to remove the time part
+			else if (this._inputType === 'date') {
+				value = value.split(' ')[0];
+			}
 		}
 
-		// If the inputType is 'time', we need to remove the date part of the value
-		if (this._inputType === 'time' && value.includes(' ')) {
-			value = value.split(' ')[1];
-		}
+		this.#syncValue(value);
+	}
 
+	#syncValue(value: string) {
 		const valueHasChanged = this.value !== value;
 		if (valueHasChanged) {
 			this.value = value;
@@ -107,7 +108,7 @@ export class UmbPropertyEditorUIDatePickerElement extends UmbLitElement implemen
 	override render() {
 		return html`
 			<umb-input-date
-				value="${ifDefined(this.value)}"
+				.value=${this.value}
 				.min=${this._min}
 				.max=${this._max}
 				.step=${this._step}
