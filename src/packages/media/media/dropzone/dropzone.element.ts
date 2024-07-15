@@ -1,9 +1,8 @@
-import { UmbDropzoneManager, type UmbUploadableFileModel } from './dropzone-manager.class.js';
-import { UmbProgressEvent } from '@umbraco-cms/backoffice/event';
+import { UmbFileDropzoneManager } from './file-dropzone-manager.class.js';
 import { css, html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
 import type { UUIFileDropzoneElement, UUIFileDropzoneEvent } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import type { UmbTemporaryFileModel } from '@umbraco-cms/backoffice/temporary-file';
+import { UmbFileDropzoneItemStatus } from './types.js';
 
 @customElement('umb-dropzone')
 export class UmbDropzoneElement extends UmbLitElement {
@@ -20,12 +19,6 @@ export class UmbDropzoneElement extends UmbLitElement {
 	accept: Array<string> = [];
 
 	//TODO: logic to disable the dropzone?
-
-	#files: Array<UmbUploadableFileModel | UmbTemporaryFileModel> = [];
-
-	public getFiles() {
-		return this.#files;
-	}
 
 	public browse() {
 		const element = this.shadowRoot?.querySelector('#dropzone') as UUIFileDropzoneElement;
@@ -63,12 +56,42 @@ export class UmbDropzoneElement extends UmbLitElement {
 	}
 
 	async #onDropFiles(event: UUIFileDropzoneEvent) {
-		// TODO Handle of folder uploads.
+		if (!event.detail.files.length && !event.detail.folders.length) return;
+		console.log('dropped these files', event.detail);
 
-		const files: Array<File> = event.detail.files;
-		if (!files.length) return;
+		const fileDropzoneManager = new UmbFileDropzoneManager(this);
+		fileDropzoneManager.progress;
 
-		const dropzoneManager = new UmbDropzoneManager(this);
+		if (this.createAsTemporary) {
+			fileDropzoneManager.createTemporaryFiles(event.detail.files);
+		} else {
+			fileDropzoneManager.createMediaItems(event.detail, this.parentUnique);
+		}
+
+		this.observe(
+			fileDropzoneManager.progress,
+			(progress) => {
+				if (progress.completed === progress.total) {
+					console.log('completed');
+					this.dispatchEvent(new CustomEvent('change', { detail: { progress } }));
+					fileDropzoneManager.destroy();
+				}
+			},
+			'_observeProgress',
+		);
+		this.observe(fileDropzoneManager.progressItems, (items) => {
+			const found = items.filter(
+				(item) =>
+					item.status !== UmbFileDropzoneItemStatus.WAITING &&
+					item.status !== UmbFileDropzoneItemStatus.UPLOADED &&
+					item.status !== UmbFileDropzoneItemStatus.CREATED,
+			);
+			if (found.length) {
+				console.log('found', found);
+			}
+		});
+		/*
+		
 		this.observe(
 			dropzoneManager.completed,
 			(completed) => {
@@ -91,6 +114,7 @@ export class UmbDropzoneElement extends UmbLitElement {
 		} else {
 			await dropzoneManager.createFilesAsMedia(files, this.parentUnique);
 		}
+			*/
 	}
 
 	override render() {
