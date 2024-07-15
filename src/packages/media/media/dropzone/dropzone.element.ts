@@ -1,8 +1,8 @@
 import { UmbFileDropzoneManager } from './file-dropzone-manager.class.js';
+import { UmbFileDropzoneItemStatus, type UmbUploadableItem } from './types.js';
 import { css, html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
 import type { UUIFileDropzoneElement, UUIFileDropzoneEvent } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { UmbFileDropzoneItemStatus } from './types.js';
 
 @customElement('umb-dropzone')
 export class UmbDropzoneElement extends UmbLitElement {
@@ -68,17 +68,20 @@ export class UmbDropzoneElement extends UmbLitElement {
 			fileDropzoneManager.createMediaItems(event.detail, this.parentUnique);
 		}
 
+		let errors: Array<UmbUploadableItem> = [];
 		this.observe(
 			fileDropzoneManager.progress,
 			(progress) => {
+				console.log(`Completed ${progress.completed} out of ${progress.total}.`);
 				if (progress.completed === progress.total) {
-					console.log('completed');
 					this.dispatchEvent(new CustomEvent('change', { detail: { progress } }));
+					console.warn('Issues found:', errors);
 					fileDropzoneManager.destroy();
 				}
 			},
 			'_observeProgress',
 		);
+
 		this.observe(fileDropzoneManager.progressItems, (items) => {
 			const found = items.filter(
 				(item) =>
@@ -86,9 +89,7 @@ export class UmbDropzoneElement extends UmbLitElement {
 					item.status !== UmbFileDropzoneItemStatus.UPLOADED &&
 					item.status !== UmbFileDropzoneItemStatus.CREATED,
 			);
-			if (found.length) {
-				console.log('found', found);
-			}
+			errors = found;
 		});
 		/*
 		

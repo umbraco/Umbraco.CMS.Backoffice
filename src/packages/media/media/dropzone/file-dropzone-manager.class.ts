@@ -152,7 +152,6 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 	async #handleFile(item: UmbUploadableFile, mediaTypeUnique: string) {
 		// Upload the file as a temporary file and update progress.
 		const temporaryFile = await this.#uploadAsTemporaryFile(item);
-		console.log('uploaded as temp file', temporaryFile);
 		if (temporaryFile.status !== TemporaryFileStatus.SUCCESS) {
 			this.#updateProgress(item, UmbFileDropzoneItemStatus.ERROR);
 			return;
@@ -212,7 +211,6 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 				this.#optionsByExt.appendOne({ extension: null, mediaTypes: [UMB_FOLDER] });
 			}
 		}
-		console.log(this.#optionsByExt.getValue());
 	}
 
 	async #getAllowedMediaTypes(item: UmbUploadableItem): Promise<Array<UmbAllowedMediaTypeModel>> {
