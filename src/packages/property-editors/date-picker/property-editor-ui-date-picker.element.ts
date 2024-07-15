@@ -42,13 +42,16 @@ export class UmbPropertyEditorUIDatePickerElement extends UmbLitElement implemen
 	@property()
 	value?: string;
 
+	@state()
+	private _inputValue?: string;
+
 	public set config(config: UmbPropertyEditorConfigCollection | undefined) {
 		if (!config) return;
 
 		// Format string prevalue/config
 		const format = config.getValueByAlias<string>('format');
-		const hasTime = format?.includes('H') || format?.includes('m');
-		const hasSeconds = format?.includes('s');
+		const hasTime = (format?.includes('H') || format?.includes('m')) ?? false;
+		const hasSeconds = format?.includes('s') ?? false;
 		this._inputType = hasTime ? 'datetime-local' : 'date';
 
 		// Based on the type of format string change the UUI-input type
@@ -70,31 +73,51 @@ export class UmbPropertyEditorUIDatePickerElement extends UmbLitElement implemen
 	}
 
 	#onChange(event: CustomEvent & { target: UmbInputDateElement }) {
-		this.#formatValue(event.target.value.toString());
+		let value = event.target.value.toString();
+
+		switch (this._inputType) {
+			case 'time':
+				value = `0001-01-01 ${value}`;
+				break;
+			case 'date':
+				value = `${value} 00:00:00`;
+				break;
+			case 'datetime-local':
+				value = value.replace('T', ' ');
+				break;
+		}
+
+		this.#syncValue(value);
 	}
 
 	/**
 	 * Formats the value depending on the input type.
 	 */
 	#formatValue(value: string) {
-		// Replace the T character with a whitespace to be backwards compatible with Umbraco.DateTime
-		value = value.replace('T', ' ');
+		this._inputValue = undefined;
 
-		// If we have a whitespace, we need special handling for "time" and "date"
-		// This could happen both on the way in and out
-		if (value.includes(' ')) {
-			// If the input type is "time", we need to remove the date part
-			if (this._inputType === 'time') {
-				value = value.split(' ')[1];
-			}
-
-			// If the input type is "date", we need to remove the time part
-			else if (this._inputType === 'date') {
-				value = value.split(' ')[0];
-			}
+		if (isNaN(new Date(value).getTime())) {
+			console.warn(`[UmbDatePicker] Invalid date: ${value}`);
+			return;
 		}
 
-		this.#syncValue(value);
+		const dateSplit = value.split(' ');
+		if (dateSplit.length !== 2) {
+			console.warn(`[UmbDatePicker] Invalid date: ${value}`);
+			return;
+		}
+
+		switch (this._inputType) {
+			case 'time':
+				this._inputValue = dateSplit[1];
+				break;
+			case 'date':
+				this._inputValue = dateSplit[0];
+				break;
+			default:
+				this._inputValue = dateSplit.join('T');
+				break;
+		}
 	}
 
 	#syncValue(value: string) {
@@ -108,7 +131,7 @@ export class UmbPropertyEditorUIDatePickerElement extends UmbLitElement implemen
 	override render() {
 		return html`
 			<umb-input-date
-				.value=${this.value}
+				.value=${this._inputValue}
 				.min=${this._min}
 				.max=${this._max}
 				.step=${this._step}
