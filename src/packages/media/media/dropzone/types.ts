@@ -37,10 +37,6 @@ export interface UmbFileDropzoneProgress {
 	completed: number;
 }
 
-export interface UmbFileDropzoneProgressItemDetail {
-	items: Array<UmbUploadableItem>;
-}
-
 export enum UmbFileDropzoneItemStatus {
 	WAITING = 'waiting',
 	UPLOADED = 'uploaded',
