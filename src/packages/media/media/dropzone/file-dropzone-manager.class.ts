@@ -10,7 +10,7 @@ import {
 	type UmbUploadableItem,
 	type UmbAllowedChildrenByMediaType,
 } from './types.js';
-import { countDropzoneItems, getExtensionFromMime } from './utils.js';
+import { getExtensionFromMime } from './utils.js';
 import { UMB_DROPZONE_MEDIA_TYPE_PICKER_MODAL } from './modals/index.js';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
@@ -24,14 +24,6 @@ import { UmbId } from '@umbraco-cms/backoffice/id';
 import { type UmbAllowedMediaTypeModel, UmbMediaTypeStructureRepository } from '@umbraco-cms/backoffice/media-type';
 import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 
-// TODO Get available folders... This hack is terribly bad.
-const UMB_FOLDER: UmbAllowedMediaTypeModel = {
-	unique: 'f38bd2d7-65d0-48e6-95dc-87ce06ec2d3d',
-	description: '',
-	name: 'Folder',
-	icon: 'icon-folder',
-};
-
 /**
  * Manages the dropzone and uploads folders and files to the server.
  * @method createMediaItems - Upload files and folders to the server and creates the items using corresponding media type.
@@ -42,6 +34,7 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 
 	#mediaTypeStructure = new UmbMediaTypeStructureRepository(this);
 	#mediaDetailRepository = new UmbMediaDetailRepository(this);
+
 	#tempFileManager = new UmbTemporaryFileManager(this);
 
 	#optionsByExt = new UmbArrayState<UmbAllowedMediaByExtension>([], (x) => x.extension);
@@ -157,17 +150,16 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 			return;
 		}
 
-		// We update with 0.5 as the file is now uploaded, but not created yet (halfway done).
-		this.#updateProgress(item, UmbFileDropzoneItemStatus.UPLOADED, 0.5);
+		this.#updateProgress(item, UmbFileDropzoneItemStatus.UPLOADED, true);
 
 		// Create the media item.
 		const scaffold = await this.createItemScaffold(item, mediaTypeUnique);
 		const { data } = await this.#mediaDetailRepository.create(scaffold!, item.parentUnique);
 
 		if (data) {
-			this.#updateProgress(item, UmbFileDropzoneItemStatus.CREATED, 0.5);
+			this.#updateProgress(item, UmbFileDropzoneItemStatus.CREATED);
 		} else {
-			this.#updateProgress(item, UmbFileDropzoneItemStatus.ERROR, 0.5);
+			this.#updateProgress(item, UmbFileDropzoneItemStatus.ERROR);
 		}
 	}
 
@@ -193,7 +185,7 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 		// Look up possible media types for all the different file types based on the progress items.
 		const progressItems = this.#progressItems.getValue();
 
-		const allTypes = progressItems.map((item) => item.temporaryFile?.file.type ?? null);
+		const allTypes = progressItems.map((item) => item.temporaryFile?.file.type || null);
 		const mimetypes = [...new Set(allTypes)]; // Duplicate types removed
 		const extensions = mimetypes.map((mime) => getExtensionFromMime(mime));
 
@@ -202,13 +194,13 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 			const stored = this.#optionsByExt.getValue().find((x) => x.extension === fileExtension);
 			if (stored) continue;
 
+			// TODO Add skip and take logic.
 			if (fileExtension) {
-				// TODO Skip/Take logic.
 				const mediaTypes = await this.#mediaTypeStructure.requestMediaTypesOf({ fileExtension });
 				this.#optionsByExt.appendOne({ extension: fileExtension, mediaTypes });
 			} else {
-				// TODO Request folders, remove UMB_FOLDER hack.
-				this.#optionsByExt.appendOne({ extension: null, mediaTypes: [UMB_FOLDER] });
+				const mediaTypes = await this.#mediaTypeStructure.requestFolders();
+				this.#optionsByExt.appendOne({ extension: null, mediaTypes: mediaTypes });
 			}
 		}
 	}
@@ -292,13 +284,13 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 	// Progress handling
 
 	async #setupProgress(items: UmbFileDropzoneDroppedItems, parent: string | null) {
-		const count = countDropzoneItems(items);
 		const current = this.#progress.getValue();
-		this.#progress.setValue({ total: current.total + count, completed: current.completed });
+		const currentItems = this.#progressItems.getValue();
 
 		const uploadableItems = this.#prepareItemsAsUploadable({ folders: items.folders, files: items.files }, parent);
-		const currentItems = this.#progressItems.getValue();
+
 		this.#progressItems.setValue([...currentItems, ...uploadableItems]);
+		this.#progress.setValue({ total: current.total + uploadableItems.length, completed: current.completed });
 
 		// Prepare media type options based on the items' different file types. We need this later when checking which media types are allowed by the parent.
 		await this.#prepareMediaTypeOptions();
@@ -306,10 +298,12 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 		return uploadableItems;
 	}
 
-	#updateProgress(item: UmbUploadableItem, status: UmbFileDropzoneItemStatus, amount = 1) {
+	#updateProgress(item: UmbUploadableItem, status: UmbFileDropzoneItemStatus, updateItemOnly = false) {
 		this.#progressItems.updateOne(item.unique, { status });
 		const progress = this.#progress.getValue();
-		this.#progress.update({ completed: progress.completed + amount });
+		if (!updateItemOnly) {
+			this.#progress.update({ completed: progress.completed + 1 });
+		}
 	}
 
 	#prepareItemsAsUploadable = (
@@ -320,12 +314,14 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 
 		for (const file of files) {
 			const unique = UmbId.new();
-			items.push({
-				unique,
-				parentUnique,
-				status: UmbFileDropzoneItemStatus.WAITING,
-				temporaryFile: { file, temporaryUnique: UmbId.new() },
-			});
+			if (file.type) {
+				items.push({
+					unique,
+					parentUnique,
+					status: UmbFileDropzoneItemStatus.WAITING,
+					temporaryFile: { file, temporaryUnique: UmbId.new() },
+				});
+			}
 		}
 
 		for (const subfolder of folders) {
