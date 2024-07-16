@@ -72,25 +72,31 @@ export class UmbDropzoneElement extends UmbLitElement {
 		this.observe(
 			fileDropzoneManager.progress,
 			(progress) => {
-				console.log(`Completed ${progress.completed} out of ${progress.total}.`);
+				this.dispatchEvent(new ProgressEvent('progress', { loaded: progress.completed, total: progress.total }));
 				if (progress.completed === progress.total) {
-					this.dispatchEvent(new CustomEvent('change', { detail: { progress } }));
-					console.warn('Issues found:', errors);
+					this.dispatchEvent(new CustomEvent('change'));
+					if (errors.length) {
+						console.warn('Errors:', errors);
+					}
 					fileDropzoneManager.destroy();
 				}
 			},
 			'_observeProgress',
 		);
 
-		this.observe(fileDropzoneManager.progressItems, (items) => {
-			const found = items.filter(
-				(item) =>
-					item.status !== UmbFileDropzoneItemStatus.WAITING &&
-					item.status !== UmbFileDropzoneItemStatus.UPLOADED &&
-					item.status !== UmbFileDropzoneItemStatus.CREATED,
-			);
-			errors = found;
-		});
+		this.observe(
+			fileDropzoneManager.progressItems,
+			(items) => {
+				const found = items.filter(
+					(item) =>
+						item.status !== UmbFileDropzoneItemStatus.WAITING &&
+						item.status !== UmbFileDropzoneItemStatus.UPLOADED &&
+						item.status !== UmbFileDropzoneItemStatus.CREATED,
+				);
+				errors = found;
+			},
+			'_observeProgressItems',
+		);
 		/*
 		
 		this.observe(

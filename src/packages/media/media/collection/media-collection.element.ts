@@ -44,8 +44,8 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 		eventContext.dispatchEvent(event);
 	}
 
-	#onProgress(event: UmbProgressEvent) {
-		this._progress = event.progress;
+	#onProgress(event: ProgressEvent) {
+		this._progress = (event.loaded / event.total) * 100;
 	}
 
 	protected override renderToolbar() {
