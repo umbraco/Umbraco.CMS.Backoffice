@@ -1,5 +1,5 @@
-export function getExtensionFromMime(mime: string | null): string | null {
-	if (!mime) return null; //TODO folders
+export function getExtensionFromMime(mime: string): string | undefined {
+	if (!mime) return undefined;
 	const extension = mime.split('/')[1];
 	switch (extension) {
 		case 'svg+xml':
