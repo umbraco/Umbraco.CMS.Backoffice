@@ -23,13 +23,14 @@ export interface UmbUploadableFolder extends UmbUploadableItem {
 	folder: { name: string };
 }
 
-export interface UmbAllowedMediaByExtension {
-	extension: string | null;
+export interface UmbAllowedMediaByFileExtension {
+	fileExtension: string | null;
 	mediaTypes: Array<UmbAllowedMediaTypeModel>;
 }
+
 export interface UmbAllowedChildrenByMediaType {
-	mediaType: string | null;
-	allowed: Array<UmbAllowedMediaTypeModel>;
+	mediaTypeUnique: string | null;
+	allowedChildren: Array<UmbAllowedMediaTypeModel>;
 }
 
 export interface UmbFileDropzoneProgress {

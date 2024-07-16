@@ -59,7 +59,6 @@ export class UmbDropzoneElement extends UmbLitElement {
 		if (!event.detail.files.length && !event.detail.folders.length) return;
 
 		const fileDropzoneManager = new UmbFileDropzoneManager(this, this.parentUnique);
-
 		//TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
 		let errors: Array<UmbUploadableItem> = [];
 		this.observe(
