@@ -27,7 +27,9 @@ import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 /**
  * Manages the dropzone and uploads folders and files to the server.
  * @method createMediaItems - Upload files and folders to the server and creates the items using corresponding media type.
- * @method createFilesAsTemporary - Upload the files as temporary files and returns the data.
+ * @method createTemporaryFiles - Upload the files as temporary files and returns the data.
+ * @observable progress - Emits the number of completed items and total items.
+ * @observable progressItems - Emits the items with their current status.
  */
 export class UmbFileDropzoneManager extends UmbControllerBase {
 	#host;
@@ -224,7 +226,8 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 		const { data: mediaTypes } = await this.#mediaTypeStructure.requestAllowedChildrenOf(parentMediaType);
 		if (mediaTypes) {
 			this.#childrenByMediaType.appendOne({ mediaType: parentMediaType, allowed: mediaTypes.items });
-			return mediaTypes.items.filter((x) => optionsByExt.find((option) => option.unique === x.unique));
+			const filtered = optionsByExt.filter((x) => mediaTypes.items.find((option) => option.unique === x.unique));
+			return filtered;
 		} else {
 			this.#childrenByMediaType.appendOne({ mediaType: parentMediaType, allowed: [] });
 			this.#updateProgress(item, UmbFileDropzoneItemStatus.NOT_ALLOWED);

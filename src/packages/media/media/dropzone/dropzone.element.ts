@@ -57,7 +57,6 @@ export class UmbDropzoneElement extends UmbLitElement {
 
 	async #onDropFiles(event: UUIFileDropzoneEvent) {
 		if (!event.detail.files.length && !event.detail.folders.length) return;
-		console.log('dropped these files', event.detail);
 
 		const fileDropzoneManager = new UmbFileDropzoneManager(this);
 		fileDropzoneManager.progress;

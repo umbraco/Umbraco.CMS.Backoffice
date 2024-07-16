@@ -25,6 +25,7 @@ export interface UmbUploadableExtensionModel {
 
 /**
  * Manages the dropzone and uploads files to the server.
+ * @deprecated Use UmbFileDropzoneManager instead.
  * @method createFilesAsMedia - Upload files to the server and creates the items using corresponding media type.
  * @method createFilesAsTemporary - Upload the files as temporary files and returns the data.
  * @observable completed - Emits an array of completed uploads.
