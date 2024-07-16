@@ -58,15 +58,9 @@ export class UmbDropzoneElement extends UmbLitElement {
 	async #onDropFiles(event: UUIFileDropzoneEvent) {
 		if (!event.detail.files.length && !event.detail.folders.length) return;
 
-		const fileDropzoneManager = new UmbFileDropzoneManager(this);
-		fileDropzoneManager.progress;
+		const fileDropzoneManager = new UmbFileDropzoneManager(this, this.parentUnique);
 
-		if (this.createAsTemporary) {
-			fileDropzoneManager.createTemporaryFiles(event.detail.files);
-		} else {
-			fileDropzoneManager.createMediaItems(event.detail, this.parentUnique);
-		}
-
+		//TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
 		let errors: Array<UmbUploadableItem> = [];
 		this.observe(
 			fileDropzoneManager.progress,
@@ -96,31 +90,12 @@ export class UmbDropzoneElement extends UmbLitElement {
 			},
 			'_observeProgressItems',
 		);
-		/*
-		
-		this.observe(
-			dropzoneManager.completed,
-			(completed) => {
-				if (!completed.length) return;
 
-				const progress = Math.floor(completed.length / files.length);
-				this.dispatchEvent(new UmbProgressEvent(progress));
-
-				if (completed.length === files.length) {
-					this.#files = completed;
-					this.dispatchEvent(new CustomEvent('change', { detail: { completed } }));
-					dropzoneManager.destroy();
-				}
-			},
-			'_observeCompleted',
-		);
-		//TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
 		if (this.createAsTemporary) {
-			await dropzoneManager.createFilesAsTemporary(files);
+			fileDropzoneManager.createTemporaryFiles(event.detail.files);
 		} else {
-			await dropzoneManager.createFilesAsMedia(files, this.parentUnique);
+			fileDropzoneManager.createMediaItems(event.detail);
 		}
-			*/
 	}
 
 	override render() {
