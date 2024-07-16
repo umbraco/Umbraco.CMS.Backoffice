@@ -13,11 +13,13 @@ import { UmbId } from '@umbraco-cms/backoffice/id';
 import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import { UmbArrayState } from '@umbraco-cms/backoffice/observable-api';
 
+/** Deprecated */
 export interface UmbUploadableFileModel extends UmbTemporaryFileModel {
 	unique: string;
 	mediaTypeUnique: string;
 }
 
+/** Deprecated */
 export interface UmbUploadableExtensionModel {
 	fileExtension: string;
 	mediaTypes: Array<UmbAllowedMediaTypeModel>;
