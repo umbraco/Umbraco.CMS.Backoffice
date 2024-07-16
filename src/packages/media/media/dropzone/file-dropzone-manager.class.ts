@@ -32,7 +32,10 @@ import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
  * @observable progressItems - Emits the items with their current status.
  */
 export class UmbFileDropzoneManager extends UmbControllerBase {
-	#host;
+	#host: UmbControllerHost;
+	#root: string | null;
+
+	// TODO Add logic for the accept property from dropzone element
 
 	#mediaTypeStructure = new UmbMediaTypeStructureRepository(this);
 	#mediaDetailRepository = new UmbMediaDetailRepository(this);
@@ -48,9 +51,10 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 	#progressItems = new UmbArrayState<UmbUploadableItem>([], (x) => x.unique);
 	public readonly progressItems = this.#progressItems.asObservable();
 
-	constructor(host: UmbControllerHost) {
+	constructor(host: UmbControllerHost, parentUnique: string | null = null) {
 		super(host);
 		this.#host = host;
+		this.#root = parentUnique;
 	}
 
 	/**
@@ -59,8 +63,8 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 	 * @param {UmbFileDropzoneDroppedItems} items - The files and folders to upload
 	 * @param {string | null} parentUnique - The parent unique of where we want to upload the top layer items.
 	 */
-	public async createMediaItems(items: UmbFileDropzoneDroppedItems, parentUnique: string | null) {
-		const uploadableItems = await this.#setupProgress(items, parentUnique);
+	public async createMediaItems(items: UmbFileDropzoneDroppedItems) {
+		const uploadableItems = await this.#setupProgress(items, this.#root);
 		if (uploadableItems.length === 1) {
 			return await this.#createOneMediaItem(uploadableItems[0]);
 		} else {
@@ -189,7 +193,7 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 
 		const allTypes = progressItems.map((item) => item.temporaryFile?.file.type || null);
 		const mimetypes = [...new Set(allTypes)]; // Duplicate types removed
-		const extensions = mimetypes.map((mime) => getExtensionFromMime(mime));
+		const extensions = mimetypes.map((mime) => getExtensionFromMime(mime ?? '') || null);
 
 		for (const fileExtension of extensions) {
 			// Check if we already have media types for this extension, otherwise request it.
@@ -208,7 +212,7 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 	}
 
 	async #getAllowedMediaTypes(item: UmbUploadableItem): Promise<Array<UmbAllowedMediaTypeModel>> {
-		const extension = getExtensionFromMime(item.temporaryFile?.file.type ?? null);
+		const extension = getExtensionFromMime(item.temporaryFile?.file.type ?? '') || null;
 		const optionsByExt = this.#optionsByExt.getValue().find((x) => x.extension === extension)?.mediaTypes ?? [];
 
 		let parentMediaType: string | null = null;
