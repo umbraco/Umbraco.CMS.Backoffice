@@ -39,7 +39,7 @@ export class UmbPublicAccessModalElement extends UmbModalBaseElement<
 
 	// Init
 
-	firstUpdated() {
+	override firstUpdated() {
 		this.#unique = this.data?.unique;
 		this.#getDocumentName();
 	}
@@ -162,7 +162,7 @@ export class UmbPublicAccessModalElement extends UmbModalBaseElement<
 
 	// Renders
 
-	render() {
+	override render() {
 		return html`
 			<umb-body-layout headline=${this.localize.term('actions_protect')}>
 				<uui-box>${this._startPage ? this.renderSelectGroup() : this.renderEditPage()}</uui-box> ${this.renderActions()}
@@ -203,7 +203,7 @@ export class UmbPublicAccessModalElement extends UmbModalBaseElement<
 					<umb-localize key="publicAccess_paLoginPageHelp"> Choose the page that contains the login form </umb-localize>
 				</small>
 				<umb-input-document
-					.value=${this._loginDocumentId ? this._loginDocumentId : ''}
+					.value=${this._loginDocumentId}
 					max="1"
 					@change=${this.#onChangeLoginPage}></umb-input-document>
 			</div>
@@ -216,7 +216,7 @@ export class UmbPublicAccessModalElement extends UmbModalBaseElement<
 					</umb-localize>
 				</small>
 				<umb-input-document
-					.value=${this._errorDocumentId ? this._errorDocumentId : ''}
+					.value=${this._errorDocumentId}
 					max="1"
 					@change=${this.#onChangeErrorPage}></umb-input-document>
 			</div>`;
@@ -274,7 +274,7 @@ export class UmbPublicAccessModalElement extends UmbModalBaseElement<
 			>${remove}${confirm}`;
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			uui-box,

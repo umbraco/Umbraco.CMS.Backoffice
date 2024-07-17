@@ -86,18 +86,20 @@ export class UmbInputUploadFieldElement extends UmbLitElement {
 		}
 	}
 
-	#handleBrowse() {
+	#handleBrowse(e: Event) {
 		if (!this._dropzone) return;
+		e.stopImmediatePropagation();
 		this._dropzone.browse();
 	}
 
-	render() {
+	override render() {
 		return html`${this._src ? this.#renderFile(this._src, this.temporaryFile?.file) : this.#renderDropzone()}`;
 	}
 
 	#renderDropzone() {
 		return html`
 			<uui-file-dropzone
+				@click=${this.#handleBrowse}
 				id="dropzone"
 				label="dropzone"
 				@change="${this.#onUpload}"
@@ -171,7 +173,7 @@ export class UmbInputUploadFieldElement extends UmbLitElement {
 		this.dispatchEvent(new UmbChangeEvent());
 	}
 
-	static styles = [
+	static override styles = [
 		css`
 			:host {
 				position: relative;
@@ -195,7 +197,16 @@ export class UmbInputUploadFieldElement extends UmbLitElement {
 			}
 
 			uui-file-dropzone {
+				position: relative;
+				display: block;
 				padding: 3px; /** Dropzone background is blurry and covers slightly into other elements. Hack to avoid this */
+			}
+			uui-file-dropzone::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				cursor: pointer;
+				border: 1px dashed var(--uui-color-divider-emphasis);
 			}
 		`,
 	];

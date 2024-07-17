@@ -1,5 +1,5 @@
-import { UMB_DATATYPE_WORKSPACE_MODAL } from '../../index.js';
 import { UMB_DATA_TYPE_PICKER_FLOW_MODAL } from '../../modals/index.js';
+import { UMB_DATATYPE_WORKSPACE_MODAL } from '../../workspace/index.js';
 import { css, html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
@@ -16,7 +16,7 @@ import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
  */
 @customElement('umb-data-type-flow-input')
 export class UmbInputDataTypeElement extends UUIFormControlMixin(UmbLitElement, '') {
-	protected getFormElement() {
+	protected override getFormElement() {
 		return undefined;
 	}
 
@@ -28,14 +28,14 @@ export class UmbInputDataTypeElement extends UUIFormControlMixin(UmbLitElement, 
 	 * @default []
 	 */
 	@property({ type: String, attribute: false })
-	set value(dataTypeId: string) {
+	override set value(dataTypeId: string) {
 		super.value = dataTypeId ?? '';
 		this._ids = super.value
 			.split(',')
 			.map((tag) => tag.trim())
 			.filter((id) => id.length !== 0);
 	}
-	get value(): string {
+	override get value(): string {
 		return super.value?.toString() ?? '';
 	}
 
@@ -68,7 +68,7 @@ export class UmbInputDataTypeElement extends UUIFormControlMixin(UmbLitElement, 
 			});
 	}
 
-	render() {
+	override render() {
 		return this._ids && this._ids.length > 0
 			? html`
 					<umb-ref-data-type
@@ -93,7 +93,7 @@ export class UmbInputDataTypeElement extends UUIFormControlMixin(UmbLitElement, 
 				`;
 	}
 
-	static styles = [
+	static override styles = [
 		css`
 			#empty-state-button {
 				width: 100%;

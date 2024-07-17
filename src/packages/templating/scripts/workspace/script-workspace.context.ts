@@ -10,7 +10,6 @@ import {
 	type UmbRoutableWorkspaceContext,
 	type UmbSubmittableWorkspaceContext,
 	UmbWorkspaceIsNewRedirectController,
-	UmbWorkspaceRouteManager,
 } from '@umbraco-cms/backoffice/workspace';
 import { loadCodeEditor } from '@umbraco-cms/backoffice/code-editor';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
@@ -40,8 +39,6 @@ export class UmbScriptWorkspaceContext
 
 	#isCodeEditorReady = new UmbBooleanState(false);
 	readonly isCodeEditorReady = this.#isCodeEditorReady.asObservable();
-
-	readonly routes = new UmbWorkspaceRouteManager(this);
 
 	constructor(host: UmbControllerHost) {
 		super(host, UMB_SCRIPT_WORKSPACE_ALIAS);
@@ -74,7 +71,7 @@ export class UmbScriptWorkspaceContext
 		]);
 	}
 
-	protected resetState(): void {
+	protected override resetState(): void {
 		super.resetState();
 		this.#data.setValue(undefined);
 	}
@@ -178,7 +175,7 @@ export class UmbScriptWorkspaceContext
 		}
 	}
 
-	destroy(): void {
+	override destroy(): void {
 		super.destroy();
 		this.#data.destroy();
 	}

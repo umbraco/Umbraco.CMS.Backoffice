@@ -1,5 +1,5 @@
-import { UMB_BLOCK_WORKSPACE_CONTEXT } from '../../block-workspace.context-token.js';
 import type { UmbBlockWorkspaceElementManagerNames } from '../../block-workspace.context.js';
+import { UMB_BLOCK_WORKSPACE_CONTEXT } from '../../block-workspace.context-token.js';
 import type { UmbBlockWorkspaceViewEditTabElement } from './block-workspace-view-edit-tab.element.js';
 import { css, html, customElement, state, repeat, property } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
@@ -116,12 +116,16 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 				path: '',
 				redirectTo: routes[0]?.path,
 			});
+			routes.push({
+				path: `**`,
+				component: async () => (await import('@umbraco-cms/backoffice/router')).UmbRouteNotFoundElement,
+			});
 		}
 
 		this._routes = routes;
 	}
 
-	render() {
+	override render() {
 		if (!this._routes || !this._tabs) return;
 		return html`
 			<umb-body-layout header-fit-height>
@@ -163,7 +167,7 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 		`;
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			:host {

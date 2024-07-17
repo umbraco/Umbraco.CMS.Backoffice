@@ -1,10 +1,5 @@
 import { UMB_DOCUMENT_COLLECTION_ALIAS } from '../collection/index.js';
 import { UMB_DOCUMENT_ENTITY_TYPE } from '../entity.js';
-import { UmbDocumentDuplicateEntityBulkAction } from './duplicate/duplicate.action.js';
-import { UmbDocumentDeleteEntityBulkAction } from './delete/delete.action.js';
-import { UmbMoveDocumentEntityBulkAction } from './move/move.action.js';
-import { UmbDocumentPublishEntityBulkAction } from './publish/publish.action.js';
-import { UmbDocumentUnpublishEntityBulkAction } from './unpublish/unpublish.action.js';
 import type { UmbCollectionBulkActionPermissions } from '@umbraco-cms/backoffice/collection';
 import type { ManifestEntityBulkAction } from '@umbraco-cms/backoffice/extension-registry';
 import {
@@ -19,7 +14,7 @@ export const manifests: Array<ManifestEntityBulkAction> = [
 		alias: 'Umb.EntityBulkAction.Document.Publish',
 		name: 'Publish Document Entity Bulk Action',
 		weight: 50,
-		api: UmbDocumentPublishEntityBulkAction,
+		api: () => import('./publish/publish.action.js'),
 		meta: {
 			label: 'Publish',
 		},
@@ -41,7 +36,7 @@ export const manifests: Array<ManifestEntityBulkAction> = [
 		alias: 'Umb.EntityBulkAction.Document.Unpublish',
 		name: 'Unpublish Document Entity Bulk Action',
 		weight: 40,
-		api: UmbDocumentUnpublishEntityBulkAction,
+		api: () => import('./unpublish/unpublish.action.js'),
 		meta: {
 			label: 'Unpublish',
 		},

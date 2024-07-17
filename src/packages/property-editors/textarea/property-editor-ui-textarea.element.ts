@@ -11,6 +11,15 @@ export class UmbPropertyEditorUITextareaElement extends UmbLitElement implements
 	@property()
 	value = '';
 
+	/**
+	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
+	 * @type {boolean}
+	 * @attr
+	 * @default false
+	 */
+	@property({ type: Boolean, reflect: true })
+	readonly = false;
+
 	@state()
 	private _maxChars?: number;
 
@@ -43,7 +52,7 @@ export class UmbPropertyEditorUITextareaElement extends UmbLitElement implements
 		this.dispatchEvent(new UmbPropertyValueChangeEvent());
 	}
 
-	render() {
+	override render() {
 		return html`
 			<uui-textarea
 				label="Textarea"
@@ -52,11 +61,12 @@ export class UmbPropertyEditorUITextareaElement extends UmbLitElement implements
 				.maxlength=${this._maxChars}
 				.rows=${this._rows}
 				.value=${this.value ?? ''}
-				@input=${this.#onInput}></uui-textarea>
+				@input=${this.#onInput}
+				?readonly=${this.readonly}></uui-textarea>
 		`;
 	}
 
-	static styles = [
+	static override styles = [
 		css`
 			uui-textarea {
 				width: 100%;

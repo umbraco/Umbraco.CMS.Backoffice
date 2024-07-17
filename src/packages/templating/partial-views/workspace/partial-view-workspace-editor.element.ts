@@ -1,12 +1,15 @@
-import type { UmbTemplatingInsertMenuElement } from '../../components/index.js';
+import type { UmbTemplatingInsertMenuElement } from '../../local-components/insert-menu/index.js';
 import { getQuerySnippet } from '../../utils/index.js';
 import { UMB_PARTIAL_VIEW_WORKSPACE_CONTEXT } from './partial-view-workspace.context-token.js';
-import { UMB_TEMPLATE_QUERY_BUILDER_MODAL } from '@umbraco-cms/backoffice/template';
-import type { UmbCodeEditorElement } from '@umbraco-cms/backoffice/code-editor';
 import type { UUIInputElement } from '@umbraco-cms/backoffice/external/uui';
 import { css, html, customElement, query, state, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement, umbFocus } from '@umbraco-cms/backoffice/lit-element';
 import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import { UMB_TEMPLATE_QUERY_BUILDER_MODAL } from '@umbraco-cms/backoffice/template';
+import type { UmbCodeEditorElement } from '@umbraco-cms/backoffice/code-editor';
+
+// import local components
+import '../../local-components/insert-menu/index.js';
 
 @customElement('umb-partial-view-workspace-editor')
 export class UmbPartialViewWorkspaceEditorElement extends UmbLitElement {
@@ -88,7 +91,7 @@ export class UmbPartialViewWorkspaceEditorElement extends UmbLitElement {
 			@input=${this.#onCodeEditorInput}></umb-code-editor>`;
 	}
 
-	render() {
+	override render() {
 		return this._isNew !== undefined
 			? html`<umb-workspace-editor alias="Umb.Workspace.PartialView">
 					<div id="workspace-header" slot="header">
@@ -121,7 +124,7 @@ export class UmbPartialViewWorkspaceEditorElement extends UmbLitElement {
 			: nothing;
 	}
 
-	static styles = [
+	static override styles = [
 		css`
 			:host {
 				display: block;

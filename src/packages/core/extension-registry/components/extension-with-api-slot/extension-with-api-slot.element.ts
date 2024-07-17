@@ -1,5 +1,4 @@
 import { umbExtensionsRegistry } from '../../registry.js';
-import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { TemplateResult } from '@umbraco-cms/backoffice/external/lit';
 import { css, repeat, customElement, property, state, html } from '@umbraco-cms/backoffice/external/lit';
 import {
@@ -8,6 +7,7 @@ import {
 	type UmbApiConstructorArgumentsMethodType,
 	type ApiLoaderProperty,
 } from '@umbraco-cms/backoffice/extension-api';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
 /**
  * @element umb-extension-with-api-slot
@@ -26,7 +26,7 @@ export class UmbExtensionWithApiSlotElement extends UmbLitElement {
 	#extensionsController?: UmbExtensionsElementAndApiInitializer;
 
 	@state()
-	private _permitted: Array<UmbExtensionElementAndApiInitializer> = [];
+	private _permitted?: Array<UmbExtensionElementAndApiInitializer>;
 
 	/**
 	 * The type or types of extensions to render.
@@ -142,12 +142,12 @@ export class UmbExtensionWithApiSlotElement extends UmbLitElement {
 		index: number,
 	) => TemplateResult | HTMLElement | null | undefined;
 
-	connectedCallback(): void {
+	override connectedCallback(): void {
 		super.connectedCallback();
 		this.#attached = true;
 		this.#observeExtensions();
 	}
-	disconnectedCallback(): void {
+	override disconnectedCallback(): void {
 		this.#attached = false;
 		this.#extensionsController?.destroy();
 		this.#extensionsController = undefined;
@@ -177,17 +177,19 @@ export class UmbExtensionWithApiSlotElement extends UmbLitElement {
 		}
 	}
 
-	render() {
-		return this._permitted.length > 0
-			? repeat(
-					this._permitted,
-					(ext) => ext.alias,
-					(ext, i) => (this.renderMethod ? this.renderMethod(ext, i) : ext.component),
-				)
-			: html`<slot></slot>`;
+	override render() {
+		return this._permitted
+			? this._permitted.length > 0
+				? repeat(
+						this._permitted,
+						(ext) => ext.alias,
+						(ext, i) => (this.renderMethod ? this.renderMethod(ext, i) : ext.component),
+					)
+				: html`<slot></slot>`
+			: '';
 	}
 
-	static styles = css`
+	static override styles = css`
 		:host {
 			display: contents;
 		}

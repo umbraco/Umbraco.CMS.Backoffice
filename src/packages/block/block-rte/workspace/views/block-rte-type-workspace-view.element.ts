@@ -5,7 +5,7 @@ import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-
 
 @customElement('umb-block-rte-type-workspace-view-settings')
 export class UmbBlockRteTypeWorkspaceViewSettingsElement extends UmbLitElement implements UmbWorkspaceViewElement {
-	render() {
+	override render() {
 		return html`
 			<uui-box headline="Editor Appearance">
 				<umb-property
@@ -63,14 +63,20 @@ export class UmbBlockRteTypeWorkspaceViewSettingsElement extends UmbLitElement i
 					alias="iconColor"
 					property-editor-ui-alias="Umb.PropertyEditorUi.TextBox"></umb-property>
 				<umb-property
-					label="Custom stylesheet"
-					alias="stylesheet"
-					property-editor-ui-alias="Umb.PropertyEditorUi.StaticFilePicker"></umb-property>
+					label="Thumbnail"
+					alias="thumbnail"
+					property-editor-ui-alias="Umb.PropertyEditorUi.StaticFilePicker"
+					.config=${[
+						{
+							alias: 'singleItemMode',
+							value: true,
+						},
+					]}></umb-property>
 			</uui-box>
 		`;
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			:host {

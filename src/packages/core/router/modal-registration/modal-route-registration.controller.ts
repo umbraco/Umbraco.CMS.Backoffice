@@ -8,7 +8,7 @@ import type {
 	UmbModalManagerContext,
 	UmbModalToken,
 } from '@umbraco-cms/backoffice/modal';
-import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import type { UmbControllerAlias, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextConsumerController } from '@umbraco-cms/backoffice/context-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 import { UmbId } from '@umbraco-cms/backoffice/id';
@@ -80,8 +80,12 @@ export class UmbModalRouteRegistrationController<
 	 * @param {UmbModalToken} alias - The alias of the modal, this is used to identify the modal.
 	 * @memberof UmbModalRouteRegistrationController
 	 */
-	constructor(host: UmbControllerHost, alias: UmbModalToken<UmbModalTokenData, UmbModalTokenValue> | string) {
-		super(host, alias.toString());
+	constructor(
+		host: UmbControllerHost,
+		alias: UmbModalToken<UmbModalTokenData, UmbModalTokenValue> | string,
+		ctrlAlias?: UmbControllerAlias,
+	) {
+		super(host, ctrlAlias ?? alias.toString());
 		this.#key = UmbId.new();
 		this.#modalAlias = alias;
 		//this.#path = path;
@@ -215,13 +219,13 @@ export class UmbModalRouteRegistrationController<
 		}
 	}
 
-	hostConnected() {
+	override hostConnected() {
 		super.hostConnected();
 		if (!this.#modalRegistrationContext) {
 			this.#registerModal();
 		}
 	}
-	hostDisconnected(): void {
+	override hostDisconnected(): void {
 		super.hostDisconnected();
 		if (this.#modalRegistrationContext) {
 			this.#modalRegistrationContext.unregisterModal(this);
@@ -327,7 +331,7 @@ export class UmbModalRouteRegistrationController<
 		return;
 	}
 
-	public destroy(): void {
+	public override destroy(): void {
 		super.destroy();
 		this.#contextConsumer.destroy();
 		this.#modalRegistrationContext = undefined;

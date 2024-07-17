@@ -16,7 +16,6 @@ import {
 import {
 	UmbSubmittableWorkspaceContextBase,
 	UmbWorkspaceIsNewRedirectController,
-	UmbWorkspaceRouteManager,
 	UmbWorkspaceSplitViewManager,
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbContentTypeStructureManager } from '@umbraco-cms/backoffice/content-type';
@@ -81,7 +80,6 @@ export class UmbDocumentBlueprintWorkspaceContext
 	);
 	#varies?: boolean;
 
-	readonly routes = new UmbWorkspaceRouteManager(this);
 	readonly splitView = new UmbWorkspaceSplitViewManager();
 
 	readonly variantOptions = mergeObservables(
@@ -156,7 +154,7 @@ export class UmbDocumentBlueprintWorkspaceContext
 		]);
 	}
 
-	resetState() {
+	override resetState() {
 		super.resetState();
 		this.#persistedData.setValue(undefined);
 		this.#currentData.setValue(undefined);
@@ -448,7 +446,7 @@ export class UmbDocumentBlueprintWorkspaceContext
 		return new UmbDocumentBlueprintPropertyDatasetContext(host, this, variantId);
 	}
 
-	public destroy(): void {
+	public override destroy(): void {
 		this.#persistedData.destroy();
 		this.#currentData.destroy();
 		this.structure.destroy();

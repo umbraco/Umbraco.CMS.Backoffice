@@ -3,6 +3,7 @@ import type { UmbAppErrorElement } from './app-error.element.js';
 import { UmbAppContext } from './app.context.js';
 import { UmbServerConnection } from './server-connection.js';
 import { UmbAppAuthController } from './app-auth.controller.js';
+import { UmbApiInterceptorController } from './api-interceptor.controller.js';
 import type { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
 import { UmbAuthContext } from '@umbraco-cms/backoffice/auth';
 import { css, html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
@@ -147,6 +148,8 @@ export class UmbAppElement extends UmbLitElement {
 
 		OpenAPI.BASE = window.location.origin;
 
+		new UmbApiInterceptorController(this);
+
 		new UmbBundleExtensionInitializer(this, umbExtensionsRegistry);
 
 		new UUIIconRegistryEssential().attach(this);
@@ -154,7 +157,7 @@ export class UmbAppElement extends UmbLitElement {
 		new UmbContextDebugController(this);
 	}
 
-	connectedCallback(): void {
+	override connectedCallback(): void {
 		super.connectedCallback();
 		this.#setup();
 	}
@@ -291,11 +294,11 @@ export class UmbAppElement extends UmbLitElement {
 		this.requestUpdate();
 	}
 
-	render() {
+	override render() {
 		return html`<umb-router-slot id="router-slot" .routes=${this._routes}></umb-router-slot>`;
 	}
 
-	static styles = css`
+	static override styles = css`
 		:host {
 			overflow: hidden;
 		}
