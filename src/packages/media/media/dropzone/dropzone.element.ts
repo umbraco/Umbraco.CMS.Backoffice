@@ -1,5 +1,4 @@
 import { UmbFileDropzoneManager } from './file-dropzone-manager.class.js';
-import { UmbFileDropzoneItemStatus, type UmbUploadableItem } from './types.js';
 import { css, html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
 import type { UUIFileDropzoneElement, UUIFileDropzoneEvent } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
@@ -59,35 +58,19 @@ export class UmbDropzoneElement extends UmbLitElement {
 		if (!event.detail.files.length && !event.detail.folders.length) return;
 
 		const fileDropzoneManager = new UmbFileDropzoneManager(this, this.parentUnique);
-		//TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
-		let errors: Array<UmbUploadableItem> = [];
+		// TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
+		// TODO We can observe progressItems and check for any files that did not succeed, then show some kind of dialog to the user with the information.
+
 		this.observe(
 			fileDropzoneManager.progress,
 			(progress) => {
 				this.dispatchEvent(new ProgressEvent('progress', { loaded: progress.completed, total: progress.total }));
 				if (progress.completed === progress.total) {
 					this.dispatchEvent(new CustomEvent('change'));
-					if (errors.length) {
-						console.warn('Errors:', errors);
-					}
 					fileDropzoneManager.destroy();
 				}
 			},
 			'_observeProgress',
-		);
-
-		this.observe(
-			fileDropzoneManager.progressItems,
-			(items) => {
-				const found = items.filter(
-					(item) =>
-						item.status !== UmbFileDropzoneItemStatus.WAITING &&
-						item.status !== UmbFileDropzoneItemStatus.UPLOADED &&
-						item.status !== UmbFileDropzoneItemStatus.CREATED,
-				);
-				errors = found;
-			},
-			'_observeProgressItems',
 		);
 
 		if (this.createAsTemporary) {
