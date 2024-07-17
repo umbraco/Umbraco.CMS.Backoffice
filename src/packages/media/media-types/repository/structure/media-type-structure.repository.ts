@@ -22,8 +22,8 @@ export class UmbMediaTypeStructureRepository extends UmbContentTypeStructureRepo
 		return this.#dataSource.getMediaTypesOfFileExtension({ fileExtension, skip, take });
 	}
 
-	async requestFolders(skip = 0, take = 100) {
-		return this.#dataSource.getFolders({ skip, take });
+	async requestMediaTypesOfFolders({ skip = 0, take = 100 } = {}) {
+		return this.#dataSource.getMediaTypesOfFolders({ skip, take });
 	}
 }
 

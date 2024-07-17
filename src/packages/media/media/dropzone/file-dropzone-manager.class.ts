@@ -200,12 +200,12 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 			const stored = this.#optionsByExt.getValue().find((x) => x.fileExtension === fileExtension);
 			if (stored) continue;
 
-			// TODO Add skip and take logic.
+			// TODO Add skip and take logic, but the repository doesn't return the data as paged.
 			if (fileExtension) {
 				const mediaTypes = await this.#mediaTypeStructure.requestMediaTypesOf({ fileExtension });
 				this.#optionsByExt.appendOne({ fileExtension, mediaTypes });
 			} else {
-				const mediaTypes = await this.#mediaTypeStructure.requestFolders();
+				const mediaTypes = await this.#mediaTypeStructure.requestMediaTypesOfFolders();
 				this.#optionsByExt.appendOne({ fileExtension: null, mediaTypes: mediaTypes });
 			}
 		}
