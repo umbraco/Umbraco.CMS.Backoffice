@@ -65,7 +65,7 @@ export class UmbDropzoneElement extends UmbLitElement {
 			fileDropzoneManager.progress,
 			(progress) => {
 				this.dispatchEvent(new ProgressEvent('progress', { loaded: progress.completed, total: progress.total }));
-				if (progress.completed === progress.total) {
+				if (progress.total && progress.completed === progress.total) {
 					this.dispatchEvent(new CustomEvent('change'));
 					fileDropzoneManager.destroy();
 				}
