@@ -187,6 +187,8 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 		return uploaded;
 	}
 
+	// Media types
+
 	async #prepareMediaTypeOptions() {
 		// Look up possible media types for all the different file types based on the progress items.
 		const progressItems = this.#progressItems.getValue();
@@ -211,19 +213,6 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 		}
 	}
 
-	async #getParentMediaType(unique: string | null) {
-		if (!unique) return null;
-
-		const mediaType = this.#parentMediaTypes.getValue().find((x) => x.unique === unique)?.mediaType;
-		if (mediaType) return mediaType;
-
-		const { data: parent } = await this.#mediaDetailRepository.requestByUnique(unique);
-		if (!parent) return null;
-
-		this.#parentMediaTypes.appendOne({ unique, mediaType: parent.mediaType.unique });
-		return parent.mediaType.unique;
-	}
-
 	async #getAllowedMediaTypes(item: UmbUploadableItem): Promise<Array<UmbAllowedMediaTypeModel>> {
 		const extension = getExtensionFromMime(item.temporaryFile?.file.type ?? '') || null;
 		const optionsByExt = this.#optionsByExt.getValue().find((x) => x.fileExtension === extension)?.mediaTypes ?? [];
@@ -246,6 +235,21 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 			return [];
 		}
 	}
+
+	async #getParentMediaType(unique: string | null) {
+		if (!unique) return null;
+
+		const mediaType = this.#parentMediaTypes.getValue().find((x) => x.unique === unique)?.mediaType;
+		if (mediaType) return mediaType;
+
+		const { data: parent } = await this.#mediaDetailRepository.requestByUnique(unique);
+		if (!parent) return null;
+
+		this.#parentMediaTypes.appendOne({ unique, mediaType: parent.mediaType.unique });
+		return parent.mediaType.unique;
+	}
+
+	// Scaffold
 
 	async #createItemScaffold(item: UmbUploadableItem, mediaTypeUnique: string) {
 		let preset: Partial<UmbMediaDetailModel> = {};
