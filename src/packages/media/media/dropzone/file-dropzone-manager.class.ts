@@ -66,8 +66,10 @@ export class UmbFileDropzoneManager extends UmbControllerBase {
 	public async createMediaItems(items: UmbFileDropzoneDroppedItems) {
 		const uploadableItems = await this.#setupProgress(items, this.#root);
 		if (uploadableItems.length === 1) {
+			// When there is only one item being uploaded, allow the user to pick the media type, if more than one is allowed.
 			return await this.#createOneMediaItem(uploadableItems[0]);
 		} else {
+			// When there are multiple items being uploaded, automatically pick the media types for each item.
 			return await this.#createMediaItems(uploadableItems);
 		}
 	}
