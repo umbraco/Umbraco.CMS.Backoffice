@@ -65,7 +65,7 @@ export class UmbPropertyEditorUIDatePickerElement extends UmbLitElement implemen
 
 		this._min = config.getValueByAlias('min');
 		this._max = config.getValueByAlias('max');
-		this._step = config.getValueByAlias('step') ?? hasSeconds ? 1 : undefined;
+		this._step = (config.getValueByAlias('step') ?? hasSeconds) ? 1 : undefined;
 
 		if (this.value) {
 			this.#formatValue(this.value);
@@ -74,6 +74,11 @@ export class UmbPropertyEditorUIDatePickerElement extends UmbLitElement implemen
 
 	#onChange(event: CustomEvent & { target: UmbInputDateElement }) {
 		let value = event.target.value.toString();
+
+		if (!value) {
+			this.#syncValue(undefined);
+			return;
+		}
 
 		switch (this._inputType) {
 			case 'time':
@@ -120,7 +125,7 @@ export class UmbPropertyEditorUIDatePickerElement extends UmbLitElement implemen
 		}
 	}
 
-	#syncValue(value: string) {
+	#syncValue(value?: string) {
 		const valueHasChanged = this.value !== value;
 		if (valueHasChanged) {
 			this.value = value;
