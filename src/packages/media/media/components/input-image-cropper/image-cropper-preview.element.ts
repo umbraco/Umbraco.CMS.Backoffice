@@ -113,7 +113,7 @@ export class UmbImageCropperPreviewElement extends LitElement {
 
 	#onFocalPointUpdated(imageWidth?: number, imageHeight?: number, containerWidth?: number, containerHeight?: number) {
 		if (!this.crop) return;
-		if (!this.imageElement || !this.imageContainerElement) return;
+		if (!this.imageElement || !this.imageContainerElement || !this.#focalPoint) return;
 		if (this.crop.coordinates) return;
 
 		if (!imageWidth || !imageHeight) {
@@ -121,14 +121,19 @@ export class UmbImageCropperPreviewElement extends LitElement {
 			imageWidth = image.width;
 			imageHeight = image.height;
 		}
+
 		if (!containerWidth || !containerHeight) {
 			const container = this.imageContainerElement.getBoundingClientRect();
 			containerWidth = container.width;
 			containerHeight = container.height;
 		}
+
+		console.log("focalPoint", this.#focalPoint);
+
 		// position image so that its center is at the focal point
 		let imageLeft = containerWidth / 2 - imageWidth * this.#focalPoint.left;
 		let imageTop = containerHeight / 2 - imageHeight * this.#focalPoint.top;
+
 		// clamp
 		imageLeft = clamp(imageLeft, containerWidth - imageWidth, 0);
 		imageTop = clamp(imageTop, containerHeight - imageHeight, 0);

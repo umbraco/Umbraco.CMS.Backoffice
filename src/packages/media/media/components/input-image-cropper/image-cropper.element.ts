@@ -330,7 +330,8 @@ export class UmbImageCropperElement extends LitElement {
 				min="0"
 				max="1"
 				value="0"
-				step="0.001"></uui-slider>
+				step="0.001">
+			</uui-slider>
 			<div id="actions">
 				<uui-button @click=${this.#onReset} label="Reset"></uui-button>
 				<uui-button look="secondary" @click=${this.#onCancel} label="Cancel"></uui-button>
