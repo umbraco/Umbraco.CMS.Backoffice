@@ -1,5 +1,4 @@
 import type { UmbImageCropperFocalPoint } from './index.js';
-import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { drag } from '@umbraco-cms/backoffice/external/uui';
 import { clamp } from '@umbraco-cms/backoffice/utils';
 import { state } from '@umbraco-cms/backoffice/external/lit';
@@ -104,7 +103,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	#onFocalPointUpdated() {
 		if (this.#isCentered(this.#focalPoint)) {
 			this.#resetCoords();
-			//this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
 		}
 	}
 
@@ -121,11 +119,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		const top = clamp((y / height), 0, 1);
 
 		this.#coordsToFactor(x, y);
-		//this.#setFocalPointStyle(left, top);
-		//this.focalPoint = { left, top };
-
-		console.log("setFocalPoint", this.focalPoint);
-		console.log("setFocalPoint", this.#focalPoint);
 
 		this.dispatchEvent(
 			new CustomEvent('change', {
@@ -138,8 +131,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	#setFocalPointStyle(left: number, top: number) {
 		if (!this.focalPointElement) return;
-
-		console.log("left", left, "top", top);
 
 		this.focalPointElement.style.left = `calc(${left * 100}% - ${this.#DOT_RADIUS}px)`;
 		this.focalPointElement.style.top = `calc(${top * 100}% - ${this.#DOT_RADIUS}px)`;
@@ -182,9 +173,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 				this.coords.x = x;
 				this.coords.y = y;
-
-				console.log('x', x, 'y', y);
-				console.log('width', width, 'height', height);
 
 				this.#setFocalPoint(x, y, width, height);
 			},
