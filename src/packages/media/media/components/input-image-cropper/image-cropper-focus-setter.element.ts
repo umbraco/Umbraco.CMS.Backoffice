@@ -249,7 +249,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		}
 		/* Wrapper is used to make the focal point position responsive to the image size */
 		#wrapper {
-			overflow: hidden;
 			position: relative;
 			display: flex;
 			margin: auto;
