@@ -134,6 +134,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 
 	#isCentered(focalPoint: UmbImageCropperFocalPoint) {
+		if (!this.focalPoint) return;
+
 		return focalPoint.left === 0.5 && focalPoint.top === 0.5;
 	}
 
