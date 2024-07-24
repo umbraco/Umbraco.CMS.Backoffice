@@ -365,6 +365,7 @@ export class UmbImageCropperElement extends LitElement {
 			display: flex;
 			justify-content: flex-end;
 			gap: var(--uui-size-space-1);
+			margin-top: 0.5rem;
 		}
 
 		#mask {
