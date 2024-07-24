@@ -13,10 +13,10 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	imageElement!: HTMLImageElement;
 
 	@query('#wrapper')
-	wrapperElement?: HTMLImageElement;
+	wrapperElement?: HTMLElement;
 
 	@query('#focal-point')
-	focalPointElement!: HTMLImageElement;
+	focalPointElement!: HTMLElement;
 
 	@state() private isDraggingGridHandle = false;
 
