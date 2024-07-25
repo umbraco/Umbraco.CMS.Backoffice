@@ -381,6 +381,10 @@ export class UmbImageCropperElement extends LitElement {
 			user-select: none;
 		}
 
+		#viewport #image {
+			cursor: move;
+		}
+
 		#slider {
 			width: 100%;
 			height: 0px; /* TODO: FIX - This is needed to prevent the slider from taking up more space than needed */
