@@ -2,6 +2,7 @@ export type UmbImageCropperPropertyEditorValue = {
 	temporaryFileId?: string | null;
 	crops: Array<{
 		alias: string;
+		label: string;
 		coordinates?: {
 			x1: number;
 			x2: number;
