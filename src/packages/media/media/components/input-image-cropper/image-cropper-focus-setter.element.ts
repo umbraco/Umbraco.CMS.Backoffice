@@ -254,9 +254,11 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 			margin: auto;
 			max-width: 100%;
 			max-height: 100%;
-			box-sizing: border-box;
-			cursor: crosshair;
+			box-sizing: border-box;	
 			forced-color-adjust: none;
+		}
+		:host(:not([hidefocalpoint])) #wrapper {
+			cursor: crosshair;
 		}
 		#image {
 			margin: auto;
