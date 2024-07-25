@@ -10,6 +10,7 @@ export type UmbMediaPickerPropertyValue = {
 
 export type UmbCropModel = {
 	alias: string;
+	label: string;
 	height: number;
 	width: number;
 	coordinates?: {
