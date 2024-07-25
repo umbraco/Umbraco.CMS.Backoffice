@@ -151,7 +151,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 
 	#handleGridDrag(event: PointerEvent) {
-		if (this.disabled) return;
+		if (this.disabled || this.hideFocalPoint) return;
 
 		const grid = this.wrapperElement;
 		const handle = this.focalPointElement;
