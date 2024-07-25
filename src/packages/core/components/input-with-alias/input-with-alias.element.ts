@@ -11,7 +11,7 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 	label: string = '';
 
 	@property({ type: String, reflect: false })
-	alias?: string;
+	alias = '';
 
 	@property({ type: Boolean, reflect: true, attribute: 'alias-readonly' })
 	aliasReadonly = false;

@@ -11,7 +11,7 @@ import type { UmbCodeEditorElement } from '@umbraco-cms/backoffice/code-editor';
 import { UMB_TEMPLATE_PICKER_MODAL } from '@umbraco-cms/backoffice/template';
 import type { UmbInputWithAliasElement } from '@umbraco-cms/backoffice/components';
 
-// import local components
+import '@umbraco-cms/backoffice/code-editor';
 import '../../local-components/insert-menu/index.js';
 
 @customElement('umb-template-workspace-editor')
@@ -26,9 +26,6 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 
 	@state()
 	private _alias?: string | null = '';
-
-	@state()
-	private _ready?: boolean = false;
 
 	@state()
 	private _masterTemplateName?: string | null = null;
@@ -69,10 +66,6 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 
 			this.observe(this.#templateWorkspaceContext.isNew, (isNew) => {
 				this.#isNew = !!isNew;
-			});
-
-			this.observe(this.#templateWorkspaceContext.isCodeEditorReady, (isReady) => {
-				this._ready = isReady;
 			});
 		});
 	}
@@ -159,14 +152,6 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 		`;
 	}
 
-	#renderCodeEditor() {
-		return html`<umb-code-editor
-			language="razor"
-			id="content"
-			.code=${this._content ?? ''}
-			@input=${this.#onCodeEditorInput}></umb-code-editor>`;
-	}
-
 	#onNameAndAliasChange(event: InputEvent & { target: UmbInputWithAliasElement }) {
 		this.#templateWorkspaceContext?.setName(event.target.value ?? '');
 		this.#templateWorkspaceContext?.setAlias(event.target.alias ?? '');
@@ -179,7 +164,7 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 				slot="header"
 				id="name"
 				label=${this.localize.term('placeholders_entername')}
-				value=${ifDefined(this._name ?? undefined)}
+				value=${ifDefined(this._name ?? '')}
 				alias=${ifDefined(this._alias ?? undefined)}
 				?auto-generate-alias=${this.#isNew}
 				@change="${this.#onNameAndAliasChange}"
@@ -206,13 +191,19 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 					</uui-button>
 				</div>
 
-				${this._ready
-					? this.#renderCodeEditor()
-					: html`<div id="loader-container">
-							<uui-loader></uui-loader>
-						</div>`}
+				${this.#renderCodeEditor()}
 			</uui-box>
-		</umb-workspace-editor>`;
+		</umb-workspace-editor> `;
+	}
+
+	#renderCodeEditor() {
+		return html`
+			<umb-code-editor
+				id="content"
+				language="razor"
+				.code=${this._content ?? ''}
+				@input=${this.#onCodeEditorInput}></umb-code-editor>
+		`;
 	}
 
 	static override styles = [
