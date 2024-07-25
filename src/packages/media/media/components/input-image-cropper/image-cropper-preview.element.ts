@@ -151,7 +151,7 @@ export class UmbImageCropperPreviewElement extends LitElement {
 
 		return html`
 			<div id="container">
-				<img id="image" src=${this.src} alt="" />
+				<img id="image" src=${this.src} alt="" draggable="false" />
 			</div>
 			<span id="alias">${this.crop.label ?? this.crop.alias}</span>
 			<span id="dimensions">${this.crop.width} x ${this.crop.height}</span>
