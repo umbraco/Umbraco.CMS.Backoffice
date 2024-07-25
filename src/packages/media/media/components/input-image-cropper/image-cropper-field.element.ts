@@ -200,6 +200,7 @@ export class UmbInputImageCropperFieldElement extends UmbLitElement {
 		#actions {
 			display: flex;
 			justify-content: space-between;
+			margin-top: 0.5rem;
 		}
 
 		umb-image-cropper-focus-setter {
