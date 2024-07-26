@@ -1,4 +1,5 @@
 import { type UmbImageCropperFocalPoint, UmbFocalPointChangeEvent } from './index.js';
+import type { UmbFocalPointModel } from '../../property-editors/index.js';
 import { drag } from '@umbraco-cms/backoffice/external/uui';
 import { clamp } from '@umbraco-cms/backoffice/utils';
 import { state } from '@umbraco-cms/backoffice/external/lit';
@@ -119,7 +120,9 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 		this.#coordsToFactor(x, y);
 
-		this.dispatchEvent(new UmbFocalPointChangeEvent(left, top));
+		const focalPoint = { left, top } as UmbFocalPointModel;
+
+		this.dispatchEvent(new UmbFocalPointChangeEvent(focalPoint));
 	}
 
 	#setFocalPointStyle(left: number, top: number) {

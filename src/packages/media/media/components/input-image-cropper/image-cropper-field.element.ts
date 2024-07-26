@@ -105,7 +105,7 @@ export class UmbInputImageCropperFieldElement extends UmbLitElement {
 	};
 
 	#onFocalPointChange = (event: UmbFocalPointChangeEvent) => {
-		this.focalPoint = { top: event.top, left: event.left };
+		this.focalPoint = event.focalPoint;
 		this.#updateValue();
 	};
 
