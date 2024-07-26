@@ -19,7 +19,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	@state() private isDraggingGridHandle = false;
 
-	@state() private coords = { x: 0, y: 0 };
+	@state()
+	private coords = { x: 0, y: 0 };
 
 	@property({ attribute: false })
 	get focalPoint() {
