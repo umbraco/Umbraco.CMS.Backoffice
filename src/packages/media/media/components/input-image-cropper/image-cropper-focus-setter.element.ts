@@ -27,6 +27,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	@property({ attribute: false })
 	set focalPoint(value) {
 		this.#focalPoint = value;
+		this.#setFocalPointStyle(this.#focalPoint.left, this.#focalPoint.top);
 		this.#onFocalPointUpdated();
 	}
 	get focalPoint() {
@@ -46,16 +47,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	src?: string;
 
 	#DOT_RADIUS = 8 as const;
-
-	protected override updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-		super.updated(_changedProperties);
-
-		if (this.hideFocalPoint) return;
-
-		if (_changedProperties.has('focalPoint') && this.focalPoint) {
-			this.#setFocalPointStyle(this.focalPoint.left, this.focalPoint.top);
-		}
-	}
 
 	protected override update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
 		super.update(changedProperties);
