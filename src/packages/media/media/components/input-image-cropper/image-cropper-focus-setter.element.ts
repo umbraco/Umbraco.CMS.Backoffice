@@ -37,7 +37,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	@property({ type: Boolean })
 	hideFocalPoint = false;
 	
-	@property({ type: Boolean, reflect: true }) disabled = false;
+	@property({ type: Boolean, reflect: true })
+	disabled = false;
 
 	@property({ type: String })
 	src?: string;
