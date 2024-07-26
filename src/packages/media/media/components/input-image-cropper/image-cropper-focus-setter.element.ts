@@ -46,10 +46,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 	#DOT_RADIUS = 8 as const;
 
-	override disconnectedCallback() {
-		super.disconnectedCallback();
-	}
-
 	protected override updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
 		super.updated(_changedProperties);
 
