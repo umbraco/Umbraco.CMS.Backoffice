@@ -1,4 +1,4 @@
-import type { UmbImageCropperCrop, UmbImageCropperFocalPoint } from './index.js';
+import { UmbImageCropChangeEvent, type UmbImageCropperCrop, type UmbImageCropperFocalPoint } from './index.js';
 import { calculateExtrapolatedValue, clamp, inverseLerp, lerp } from '@umbraco-cms/backoffice/utils';
 import type { PropertyValueMap } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, query, state, LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
@@ -261,19 +261,19 @@ export class UmbImageCropperElement extends LitElement {
 			coordinates: { x1, x2, y1, y2 },
 		};
 
-		this.dispatchEvent(new CustomEvent('change'));
+		this.dispatchEvent(new UmbImageCropChangeEvent());
 	}
 
 	#onCancel() {
 		//TODO: How should we handle canceling the crop?
-		this.dispatchEvent(new CustomEvent('change'));
+		this.dispatchEvent(new UmbImageCropChangeEvent());
 	}
 
 	#onReset() {
 		if (!this.value) return;
 
 		delete this.value.coordinates;
-		this.dispatchEvent(new CustomEvent('change'));
+		this.dispatchEvent(new UmbImageCropChangeEvent());
 	}
 
 	#onSliderUpdate(event: InputEvent) {

@@ -8,6 +8,7 @@ import type {
 	UmbImageCropperFocalPoint,
 	UmbImageCropperPropertyEditorValue,
 	UmbFocalPointChangeEvent,
+	UmbImageCropChangeEvent,
 } from './index.js';
 import { css, customElement, html, property, repeat, state, when } from '@umbraco-cms/backoffice/external/lit';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
@@ -88,7 +89,7 @@ export class UmbInputImageCropperFieldElement extends UmbLitElement {
 		this.currentCrop = { ...this.crops[index] };
 	}
 
-	#onCropChange = (event: CustomEvent) => {
+	#onCropChange = (event: UmbImageCropChangeEvent) => {
 		const target = event.target as UmbImageCropperElement;
 		const value = target.value;
 
