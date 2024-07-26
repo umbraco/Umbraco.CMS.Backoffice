@@ -7,8 +7,8 @@ import type {
 	UmbImageCropperCrops,
 	UmbImageCropperFocalPoint,
 	UmbImageCropperPropertyEditorValue,
+	UmbFocalPointChangeEvent,
 } from './index.js';
-import { UmbFocalPointChangeEvent } from './index.js';
 import { css, customElement, html, property, repeat, state, when } from '@umbraco-cms/backoffice/external/lit';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
