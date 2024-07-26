@@ -23,12 +23,12 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	private coords = { x: 0, y: 0 };
 
 	@property({ attribute: false })
-	get focalPoint() {
-		return this.#focalPoint;
-	}
 	set focalPoint(value) {
 		this.#focalPoint = value;
 		this.#onFocalPointUpdated();
+	}
+	get focalPoint() {
+		return this.#focalPoint;
 	}
 
 	#focalPoint: UmbImageCropperFocalPoint = { left: 0.5, top: 0.5 };
