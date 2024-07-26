@@ -18,7 +18,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	focalPointElement!: HTMLElement;
 
 	@state()
-	private isDraggingGridHandle = false;
+	private _isDraggingGridHandle = false;
 
 	@state()
 	private coords = { x: 0, y: 0 };
@@ -163,7 +163,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.isDraggingGridHandle = true;
+		this._isDraggingGridHandle = true;
 
 		drag(grid, {
 			onMove: (x, y) => {
@@ -175,7 +175,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 				this.#setFocalPoint(x, y, width, height);
 			},
-			onStop: () => (this.isDraggingGridHandle = false),
+			onStop: () => (this._isDraggingGridHandle = false),
 			initialEvent: event,
 		});
 	}
@@ -224,7 +224,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 				<img id="image" @keydown=${() => nothing} src=${this.src} alt="" />
 				<span id="focal-point"
 					class=${classMap({
-						'focal-point--dragging': this.isDraggingGridHandle,
+						'focal-point--dragging': this._isDraggingGridHandle,
 						'hidden': this.hideFocalPoint
 					})}
 					tabindex=${ifDefined(this.disabled ? undefined : '0')}
