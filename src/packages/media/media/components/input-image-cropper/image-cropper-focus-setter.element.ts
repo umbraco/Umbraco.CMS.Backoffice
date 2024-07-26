@@ -182,7 +182,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	}
 
 	#handleGridKeyDown(event: KeyboardEvent) {
-		if (this.disabled) return;
+		if (this.disabled || this.hideFocalPoint) return;
+		
 		const increment = event.shiftKey ? 1 : 10;
 
 		const grid = this.wrapperElement;
@@ -204,8 +205,6 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 
 		if (event.key === 'ArrowUp') {
 			event.preventDefault();
-		if (this.hideFocalPoint) return;
-
 			this.coords.y = clamp(this.coords.y - increment, 0, height);
 			this.#setFocalPoint(this.coords.x, this.coords.y, width, height);
 		}
