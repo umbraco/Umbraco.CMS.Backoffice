@@ -17,7 +17,8 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 	@query('#focal-point')
 	focalPointElement!: HTMLElement;
 
-	@state() private isDraggingGridHandle = false;
+	@state()
+	private isDraggingGridHandle = false;
 
 	@state()
 	private coords = { x: 0, y: 0 };
