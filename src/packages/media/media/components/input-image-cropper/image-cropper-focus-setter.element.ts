@@ -208,7 +208,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 		return html`
 			<div id="wrapper"
 				@mousedown=${this.#handleGridDrag}
-        			@touchstart=${this.#handleGridDrag}>
+        		@touchstart=${this.#handleGridDrag}>
 				<img id="image" @keydown=${() => nothing} src=${this.src} alt="" />
 				<span id="focal-point"
 					class=${classMap({

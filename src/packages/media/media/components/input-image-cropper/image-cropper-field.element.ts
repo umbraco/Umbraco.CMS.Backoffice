@@ -105,7 +105,7 @@ export class UmbInputImageCropperFieldElement extends UmbLitElement {
 	};
 
 	#onFocalPointChange = (event: UmbFocalPointChangeEvent) => {
-		this.focalPoint = event.focalPoint;
+		this.focalPoint = { top: event.focalPoint.top, left: event.focalPoint.left };
 		this.#updateValue();
 	};
 
@@ -139,7 +139,7 @@ export class UmbInputImageCropperFieldElement extends UmbLitElement {
 					.src=${this.source}
 					.value=${this.currentCrop}
 					?hideFocalPoint=${this.hideFocalPoint}
-					@change=${this.#onCropChange}>
+					@imagecrop-change=${this.#onCropChange}>
 				</umb-image-cropper>
 			`;
 		}
@@ -149,7 +149,7 @@ export class UmbInputImageCropperFieldElement extends UmbLitElement {
 				.focalPoint=${this.focalPoint}
 				.src=${this.source}
 				?hideFocalPoint=${this.hideFocalPoint}
-				@change=${this.#onFocalPointChange}>
+				@focalpoint-change=${this.#onFocalPointChange}>
 			</umb-image-cropper-focus-setter>
 			<div id="actions">${this.renderActions()}</div>
 		`;
