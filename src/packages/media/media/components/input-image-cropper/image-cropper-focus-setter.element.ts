@@ -3,12 +3,13 @@ import type { UmbFocalPointModel } from '../../property-editors/index.js';
 import { drag } from '@umbraco-cms/backoffice/external/uui';
 import { clamp } from '@umbraco-cms/backoffice/utils';
 import { state } from '@umbraco-cms/backoffice/external/lit';
-import { css, customElement, classMap, ifDefined, html, nothing, property, query, LitElement } from '@umbraco-cms/backoffice/external/lit';
+import { css, customElement, classMap, ifDefined, html, nothing, property, query } from '@umbraco-cms/backoffice/external/lit';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
 import type { PropertyValueMap } from '@umbraco-cms/backoffice/external/lit';
 
 @customElement('umb-image-cropper-focus-setter')
-export class UmbImageCropperFocusSetterElement extends LitElement {
+export class UmbImageCropperFocusSetterElement extends UmbLitElement {
 	@query('#image')
 	imageElement!: HTMLImageElement;
 
@@ -216,7 +217,7 @@ export class UmbImageCropperFocusSetterElement extends LitElement {
 						'hidden': this.hideFocalPoint
 					})}
 					tabindex=${ifDefined(this.disabled ? undefined : '0')}
-					aria-label="Focal Point"
+					aria-label="${this.localize.term('general_focalPoint')}"
 					@keydown=${this.#handleGridKeyDown}>
 				</span>
 			</div>
