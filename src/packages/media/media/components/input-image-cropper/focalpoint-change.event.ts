@@ -1,4 +1,4 @@
-import type { UmbFocalPointModel } from '../../property-editors/index.js';
+import type { UmbFocalPointModel } from '../../types.js';
 
 export class UmbFocalPointChangeEvent extends Event {
 	public static readonly TYPE = 'focalpoint-change';

@@ -1,5 +1,5 @@
 import { type UmbImageCropperFocalPoint, UmbFocalPointChangeEvent } from './index.js';
-import type { UmbFocalPointModel } from '../../property-editors/index.js';
+import type { UmbFocalPointModel } from '../../types.js';
 import { drag } from '@umbraco-cms/backoffice/external/uui';
 import { clamp } from '@umbraco-cms/backoffice/utils';
 import { state } from '@umbraco-cms/backoffice/external/lit';
