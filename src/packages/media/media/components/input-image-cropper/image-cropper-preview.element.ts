@@ -1,11 +1,12 @@
 import type { UmbImageCropperCrop, UmbImageCropperFocalPoint } from './index.js';
 import { calculateExtrapolatedValue, clamp } from '@umbraco-cms/backoffice/utils';
-import { LitElement, css, html, nothing, customElement, property, query } from '@umbraco-cms/backoffice/external/lit';
+import { css, html, nothing, customElement, property, query } from '@umbraco-cms/backoffice/external/lit';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
 @customElement('umb-image-cropper-preview')
-export class UmbImageCropperPreviewElement extends LitElement {
+export class UmbImageCropperPreviewElement extends UmbLitElement {
 	@query('#image') imageElement!: HTMLImageElement;
-	@query('#container') imageContainerElement!: HTMLElement;
+	@query('#container') imageContainerElement!: HTMLImageElement;
 
 	@property({ type: Object, attribute: false })
 	crop?: UmbImageCropperCrop;
@@ -113,7 +114,7 @@ export class UmbImageCropperPreviewElement extends LitElement {
 
 	#onFocalPointUpdated(imageWidth?: number, imageHeight?: number, containerWidth?: number, containerHeight?: number) {
 		if (!this.crop) return;
-		if (!this.imageElement || !this.imageContainerElement || !this.#focalPoint) return;
+		if (!this.imageElement || !this.imageContainerElement) return;
 		if (this.crop.coordinates) return;
 
 		if (!imageWidth || !imageHeight) {
@@ -121,17 +122,14 @@ export class UmbImageCropperPreviewElement extends LitElement {
 			imageWidth = image.width;
 			imageHeight = image.height;
 		}
-
 		if (!containerWidth || !containerHeight) {
 			const container = this.imageContainerElement.getBoundingClientRect();
 			containerWidth = container.width;
 			containerHeight = container.height;
 		}
-
 		// position image so that its center is at the focal point
 		let imageLeft = containerWidth / 2 - imageWidth * this.#focalPoint.left;
 		let imageTop = containerHeight / 2 - imageHeight * this.#focalPoint.top;
-
 		// clamp
 		imageLeft = clamp(imageLeft, containerWidth - imageWidth, 0);
 		imageTop = clamp(imageTop, containerHeight - imageHeight, 0);
@@ -151,9 +149,11 @@ export class UmbImageCropperPreviewElement extends LitElement {
 
 		return html`
 			<div id="container">
-				<img id="image" src=${this.src} alt="" draggable="false" />
+				<img id="image" src=${this.src} alt="" />
 			</div>
-			<span id="alias">${this.crop.label ?? this.crop.alias}</span>
+			<span id="alias">
+				${this.crop.label !== undefined ? this.localize.string(this.crop.label) : (this.label ?? this.crop.alias)}
+			</span>
 			<span id="dimensions">${this.crop.width} x ${this.crop.height}</span>
 			${this.crop.coordinates
 				? html`<span id="user-defined"><umb-localize key="imagecropper_customCrop">User defined</umb-localize></span>`
