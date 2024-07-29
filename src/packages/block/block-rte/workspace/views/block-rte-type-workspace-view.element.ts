@@ -57,15 +57,23 @@ export class UmbBlockRteTypeWorkspaceViewSettingsElement extends UmbLitElement i
 				<umb-property
 					label="Background color"
 					alias="backgroundColor"
-					property-editor-ui-alias="Umb.PropertyEditorUi.TextBox"></umb-property>
+					property-editor-ui-alias="Umb.PropertyEditorUi.EyeDropper"
+					.config=${[{ alias: 'showAlpha', value: true }]}></umb-property>
 				<umb-property
 					label="Icon color"
 					alias="iconColor"
-					property-editor-ui-alias="Umb.PropertyEditorUi.TextBox"></umb-property>
+					property-editor-ui-alias="Umb.PropertyEditorUi.EyeDropper"
+					.config=${[{ alias: 'showAlpha', value: true }]}></umb-property>
 				<umb-property
-					label="Custom stylesheet"
-					alias="stylesheet"
-					property-editor-ui-alias="Umb.PropertyEditorUi.StaticFilePicker"></umb-property>
+					label="Thumbnail"
+					alias="thumbnail"
+					property-editor-ui-alias="Umb.PropertyEditorUi.StaticFilePicker"
+					.config=${[
+						{
+							alias: 'singleItemMode',
+							value: true,
+						},
+					]}></umb-property>
 			</uui-box>
 		`;
 	}
