@@ -334,9 +334,9 @@ export class UmbImageCropperElement extends UmbLitElement {
 				step="0.001">
 			</uui-slider>
 			<div id="actions">
-				<uui-button @click=${this.#onReset} .label="${this.localize.term('general_reset')}"></uui-button>
-				<uui-button look="secondary" @click=${this.#onCancel} .label="${this.localize.term('general_cancel')}"></uui-button>
-				<uui-button look="primary" color="positive" @click=${this.#onSave} .label="${this.localize.term('buttons_save')}"></uui-button>
+				<uui-button @click=${this.#onReset} label="${this.localize.term('general_reset')}"></uui-button>
+				<uui-button look="secondary" @click=${this.#onCancel} label="${this.localize.term('general_cancel')}"></uui-button>
+				<uui-button look="primary" color="positive" @click=${this.#onSave} label="${this.localize.term('buttons_save')}"></uui-button>
 			</div>
 		`;
 	}
