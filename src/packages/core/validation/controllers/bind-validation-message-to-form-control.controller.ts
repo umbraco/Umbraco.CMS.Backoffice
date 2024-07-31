@@ -3,14 +3,12 @@ import { UMB_VALIDATION_CONTEXT } from '../context/validation.context-token.js';
 import type { UmbFormControlMixinInterface } from '../mixins/form-control.mixin.js';
 import { jsonStringComparison } from '@umbraco-cms/backoffice/observable-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
-import type { UmbControllerAlias, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
 const ctrlSymbol = Symbol();
 const observeSymbol = Symbol();
 
 export class UmbBindValidationMessageToFormControl extends UmbControllerBase {
-	readonly controllerAlias: UmbControllerAlias;
-
 	#context?: typeof UMB_VALIDATION_CONTEXT.TYPE;
 
 	#control: UmbFormControlMixinInterface<unknown>;
@@ -106,7 +104,7 @@ export class UmbBindValidationMessageToFormControl extends UmbControllerBase {
 		this.#control.focusFirstInvalidElement();
 	}
 
-	destroy(): void {
+	override destroy(): void {
 		this.#context = undefined;
 		// Reset control setup.
 		this.#demolish();

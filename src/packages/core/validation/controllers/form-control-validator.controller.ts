@@ -4,7 +4,7 @@ import type { UmbFormControlMixinInterface } from '../mixins/form-control.mixin.
 import { UmbValidationInvalidEvent } from '../events/validation-invalid.event.js';
 import { UmbValidationValidEvent } from '../events/validation-valid.event.js';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
-import type { UmbControllerAlias, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
 export class UmbFormControlValidator extends UmbControllerBase implements UmbValidator {
 	// The path to the data that this validator is validating.
@@ -13,7 +13,6 @@ export class UmbFormControlValidator extends UmbControllerBase implements UmbVal
 	#context?: typeof UMB_VALIDATION_CONTEXT.TYPE;
 
 	#control: UmbFormControlMixinInterface<unknown>;
-	readonly controllerAlias: UmbControllerAlias;
 
 	#isValid = true;
 
@@ -77,13 +76,13 @@ export class UmbFormControlValidator extends UmbControllerBase implements UmbVal
 		this.#control.focusFirstInvalidElement();
 	}
 
-	hostConnected(): void {
+	override hostConnected(): void {
 		super.hostConnected();
 		if (this.#context) {
 			this.#context.addValidator(this);
 		}
 	}
-	hostDisconnected(): void {
+	override hostDisconnected(): void {
 		super.hostDisconnected();
 		if (this.#context) {
 			this.#context.removeValidator(this);
@@ -95,7 +94,7 @@ export class UmbFormControlValidator extends UmbControllerBase implements UmbVal
 		}
 	}
 
-	destroy(): void {
+	override destroy(): void {
 		if (this.#control) {
 			this.#control.removeEventListener(UmbValidationInvalidEvent.TYPE, this.#setInvalid);
 			this.#control.removeEventListener(UmbValidationValidEvent.TYPE, this.#setValid);

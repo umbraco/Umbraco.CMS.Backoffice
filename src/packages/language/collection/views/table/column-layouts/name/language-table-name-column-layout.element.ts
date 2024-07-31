@@ -6,12 +6,12 @@ export class UmbLanguageTableNameColumnLayoutElement extends LitElement {
 	@property({ attribute: false })
 	value!: { unique: string; name: string; editPath: string };
 
-	render() {
+	override render() {
 		if (!this.value) return nothing;
 		return html` <uui-button compact href=${this.value.editPath} label=${this.value.name}></uui-button> `;
 	}
 
-	static styles = [UmbTextStyles];
+	static override styles = [UmbTextStyles];
 }
 
 declare global {

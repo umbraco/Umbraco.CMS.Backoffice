@@ -1,6 +1,3 @@
-import { UmbDocumentTypeDetailRepository } from '../repository/detail/document-type-detail.repository.js';
-import { UMB_DOCUMENT_TYPE_ENTITY_TYPE } from '../entity.js';
-import type { UmbDocumentTypeDetailModel } from '../types.js';
 import {
 	UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN,
 	UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PRESET_ELEMENT,
@@ -8,6 +5,9 @@ import {
 	UMB_EDIT_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN,
 	type UmbCreateDocumentTypeWorkspacePresetType,
 } from '../paths.js';
+import type { UmbDocumentTypeDetailModel } from '../types.js';
+import { UMB_DOCUMENT_TYPE_ENTITY_TYPE } from '../entity.js';
+import { UmbDocumentTypeDetailRepository } from '../repository/detail/document-type-detail.repository.js';
 import { UmbDocumentTypeWorkspaceEditorElement } from './document-type-workspace-editor.element.js';
 import { UmbContentTypeStructureManager } from '@umbraco-cms/backoffice/content-type';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
@@ -18,7 +18,6 @@ import {
 import {
 	UmbSubmittableWorkspaceContextBase,
 	UmbWorkspaceIsNewRedirectController,
-	UmbWorkspaceRouteManager,
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbTemplateDetailRepository } from '@umbraco-cms/backoffice/template';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
@@ -73,7 +72,6 @@ export class UmbDocumentTypeWorkspaceContext
 	readonly defaultTemplate;
 	readonly cleanup;
 
-	readonly routes = new UmbWorkspaceRouteManager(this);
 	readonly structure = new UmbContentTypeStructureManager<EntityType>(this, this.repository);
 
 	createTemplateMode: boolean = false;
@@ -114,7 +112,7 @@ export class UmbDocumentTypeWorkspaceContext
 					>;
 					const parentEntityType = params.parentEntityType;
 					const parentUnique = params.parentUnique === 'null' ? null : params.parentUnique;
-					const presetAlias = params.presetAlias === 'null' ? null : params.presetAlias ?? null;
+					const presetAlias = params.presetAlias === 'null' ? null : (params.presetAlias ?? null);
 					if (parentUnique === undefined) {
 						throw new Error('ParentUnique url parameter is required to create a document type');
 					}
@@ -139,7 +137,7 @@ export class UmbDocumentTypeWorkspaceContext
 		]);
 	}
 
-	protected resetState(): void {
+	protected override resetState(): void {
 		super.resetState();
 		this.#persistedData.setValue(undefined);
 	}
@@ -322,7 +320,7 @@ export class UmbDocumentTypeWorkspaceContext
 		}
 	}
 
-	public destroy(): void {
+	public override destroy(): void {
 		this.#persistedData.destroy();
 		this.structure.destroy();
 		this.repository.destroy();

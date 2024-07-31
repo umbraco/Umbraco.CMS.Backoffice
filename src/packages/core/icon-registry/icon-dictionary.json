@@ -1098,7 +1098,7 @@
 		},
 		{
 			"name": "icon-home",
-			"file": "home.svg"
+			"file": "house.svg"
 		},
 		{
 			"name": "icon-hourglass",
@@ -1810,8 +1810,7 @@
 		},
 		{
 			"name": "icon-readonly",
-			"file": "ban.svg",
-			"legacy": true
+			"file": "pencil-off.svg"
 		},
 		{
 			"name": "icon-receipt-alt",
@@ -2452,10 +2451,6 @@
 	],
 	"simpleIcons": [
 		{
-			"name": "icon-azure",
-			"file": "microsoftazure.svg"
-		},
-		{
 			"name": "icon-facebook",
 			"file": "facebook.svg"
 		},
@@ -2482,10 +2477,6 @@
 		{
 			"name": "icon-mastodon",
 			"file": "mastodon.svg"
-		},
-		{
-			"name": "icon-microsoft",
-			"file": "microsoft.svg"
 		},
 		{
 			"name": "icon-twitter-x",

@@ -4,7 +4,6 @@ import { UmbLanguageWorkspaceEditorElement } from './language-workspace-editor.e
 import {
 	type UmbSubmittableWorkspaceContext,
 	UmbSubmittableWorkspaceContextBase,
-	UmbWorkspaceRouteManager,
 	UmbWorkspaceIsNewRedirectController,
 	type UmbRoutableWorkspaceContext,
 } from '@umbraco-cms/backoffice/workspace';
@@ -26,8 +25,6 @@ export class UmbLanguageWorkspaceContext
 	// TODO: this is a temp solution to bubble validation errors to the UI
 	#validationErrors = new UmbObjectState<any | undefined>(undefined);
 	readonly validationErrors = this.#validationErrors.asObservable();
-
-	readonly routes = new UmbWorkspaceRouteManager(this);
 
 	constructor(host: UmbControllerHost) {
 		super(host, 'Umb.Workspace.Language');
@@ -57,7 +54,7 @@ export class UmbLanguageWorkspaceContext
 		]);
 	}
 
-	protected resetState(): void {
+	protected override resetState(): void {
 		super.resetState();
 		this.#data.setValue(undefined);
 	}
@@ -133,7 +130,7 @@ export class UmbLanguageWorkspaceContext
 		}
 	}
 
-	destroy(): void {
+	override destroy(): void {
 		this.#data.destroy();
 		super.destroy();
 	}

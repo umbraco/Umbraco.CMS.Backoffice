@@ -13,6 +13,7 @@ import './components/index.js';
 
 const CORE_PACKAGES = [
 	import('../../packages/block/umbraco-package.js'),
+	import('../../packages/code-editor/umbraco-package.js'),
 	import('../../packages/data-type/umbraco-package.js'),
 	import('../../packages/dictionary/umbraco-package.js'),
 	import('../../packages/documents/umbraco-package.js'),
@@ -33,6 +34,7 @@ const CORE_PACKAGES = [
 	import('../../packages/tags/umbraco-package.js'),
 	import('../../packages/templating/umbraco-package.js'),
 	import('../../packages/tiny-mce/umbraco-package.js'),
+	import('../../packages/ufm/umbraco-package.js'),
 	import('../../packages/umbraco-news/umbraco-package.js'),
 	import('../../packages/user/umbraco-package.js'),
 	import('../../packages/webhook/umbraco-package.js'),
@@ -71,7 +73,7 @@ export class UmbBackofficeElement extends UmbLitElement {
 		});
 	}
 
-	render() {
+	override render() {
 		return html`
 			<umb-backoffice-header></umb-backoffice-header>
 			<umb-backoffice-main></umb-backoffice-main>
@@ -79,7 +81,7 @@ export class UmbBackofficeElement extends UmbLitElement {
 		`;
 	}
 
-	static styles = [
+	static override styles = [
 		css`
 			:host {
 				display: flex;

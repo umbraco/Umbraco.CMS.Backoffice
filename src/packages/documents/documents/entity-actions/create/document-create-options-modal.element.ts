@@ -42,7 +42,7 @@ export class UmbDocumentCreateOptionsModalElement extends UmbModalBaseElement<
 	@state()
 	private _availableBlueprints: Array<UmbDocumentBlueprintItemBaseModel> = [];
 
-	async firstUpdated() {
+	override async firstUpdated() {
 		const parentUnique = this.data?.parent.unique;
 		const documentTypeUnique = this.data?.documentType?.unique || null;
 
@@ -115,11 +115,11 @@ export class UmbDocumentCreateOptionsModalElement extends UmbModalBaseElement<
 		}
 	}
 
-	render() {
+	override render() {
 		return html`
 			<umb-body-layout headline=${this.localize.term('actions_create')}>
 				${when(
-					this._availableBlueprints.length === 0 && this.#documentTypeUnique,
+					this._availableBlueprints.length && this.#documentTypeUnique,
 					() => this.#renderBlueprints(),
 					() => this.#renderDocumentTypes(),
 				)}
@@ -189,7 +189,7 @@ export class UmbDocumentCreateOptionsModalElement extends UmbModalBaseElement<
 		> `;
 	}
 
-	static styles = [
+	static override styles = [
 		UmbTextStyles,
 		css`
 			#blank {
