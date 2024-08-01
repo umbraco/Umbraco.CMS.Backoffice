@@ -1,6 +1,12 @@
+import type { UmbCollectionRepository } from '../repository/index.js';
 import { html, nothing, customElement, property, state, repeat } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import type { ManifestMenuItemTreeKind, UmbMenuItemElement } from '@umbraco-cms/backoffice/extension-registry';
+import {
+	type ManifestMenuItemCollectionKind,
+	umbExtensionsRegistry,
+	type ManifestRepository,
+	type UmbMenuItemElement,
+} from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLanguageCollectionRepository } from '@umbraco-cms/backoffice/language';
 import { UMB_SECTION_CONTEXT } from '@umbraco-cms/backoffice/section';
 import {
@@ -8,12 +14,21 @@ import {
 	UmbRequestReloadStructureForEntityEvent,
 } from '@umbraco-cms/backoffice/entity-action';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
+import { UmbExtensionApiInitializer } from '@umbraco-cms/backoffice/extension-api';
 
 const elementName = 'umb-collection-menu-item';
 @customElement(elementName)
 export class UmbCollectionMenuItemElement extends UmbLitElement implements UmbMenuItemElement {
+	#manifest?: ManifestMenuItemCollectionKind | undefined;
+
 	@property({ type: Object })
-	manifest?: ManifestMenuItemTreeKind;
+	public get manifest(): ManifestMenuItemCollectionKind | undefined {
+		return this.#manifest;
+	}
+	public set manifest(value: ManifestMenuItemCollectionKind | undefined) {
+		this.#manifest = value;
+		this.#observeRepository();
+	}
 
 	@state()
 	private _items: any[] = [];
@@ -113,6 +128,21 @@ export class UmbCollectionMenuItemElement extends UmbLitElement implements UmbMe
 
 	#onReloadRequest = () => this.#requestItems();
 	#onReloadStructureRequest = () => this.#requestItems();
+
+	#observeRepository() {
+		const repositoryAlias = this.manifest?.meta.collectionRepositoryAlias;
+		if (!repositoryAlias) throw new Error('Collection Menu Item must have a repository alias.');
+
+		new UmbExtensionApiInitializer<ManifestRepository<UmbCollectionRepository<any>>>(
+			this,
+			umbExtensionsRegistry,
+			repositoryAlias,
+			[this],
+			(permitted, ctrl) => {
+				this.#collectionRepository = permitted ? ctrl.api : undefined;
+			},
+		);
+	}
 
 	override render() {
 		const manifest = this.manifest;
