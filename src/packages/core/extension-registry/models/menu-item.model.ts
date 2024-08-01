@@ -16,6 +16,7 @@ export interface MetaMenuItem {
 	icon?: string;
 }
 
+// Tree kind
 export interface ManifestMenuItemTreeKind extends ManifestMenuItem {
 	type: 'menuItem';
 	kind: 'tree';
@@ -25,4 +26,15 @@ export interface ManifestMenuItemTreeKind extends ManifestMenuItem {
 export interface MetaMenuItemTreeKind extends MetaMenuItem {
 	treeAlias: string;
 	hideTreeRoot?: boolean;
+}
+
+// Collection kind
+export interface ManifestMenuItemCollectionKind extends ManifestMenuItem {
+	type: 'menuItem';
+	kind: 'collection';
+	meta: MetaMenuItemCollectionKind;
+}
+
+export interface MetaMenuItemCollectionKind extends MetaMenuItem {
+	collectionRepositoryAlias: string;
 }
