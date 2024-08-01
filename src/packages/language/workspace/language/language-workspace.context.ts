@@ -9,6 +9,8 @@ import {
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
+import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';
 
 export class UmbLanguageWorkspaceContext
 	extends UmbSubmittableWorkspaceContextBase<UmbLanguageDetailModel>
@@ -128,6 +130,14 @@ export class UmbLanguageWorkspaceContext
 				throw new Error(error.message);
 			}
 		}
+
+		const actionEventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
+		const event = new UmbRequestReloadStructureForEntityEvent({
+			unique: this.getUnique()!,
+			entityType: this.getEntityType(),
+		});
+
+		actionEventContext.dispatchEvent(event);
 	}
 
 	override destroy(): void {
