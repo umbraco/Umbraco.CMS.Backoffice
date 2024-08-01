@@ -3,6 +3,11 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { ManifestMenuItemTreeKind, UmbMenuItemElement } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLanguageCollectionRepository } from '@umbraco-cms/backoffice/language';
 import { UMB_SECTION_CONTEXT } from '@umbraco-cms/backoffice/section';
+import {
+	UmbRequestReloadChildrenOfEntityEvent,
+	UmbRequestReloadStructureForEntityEvent,
+} from '@umbraco-cms/backoffice/entity-action';
+import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
 
 const elementName = 'umb-collection-menu-item';
 @customElement(elementName)
@@ -29,12 +34,38 @@ export class UmbCollectionMenuItemElement extends UmbLitElement implements UmbMe
 	#sectionContext?: typeof UMB_SECTION_CONTEXT.TYPE;
 	#sectionPathname? = '';
 
+	#actionEventContext?: typeof UMB_ACTION_EVENT_CONTEXT.TYPE;
+
 	constructor() {
 		super();
 
 		this.consumeContext(UMB_SECTION_CONTEXT, (instance) => {
 			this.#sectionContext = instance;
 			this.#observeSectionPath();
+		});
+
+		this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
+			this.#actionEventContext?.removeEventListener(
+				UmbRequestReloadChildrenOfEntityEvent.TYPE,
+				this.#onReloadRequest as EventListener,
+			);
+
+			this.#actionEventContext?.removeEventListener(
+				UmbRequestReloadStructureForEntityEvent.TYPE,
+				this.#onReloadStructureRequest as unknown as EventListener,
+			);
+
+			this.#actionEventContext = instance;
+
+			this.#actionEventContext.addEventListener(
+				UmbRequestReloadChildrenOfEntityEvent.TYPE,
+				this.#onReloadRequest as EventListener,
+			);
+
+			this.#actionEventContext.addEventListener(
+				UmbRequestReloadStructureForEntityEvent.TYPE,
+				this.#onReloadStructureRequest as unknown as EventListener,
+			);
 		});
 	}
 
@@ -52,6 +83,10 @@ export class UmbCollectionMenuItemElement extends UmbLitElement implements UmbMe
 
 	async #onShowChildren(event: any) {
 		event.stopPropagation();
+		this.#requestItems();
+	}
+
+	async #requestItems() {
 		this._isLoading = true;
 		const { data } = await this.#collectionRepository.requestCollection({});
 		this._items = data?.items ?? [];
@@ -73,9 +108,11 @@ export class UmbCollectionMenuItemElement extends UmbLitElement implements UmbMe
 	#checkIsActive(entityType: string, unique: string | null) {
 		const location = window.location.pathname;
 		const itemPath = this.#constructPath(entityType, unique);
-		console.log(location, itemPath);
 		return location.includes(itemPath);
 	}
+
+	#onReloadRequest = () => this.#requestItems();
+	#onReloadStructureRequest = () => this.#requestItems();
 
 	override render() {
 		const manifest = this.manifest;
@@ -95,7 +132,7 @@ export class UmbCollectionMenuItemElement extends UmbLitElement implements UmbMe
 				.caretLabel=${this.localize.term('visuallyHiddenTexts_expandItems') + ' ' + label}
 				label=${label}
 				href="${this.#constructPath(entityType, null)}">
-				${this.#renderIcon(this.manifest?.meta.icon)} ${this.renderLabel()}
+				${this.#renderIcon(this.manifest?.meta.icon)} ${this.#renderLabel()}
 				${this.#renderActions(entityType, null, label)} ${this.#renderItems()}
 				<slot></slot>
 				${this.#renderPaging()}
@@ -103,7 +140,7 @@ export class UmbCollectionMenuItemElement extends UmbLitElement implements UmbMe
 		`;
 	}
 
-	renderLabel() {
+	#renderLabel() {
 		return html`<slot name="label" slot="label"></slot>`;
 	}
 
@@ -127,7 +164,7 @@ export class UmbCollectionMenuItemElement extends UmbLitElement implements UmbMe
 								label=${item.name}
 								href=${this.#constructPath(item.entityType, item.unique)}
 								?active=${this.#checkIsActive(item.entityType, item.unique)}>
-								${this.#renderIcon(this.manifest?.meta.icon)} ${this.renderLabel()}
+								${this.#renderIcon(this.manifest?.meta.icon)} ${this.#renderLabel()}
 								${this.#renderActions(item.entityType, item.unique, item.name)}}
 							</uui-menu-item>`,
 					)
@@ -141,6 +178,20 @@ export class UmbCollectionMenuItemElement extends UmbLitElement implements UmbMe
 		}
 
 		return html` <uui-button @click=${this.#onLoadMoreClick} label="Load more"></uui-button> `;
+	}
+
+	override destroy(): void {
+		this.#actionEventContext?.removeEventListener(
+			UmbRequestReloadChildrenOfEntityEvent.TYPE,
+			this.#onReloadRequest as EventListener,
+		);
+
+		this.#actionEventContext?.removeEventListener(
+			UmbRequestReloadStructureForEntityEvent.TYPE,
+			this.#onReloadStructureRequest as unknown as EventListener,
+		);
+
+		super.destroy();
 	}
 }
 
