@@ -232,7 +232,7 @@
 		"@storybook/addon-essentials": "^7.6.17",
 		"@storybook/addon-links": "^7.6.17",
 		"@storybook/mdx2-csf": "^1.1.0",
-		"@storybook/web-components": "^7.6.17",
+		"@storybook/web-components": "^8.2.7",
 		"@storybook/web-components-vite": "^7.6.17",
 		"@types/chai": "^4.3.16",
 		"@types/eslint__js": "^8.42.3",
