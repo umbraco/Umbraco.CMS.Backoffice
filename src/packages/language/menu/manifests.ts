@@ -3,6 +3,7 @@ import type { ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 export const manifests: Array<ManifestTypes> = [
 	{
 		type: 'menuItem',
+		kind: 'collection',
 		alias: 'Umb.MenuItem.Languages',
 		name: 'Languages Menu Item',
 		weight: 100,
