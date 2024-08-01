@@ -1,6 +1,8 @@
+import { UMB_LANGUAGE_COLLECTION_REPOSITORY_ALIAS } from '../collection/index.js';
+import type { ManifestKind } from '@umbraco-cms/backoffice/extension-api';
 import type { ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 
-export const manifests: Array<ManifestTypes> = [
+export const manifests: Array<ManifestTypes | ManifestKind<ManifestTypes>> = [
 	{
 		type: 'menuItem',
 		kind: 'collection',
@@ -12,6 +14,7 @@ export const manifests: Array<ManifestTypes> = [
 			icon: 'icon-globe',
 			entityType: 'language-root',
 			menus: ['Umb.Menu.StructureSettings'],
+			collectionRepositoryAlias: UMB_LANGUAGE_COLLECTION_REPOSITORY_ALIAS,
 		},
 	},
 	{
