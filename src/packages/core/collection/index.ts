@@ -10,6 +10,9 @@ export * from './default/collection-default.context.js';
 export * from './default/collection-default.context-token.js';
 export * from './collection-filter-model.interface.js';
 
+// Collection Structure Menu
+export * from './collection-something/index.js';
+
 export { UMB_COLLECTION_ALIAS_CONDITION } from './collection-alias.manifest.js';
 export { UMB_COLLECTION_BULK_ACTION_PERMISSION_CONDITION } from './collection-bulk-action-permission.manifest.js';
 

@@ -1,7 +1,26 @@
 import type { Observable } from '@umbraco-cms/backoffice/external/rxjs';
 import type { ManifestCollection } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbPaginationManager } from '@umbraco-cms/backoffice/utils';
+import type { UmbEntityModel } from '@umbraco-cms/backoffice/entity';
 
+export interface UmbCollectionItemModel extends UmbEntityModel {
+	unique: string;
+}
+
+export interface UmbCollectionRootModel extends UmbEntityModel {
+	unique: null;
+	hasChildren: boolean;
+	name: string;
+	icon: string | null;
+}
+
+export type UmbCollectionSelectionConfiguration = {
+	multiple?: boolean;
+	selectable?: boolean;
+	selection?: Array<string | null>;
+};
+
+// TODO: this interface should only be applied for content collections.
 export interface UmbCollectionBulkActionPermissions {
 	allowBulkCopy: boolean;
 	allowBulkDelete: boolean;
@@ -10,6 +29,7 @@ export interface UmbCollectionBulkActionPermissions {
 	allowBulkUnpublish: boolean;
 }
 
+// TODO: this interface should only be applied for content collections.
 export interface UmbCollectionConfiguration {
 	unique?: string;
 	dataTypeId?: string;
@@ -21,6 +41,7 @@ export interface UmbCollectionConfiguration {
 	userDefinedProperties?: Array<UmbCollectionColumnConfiguration>;
 }
 
+// TODO: this interface should only be applied for content collections.
 export interface UmbCollectionColumnConfiguration {
 	alias: string;
 	header: string;
@@ -31,6 +52,7 @@ export interface UmbCollectionColumnConfiguration {
 	nameTemplate?: string;
 }
 
+// TODO: this interface should only be applied for content collections.
 export interface UmbCollectionLayoutConfiguration {
 	icon?: string;
 	name: string;

@@ -36,5 +36,6 @@ export interface ManifestMenuItemCollectionKind extends ManifestMenuItem {
 }
 
 export interface MetaMenuItemCollectionKind extends MetaMenuItem {
-	collectionRepositoryAlias: string;
+	collectionSomethingAlias: string;
+	hideRoot?: boolean;
 }
