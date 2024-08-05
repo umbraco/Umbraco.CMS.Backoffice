@@ -92,33 +92,13 @@ export class UmbDefaultCollectionSomethingElement extends UmbLitElement {
 	}
 
 	override render() {
-		return html`${this.#renderRoot()} ${this.#renderItems()}`;
+		return html`${this.#renderRoot()} ${this.#renderItems()}${this.#renderPaging()}`;
 	}
 
-	#renderRoot() {
-		return html`<div>${this.localize.string(this._root?.name || '')}</div>`;
-		if (this.hideRoot || this._root === undefined) return nothing;
-		return html`
-			<umb-tree-item
-				.entityType=${this._root.entityType}
-				.props=${{ hideActions: this.hideItemActions, item: this._root }}></umb-tree-item>
-		`;
-	}
-
-	#renderItems() {
-		// only show the root items directly if the collection root is hidden
-		if (this.hideRoot === true) {
-			return html`
-				${repeat(
-					this._items,
-					(item) => item.unique,
-					(item) => html`<div>${item.unique}</div>`,
-				)}
-				${this.#renderPaging()}
-			`;
-		} else {
-			return nothing;
-		}
+	// TODO: do we want to catch and emit a backoffice event here?
+	#onShowChildren(event: any) {
+		event.stopPropagation();
+		this.#api?.load();
 	}
 
 	#onLoadMoreClick = (event: any) => {
@@ -126,6 +106,32 @@ export class UmbDefaultCollectionSomethingElement extends UmbLitElement {
 		const next = (this._currentPage = this._currentPage + 1);
 		this.#api?.pagination.setCurrentPageNumber(next);
 	};
+
+	#renderRoot() {
+		const rootIcon = this._root?.icon || 'icon-folder';
+		return html`
+			<uui-menu-item
+				.label=${this.localize.string(this._root?.name || '')}
+				.hasChildren=${this._root?.hasChildren || false}
+				@show-children=${this.#onShowChildren}>
+				<uui-icon slot="icon" name=${rootIcon}></uui-icon>
+				${this.#renderItems()}
+			</uui-menu-item>
+		`;
+	}
+
+	#renderItems() {
+		return html`
+			${repeat(
+				this._items,
+				(item) => item.unique,
+				(item) =>
+					html`<umb-collection-something-item
+						.entityType=${this._root?.entityType}
+						.props=${{ hideActions: this.hideItemActions, item }}></umb-collection-something-item>`,
+			)}
+		`;
+	}
 
 	#renderPaging() {
 		if (this._totalPages <= 1 || this._currentPage === this._totalPages) {

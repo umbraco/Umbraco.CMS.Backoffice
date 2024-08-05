@@ -19,14 +19,15 @@ export class UmbLanguageCollectionRepository extends UmbRepositoryBase implement
 	}
 
 	async requestRoot() {
-		//const { data: treeRootData } = await this._treeSource.getRootItems({ skip: 0, take: 1 });
-		//const hasChildren = treeRootData ? treeRootData.total > 0 : false;
+		const { data: collectionRootData } = await this.#collectionSource.getCollection({ skip: 0, take: 1 });
+		const hasChildren = collectionRootData ? collectionRootData.total > 0 : false;
 
 		const data = {
 			unique: null,
 			entityType: UMB_LANGUAGE_ROOT_ENTITY_TYPE,
 			name: '#treeHeaders_languages',
-			hasChildren: true,
+			hasChildren,
+			icon: 'icon-globe',
 		};
 
 		return { data };

@@ -6,8 +6,10 @@ import { UMB_LANGUAGE_COLLECTION_ALIAS, UMB_LANGUAGE_COLLECTION_SOMETHING_ALIAS 
 import type {
 	ManifestCollection,
 	ManifestCollectionSomething,
+	ManifestCollectionSomethingItem,
 	ManifestTypes,
 } from '@umbraco-cms/backoffice/extension-registry';
+import { UMB_LANGUAGE_ENTITY_TYPE, UMB_LANGUAGE_ROOT_ENTITY_TYPE } from '../entity.js';
 
 const collectionManifest: ManifestCollection = {
 	type: 'collection',
@@ -29,9 +31,18 @@ const collectionSomethingManifest: ManifestCollectionSomething = {
 	},
 };
 
+const collectionSomethingItemManifest: ManifestCollectionSomethingItem = {
+	type: 'collectionSomethingItem',
+	kind: 'default',
+	alias: 'Umb.CollectionSomethingItem.Language',
+	name: 'Language Collection Something Item',
+	forEntityTypes: [UMB_LANGUAGE_ROOT_ENTITY_TYPE, UMB_LANGUAGE_ENTITY_TYPE],
+};
+
 export const manifests: Array<ManifestTypes> = [
 	collectionManifest,
 	collectionSomethingManifest,
+	collectionSomethingItemManifest,
 	...collectionRepositoryManifests,
 	...collectionViewManifests,
 	...collectionActionManifests,

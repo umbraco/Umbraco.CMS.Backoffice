@@ -72,6 +72,7 @@ import type { ManifestEntryPoint } from './entry-point.model.js';
 import type { ManifestMonacoMarkdownEditorAction } from './monaco-markdown-editor-action.model.js';
 import type { ManifestSectionRoute } from './section-route.model.js';
 import type { ManifestCollectionSomething } from './collection-something.model.js';
+import type { ManifestCollectionSomethingItem } from './collection-something-item.model.js';
 import type { ManifestBase, ManifestBundle, ManifestCondition } from '@umbraco-cms/backoffice/extension-api';
 
 export type * from './app-entry-point.model.js';
@@ -80,6 +81,7 @@ export type * from './backoffice-entry-point.model.js';
 export type * from './block-editor-custom-view.model.js';
 export type * from './collection-action.model.js';
 export type * from './collection-something.model.js';
+export type * from './collection-something-item.model.js';
 export type * from './collection-view.model.js';
 export type * from './collection.models.js';
 export type * from './current-user-action.model.js';
@@ -163,6 +165,7 @@ export type ManifestTypes =
 	| ManifestCollection
 	| ManifestCollectionAction
 	| ManifestCollectionSomething
+	| ManifestCollectionSomethingItem
 	| ManifestCollectionView
 	| ManifestCondition
 	| ManifestCurrentUserAction

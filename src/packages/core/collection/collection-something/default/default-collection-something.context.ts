@@ -17,6 +17,7 @@ import {
 	UmbRequestReloadStructureForEntityEvent,
 } from '@umbraco-cms/backoffice/entity-action';
 import { UmbExtensionApiInitializer } from '@umbraco-cms/backoffice/extension-api';
+import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 
 export class UmbDefaultCollectionSomethingContext<
 	ItemType extends UmbCollectionItemModel = UmbCollectionItemModel,
@@ -65,7 +66,7 @@ export class UmbDefaultCollectionSomethingContext<
 		this.pagination.setPageSize(this.#paging.take);
 
 		// listen for page changes on the pagination manager
-		//this.pagination.addEventListener(UmbChangeEvent.TYPE, this.#onPageChange);
+		this.pagination.addEventListener(UmbChangeEvent.TYPE, this.#onPageChange);
 
 		this.consumeContext(UMB_ACTION_EVENT_CONTEXT, (instance) => {
 			this.#actionEventContext?.removeEventListener(
@@ -98,13 +99,13 @@ export class UmbDefaultCollectionSomethingContext<
 	 */
 	// TODO: debouncing the load method because multiple props can be set at the same time
 	// that would trigger multiple load calls. This is a temporary solution to avoid that.
-	public load = debounce(() => this.#debouncedLoadTree(), 100);
+	public load = debounce(() => this.#debouncedLoadItems(), 100);
 
 	/**
 	 * Reloads the tree
 	 * @memberof UmbDefaultTreeContext
 	 */
-	public loadMore = () => this.#debouncedLoadTree(true);
+	public loadMore = () => this.#debouncedLoadItems(true);
 
 	setHideRoot(hideTreeRoot: boolean) {
 		this.#hideRoot.setValue(hideTreeRoot);
@@ -119,12 +120,8 @@ export class UmbDefaultCollectionSomethingContext<
 
 	#onReloadStructureRequest = () => this.#loadItems();
 
-	#debouncedLoadTree(reload = false) {
-		const hideRoot = this.getHideRoot();
-		if (hideRoot) {
-			this.#loadItems(reload);
-			return;
-		}
+	#debouncedLoadItems(reload = false) {
+		this.#loadItems(reload);
 	}
 
 	async #loadRoot() {
@@ -141,6 +138,10 @@ export class UmbDefaultCollectionSomethingContext<
 	}
 
 	async #loadItems(loadMore = false) {
+		if (!this.#repository) {
+			throw new Error('Repository is missing');
+		}
+
 		const skip = loadMore ? this.#paging.skip : 0;
 		const take = loadMore ? this.#paging.take : this.pagination.getCurrentPageNumber() * this.#paging.take;
 
@@ -157,6 +158,12 @@ export class UmbDefaultCollectionSomethingContext<
 			this.pagination.setTotalItems(data.total);
 		}
 	}
+
+	#onPageChange = (event: UmbChangeEvent) => {
+		const target = event.target as UmbPaginationManager;
+		this.#paging.skip = target.getSkip();
+		this.loadMore();
+	};
 
 	#observeRepository() {
 		const repositoryAlias = this.manifest?.meta.repositoryAlias;

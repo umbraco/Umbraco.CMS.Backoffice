@@ -5,6 +5,8 @@ import type { UmbEntityModel } from '@umbraco-cms/backoffice/entity';
 
 export interface UmbCollectionItemModel extends UmbEntityModel {
 	unique: string;
+	icon?: string;
+	name?: string;
 }
 
 export interface UmbCollectionRootModel extends UmbEntityModel {
