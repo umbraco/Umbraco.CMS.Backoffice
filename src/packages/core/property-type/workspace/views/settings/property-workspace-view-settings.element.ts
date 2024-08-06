@@ -1,11 +1,16 @@
 import { UMB_PROPERTY_TYPE_WORKSPACE_CONTEXT } from '../../../index.js';
-import { css, html, customElement, state, nothing } from '@umbraco-cms/backoffice/external/lit';
+import { css, html, customElement, state, nothing, query } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UmbLitElement, umbFocus } from '@umbraco-cms/backoffice/lit-element';
 import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbPropertyTypeModel } from '@umbraco-cms/backoffice/content-type';
 import { UMB_CONTENT_TYPE_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/content-type';
-import type { UUIBooleanInputEvent, UUIInputEvent, UUISelectEvent } from '@umbraco-cms/backoffice/external/uui';
+import type {
+	UUIBooleanInputEvent,
+	UUIInputEvent,
+	UUIInputLockElement,
+	UUISelectEvent,
+} from '@umbraco-cms/backoffice/external/uui';
 import { generateAlias } from '@umbraco-cms/backoffice/utils';
 
 @customElement('umb-property-type-workspace-view-settings')
@@ -43,10 +48,16 @@ export class UmbPropertyTypeWorkspaceViewSettingsElement extends UmbLitElement i
 	private _aliasLocked = true;
 
 	@state()
+	private _autoGenerateAlias = true;
+
+	@state()
 	private _contentTypeVariesByCulture?: boolean;
 
 	@state()
 	private _contentTypeVariesBySegment?: boolean;
+
+	@query('#alias-input')
+	private _aliasInput!: UUIInputLockElement;
 
 	constructor() {
 		super();
@@ -54,6 +65,10 @@ export class UmbPropertyTypeWorkspaceViewSettingsElement extends UmbLitElement i
 		this.consumeContext(UMB_PROPERTY_TYPE_WORKSPACE_CONTEXT, (instance) => {
 			this.#context = instance;
 			this.observe(instance.data, (data) => {
+				if (!this._data && data?.alias) {
+					// Initial. Loading existing property
+					this._autoGenerateAlias = false;
+				}
 				this._data = data;
 			});
 		});
@@ -69,23 +84,16 @@ export class UmbPropertyTypeWorkspaceViewSettingsElement extends UmbLitElement i
 	}
 
 	#onNameChange(event: UUIInputEvent) {
-		const oldName = this._data?.name;
-		const oldAlias = this._data?.alias;
 		this.updateValue({ name: event.target.value.toString() });
-		if (this._aliasLocked) {
-			const expectedOldAlias = generateAlias(oldName ?? '');
-			// Only update the alias if the alias matches a generated alias of the old name (otherwise the alias is considered one written by the user.) [NL]
-			if (expectedOldAlias === oldAlias) {
-				this.updateValue({ alias: generateAlias(this._data?.name ?? '') });
-			}
+		if (this._aliasLocked && this._autoGenerateAlias) {
+			this.updateValue({ alias: generateAlias(this._data?.name ?? '') });
 		}
 	}
 
-	#onAliasChange(event: UUIInputEvent) {
-		const alias = generateAlias(event.target.value.toString());
-		if (this._aliasLocked) {
-			this.updateValue({ alias });
-		}
+	#onAliasChange() {
+		// TODO: Why can I not get the correct value via event? Is it an issue in uui library too?
+		const alias = generateAlias(this._aliasInput.value.toString());
+		this.updateValue({ alias });
 	}
 
 	#onDescriptionChange(event: UUIInputEvent) {
@@ -130,6 +138,12 @@ export class UmbPropertyTypeWorkspaceViewSettingsElement extends UmbLitElement i
 
 	#onToggleAliasLock() {
 		this._aliasLocked = !this._aliasLocked;
+		if (this._aliasLocked && !this._data?.alias) {
+			// Reenable auto-generate if alias is empty and locked.
+			this._autoGenerateAlias = true;
+		} else {
+			this._autoGenerateAlias = false;
+		}
 	}
 
 	#onCustomValidationChange(event: UUISelectEvent) {
@@ -186,19 +200,17 @@ export class UmbPropertyTypeWorkspaceViewSettingsElement extends UmbLitElement i
 								${umbFocus()}>
 								<!-- TODO: validation for bad characters -->
 							</uui-input>
-							<uui-input
+							<uui-input-lock
 								id="alias-input"
 								name="alias"
 								@input=${this.#onAliasChange}
+								@lock-change=${this.#onToggleAliasLock}
 								.value=${this._data?.alias}
 								label=${this.localize.term('placeholders_enterAlias')}
 								placeholder=${this.localize.term('placeholders_enterAlias')}
-								?disabled=${this._aliasLocked}>
+								?locked=${this._aliasLocked}>
 								<!-- TODO: validation for bad characters -->
-								<div @click=${this.#onToggleAliasLock} @keydown=${() => ''} id="alias-lock" slot="prepend">
-									<uui-icon name=${this._aliasLocked ? 'icon-lock' : 'icon-unlocked'}></uui-icon>
-								</div>
-							</uui-input>
+							</uui-input-lock>
 							<uui-textarea
 								id="description-input"
 								name="description"

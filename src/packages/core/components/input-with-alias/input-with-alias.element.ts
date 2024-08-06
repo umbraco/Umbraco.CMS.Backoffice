@@ -1,4 +1,4 @@
-import { css, customElement, html, nothing, property, state } from '@umbraco-cms/backoffice/external/lit';
+import { css, customElement, html, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
@@ -11,7 +11,7 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 	label: string = '';
 
 	@property({ type: String, reflect: false })
-	alias?: string;
+	alias = '';
 
 	@property({ type: Boolean, reflect: true, attribute: 'alias-readonly' })
 	aliasReadonly = false;
@@ -36,16 +36,10 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 		const target = e.composedPath()[0] as UUIInputElement;
 
 		if (typeof target?.value === 'string') {
-			const oldName = this.value;
-			const oldAlias = this.alias ?? '';
 			this.value = e.target.value.toString();
 			if (this.autoGenerateAlias && this._aliasLocked) {
-				// If locked we will update the alias, but only if it matches the generated alias of the old name [NL]
-				const expectedOldAlias = generateAlias(oldName ?? '');
-				// Only update the alias if the alias matches a generated alias of the old name (otherwise the alias is considered one written by the user.) [NL]
-				if (expectedOldAlias === oldAlias) {
-					this.alias = generateAlias(this.value);
-				}
+				// Generate alias if it's locked and auto-generate is enabled
+				this.alias = generateAlias(this.value);
 			}
 
 			this.dispatchEvent(new UmbChangeEvent());
@@ -66,6 +60,12 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 
 	#onToggleAliasLock() {
 		this._aliasLocked = !this._aliasLocked;
+		if (!this.alias && this._aliasLocked) {
+			// Reenable auto-generate if alias is empty and locked.
+			this.autoGenerateAlias = true;
+		} else {
+			this.autoGenerateAlias = false;
+		}
 	}
 
 	override render() {
@@ -79,26 +79,17 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 				label=${nameLabel}
 				.value=${this.value}
 				@input=${this.#onNameChange}>
-				<!-- TODO: should use UUI-LOCK-INPUT, but that does not fire an event when its locked/unlocked -->
-				<uui-input
+				<uui-input-lock
 					auto-width
 					name="alias"
 					slot="append"
 					label=${aliasLabel}
 					.value=${this.alias}
 					placeholder=${aliasLabel}
-					?disabled=${this._aliasLocked && !this.aliasReadonly}
-					?readonly=${this.aliasReadonly}
+					@lock-change=${this.#onToggleAliasLock}
 					@input=${this.#onAliasChange}>
 					<!-- TODO: validation for bad characters -->
-					${this.aliasReadonly
-						? nothing
-						: html`
-								<div @click=${this.#onToggleAliasLock} @keydown=${() => ''} id="alias-lock" slot="prepend">
-									<uui-icon name=${this._aliasLocked ? 'icon-lock' : 'icon-unlocked'}></uui-icon>
-								</div>
-							`}
-				</uui-input>
+				</uui-input-lock>
 			</uui-input>
 		`;
 	}
