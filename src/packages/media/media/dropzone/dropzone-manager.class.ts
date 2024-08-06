@@ -13,11 +13,13 @@ import { UmbId } from '@umbraco-cms/backoffice/id';
 import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import { UmbArrayState } from '@umbraco-cms/backoffice/observable-api';
 
+/** Deprecated */
 export interface UmbUploadableFileModel extends UmbTemporaryFileModel {
 	unique: string;
 	mediaTypeUnique: string;
 }
 
+/** Deprecated */
 export interface UmbUploadableExtensionModel {
 	fileExtension: string;
 	mediaTypes: Array<UmbAllowedMediaTypeModel>;
@@ -25,6 +27,7 @@ export interface UmbUploadableExtensionModel {
 
 /**
  * Manages the dropzone and uploads files to the server.
+ * @deprecated Use UmbFileDropzoneManager instead.
  * @method createFilesAsMedia - Upload files to the server and creates the items using corresponding media type.
  * @method createFilesAsTemporary - Upload the files as temporary files and returns the data.
  * @observable completed - Emits an array of completed uploads.

@@ -1,9 +1,7 @@
-import { UmbDropzoneManager, type UmbUploadableFileModel } from './dropzone-manager.class.js';
-import { UmbProgressEvent } from '@umbraco-cms/backoffice/event';
+import { UmbFileDropzoneManager } from './file-dropzone-manager.class.js';
 import { css, html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
 import type { UUIFileDropzoneElement, UUIFileDropzoneEvent } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import type { UmbTemporaryFileModel } from '@umbraco-cms/backoffice/temporary-file';
 
 @customElement('umb-dropzone')
 export class UmbDropzoneElement extends UmbLitElement {
@@ -20,12 +18,6 @@ export class UmbDropzoneElement extends UmbLitElement {
 	accept: Array<string> = [];
 
 	//TODO: logic to disable the dropzone?
-
-	#files: Array<UmbUploadableFileModel | UmbTemporaryFileModel> = [];
-
-	public getFiles() {
-		return this.#files;
-	}
 
 	public browse() {
 		const element = this.shadowRoot?.querySelector('#dropzone') as UUIFileDropzoneElement;
@@ -63,33 +55,28 @@ export class UmbDropzoneElement extends UmbLitElement {
 	}
 
 	async #onDropFiles(event: UUIFileDropzoneEvent) {
-		// TODO Handle of folder uploads.
+		if (!event.detail.files.length && !event.detail.folders.length) return;
 
-		const files: Array<File> = event.detail.files;
-		if (!files.length) return;
+		const fileDropzoneManager = new UmbFileDropzoneManager(this, this.parentUnique);
+		// TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
+		// TODO We can observe progressItems and check for any files that did not succeed, then show some kind of dialog to the user with the information.
 
-		const dropzoneManager = new UmbDropzoneManager(this);
 		this.observe(
-			dropzoneManager.completed,
-			(completed) => {
-				if (!completed.length) return;
-
-				const progress = Math.floor(completed.length / files.length);
-				this.dispatchEvent(new UmbProgressEvent(progress));
-
-				if (completed.length === files.length) {
-					this.#files = completed;
-					this.dispatchEvent(new CustomEvent('change', { detail: { completed } }));
-					dropzoneManager.destroy();
+			fileDropzoneManager.progress,
+			(progress) => {
+				this.dispatchEvent(new ProgressEvent('progress', { loaded: progress.completed, total: progress.total }));
+				if (progress.total && progress.completed === progress.total) {
+					this.dispatchEvent(new CustomEvent('change'));
+					fileDropzoneManager.destroy();
 				}
 			},
-			'_observeCompleted',
+			'_observeProgress',
 		);
-		//TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
+
 		if (this.createAsTemporary) {
-			await dropzoneManager.createFilesAsTemporary(files);
+			fileDropzoneManager.createTemporaryFiles(event.detail.files);
 		} else {
-			await dropzoneManager.createFilesAsMedia(files, this.parentUnique);
+			fileDropzoneManager.createMediaItems(event.detail);
 		}
 	}
 

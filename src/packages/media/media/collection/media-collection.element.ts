@@ -4,8 +4,6 @@ import type { UmbMediaCollectionContext } from './media-collection.context.js';
 import { UMB_MEDIA_COLLECTION_CONTEXT } from './media-collection.context-token.js';
 import { customElement, html, state, when } from '@umbraco-cms/backoffice/external/lit';
 import { UmbCollectionDefaultElement } from '@umbraco-cms/backoffice/collection';
-import type { UmbProgressEvent } from '@umbraco-cms/backoffice/event';
-
 import './media-collection-toolbar.element.js';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
 import { UmbRequestReloadChildrenOfEntityEvent } from '@umbraco-cms/backoffice/entity-action';
@@ -44,8 +42,8 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 		eventContext.dispatchEvent(event);
 	}
 
-	#onProgress(event: UmbProgressEvent) {
-		this._progress = event.progress;
+	#onProgress(event: ProgressEvent) {
+		this._progress = (event.loaded / event.total) * 100;
 	}
 
 	protected override renderToolbar() {
