@@ -5,12 +5,22 @@ import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { UmbContentTypeModel, UmbPropertyTypeModel } from '@umbraco-cms/backoffice/content-type';
 import { UmbContentTypePropertyStructureHelper } from '@umbraco-cms/backoffice/content-type';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbDataTypeItemRepository } from '@umbraco-cms/backoffice/data-type';
+import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
+import { UMB_BLOCKS_PROPERTY_EDITOR_SCHEMAS_NOT_SUPPORTED } from '../../../index.js';
 
 @customElement('umb-block-workspace-view-edit-properties')
 export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
 	#managerName?: UmbBlockWorkspaceElementManagerNames;
 	#blockWorkspace?: typeof UMB_BLOCK_WORKSPACE_CONTEXT.TYPE;
 	#propertyStructureHelper = new UmbContentTypePropertyStructureHelper<UmbContentTypeModel>(this);
+	#dataTypeItemRepository = new UmbDataTypeItemRepository(this);
+
+	// The found UIs based schemas from UMB_BLOCKS_PROPERTY_EDITOR_SCHEMAS_NOT_SUPPORTED
+	#disallowedPropertyEditorUis: Array<{ schemaAlias: string; uiAlias: string }> = [];
+
+	// The found data types based on the disallowed PropertyEditorUIs.
+	#foundDisallowedDataTypes: Array<{ schemaAlias: string; unique: string }> = [];
 
 	@property({ attribute: false })
 	public get managerName(): UmbBlockWorkspaceElementManagerNames | undefined {
@@ -39,6 +49,18 @@ export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
 			this.#blockWorkspace = workspaceContext;
 			this.#setStructureManager();
 		});
+
+		// Finding the Property Editor UIs that are not allowed in blocks.
+		this.observe(
+			umbExtensionsRegistry.byTypeAndFilter('propertyEditorUi', (ui) =>
+				UMB_BLOCKS_PROPERTY_EDITOR_SCHEMAS_NOT_SUPPORTED.includes(ui.meta.propertyEditorSchemaAlias ?? ''),
+			),
+			(manifests) =>
+				(this.#disallowedPropertyEditorUis = manifests.map((manifest) => ({
+					uiAlias: manifest.alias,
+					schemaAlias: manifest.meta.propertyEditorSchemaAlias!,
+				}))),
+		);
 	}
 
 	#setStructureManager() {
@@ -46,18 +68,55 @@ export class UmbBlockWorkspaceViewEditPropertiesElement extends UmbLitElement {
 		this.#propertyStructureHelper.setStructureManager(this.#blockWorkspace[this.#managerName].structure);
 		this.observe(
 			this.#propertyStructureHelper.propertyStructure,
-			(propertyStructure) => {
+			async (propertyStructure) => {
+				await this.#checkForDisallowed(propertyStructure);
 				this._propertyStructure = propertyStructure;
 			},
 			'observePropertyStructure',
 		);
 	}
 
+	async #checkForDisallowed(properties: Array<UmbPropertyTypeModel>) {
+		const { data } = await this.#dataTypeItemRepository.requestItems(
+			properties.map((property) => property.dataType.unique),
+		);
+
+		if (!data) {
+			this.#foundDisallowedDataTypes = [];
+			return;
+		}
+
+		for (const datatype of data) {
+			const propertyEditorUi = this.#disallowedPropertyEditorUis.find(
+				(propertyEditorUi) => propertyEditorUi.uiAlias === datatype.propertyEditorUiAlias,
+			);
+			if (propertyEditorUi?.uiAlias === datatype.propertyEditorUiAlias) {
+				this.#foundDisallowedDataTypes.push({ schemaAlias: propertyEditorUi.schemaAlias, unique: datatype.unique });
+			}
+		}
+	}
+
 	override render() {
 		return repeat(
 			this._propertyStructure,
 			(property) => property.alias,
-			(property) => html`<umb-property-type-based-property .property=${property}></umb-property-type-based-property> `,
+			(property) => {
+				const disallowed = this.#foundDisallowedDataTypes.find(
+					(disallowed) => disallowed.unique === property.dataType.unique,
+				);
+				if (disallowed) {
+					return html`<umb-property-type-based-property
+						.property=${property}
+						.notSupportedMessage=${this.localize.term(
+							'blockEditor_propertyEditorNotSupported',
+							property.alias,
+							disallowed?.schemaAlias,
+						)}
+						notSupported></umb-property-type-based-property>`;
+				} else {
+					return html`<umb-property-type-based-property .property=${property}></umb-property-type-based-property>`;
+				}
+			},
 		);
 	}
 

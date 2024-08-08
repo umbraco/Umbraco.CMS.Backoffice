@@ -1,5 +1,5 @@
 import { UmbPropertyContext } from './property.context.js';
-import { css, customElement, html, property, state, nothing } from '@umbraco-cms/backoffice/external/lit';
+import { css, customElement, html, property, state, nothing, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 import { createExtensionElement } from '@umbraco-cms/backoffice/extension-api';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
@@ -29,6 +29,12 @@ import type { UmbObserverController } from '@umbraco-cms/backoffice/observable-a
 
 @customElement('umb-property')
 export class UmbPropertyElement extends UmbLitElement {
+	@property({ type: Boolean })
+	public notSupported = false;
+
+	@property({ type: String })
+	public notSupportedMessage?: string;
+
 	/**
 	 * Label. Name of the property
 	 * @type {string}
@@ -326,9 +332,9 @@ export class UmbPropertyElement extends UmbLitElement {
 		return html`
 			<umb-property-layout
 				id="layout"
-				.alias=${this._alias ?? ''}
-				.label=${this._label ?? ''}
-				.description=${this._description ?? ''}
+				alias=${ifDefined(this._alias)}
+				label=${ifDefined(this._label)}
+				description=${ifDefined(this._description)}
 				.orientation=${this._orientation ?? 'horizontal'}
 				?mandatory=${this._mandatory}
 				?invalid=${this._invalid}>
@@ -336,7 +342,11 @@ export class UmbPropertyElement extends UmbLitElement {
 				${this._variantDifference
 					? html`<uui-tag look="secondary" slot="description">${this._variantDifference}</uui-tag>`
 					: ''}
-				<div slot="editor">${this._element}</div>
+				${this.notSupported
+					? html`<div slot="editor" class="not-supported">
+							${this.notSupportedMessage ?? 'This property is not supported.'}
+						</div>`
+					: html`<div slot="editor">${this._element}</div>`}
 			</umb-property-layout>
 		`;
 	}
@@ -357,6 +367,13 @@ export class UmbPropertyElement extends UmbLitElement {
 		css`
 			:host {
 				display: block;
+			}
+
+			.not-supported {
+				background-color: var(--uui-color-danger);
+				color: var(--uui-color-surface);
+				padding: var(--uui-size-space-4);
+				border-radius: var(--uui-border-radius);
 			}
 
 			p {
