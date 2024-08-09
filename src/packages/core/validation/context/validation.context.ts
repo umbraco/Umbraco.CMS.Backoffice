@@ -9,10 +9,40 @@ export class UmbValidationContext extends UmbContextBase<UmbValidationContext> i
 	#validationMode: boolean = false;
 	#isValid: boolean = false;
 
+	#parent?: UmbValidationContext;
+	#baseDataPath?: string;
+
 	public readonly messages = new UmbValidationMessagesManager();
 
 	constructor(host: UmbControllerHost) {
 		super(host, UMB_VALIDATION_CONTEXT);
+	}
+
+	setDataPath(dataPath: string): void {
+		if (this.#baseDataPath) {
+			// Just fire an error, as I haven't made the right clean up jet. Or haven't thought about what should happen if it changes while already setup.
+			// cause maybe all the messages should be removed as we are not interested in the old once any more. But then on the other side, some might be relevant as this is the same entity that changed its paths?
+			throw new Error('Data path is already set, we do not support changing the context data-path as of now.');
+		}
+		this.#baseDataPath = dataPath;
+
+		this.consumeContext(UMB_VALIDATION_CONTEXT, (parent) => {
+			if (this.#parent) {
+				this.#parent.removeValidator(this);
+			}
+			this.#parent = parent;
+			parent.addValidator(this);
+
+			// observe parent messages that fits with the path?.
+			// — Transfer message, without the base path?
+
+			// observe our messages and make sure to propagate them? or observe our messages, if we have one, set one message to the parent with out base path. Or parse all?.
+			// Maybe it has to actively be add or remove...
+
+			// Question is do we want sub messages to be added to the parent? or do we want to keep them separate?.
+			// How about removing sub messages, a sub message could come from the server/parent. so who decides to remove it? I would say it still should be the property editor.
+			// So maybe only remove if they exist upward, but not append upward? Maybe only append upward one for the basePath, and then if we have one message when getting spun up, we can run validation and if validation is good we remove the base-path from the parent.
+		}).skipHost();
 	}
 
 	get isValid(): boolean {
@@ -27,6 +57,7 @@ export class UmbValidationContext extends UmbContextBase<UmbValidationContext> i
 			this.validate();
 		}
 	}
+
 	removeValidator(validator: UmbValidator): void {
 		const index = this.#validators.indexOf(validator);
 		if (index !== -1) {
@@ -38,25 +69,6 @@ export class UmbValidationContext extends UmbContextBase<UmbValidationContext> i
 			}
 		}
 	}
-
-	/*#onValidatorChange = (e: Event) => {
-		const target = e.target as unknown as UmbValidator | undefined;
-		if (!target) {
-			console.error('Validator did not exist.');
-			return;
-		}
-		const dataPath = target.dataPath;
-		if (!dataPath) {
-			console.error('Validator did not exist or did not provide a data-path.');
-			return;
-		}
-
-		if (target.isValid) {
-			this.messages.removeMessagesByTypeAndPath('client', dataPath);
-		} else {
-			this.messages.addMessages('client', dataPath, target.getMessages());
-		}
-	};*/
 
 	/**
 	 *
@@ -108,6 +120,9 @@ export class UmbValidationContext extends UmbContextBase<UmbValidationContext> i
 	}
 
 	override destroy(): void {
+		this.removeFromParent();
+		this.messages.destroy();
+		(this.messages as any) = undefined;
 		this.#destroyValidators();
 		super.destroy();
 	}

@@ -52,7 +52,10 @@ import {
 	UmbRequestReloadStructureForEntityEvent,
 } from '@umbraco-cms/backoffice/entity-action';
 import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
-import { UmbServerModelValidationContext } from '@umbraco-cms/backoffice/validation';
+import {
+	UmbServerModelValidationContext,
+	UmbVariantValuesValidationMessageTranslator,
+} from '@umbraco-cms/backoffice/validation';
 import { UmbDocumentBlueprintDetailRepository } from '@umbraco-cms/backoffice/document-blueprint';
 import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
 import type { UmbContentWorkspaceContext } from '@umbraco-cms/backoffice/content';
@@ -158,6 +161,8 @@ export class UmbDocumentWorkspaceContext
 
 	constructor(host: UmbControllerHost) {
 		super(host, UMB_DOCUMENT_WORKSPACE_ALIAS);
+
+		new UmbVariantValuesValidationMessageTranslator(this, this.#serverValidation);
 
 		this.observe(this.contentTypeUnique, (unique) => this.structure.loadType(unique));
 		this.observe(this.varies, (varies) => (this.#varies = varies));
@@ -572,6 +577,7 @@ export class UmbDocumentWorkspaceContext
 
 	async #performSaveOrCreate(saveData: UmbDocumentDetailModel): Promise<void> {
 		if (this.getIsNew()) {
+			// Create:
 			const parent = this.#parent.getValue();
 			if (!parent) throw new Error('Parent is not set');
 
@@ -592,6 +598,7 @@ export class UmbDocumentWorkspaceContext
 			});
 			eventContext.dispatchEvent(event);
 		} else {
+			// Save:
 			const { data, error } = await this.repository.save(saveData);
 			if (!data || error) {
 				console.error('Error saving document', error);
@@ -603,8 +610,8 @@ export class UmbDocumentWorkspaceContext
 
 			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
 			const event = new UmbRequestReloadStructureForEntityEvent({
-				unique: this.getUnique()!,
 				entityType: this.getEntityType(),
+				unique: this.getUnique()!,
 			});
 
 			eventContext.dispatchEvent(event);

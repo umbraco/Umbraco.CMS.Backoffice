@@ -8,7 +8,11 @@ import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 const ctrlSymbol = Symbol();
 const observeSymbol = Symbol();
 
-export class UmbBindValidationMessageToFormControl extends UmbControllerBase {
+/**
+ * Binds server validation to a form control.
+ * This controller will add a custom error to the form control if the validation context has any messages for the specified data path.
+ */
+export class UmbBindServerValidationToFormControl extends UmbControllerBase {
 	#context?: typeof UMB_VALIDATION_CONTEXT.TYPE;
 
 	#control: UmbFormControlMixinInterface<unknown>;

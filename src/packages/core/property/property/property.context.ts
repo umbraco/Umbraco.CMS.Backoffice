@@ -43,23 +43,25 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 
 	#validation = new UmbObjectState<UmbPropertyTypeValidationModel | undefined>(undefined);
 	public readonly validation = this.#validation.asObservable();
+	public readonly validationMandatory = this.#validation.asObservablePart((x) => x?.mandatory);
+	public readonly validationMandatoryMessage = this.#validation.asObservablePart((x) => x?.mandatoryMessage);
 
-	private _editor = new UmbBasicState<UmbPropertyEditorUiElement | undefined>(undefined);
-	public readonly editor = this._editor.asObservable();
+	#editor = new UmbBasicState<UmbPropertyEditorUiElement | undefined>(undefined);
+	public readonly editor = this.#editor.asObservable();
 
 	setEditor(editor: UmbPropertyEditorUiElement | undefined) {
-		this._editor.setValue(editor ?? undefined);
+		this.#editor.setValue(editor ?? undefined);
 	}
 	getEditor() {
-		return this._editor.getValue();
+		return this.#editor.getValue();
 	}
 
 	// property variant ID:
 	#variantId = new UmbClassState<UmbVariantId | undefined>(undefined);
 	public readonly variantId = this.#variantId.asObservable();
 
-	private _variantDifference = new UmbStringState(undefined);
-	public readonly variantDifference = this._variantDifference.asObservable();
+	#variantDifference = new UmbStringState(undefined);
+	public readonly variantDifference = this.#variantDifference.asObservable();
 
 	#datasetContext?: typeof UMB_PROPERTY_DATASET_CONTEXT.TYPE;
 
@@ -72,17 +74,29 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 			this._observeProperty();
 		});
 
-		this.observe(this.alias, () => {
-			this._observeProperty();
-		});
+		this.observe(
+			this.alias,
+			() => {
+				this._observeProperty();
+			},
+			null,
+		);
 
-		this.observe(this.configValues, (configValues) => {
-			this.#config.setValue(configValues ? new UmbPropertyEditorConfigCollection(configValues) : undefined);
-		});
+		this.observe(
+			this.configValues,
+			(configValues) => {
+				this.#config.setValue(configValues ? new UmbPropertyEditorConfigCollection(configValues) : undefined);
+			},
+			null,
+		);
 
-		this.observe(this.variantId, () => {
-			this._generateVariantDifferenceString();
-		});
+		this.observe(
+			this.variantId,
+			() => {
+				this._generateVariantDifferenceString();
+			},
+			null,
+		);
 	}
 
 	private async _observeProperty(): Promise<void> {
@@ -109,9 +123,20 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 	private _generateVariantDifferenceString() {
 		if (!this.#datasetContext) return;
 		const contextVariantId = this.#datasetContext.getVariantId?.() ?? undefined;
-		this._variantDifference.setValue(
-			contextVariantId ? this.#variantId.getValue()?.toDifferencesString(contextVariantId) : '',
-		);
+		const propertyVariantId = this.#variantId.getValue();
+
+		let shareMessage;
+		if (contextVariantId && propertyVariantId) {
+			if (contextVariantId.segment !== propertyVariantId.segment) {
+				// TODO: Translate this, ideally the actual culture is mentioned in the message:
+				shareMessage = 'Shared with all segments of this culture';
+			}
+			if (contextVariantId.culture !== propertyVariantId.culture) {
+				// TODO: Translate this:
+				shareMessage = 'Shared';
+			}
+		}
+		this.#variantDifference.setValue(shareMessage);
 	}
 
 	public setAlias(alias: string | undefined): void {

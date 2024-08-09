@@ -1,4 +1,4 @@
-import type { UmbServerModelValidationContext } from '../context/server-model-validation.context.js';
+import type { UmbServerModelValidationContext } from '../controllers/server-model-validation.context.js';
 import { UmbDataPathPropertyValueFilter } from '../utils/data-path-property-value-filter.function.js';
 import type { UmbValidationMessageTranslator } from './validation-message-translator.interface.js';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
@@ -19,21 +19,22 @@ export class UmbVariantValuesValidationMessageTranslator
 
 	translate(path: string) {
 		if (path.indexOf('$.values[') !== 0) {
-			// No translation anyway.
-			return;
+			// We do not handle this path.
+			return false;
 		}
 		const pathEnd = path.indexOf(']');
 		if (pathEnd === -1) {
-			// No translation anyway.
-			return;
+			// We do not handle this path.
+			return false;
 		}
 		// retrieve the number from the message values index: [NL]
 		const index = parseInt(path.substring(9, pathEnd));
 
 		if (isNaN(index)) {
-			// No translation anyway.
-			return;
+			// index is not a number, this means its not a path we want to translate. [NL]
+			return false;
 		}
+
 		// Get the data from the validation request, the context holds that for us: [NL]
 		const data = this.#context.getData();
 
