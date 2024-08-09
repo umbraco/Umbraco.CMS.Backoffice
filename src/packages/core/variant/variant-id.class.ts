@@ -85,7 +85,7 @@ export class UmbVariantId {
 		let r = '';
 
 		if (variantId.culture !== this.culture) {
-			r = 'Invariant';
+			r = 'Shared';
 		}
 
 		if (variantId.segment !== this.segment) {

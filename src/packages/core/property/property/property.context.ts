@@ -4,6 +4,7 @@ import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import {
 	UmbArrayState,
 	UmbBasicState,
+	UmbBooleanState,
 	UmbClassState,
 	UmbDeepState,
 	UmbObjectState,
@@ -47,6 +48,9 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 	private _editor = new UmbBasicState<UmbPropertyEditorUiElement | undefined>(undefined);
 	public readonly editor = this._editor.asObservable();
 
+	#isReadOnly = new UmbBooleanState(false);
+	public readonly isReadOnly = this.#isReadOnly.asObservable();
+
 	setEditor(editor: UmbPropertyEditorUiElement | undefined) {
 		this._editor.setValue(editor ?? undefined);
 	}
@@ -68,6 +72,7 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 
 		this.consumeContext(UMB_PROPERTY_DATASET_CONTEXT, (variantContext) => {
 			this.#datasetContext = variantContext;
+			this.setVariantId(variantContext.getVariantId?.());
 			this._generateVariantDifferenceString();
 			this._observeProperty();
 		});
@@ -104,6 +109,19 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 			},
 			'observeValue',
 		);
+
+		this.observe(this.#datasetContext.currentVariantCultureIsReadOnly, (value) => {
+			// always allow invariant properties to be editable
+			const isInvariant = this.#variantId?.getValue()?.isInvariant();
+
+			// always allow editing invariant properties
+			if (isInvariant) {
+				this.#isReadOnly.setValue(false);
+				return;
+			}
+
+			this.#isReadOnly.setValue(value);
+		});
 	}
 
 	private _generateVariantDifferenceString() {
@@ -114,30 +132,74 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 		);
 	}
 
+	/**
+	 * Set the alias of this property.
+	 * @param {(string | undefined)} alias
+	 * @memberof UmbPropertyContext
+	 */
 	public setAlias(alias: string | undefined): void {
 		this.#alias.setValue(alias);
 	}
+
+	/**
+	 * Get the alias of this property.
+	 * @return {*}  {(string | undefined)}
+	 * @memberof UmbPropertyContext
+	 */
 	public getAlias(): string | undefined {
 		return this.#alias.getValue();
 	}
 
+	/**
+	 * Set the label of this property.
+	 * @param {(string | undefined)} label
+	 * @memberof UmbPropertyContext
+	 */
 	public setLabel(label: string | undefined): void {
 		this.#label.setValue(label);
 	}
+
+	/**
+	 * Get the label of this property.
+	 * @return {*}  {(string | undefined)}
+	 * @memberof UmbPropertyContext
+	 */
 	public getLabel(): string | undefined {
 		return this.#label.getValue();
 	}
 
+	/**
+	 * Set the description of this property.
+	 * @param {(string | undefined)} description
+	 * @memberof UmbPropertyContext
+	 */
 	public setDescription(description: string | undefined): void {
 		this.#description.setValue(description);
 	}
+
+	/**
+	 * Get the description of this property.
+	 * @return {*}  {(string | undefined)}
+	 * @memberof UmbPropertyContext
+	 */
 	public getDescription(): string | undefined {
 		return this.#description.getValue();
 	}
 
+	/**
+	 * Set the appearance of this property.
+	 * @param {(UmbPropertyTypeAppearanceModel | undefined)} appearance
+	 * @memberof UmbPropertyContext
+	 */
 	public setAppearance(appearance: UmbPropertyTypeAppearanceModel | undefined): void {
 		this.#appearance.setValue(appearance);
 	}
+
+	/**
+	 * Get the appearance of this property.
+	 * @return {*}  {(UmbPropertyTypeAppearanceModel | undefined)}
+	 * @memberof UmbPropertyContext
+	 */
 	public getAppearance(): UmbPropertyTypeAppearanceModel | undefined {
 		return this.#appearance.getValue();
 	}
@@ -160,30 +222,81 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 		return this.#value.getValue();
 	}
 
+	/**
+	 * Set the config of this property.
+	 * @param {(Array<UmbPropertyEditorConfigProperty> | undefined)} config
+	 * @memberof UmbPropertyContext
+	 */
 	public setConfig(config: Array<UmbPropertyEditorConfigProperty> | undefined): void {
 		this.#configValues.setValue(config ?? []);
 	}
+
+	/**
+	 * Get the config of this property.
+	 * @return {*}  {(Array<UmbPropertyEditorConfigProperty> | undefined)}
+	 * @memberof UmbPropertyContext
+	 */
 	public getConfig(): Array<UmbPropertyEditorConfigProperty> | undefined {
 		return this.#configValues.getValue();
 	}
 
+	/**
+	 * Set the variant ID of this property.
+	 * @param {(UmbVariantId | undefined)} variantId
+	 * @memberof UmbPropertyContext
+	 */
 	public setVariantId(variantId: UmbVariantId | undefined): void {
 		this.#variantId.setValue(variantId);
 	}
+
+	/**
+	 * Get the variant ID of this property.
+	 * @return {*}  {(UmbVariantId | undefined)}
+	 * @memberof UmbPropertyContext
+	 */
 	public getVariantId(): UmbVariantId | undefined {
 		return this.#variantId.getValue();
 	}
 
+	/**
+	 * Set the validation of this property.
+	 * @param {(UmbPropertyTypeValidationModel | undefined)} validation
+	 * @memberof UmbPropertyContext
+	 */
 	public setValidation(validation: UmbPropertyTypeValidationModel | undefined): void {
 		this.#validation.setValue(validation);
 	}
+
+	/**
+	 * Get the validation of this property.
+	 * @return {*}  {(UmbPropertyTypeValidationModel | undefined)}
+	 * @memberof UmbPropertyContext
+	 */
 	public getValidation(): UmbPropertyTypeValidationModel | undefined {
 		return this.#validation.getValue();
 	}
 
+	/**
+	 * Get the read only state of this property
+	 * @return {*}  {boolean}
+	 * @memberof UmbPropertyContext
+	 */
+	public getIsReadOnly(): boolean {
+		return this.#isReadOnly.getValue();
+	}
+
+	/**
+	 * Reset the value of this property.
+	 * @memberof UmbPropertyContext
+	 */
 	public resetValue(): void {
 		this.setValue(undefined); // TODO: We should get the value from the server aka. the value from the persisted data. (Most workspaces holds this data, via dataset) [NL]
 	}
+
+	/**
+	 * Clear the value of this property.
+	 * @memberof UmbPropertyContext
+	 */
 	public clearValue(): void {
 		this.setValue(undefined); // TODO: We should get the default value from Property Editor maybe even later the DocumentType, as that would hold the default value for the property. (Get it via the dataset) [NL]
 	}
@@ -197,6 +310,7 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 		this.#configValues.destroy();
 		this.#value.destroy();
 		this.#config.destroy();
+		this.#isReadOnly.destroy();
 		this.#datasetContext = undefined;
 	}
 }
