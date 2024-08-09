@@ -831,6 +831,7 @@ export default {
 		logout: 'Logout',
 		macro: 'Macro',
 		mandatory: 'Mandatory',
+		manifest: 'Manifest',
 		message: 'Message',
 		move: 'Move',
 		name: 'Name',
@@ -1562,6 +1563,7 @@ export default {
 		ascending: 'ascending',
 		descending: 'descending',
 		template: 'Template',
+		systemFields: 'System fields',
 	},
 	grid: {
 		media: 'Image',
@@ -2470,6 +2472,7 @@ export default {
 		tabClipboard: 'Clipboard',
 		tabBlockSettings: 'Settings',
 		headlineAdvanced: 'Advanced',
+		headlineCustomView: 'Custom View',
 		forceHideContentEditor: 'Hide content editor',
 		forceHideContentEditorHelp: 'Hide the content edit button and the content editor from the Block Editor overlay.',
 		gridInlineEditing: 'Inline editing',
