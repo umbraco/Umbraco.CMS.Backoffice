@@ -1,15 +1,15 @@
+import { getQuerySnippet } from '../../utils/index.js';
+import { UMB_TEMPLATE_QUERY_BUILDER_MODAL } from '../modals/query-builder/index.js';
 import { UMB_TEMPLATING_SECTION_PICKER_MODAL } from '../../modals/templating-section-picker/templating-section-picker-modal.token.js';
 import type { UmbTemplatingInsertMenuElement } from '../../local-components/insert-menu/insert-menu.element.js';
-import { UMB_TEMPLATE_QUERY_BUILDER_MODAL } from '../modals/query-builder/index.js';
-import { getQuerySnippet } from '../../utils/index.js';
 import { UMB_TEMPLATE_WORKSPACE_CONTEXT } from './template-workspace.context-token.js';
-import { css, html, customElement, query, state, nothing, ifDefined } from '@umbraco-cms/backoffice/external/lit';
-import type { UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
-import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import { css, customElement, html, nothing, query, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement, umbFocus } from '@umbraco-cms/backoffice/lit-element';
-import type { UmbCodeEditorElement } from '@umbraco-cms/backoffice/code-editor';
+import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import { UMB_TEMPLATE_PICKER_MODAL } from '@umbraco-cms/backoffice/template';
+import type { UmbCodeEditorElement } from '@umbraco-cms/backoffice/code-editor';
 import type { UmbInputWithAliasElement } from '@umbraco-cms/backoffice/components';
+import type { UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
 
 import '@umbraco-cms/backoffice/code-editor';
 import '../../local-components/insert-menu/index.js';
@@ -19,13 +19,13 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 	#modalContext?: UmbModalManagerContext;
 
 	@state()
-	private _name?: string | null = '';
+	private _name?: string = '';
 
 	@state()
 	private _content?: string | null = '';
 
 	@state()
-	private _alias?: string | null = '';
+	private _alias?: string = '';
 
 	@state()
 	private _masterTemplateName?: string | null = null;
@@ -68,6 +68,11 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 				this.#isNew = !!isNew;
 			});
 		});
+	}
+
+	#onNameAndAliasChange(event: InputEvent & { target: UmbInputWithAliasElement }) {
+		this.#templateWorkspaceContext?.setName(event.target.value ?? '');
+		this.#templateWorkspaceContext?.setAlias(event.target.alias ?? '');
 	}
 
 	#onCodeEditorInput(event: Event) {
@@ -152,48 +157,46 @@ export class UmbTemplateWorkspaceEditorElement extends UmbLitElement {
 		`;
 	}
 
-	#onNameAndAliasChange(event: InputEvent & { target: UmbInputWithAliasElement }) {
-		this.#templateWorkspaceContext?.setName(event.target.value ?? '');
-		this.#templateWorkspaceContext?.setAlias(event.target.alias ?? '');
-	}
-
 	override render() {
 		// TODO: add correct UI elements
-		return html`<umb-workspace-editor alias="Umb.Workspace.Template">
-			<umb-input-with-alias
-				slot="header"
-				id="name"
-				label=${this.localize.term('placeholders_entername')}
-				value=${ifDefined(this._name ?? '')}
-				alias=${ifDefined(this._alias ?? undefined)}
-				?auto-generate-alias=${this.#isNew}
-				@change="${this.#onNameAndAliasChange}"
-				${umbFocus()}>
-			</umb-input-with-alias>
+		return html`
+			<umb-workspace-editor alias="Umb.Workspace.Template">
+				<umb-input-with-alias
+					slot="header"
+					id="name"
+					label=${this.localize.term('placeholders_entername')}
+					placeholder=${this.localize.term('placeholders_entername')}
+					.value=${this._name}
+					.alias=${this._alias}
+					?auto-generate-alias=${this.#isNew}
+					@change=${this.#onNameAndAliasChange}
+					${umbFocus()}>
+				</umb-input-with-alias>
 
-			<uui-box>
-				<div slot="header" id="code-editor-menu-container">${this.#renderMasterTemplatePicker()}</div>
-				<div slot="header-actions">
-					<umb-templating-insert-menu @insert=${this.#insertSnippet}></umb-templating-insert-menu>
-					<uui-button
-						look="secondary"
-						id="query-builder-button"
-						label=${this.localize.term('template_queryBuilder')}
-						@click=${this.#openQueryBuilder}>
-						<uui-icon name="icon-wand"></uui-icon> ${this.localize.term('template_queryBuilder')}
-					</uui-button>
-					<uui-button
-						look="secondary"
-						id="sections-button"
-						label=${this.localize.term('template_insertSections')}
-						@click=${this.#openInsertSectionModal}>
-						<uui-icon name="icon-indent"></uui-icon> ${this.localize.term('template_insertSections')}
-					</uui-button>
-				</div>
+				<uui-box>
+					<div slot="header" id="code-editor-menu-container">${this.#renderMasterTemplatePicker()}</div>
+					<div slot="header-actions">
+						<umb-templating-insert-menu @insert=${this.#insertSnippet}></umb-templating-insert-menu>
+						<uui-button
+							look="secondary"
+							id="query-builder-button"
+							label=${this.localize.term('template_queryBuilder')}
+							@click=${this.#openQueryBuilder}>
+							<uui-icon name="icon-wand"></uui-icon> ${this.localize.term('template_queryBuilder')}
+						</uui-button>
+						<uui-button
+							look="secondary"
+							id="sections-button"
+							label=${this.localize.term('template_insertSections')}
+							@click=${this.#openInsertSectionModal}>
+							<uui-icon name="icon-indent"></uui-icon> ${this.localize.term('template_insertSections')}
+						</uui-button>
+					</div>
 
-				${this.#renderCodeEditor()}
-			</uui-box>
-		</umb-workspace-editor> `;
+					${this.#renderCodeEditor()}
+				</uui-box>
+			</umb-workspace-editor>
+		`;
 	}
 
 	#renderCodeEditor() {

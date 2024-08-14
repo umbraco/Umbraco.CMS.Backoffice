@@ -1,9 +1,10 @@
 import { css, customElement, html, property, state } from '@umbraco-cms/backoffice/external/lit';
+import { generateAlias } from '@umbraco-cms/backoffice/utils';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { type UUIInputElement, UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
-import { generateAlias } from '@umbraco-cms/backoffice/utils';
+import { UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
+import type { UUIInputElement } from '@umbraco-cms/backoffice/external/uui';
 
 @customElement('umb-input-with-alias')
 export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof UmbLitElement>(UmbLitElement) {
@@ -58,13 +59,17 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 		}
 	}
 
-	#onToggleAliasLock() {
+	#onToggleAliasLock(event: CustomEvent) {
 		this._aliasLocked = !this._aliasLocked;
 		if (!this.alias && this._aliasLocked) {
 			// Reenable auto-generate if alias is empty and locked.
 			this.autoGenerateAlias = true;
 		} else {
 			this.autoGenerateAlias = false;
+		}
+
+		if (!this._aliasLocked) {
+			(event.target as UUIInputElement)?.focus();
 		}
 	}
 
@@ -84,11 +89,12 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 					name="alias"
 					slot="append"
 					label=${aliasLabel}
-					.value=${this.alias}
 					placeholder=${aliasLabel}
-					@lock-change=${this.#onToggleAliasLock}
-					@input=${this.#onAliasChange}>
-					<!-- TODO: validation for bad characters -->
+					.value=${this.alias}
+					?locked=${this._aliasLocked && !this.aliasReadonly}
+					?readonly=${this.aliasReadonly}
+					@input=${this.#onAliasChange}
+					@lock-change=${this.#onToggleAliasLock}>
 				</uui-input-lock>
 			</uui-input>
 		`;
@@ -111,21 +117,10 @@ export class UmbInputWithAliasElement extends UmbFormControlMixin<string, typeof
 		:host(:invalid:not([pristine])) > uui-input {
 			border-color: var(--uui-color-danger);
 		}
-
-		#alias-lock {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			cursor: pointer;
-		}
-
-		#alias-lock uui-icon {
-			margin-bottom: 2px;
-		}
 	`;
 }
 
-export default UmbInputWithAliasElement;
+export { UmbInputWithAliasElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {

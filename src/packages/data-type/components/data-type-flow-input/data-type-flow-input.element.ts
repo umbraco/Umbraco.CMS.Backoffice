@@ -25,7 +25,7 @@ export class UmbInputDataTypeElement extends UUIFormControlMixin(UmbLitElement, 
 
 	/**
 	 * @param {string} dataTypeId
-	 * @default []
+	 * @default
 	 */
 	@property({ type: String, attribute: false })
 	override set value(dataTypeId: string) {
@@ -52,9 +52,7 @@ export class UmbInputDataTypeElement extends UUIFormControlMixin(UmbLitElement, 
 		new UmbModalRouteRegistrationController(this, UMB_DATA_TYPE_PICKER_FLOW_MODAL)
 			.onSetup(() => {
 				return {
-					data: {
-						submitLabel: 'Submit',
-					},
+					data: {},
 					value: { selection: this._ids ?? [] },
 				};
 			})

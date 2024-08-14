@@ -1,12 +1,12 @@
 import type { UmbMemberGroupItemModel } from './types.js';
-import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
+import { UMB_MEMBER_GROUP_ITEM_STORE_CONTEXT } from './member-group-item.store.context-token.js';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbItemStoreBase } from '@umbraco-cms/backoffice/store';
 
 /**
  * @export
  * @class UmbMemberGroupItemStore
- * @extends {UmbStoreBase}
+ * @augments {UmbStoreBase}
  * @description - Data Store for Member Group items
  */
 
@@ -22,7 +22,3 @@ export class UmbMemberGroupItemStore extends UmbItemStoreBase<UmbMemberGroupItem
 }
 
 export default UmbMemberGroupItemStore;
-
-export const UMB_MEMBER_GROUP_ITEM_STORE_CONTEXT = new UmbContextToken<UmbMemberGroupItemStore>(
-	'UmbMemberGroupItemStore',
-);
