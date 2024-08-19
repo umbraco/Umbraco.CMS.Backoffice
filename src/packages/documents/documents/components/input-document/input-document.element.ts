@@ -1,4 +1,4 @@
-import { UmbDocumentPickerContext } from './input-document.context.js';
+import { UmbDocumentPickerInputContext } from './input-document.context.js';
 import { classMap, css, customElement, html, property, repeat, state } from '@umbraco-cms/backoffice/external/lit';
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
@@ -109,7 +109,7 @@ export class UmbInputDocumentElement extends UmbFormControlMixin<string | undefi
 	@state()
 	private _items?: Array<UmbDocumentItemModel>;
 
-	#pickerContext = new UmbDocumentPickerContext(this);
+	#pickerContext = new UmbDocumentPickerInputContext(this);
 
 	constructor() {
 		super();
