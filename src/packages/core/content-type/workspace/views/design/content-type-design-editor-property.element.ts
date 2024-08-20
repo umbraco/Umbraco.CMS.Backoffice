@@ -93,21 +93,6 @@ export class UmbContentTypeDesignEditorPropertyElement extends UmbLitElement {
 		if (this.#context.getAlias()) {
 			this.#autoGenerateAlias = false;
 		}
-
-		/* TODO: Do we know if we are loading an existing property (do not auto generate alias) or added a new property (auto-generate only if matching expected alias)?
-		Maybe its fine and we don't want to automatically auto-generate alias anymore at this stage. Can still auto-generate by deleting the alias + locking it.
-
-		const alias = this.property?.alias ?? '';
-		const name = this.property?.name ?? '';
-		const expectedAlias = generateAlias(name ?? '');
-
-		if (expectedAlias === alias) {
-			// If the alias is the same as the expected alias, we assume it's untouched and will continue auto generating alias here.
-			this.#autoGenerateAlias = true;
-		} else {
-			this.#autoGenerateAlias = false;
-		}
-		*/
 	}
 
 	async #checkInherited() {
