@@ -10,12 +10,13 @@ import { manifests as extensionManifests } from './extension-registry/manifests.
 import { manifests as iconRegistryManifests } from './icon-registry/manifests.js';
 import { manifests as localizationManifests } from './localization/manifests.js';
 import { manifests as modalManifests } from './modal/common/manifests.js';
+import { manifests as pickerManifests } from './picker/manifests.js';
 import { manifests as propertyActionManifests } from './property-action/manifests.js';
+import { manifests as propertyManifests } from './property/manifests.js';
 import { manifests as propertyTypeManifests } from './property-type/manifests.js';
 import { manifests as recycleBinManifests } from './recycle-bin/manifests.js';
 import { manifests as sectionManifests } from './section/manifests.js';
 import { manifests as serverFileSystemManifests } from './server-file-system/manifests.js';
-import { manifests as settingsManifests } from './settings/manifests.js';
 import { manifests as themeManifests } from './themes/manifests.js';
 import { manifests as treeManifests } from './tree/manifests.js';
 import { manifests as workspaceManifests } from './workspace/manifests.js';
@@ -24,24 +25,25 @@ import type { ManifestTypes, UmbBackofficeManifestKind } from './extension-regis
 
 export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 	...authManifests,
-	...extensionManifests,
-	...iconRegistryManifests,
-	...cultureManifests,
-	...localizationManifests,
-	...themeManifests,
-	...sectionManifests,
-	...treeManifests,
 	...collectionManifests,
-	...workspaceManifests,
 	...contentManifests,
 	...contentTypeManifests,
-	...propertyTypeManifests,
-	...settingsManifests,
-	...modalManifests,
+	...cultureManifests,
+	...debugManifests,
 	...entityActionManifests,
 	...entityBulkActionManifests,
+	...extensionManifests,
+	...iconRegistryManifests,
+	...localizationManifests,
+	...modalManifests,
+	...pickerManifests,
 	...propertyActionManifests,
-	...serverFileSystemManifests,
-	...debugManifests,
+	...propertyManifests,
+	...propertyTypeManifests,
 	...recycleBinManifests,
+	...sectionManifests,
+	...serverFileSystemManifests,
+	...themeManifests,
+	...treeManifests,
+	...workspaceManifests,
 ];
