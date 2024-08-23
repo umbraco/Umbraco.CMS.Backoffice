@@ -11,6 +11,7 @@ import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registr
 import { UMB_SECTION_PATH_PATTERN } from '@umbraco-cms/backoffice/section';
 import { UMB_APP_CONTEXT } from '@umbraco-cms/backoffice/app';
 import { ensurePathEndsWithSlash } from '@umbraco-cms/backoffice/utils';
+import { UMB_USER_ENTITY_TYPE } from '../user/entity.js';
 
 export class UmbCurrentUserContext extends UmbContextBase<UmbCurrentUserContext> {
 	#currentUser = new UmbObjectState<UmbCurrentUserModel | undefined>(undefined);
@@ -88,6 +89,10 @@ export class UmbCurrentUserContext extends UmbContextBase<UmbCurrentUserContext>
 		this.observe(this.#authContext.isAuthorized, (isAuthorized) => {
 			if (isAuthorized) {
 				this.load();
+				this.#startHeartBeat();
+			} else {
+				this.#currentUser?.setValue(undefined);
+				this.#stopHeartBeat();
 			}
 		});
 	}
@@ -123,6 +128,37 @@ export class UmbCurrentUserContext extends UmbContextBase<UmbCurrentUserContext>
 		).asPromise();
 
 		return sections[0];
+	}
+
+	#heartBeatInterval?: NodeJS.Timeout;
+
+	/**
+	 * Starts the heart beat
+	 */
+	#startHeartBeat() {
+		this.#heartBeatInterval = setInterval(() => {
+			const event = {
+				type: 'currentUserHeartbeat',
+				data: {
+					entityType: UMB_USER_ENTITY_TYPE,
+					unique: this.#currentUser.getValue()?.unique,
+				},
+			};
+		}, 5000);
+	}
+
+	/**
+	 * Stops the heart beat
+	 */
+	#stopHeartBeat() {
+		if (this.#heartBeatInterval) {
+			clearInterval(this.#heartBeatInterval);
+		}
+	}
+
+	override destroy(): void {
+		super.destroy();
+		this.#stopHeartBeat();
 	}
 }
 
