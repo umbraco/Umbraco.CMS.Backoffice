@@ -78,6 +78,7 @@
 		"./section": "./dist-cms/packages/core/section/index.js",
 		"./server-file-system": "./dist-cms/packages/core/server-file-system/index.js",
 		"./settings": "./dist-cms/packages/settings/index.js",
+		"./something": "./dist-cms/packages/core/something/index.js",
 		"./sorter": "./dist-cms/packages/core/sorter/index.js",
 		"./static-file": "./dist-cms/packages/static-file/index.js",
 		"./store": "./dist-cms/packages/core/store/index.js",
@@ -212,6 +213,7 @@
 		"npm": ">=10.1 < 11"
 	},
 	"dependencies": {
+		"@microsoft/signalr": "^8.0.7",
 		"@types/diff": "^5.2.1",
 		"@types/dompurify": "^3.0.5",
 		"@types/uuid": "^10.0.0",
