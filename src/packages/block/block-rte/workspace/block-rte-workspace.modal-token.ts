@@ -2,7 +2,11 @@ import type { UmbBlockWorkspaceData } from '@umbraco-cms/backoffice/block';
 import type { UmbWorkspaceModalData, UmbWorkspaceModalValue } from '@umbraco-cms/backoffice/modal';
 import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
 
-export interface UmbBlockRteWorkspaceData extends UmbBlockWorkspaceData<object> {}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UmbBlockRteWorkspaceOriginData {}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UmbBlockRteWorkspaceData extends UmbBlockWorkspaceData<UmbBlockRteWorkspaceOriginData> {}
 
 export const UMB_BLOCK_RTE_WORKSPACE_MODAL = new UmbModalToken<UmbBlockRteWorkspaceData, UmbWorkspaceModalValue>(
 	'Umb.Modal.Workspace',
