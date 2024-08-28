@@ -1,4 +1,4 @@
-import { UMB_COLLECTION_CONTEXT } from '../default/collection-default.context-token.js';
+import { UMB_COLLECTION_CONTEXT } from '../../default/collection-default.context-token.js';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import type {
 	UmbConditionConfigBase,
