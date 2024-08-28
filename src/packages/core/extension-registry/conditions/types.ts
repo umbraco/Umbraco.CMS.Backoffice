@@ -7,6 +7,7 @@ import type { UmbMultipleAppLanguageConditionConfig } from './multiple-app-langu
 import type {
 	WorkspaceAliasConditionConfig,
 	WorkspaceEntityTypeConditionConfig,
+	WorkspaceContentTypeAliasConditionConfig,
 } from '@umbraco-cms/backoffice/workspace';
 import type { UmbConditionConfigBase } from '@umbraco-cms/backoffice/extension-api';
 import type { UmbDocumentUserPermissionConditionConfig } from '@umbraco-cms/backoffice/document';
@@ -35,4 +36,5 @@ export type ConditionTypes =
 	| UmbMultipleAppLanguageConditionConfig
 	| UmbSectionUserPermissionConditionConfig
 	| WorkspaceAliasConditionConfig
+	| WorkspaceContentTypeAliasConditionConfig
 	| WorkspaceEntityTypeConditionConfig;

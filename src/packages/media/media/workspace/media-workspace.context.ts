@@ -28,6 +28,7 @@ import type { UmbMediaTypeDetailModel } from '@umbraco-cms/backoffice/media-type
 import type { UmbContentWorkspaceContext } from '@umbraco-cms/backoffice/content';
 import { UmbEntityContext } from '@umbraco-cms/backoffice/entity';
 import { UmbIsTrashedEntityContext } from '@umbraco-cms/backoffice/recycle-bin';
+import { UmbReadOnlyVariantStateManager } from '@umbraco-cms/backoffice/utils';
 
 type EntityType = UmbMediaDetailModel;
 export class UmbMediaWorkspaceContext
@@ -54,6 +55,8 @@ export class UmbMediaWorkspaceContext
 	#languageRepository = new UmbLanguageCollectionRepository(this);
 	#languages = new UmbArrayState<UmbLanguageDetailModel>([], (x) => x.unique);
 	public readonly languages = this.#languages.asObservable();
+
+	readOnlyState = new UmbReadOnlyVariantStateManager(this);
 
 	public isLoaded() {
 		return this.#getDataPromise;
@@ -256,7 +259,13 @@ export class UmbMediaWorkspaceContext
 	async propertyStructureById(propertyId: string) {
 		return this.structure.propertyStructureById(propertyId);
 	}
-
+	/**
+	 * @function propertyValueByAlias
+	 * @param {string} propertyAlias
+	 * @param {UmbVariantId} variantId
+	 * @returns {Promise<Observable<ReturnType | undefined> | undefined>}
+	 * @description Get an Observable for the value of this property.
+	 */
 	async propertyValueByAlias<PropertyValueType = unknown>(propertyAlias: string, variantId?: UmbVariantId) {
 		return this.#currentData.asObservablePart(
 			(data) =>

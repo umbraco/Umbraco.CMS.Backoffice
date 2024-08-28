@@ -3,7 +3,7 @@ import { UMB_BLOCK_CATALOGUE_MODAL, UmbBlockEntriesContext } from '../../block/i
 import {
 	UMB_BLOCK_GRID_ENTRY_CONTEXT,
 	UMB_BLOCK_GRID_WORKSPACE_MODAL,
-	type UmbBlockGridWorkspaceData,
+	type UmbBlockGridWorkspaceOriginData,
 } from '../index.js';
 import type { UmbBlockGridLayoutModel, UmbBlockGridTypeAreaType, UmbBlockGridTypeModel } from '../types.js';
 import { UMB_BLOCK_GRID_MANAGER_CONTEXT } from './block-grid-manager.context-token.js';
@@ -19,13 +19,17 @@ export class UmbBlockGridEntriesContext
 		typeof UMB_BLOCK_GRID_MANAGER_CONTEXT,
 		typeof UMB_BLOCK_GRID_MANAGER_CONTEXT.TYPE,
 		UmbBlockGridTypeModel,
-		UmbBlockGridLayoutModel
+		UmbBlockGridLayoutModel,
+		UmbBlockGridWorkspaceOriginData
 	>
 	implements UmbBlockGridScalableContainerContext
 {
 	//
-	#catalogueModal: UmbModalRouteRegistrationController<typeof UMB_BLOCK_CATALOGUE_MODAL.DATA, undefined>;
-	#workspaceModal: UmbModalRouteRegistrationController;
+	#catalogueModal: UmbModalRouteRegistrationController<
+		typeof UMB_BLOCK_CATALOGUE_MODAL.DATA,
+		typeof UMB_BLOCK_CATALOGUE_MODAL.VALUE
+	>;
+	#workspaceModal;
 
 	#parentEntry?: typeof UMB_BLOCK_GRID_ENTRY_CONTEXT.TYPE;
 
@@ -89,6 +93,20 @@ export class UmbBlockGridEntriesContext
 		return this.#layoutColumns.getValue();
 	}
 
+	getMinAllowed() {
+		if (this.#areaKey) {
+			return this.#areaType?.minAllowed ?? 0;
+		}
+		return this._manager?.getMinAllowed() ?? 0;
+	}
+
+	getMaxAllowed() {
+		if (this.#areaKey) {
+			return this.#areaType?.maxAllowed ?? Infinity;
+		}
+		return this._manager?.getMaxAllowed() ?? Infinity;
+	}
+
 	getLayoutContainerElement() {
 		return this.getHostElement().shadowRoot?.querySelector('.umb-block-grid__layout-container') as
 			| HTMLElement
@@ -114,7 +132,7 @@ export class UmbBlockGridEntriesContext
 						blocks: this.#allowedBlockTypes.getValue(),
 						blockGroups: this._manager?.getBlockGroups() ?? [],
 						openClipboard: routingInfo.view === 'clipboard',
-						blockOriginData: { index: index, areaKey: this.#areaKey, parentUnique: this.#parentUnique },
+						originData: { index: index, areaKey: this.#areaKey, parentUnique: this.#parentUnique },
 					},
 				};
 			})
@@ -131,7 +149,7 @@ export class UmbBlockGridEntriesContext
 					data: {
 						entityType: 'block',
 						preset: {},
-						originData: { areaKey: this.#areaKey, parentUnique: this.#parentUnique },
+						originData: { areaKey: this.#areaKey, parentUnique: this.#parentUnique, baseDataPath: this._dataPath },
 					},
 					modal: { size: 'medium' },
 				};
@@ -298,10 +316,10 @@ export class UmbBlockGridEntriesContext
 	async create(
 		contentElementTypeKey: string,
 		partialLayoutEntry?: Omit<UmbBlockGridLayoutModel, 'contentUdi'>,
-		modalData?: UmbBlockGridWorkspaceData,
+		originData?: UmbBlockGridWorkspaceOriginData,
 	) {
 		await this._retrieveManager;
-		return this._manager?.create(contentElementTypeKey, partialLayoutEntry, modalData);
+		return this._manager?.create(contentElementTypeKey, partialLayoutEntry, originData);
 	}
 
 	// insert Block?
@@ -310,11 +328,11 @@ export class UmbBlockGridEntriesContext
 		layoutEntry: UmbBlockGridLayoutModel,
 		content: UmbBlockDataType,
 		settings: UmbBlockDataType | undefined,
-		modalData: UmbBlockGridWorkspaceData,
+		originData: UmbBlockGridWorkspaceOriginData,
 	) {
 		await this._retrieveManager;
 		// TODO: Insert layout entry at the right spot.
-		return this._manager?.insert(layoutEntry, content, settings, modalData) ?? false;
+		return this._manager?.insert(layoutEntry, content, settings, originData) ?? false;
 	}
 
 	// create Block?

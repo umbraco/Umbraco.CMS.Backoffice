@@ -41,7 +41,8 @@ export class UmbInputRichMediaElement extends UUIFormControlMixin(UmbLitElement,
 		identifier: 'Umb.SorterIdentifier.InputRichMedia',
 		itemSelector: 'uui-card-media',
 		containerSelector: '.container',
-		/** TODO: This component probably needs some grid-like logic for resolve placement... [LI] */
+		// TODO: This component probably needs some grid-like logic for resolve placement... [LI]
+		// TODO: You can also use verticalDirection? [NL]
 		resolvePlacement: () => false,
 		onChange: ({ model }) => {
 			this.#items = model;
@@ -149,6 +150,27 @@ export class UmbInputRichMediaElement extends UUIFormControlMixin(UmbLitElement,
 		return this.#modalRouter.getUniquePathValue('variantId');
 	}
 
+	/**
+	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
+	 * @type {boolean}
+	 * @attr
+	 * @default false
+	 */
+	@property({ type: Boolean, reflect: true })
+	public get readonly() {
+		return this.#readonly;
+	}
+	public set readonly(value) {
+		this.#readonly = value;
+
+		if (this.#readonly) {
+			this.#sorter.disable();
+		} else {
+			this.#sorter.enable();
+		}
+	}
+	#readonly = false;
+
 	@state()
 	private _cards: Array<UmbRichMediaCardModel> = [];
 
@@ -157,7 +179,7 @@ export class UmbInputRichMediaElement extends UUIFormControlMixin(UmbLitElement,
 
 	#itemRepository = new UmbMediaItemRepository(this);
 
-	#modalRouter: UmbModalRouteRegistrationController;
+	#modalRouter;
 	#modalManager?: UmbModalManagerContext;
 
 	constructor() {
@@ -322,6 +344,7 @@ export class UmbInputRichMediaElement extends UUIFormControlMixin(UmbLitElement,
 	}
 
 	#renderDropzone() {
+		if (this.readonly) return nothing;
 		if (this._cards && this._cards.length >= this.max) return;
 		return html`<umb-dropzone @change=${this.#onUploadCompleted}></umb-dropzone>`;
 	}
@@ -344,7 +367,8 @@ export class UmbInputRichMediaElement extends UUIFormControlMixin(UmbLitElement,
 				id="btn-add"
 				look="placeholder"
 				@click=${this.#openPicker}
-				label=${this.localize.term('general_choose')}>
+				label=${this.localize.term('general_choose')}
+				?disabled=${this.readonly}>
 				<uui-icon name="icon-add"></uui-icon>
 				${this.localize.term('general_choose')}
 			</uui-button>
@@ -353,23 +377,26 @@ export class UmbInputRichMediaElement extends UUIFormControlMixin(UmbLitElement,
 
 	#renderItem(item: UmbRichMediaCardModel) {
 		if (!item.unique) return nothing;
-		const href = this._routeBuilder?.({ key: item.unique });
+		const href = this.readonly ? undefined : this._routeBuilder?.({ key: item.unique });
 		return html`
-			<uui-card-media id=${item.unique} name=${item.name} .href=${href}>
+			<uui-card-media id=${item.unique} name=${item.name} .href=${href} ?readonly=${this.readonly}>
 				<umb-imaging-thumbnail
 					unique=${item.media}
 					alt=${item.name}
 					icon=${item.icon ?? 'icon-picture'}></umb-imaging-thumbnail>
-				${this.#renderIsTrashed(item)}
-				<uui-action-bar slot="actions">
-					<uui-button
-						label=${this.localize.term('general_remove')}
-						look="secondary"
-						@click=${() => this.#onRemove(item)}>
-						<uui-icon name="icon-trash"></uui-icon>
-					</uui-button>
-				</uui-action-bar>
+				${this.#renderIsTrashed(item)} ${this.#renderActions(item)}
 			</uui-card-media>
+		`;
+	}
+
+	#renderActions(item: UmbRichMediaCardModel) {
+		if (this.readonly) return nothing;
+		return html`
+			<uui-action-bar slot="actions">
+				<uui-button label=${this.localize.term('general_remove')} look="secondary" @click=${() => this.#onRemove(item)}>
+					<uui-icon name="icon-trash"></uui-icon>
+				</uui-button>
+			</uui-action-bar>
 		`;
 	}
 
