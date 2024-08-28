@@ -97,6 +97,26 @@ export class UmbInputNumberRangeElement extends UmbFormControlMixin(UmbLitElemen
 			() => this.requiredMessage,
 			() => !!this.required && (this._minValue === undefined || this._maxValue === undefined),
 		);
+
+		if (!this.validationRange) return;
+
+		this.addValidator(
+			'rangeUnderflow',
+			() => `The first value may not be less than ${this.validationRange?.min}`,
+			() =>
+				this.validationRange?.min !== undefined &&
+				this._minValue !== undefined &&
+				this._minValue < this.validationRange.min,
+		);
+
+		this.addValidator(
+			'rangeOverflow',
+			() => `The second value may not be greater than ${this.validationRange?.max}`,
+			() =>
+				this.validationRange?.max !== undefined &&
+				this._maxValue !== undefined &&
+				this._maxValue > this.validationRange.max,
+		);
 	}
 
 	override firstUpdated() {
