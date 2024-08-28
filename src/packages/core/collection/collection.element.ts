@@ -25,16 +25,56 @@ export class UmbCollectionElement extends UmbExtensionElementAndApiSlotElementBa
 	}
 	#config?: UmbCollectionConfiguration;
 
+	/**
+	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
+	 * @type {boolean}
+	 * @attr
+	 * @default false
+	 */
+	@property({ type: Boolean, reflect: true })
+	public get readonly() {
+		return this.#readonly;
+	}
+	public set readonly(value) {
+		this.#readonly = value;
+		this.#setReadonly();
+	}
+	#readonly = false;
+
 	protected override apiChanged(api: UmbApi | undefined): void {
 		super.apiChanged(api);
 		this.#setConfig();
+		this.#setReadonly();
 	}
 
 	#setConfig() {
 		if (!this.#config || !this._api) return;
+		// TODO: add type
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		this._api.setConfig(this.#config);
+	}
+
+	#setReadonly() {
+		if (!this._api) return;
+
+		const unique = 'UMB_READ_ONLY_ATTRIBUTE';
+
+		if (this.#readonly) {
+			const state = {
+				unique,
+				message: '',
+			};
+			// TODO: add type
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			this._api.readOnlyState.addState(state);
+		} else {
+			// TODO: add type
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			this._api.readOnlyState.removeState(unique);
+		}
 	}
 }
 
