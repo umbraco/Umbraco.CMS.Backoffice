@@ -1,8 +1,9 @@
 import { expect } from '@open-wc/testing';
 import { ufm } from './marked-ufm.plugin.js';
 import { UmbMarked } from '../index.js';
-import { UmbUfmLabelValueComponent } from '../ufm-components/label-value.component.js';
-import { UmbUfmLocalizeComponent } from '../ufm-components/localize.component.js';
+import { UmbUfmContentNameComponent } from '../components/content-name/content-name.component.js';
+import { UmbUfmLabelValueComponent } from '../components/label-value/label-value.component.js';
+import { UmbUfmLocalizeComponent } from '../components/localize/localize.component.js';
 
 describe('UmbMarkedUfm', () => {
 	describe('UFM parsing', () => {
@@ -11,7 +12,11 @@ describe('UmbMarkedUfm', () => {
 			{ ufm: '{= prop1}', expected: '<ufm-label-value alias="prop1"></ufm-label-value>' },
 			{ ufm: '{= prop1 }', expected: '<ufm-label-value alias="prop1"></ufm-label-value>' },
 			{ ufm: '{{=prop1}}', expected: '{<ufm-label-value alias="prop1"></ufm-label-value>}' },
-			{ ufm: '{#general_add}', expected: '<umb-localize key="general_add"></umb-localize>' },
+			{
+				ufm: '{= prop1 | strip-html | truncate:30}',
+				expected: '<ufm-label-value filters="strip-html | truncate:30" alias="prop1"></ufm-label-value>',
+			},
+			{ ufm: '{#general_add}', expected: '<ufm-localize alias="general_add"></ufm-localize>' },
 		];
 
 		// Manually configuring the UFM components for testing.
