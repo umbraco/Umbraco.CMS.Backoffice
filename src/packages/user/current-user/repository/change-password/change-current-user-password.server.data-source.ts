@@ -5,15 +5,15 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 /**
  * A server data source for changing the password of a user
  * @export
- * @class UmbChangeUserPasswordServerDataSource
+ * @class UmbChangeCurrentUserPasswordServerDataSource
  */
-export class UmbChangeUserPasswordServerDataSource {
+export class UmbChangeCurrentUserPasswordServerDataSource {
 	#host: UmbControllerHost;
 
 	/**
-	 * Creates an instance of UmbChangeUserPasswordServerDataSource.
+	 * Creates an instance of UmbChangeCurrentUserPasswordServerDataSource.
 	 * @param {UmbControllerHost} host
-	 * @memberof UmbChangeUserPasswordServerDataSource
+	 * @memberof UmbChangeCurrentUserPasswordServerDataSource
 	 */
 	constructor(host: UmbControllerHost) {
 		this.#host = host;
@@ -24,7 +24,7 @@ export class UmbChangeUserPasswordServerDataSource {
 	 * @param {string} id
 	 * @param {string} newPassword
 	 * @returns {*}
-	 * @memberof UmbChangeUserPasswordServerDataSource
+	 * @memberof UmbChangeCurrentUserPasswordServerDataSource
 	 */
 	async changePassword(id: string, newPassword: string, oldPassword: string, isCurrentUser: boolean) {
 		if (!id) throw new Error('User Id is missing');
