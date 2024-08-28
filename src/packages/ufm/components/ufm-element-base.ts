@@ -25,7 +25,7 @@ export abstract class UmbUfmElementBase extends UmbLitElement {
 	public get filters(): string | undefined {
 		return this.#filters;
 	}
-	#filters?: string | undefined;
+	#filters?: string;
 
 	@state()
 	value?: unknown;

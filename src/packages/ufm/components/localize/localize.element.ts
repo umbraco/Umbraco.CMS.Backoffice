@@ -14,7 +14,7 @@ export class UmbUfmLocalizeElement extends UmbUfmElementBase {
 	public get alias(): string | undefined {
 		return this.#alias;
 	}
-	#alias?: string | undefined;
+	#alias?: string;
 }
 
 export { UmbUfmLocalizeElement as element };
