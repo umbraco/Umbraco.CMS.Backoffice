@@ -4,12 +4,12 @@ import { UmbUfmRenderContext } from './ufm-render.context.js';
 import { css, customElement, nothing, property, unsafeHTML, until } from '@umbraco-cms/backoffice/external/lit';
 import { DOMPurify } from '@umbraco-cms/backoffice/external/dompurify';
 import { Marked } from '@umbraco-cms/backoffice/external/marked';
-import type { UmbExtensionApiInitializer } from '@umbraco-cms/backoffice/extension-api';
 import { UmbExtensionsApiInitializer } from '@umbraco-cms/backoffice/extension-api';
+import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import type { ManifestUfmComponent } from '@umbraco-cms/backoffice/extension-registry';
+import type { UmbExtensionApiInitializer } from '@umbraco-cms/backoffice/extension-api';
 
 const UmbDomPurify = DOMPurify(window);
 const UmbDomPurifyConfig: DOMPurify.Config = {
@@ -62,6 +62,7 @@ export class UmbUfmRenderElement extends UmbLitElement {
 	constructor() {
 		super();
 
+		// TODO: [LK] Review if this could be initialized elsewhere (upwards, in a context), as it's called mulitple times.
 		new UmbExtensionsApiInitializer(this, umbExtensionsRegistry, 'ufmComponent', [], undefined, (controllers) => {
 			UmbMarked.use(
 				ufm(
