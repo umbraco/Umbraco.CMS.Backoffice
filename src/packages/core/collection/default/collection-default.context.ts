@@ -14,7 +14,7 @@ import { UmbArrayState, UmbNumberState, UmbObjectState } from '@umbraco-cms/back
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import { UmbExtensionApiInitializer } from '@umbraco-cms/backoffice/extension-api';
-import { UmbSelectionManager, UmbPaginationManager } from '@umbraco-cms/backoffice/utils';
+import { UmbSelectionManager, UmbPaginationManager, UmbReadOnlyStateManager } from '@umbraco-cms/backoffice/utils';
 import type { ManifestCollection, ManifestRepository } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbApi } from '@umbraco-cms/backoffice/extension-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
@@ -60,6 +60,8 @@ export class UmbDefaultCollectionContext<
 	public readonly pagination = new UmbPaginationManager();
 	public readonly selection = new UmbSelectionManager(this);
 	public readonly view = new UmbCollectionViewManager(this);
+
+	public readOnlyState = new UmbReadOnlyStateManager(this);
 
 	#defaultViewAlias: string;
 	#defaultFilter: Partial<FilterModelType>;
