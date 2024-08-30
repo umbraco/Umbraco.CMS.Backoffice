@@ -1,4 +1,7 @@
-import { UMB_COLLECTION_ALIAS_CONDITION } from '@umbraco-cms/backoffice/collection';
+import {
+	UMB_COLLECTION_ALIAS_CONDITION,
+	UMB_WRITABLE_COLLECTION_CONDITION_ALIAS,
+} from '@umbraco-cms/backoffice/collection';
 import type { ManifestCollectionAction, ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 
 export const createManifest: ManifestCollectionAction = {
@@ -15,6 +18,9 @@ export const createManifest: ManifestCollectionAction = {
 		{
 			alias: UMB_COLLECTION_ALIAS_CONDITION,
 			match: 'Umb.Collection.Media',
+		},
+		{
+			alias: UMB_WRITABLE_COLLECTION_CONDITION_ALIAS,
 		},
 	],
 };
