@@ -30,7 +30,7 @@ const workspace: ManifestWorkspaces = {
 const workspaceViews: Array<ManifestWorkspaceView> = [
 	{
 		type: 'workspaceView',
-		kind: 'collection',
+		kind: 'contentCollection',
 		alias: 'Umb.WorkspaceView.Document.Collection',
 		name: 'Document Workspace Collection View',
 		meta: {
