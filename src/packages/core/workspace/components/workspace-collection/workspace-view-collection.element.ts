@@ -7,6 +7,9 @@ import { UMB_COLLECTION_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/worksp
 import type { UmbDataTypeDetailModel } from '@umbraco-cms/backoffice/data-type';
 import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-registry';
 
+// TODO: clean up this code and make it more generic
+/* Be aware this code has been duplicated in the UmbContentCollectionWorkspaceViewElement as is should only be specific for collections based on a content type.
+This element is currently no longer in use in the code base but we will need it in the future with a different implementation without knowledge of content and data types */
 @customElement('umb-workspace-view-collection')
 export class UmbWorkspaceViewCollectionElement extends UmbLitElement implements UmbWorkspaceViewElement {
 	@state()
