@@ -5,20 +5,34 @@ import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbSwatchDetails } from '@umbraco-cms/backoffice/models';
 import type { UUIColorSwatchesEvent } from '@umbraco-cms/backoffice/external/uui';
+import { UMB_VALIDATION_EMPTY_LOCALIZATION_KEY, UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 
 /**
  * @element umb-property-editor-ui-color-picker
  */
 @customElement('umb-property-editor-ui-color-picker')
-export class UmbPropertyEditorUIColorPickerElement extends UmbLitElement implements UmbPropertyEditorUiElement {
+export class UmbPropertyEditorUIColorPickerElement
+	extends UmbFormControlMixin<UmbSwatchDetails | undefined, typeof UmbLitElement, undefined>(UmbLitElement, undefined)
+	implements UmbPropertyEditorUiElement
+{
 	#defaultShowLabels = false;
 
+	/**
+	 * Sets editor to mandatory, meaning validation will fail if the value is empty.
+	 * @type {boolean}
+	 */
+	@property({ type: Boolean })
+	mandatory?: boolean;
+
+	@property({ type: String })
+	mandatoryMessage = UMB_VALIDATION_EMPTY_LOCALIZATION_KEY;
+
 	@property({ type: Object })
-	public set value(value: UmbSwatchDetails | undefined) {
+	public override set value(value: UmbSwatchDetails | undefined) {
 		if (!value) return;
 		this.#value = this.#ensureHashPrefix(value);
 	}
-	public get value(): UmbSwatchDetails | undefined {
+	public override get value(): UmbSwatchDetails | undefined {
 		return this.#value;
 	}
 	#value?: UmbSwatchDetails | undefined;
@@ -38,6 +52,14 @@ export class UmbPropertyEditorUIColorPickerElement extends UmbLitElement impleme
 		this._swatches = swatches.map((swatch) => this.#ensureHashPrefix(swatch));
 	}
 
+	protected override firstUpdated(): void {
+		this.addFormControlElement(this.shadowRoot!.querySelector('umb-input-color')!);
+	}
+
+	override focus() {
+		return this.shadowRoot?.querySelector<UmbLitElement>('umb-input-color')?.focus();
+	}
+
 	#ensureHashPrefix(swatch: UmbSwatchDetails): UmbSwatchDetails {
 		return {
 			label: swatch.label,
@@ -53,10 +75,13 @@ export class UmbPropertyEditorUIColorPickerElement extends UmbLitElement impleme
 	}
 
 	override render() {
+		console.log(this.mandatoryMessage);
 		return html`<umb-input-color
-			value=${this.value?.value ?? ''}
+			.value=${this.value?.value ?? ''}
 			.swatches=${this._swatches}
 			?showLabels=${this._showLabels}
+			?required=${this.mandatory}
+			.requiredMessage=${this.mandatoryMessage}
 			@change=${this.#onChange}></umb-input-color>`;
 	}
 }
