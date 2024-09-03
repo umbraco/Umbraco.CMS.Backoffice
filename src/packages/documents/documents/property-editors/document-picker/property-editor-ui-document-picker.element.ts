@@ -7,12 +7,13 @@ import type { UmbNumberRangeValueType } from '@umbraco-cms/backoffice/models';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbTreeStartNode } from '@umbraco-cms/backoffice/tree';
+import { UMB_VALIDATION_EMPTY_LOCALIZATION_KEY, UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 
 @customElement('umb-property-editor-ui-document-picker')
-export class UmbPropertyEditorUIDocumentPickerElement extends UmbLitElement implements UmbPropertyEditorUiElement {
-	@property()
-	public value?: string;
-
+export class UmbPropertyEditorUIDocumentPickerElement
+	extends UmbFormControlMixin<string, typeof UmbLitElement>(UmbLitElement, undefined)
+	implements UmbPropertyEditorUiElement
+{
 	public set config(config: UmbPropertyEditorConfigCollection | undefined) {
 		if (!config) return;
 
@@ -35,6 +36,12 @@ export class UmbPropertyEditorUIDocumentPickerElement extends UmbLitElement impl
 	@property({ type: Boolean, reflect: true })
 	readonly = false;
 
+	@property({ type: Boolean })
+	mandatory?: boolean;
+
+	@property()
+	mandatoryMessage = UMB_VALIDATION_EMPTY_LOCALIZATION_KEY;
+
 	@state()
 	private _min = 0;
 
@@ -54,6 +61,10 @@ export class UmbPropertyEditorUIDocumentPickerElement extends UmbLitElement impl
 		this.dispatchEvent(new UmbPropertyValueChangeEvent());
 	}
 
+	override firstUpdated() {
+		this.addFormControlElement(this.shadowRoot!.querySelector('umb-input-document')!);
+	}
+
 	override render() {
 		const startNode: UmbTreeStartNode | undefined = this._startNodeId
 			? { unique: this._startNodeId, entityType: UMB_DOCUMENT_ENTITY_TYPE }
@@ -67,7 +78,9 @@ export class UmbPropertyEditorUIDocumentPickerElement extends UmbLitElement impl
 				.value=${this.value}
 				?showOpenButton=${this._showOpenButton}
 				@change=${this.#onChange}
-				?readonly=${this.readonly}>
+				?readonly=${this.readonly}
+				?required=${this.mandatory}
+				.requiredMessage=${this.mandatoryMessage}>
 			</umb-input-document>
 		`;
 	}
