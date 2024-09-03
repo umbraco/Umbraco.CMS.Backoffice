@@ -107,6 +107,7 @@ export class UmbInputDocumentElement extends UmbFormControlMixin<string | undefi
 	@property({ type: String })
 	public override set value(selectionString: string | undefined) {
 		this.selection = splitStringToArray(selectionString);
+		this._runValidators();
 	}
 	public override get value(): string | undefined {
 		return this.selection.length > 0 ? this.selection.join(',') : undefined;

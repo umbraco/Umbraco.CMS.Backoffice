@@ -119,6 +119,7 @@ export class UmbInputMediaElement extends UmbFormControlMixin<string | undefined
 	@property({ type: String })
 	public override set value(selectionString: string | undefined) {
 		this.selection = splitStringToArray(selectionString);
+		this._runValidators();
 	}
 	public override get value(): string | undefined {
 		return this.selection.length > 0 ? this.selection.join(',') : undefined;
