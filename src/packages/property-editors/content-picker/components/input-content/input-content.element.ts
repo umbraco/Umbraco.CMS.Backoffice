@@ -5,7 +5,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { UmbReferenceByUniqueAndType } from '@umbraco-cms/backoffice/models';
 import type { UmbTreeStartNode } from '@umbraco-cms/backoffice/tree';
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
-import { UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
+import { UMB_VALIDATION_EMPTY_LOCALIZATION_KEY, UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 
 const elementName = 'umb-input-content';
 @customElement(elementName)
@@ -39,6 +39,12 @@ export class UmbInputContentElement extends UmbFormControlMixin<string | undefin
 
 	@property({ type: Object, attribute: false })
 	startNode?: UmbTreeStartNode;
+
+	@property({ type: Boolean })
+	required?: boolean;
+
+	@property()
+	requiredMessage = UMB_VALIDATION_EMPTY_LOCALIZATION_KEY;
 
 	@property()
 	public set allowedContentTypeIds(value: string) {
@@ -126,6 +132,8 @@ export class UmbInputContentElement extends UmbFormControlMixin<string | undefin
 				.maxMessage=${this.maxMessage}
 				?showOpenButton=${this.showOpenButton}
 				?readonly=${this.readonly}
+				?required=${this.required}
+				.requiredMessage=${this.requiredMessage}
 				@change=${this.#onChange}></umb-input-document>
 		`;
 	}
@@ -141,6 +149,8 @@ export class UmbInputContentElement extends UmbFormControlMixin<string | undefin
 				.maxMessage=${this.maxMessage}
 				?showOpenButton=${this.showOpenButton}
 				?readonly=${this.readonly}
+				?required=${this.required}
+				.requiredMessage=${this.requiredMessage}
 				@change=${this.#onChange}></umb-input-media>
 		`;
 	}
@@ -156,6 +166,8 @@ export class UmbInputContentElement extends UmbFormControlMixin<string | undefin
 				.maxMessage=${this.maxMessage}
 				?showOpenButton=${this.showOpenButton}
 				?readonly=${this.readonly}
+				?required=${this.required}
+				.requiredMessage=${this.requiredMessage}
 				@change=${this.#onChange}></umb-input-member>
 		`;
 	}

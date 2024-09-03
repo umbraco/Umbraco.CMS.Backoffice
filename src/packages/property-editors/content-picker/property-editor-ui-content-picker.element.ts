@@ -3,7 +3,7 @@ import type { UmbInputContentElement } from './components/input-content/index.js
 import type { UmbContentPickerSource, UmbContentPickerSourceType } from './types.js';
 import { html, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
+import { UMB_VALIDATION_EMPTY_LOCALIZATION_KEY, UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 import { UmbPropertyValueChangeEvent } from '@umbraco-cms/backoffice/property-editor';
 import { UMB_DOCUMENT_ENTITY_TYPE } from '@umbraco-cms/backoffice/document';
 import { UMB_ENTITY_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/workspace';
@@ -45,6 +45,12 @@ export class UmbPropertyEditorUIContentPickerElement
 	 */
 	@property({ type: Boolean, reflect: true })
 	readonly = false;
+
+	@property({ type: Boolean })
+	mandatory?: boolean;
+
+	@property()
+	mandatoryMessage = UMB_VALIDATION_EMPTY_LOCALIZATION_KEY;
 
 	@state()
 	_type: UmbContentPickerSource['type'] = 'content';
@@ -160,6 +166,8 @@ export class UmbPropertyEditorUIContentPickerElement
 				.allowedContentTypeIds=${this._allowedContentTypeUniques ?? ''}
 				?showOpenButton=${this._showOpenButton}
 				?readonly=${this.readonly}
+				?required=${this.mandatory}
+				.requiredMessage=${this.mandatoryMessage}
 				@change=${this.#onChange}></umb-input-content>
 		`;
 	}

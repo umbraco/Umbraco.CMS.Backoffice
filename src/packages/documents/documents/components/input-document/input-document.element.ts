@@ -11,7 +11,7 @@ import {
 } from '@umbraco-cms/backoffice/external/lit';
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
-import { UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
+import { UMB_VALIDATION_EMPTY_LOCALIZATION_KEY, UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
@@ -133,6 +133,12 @@ export class UmbInputDocumentElement extends UmbFormControlMixin<string | undefi
 	}
 	#readonly = false;
 
+	@property({ type: Boolean })
+	required?: boolean;
+
+	@property()
+	requiredMessage = UMB_VALIDATION_EMPTY_LOCALIZATION_KEY;
+
 	@state()
 	private _editDocumentPath = '';
 
@@ -152,6 +158,12 @@ export class UmbInputDocumentElement extends UmbFormControlMixin<string | undefi
 			.observeRouteBuilder((routeBuilder) => {
 				this._editDocumentPath = routeBuilder({});
 			});
+
+		this.addValidator(
+			'valueMissing',
+			() => this.requiredMessage,
+			() => !!this.required && this.selection.length === 0,
+		);
 
 		this.addValidator(
 			'rangeUnderflow',

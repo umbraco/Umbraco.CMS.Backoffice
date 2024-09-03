@@ -7,7 +7,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
 import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
 import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
-import { UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
+import { UMB_VALIDATION_EMPTY_LOCALIZATION_KEY, UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 
 const elementName = 'umb-input-member';
 
@@ -123,6 +123,12 @@ export class UmbInputMemberElement extends UmbFormControlMixin<string | undefine
 	}
 	#readonly = false;
 
+	@property({ type: Boolean })
+	required?: boolean;
+
+	@property()
+	requiredMessage = UMB_VALIDATION_EMPTY_LOCALIZATION_KEY;
+
 	@state()
 	private _editMemberPath = '';
 
@@ -142,6 +148,12 @@ export class UmbInputMemberElement extends UmbFormControlMixin<string | undefine
 			.observeRouteBuilder((routeBuilder) => {
 				this._editMemberPath = routeBuilder({});
 			});
+
+		this.addValidator(
+			'valueMissing',
+			() => this.requiredMessage,
+			() => !!this.required && this.selection.length === 0,
+		);
 
 		this.addValidator(
 			'rangeUnderflow',

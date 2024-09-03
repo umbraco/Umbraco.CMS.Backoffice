@@ -17,7 +17,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
 import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
-import { UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
+import { UMB_VALIDATION_EMPTY_LOCALIZATION_KEY, UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 
 import '@umbraco-cms/backoffice/imaging';
 
@@ -145,6 +145,12 @@ export class UmbInputMediaElement extends UmbFormControlMixin<string | undefined
 	}
 	#readonly = false;
 
+	@property({ type: Boolean })
+	required?: boolean;
+
+	@property()
+	requiredMessage = UMB_VALIDATION_EMPTY_LOCALIZATION_KEY;
+
 	@state()
 	private _editMediaPath = '';
 
@@ -173,6 +179,12 @@ export class UmbInputMediaElement extends UmbFormControlMixin<string | undefined
 
 			this._cards = selectedItems ?? [];
 		});
+
+		this.addValidator(
+			'valueMissing',
+			() => this.requiredMessage,
+			() => !!this.required && this.selection.length === 0,
+		);
 
 		this.addValidator(
 			'rangeUnderflow',
