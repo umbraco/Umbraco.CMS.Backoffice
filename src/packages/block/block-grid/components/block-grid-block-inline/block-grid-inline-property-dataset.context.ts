@@ -6,9 +6,13 @@ import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 import { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import type { Observable } from '@umbraco-cms/backoffice/external/rxjs';
+import { UmbBooleanState } from '@umbraco-cms/backoffice/observable-api';
 
 export class UmbBlockGridInlinePropertyDatasetContext extends UmbControllerBase implements UmbPropertyDatasetContext {
 	#entryContext: UmbBlockGridEntryContext;
+
+	#currentVariantCultureIsReadOnly = new UmbBooleanState(false);
+	public currentVariantCultureIsReadOnly = this.#currentVariantCultureIsReadOnly.asObservable();
 
 	// default data:
 
@@ -36,8 +40,10 @@ export class UmbBlockGridInlinePropertyDatasetContext extends UmbControllerBase 
 	}
 
 	/**
-	 * TODO: Write proper JSDocs here.
-	 * @param propertyAlias
+	 * @function propertyValueByAlias
+	 * @param {string} propertyAlias
+	 * @returns {Promise<Observable<ReturnType | undefined> | undefined>}
+	 * @description Get an Observable for the value of this property.
 	 */
 	async propertyValueByAlias<ReturnType = unknown>(propertyAlias: string) {
 		// TODO: Investigate how I do that with the workspaces..
@@ -45,12 +51,23 @@ export class UmbBlockGridInlinePropertyDatasetContext extends UmbControllerBase 
 	}
 
 	/**
-	 * TODO: Write proper JSDocs here.
-	 * @param propertyAlias
-	 * @param value
+	 * @function setPropertyValue
+	 * @param {string} propertyAlias
+	 * @param {unknown} value - value can be a promise resolving into the actual value or the raw value it self.
+	 * @returns {Promise<void>}
+	 * @description Set the value of this property.
 	 */
 	async setPropertyValue(propertyAlias: string, value: unknown) {
 		// TODO: Investigate how I do that with the workspaces..
 		return this.#entryContext.setContentPropertyValue(propertyAlias, value);
+	}
+
+	/**
+	 * Gets the read-only state of the current variant culture.
+	 * @returns {*}  {boolean}
+	 * @memberof UmbBlockGridInlinePropertyDatasetContext
+	 */
+	getCurrentVariantCultureIsReadOnly(): boolean {
+		return this.#currentVariantCultureIsReadOnly.getValue();
 	}
 }

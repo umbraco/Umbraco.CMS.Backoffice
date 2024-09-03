@@ -4,7 +4,7 @@ import { UMB_PROPERTY_DATASET_CONTEXT } from '@umbraco-cms/backoffice/property';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import { type Observable, map } from '@umbraco-cms/backoffice/external/rxjs';
-import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
+import { UmbBooleanState, UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbVariantModel } from '@umbraco-cms/backoffice/variant';
 import { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import type { UmbContentTypeModel, UmbPropertyTypeModel } from '@umbraco-cms/backoffice/content-type';
@@ -30,6 +30,9 @@ export class UmbContentPropertyDatasetContext<
 	culture = this.#currentVariant.asObservablePart((x) => x?.culture);
 	segment = this.#currentVariant.asObservablePart((x) => x?.segment);
 
+	#currentVariantCultureIsReadOnly = new UmbBooleanState(false);
+	public currentVariantCultureIsReadOnly = this.#currentVariantCultureIsReadOnly.asObservable();
+
 	getEntityType(): string {
 		return this.#workspace.getEntityType();
 	}
@@ -44,6 +47,10 @@ export class UmbContentPropertyDatasetContext<
 	}
 	getVariantInfo() {
 		return this.#workspace.getVariant(this.#variantId);
+	}
+
+	getCurrentVariantCultureIsReadOnly() {
+		return this.#currentVariantCultureIsReadOnly.getValue();
 	}
 
 	constructor(
@@ -63,6 +70,18 @@ export class UmbContentPropertyDatasetContext<
 				this.#currentVariant.setValue(variantInfo);
 			},
 			'_observeActiveVariant',
+		);
+
+		this.observe(
+			this.#workspace.readOnlyState.states,
+			(states) => {
+				const isReadOnly = states.some(
+					(state) => state.unique.startsWith('UMB_CULTURE_') && state.variantId.equal(this.#variantId),
+				);
+
+				this.#currentVariantCultureIsReadOnly.setValue(isReadOnly);
+			},
+			'umbObserveReadOnlyStates',
 		);
 	}
 
@@ -113,16 +132,12 @@ export class UmbContentPropertyDatasetContext<
 	/**
 	 * @function setPropertyValueByVariant
 	 * @param {string} propertyAlias
-	 * @param {PromiseLike<unknown>} value - value can be a promise resolving into the actual value or the raw value it self.
+	 * @param {unknown} value - value can be a promise resolving into the actual value or the raw value it self.
 	 * @param {UmbVariantId} propertyVariantId - The variant id for the value to be set for.
 	 * @returns {Promise<unknown>}
 	 * @description Get the value of this property.
 	 */
-	setPropertyValueByVariant(
-		propertyAlias: string,
-		value: PromiseLike<unknown>,
-		propertyVariantId: UmbVariantId,
-	): Promise<void> {
+	setPropertyValueByVariant(propertyAlias: string, value: unknown, propertyVariantId: UmbVariantId): Promise<void> {
 		return this.#workspace.setPropertyValue(propertyAlias, value, propertyVariantId);
 	}
 

@@ -5,7 +5,6 @@ import { UmbArrayState, UmbBooleanState } from '@umbraco-cms/backoffice/observab
 
 /**
  * Manages the selection of items.
- * @export
  * @class UmbSelectionManager
  */
 export class UmbSelectionManager<ValueType extends string | null = string | null> extends UmbControllerBase {
@@ -14,6 +13,7 @@ export class UmbSelectionManager<ValueType extends string | null = string | null
 
 	#selection = new UmbArrayState(<Array<ValueType>>[], (x) => x);
 	public readonly selection = this.#selection.asObservable();
+	public readonly hasSelection = this.#selection.asObservablePart((x) => x.length > 0);
 
 	#multiple = new UmbBooleanState(false);
 	public readonly multiple = this.#multiple.asObservable();
@@ -94,7 +94,11 @@ export class UmbSelectionManager<ValueType extends string | null = string | null
 	 */
 	public toggleSelect(unique: ValueType) {
 		if (this.getSelectable() === false) return;
-		this.isSelected(unique) ? this.deselect(unique) : this.select(unique);
+		if (this.isSelected(unique)) {
+			this.deselect(unique);
+		} else {
+			this.select(unique);
+		}
 	}
 
 	/**

@@ -1,5 +1,5 @@
 import type { UmbBlockGridLayoutModel, UmbBlockGridTypeModel } from '../types.js';
-import type { UmbBlockGridWorkspaceData } from '../index.js';
+import type { UmbBlockGridWorkspaceOriginData } from '../index.js';
 import { UmbArrayState, appendToFrozenArray, pushAtToUniqueArray } from '@umbraco-cms/backoffice/observable-api';
 import { removeLastSlashFromPath, transformServerPathToClientPath } from '@umbraco-cms/backoffice/utils';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
@@ -7,6 +7,7 @@ import { UMB_APP_CONTEXT } from '@umbraco-cms/backoffice/app';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import { type UmbBlockDataType, UmbBlockManagerContext } from '@umbraco-cms/backoffice/block';
 import type { UmbBlockTypeGroup } from '@umbraco-cms/backoffice/block-type';
+import type { UmbNumberRangeValueType } from '@umbraco-cms/backoffice/models';
 
 export const UMB_BLOCK_GRID_DEFAULT_LAYOUT_STYLESHEET = '/umbraco/backoffice/css/umbraco-blockgridlayout.css';
 
@@ -15,7 +16,7 @@ export const UMB_BLOCK_GRID_DEFAULT_LAYOUT_STYLESHEET = '/umbraco/backoffice/css
  */
 export class UmbBlockGridManagerContext<
 	BlockLayoutType extends UmbBlockGridLayoutModel = UmbBlockGridLayoutModel,
-> extends UmbBlockManagerContext<UmbBlockGridTypeModel, UmbBlockGridLayoutModel> {
+> extends UmbBlockManagerContext<UmbBlockGridTypeModel, UmbBlockGridLayoutModel, UmbBlockGridWorkspaceOriginData> {
 	//
 	#initAppUrl: Promise<void>;
 	#appUrl?: string;
@@ -38,6 +39,16 @@ export class UmbBlockGridManagerContext<
 		return parseInt(value && value !== '' ? value : '12');
 	});
 
+	getMinAllowed() {
+		return this._editorConfiguration.getValue()?.getValueByAlias<UmbNumberRangeValueType>('validationLimit')?.min ?? 0;
+	}
+
+	getMaxAllowed() {
+		return (
+			this._editorConfiguration.getValue()?.getValueByAlias<UmbNumberRangeValueType>('validationLimit')?.max ?? Infinity
+		);
+	}
+
 	override setEditorConfiguration(configs: UmbPropertyEditorConfigCollection) {
 		this.#initAppUrl.then(() => {
 			// we await initAppUrl, So the appUrl begin here is available when retrieving the layoutStylesheet.
@@ -51,6 +62,9 @@ export class UmbBlockGridManagerContext<
 	getBlockGroups() {
 		return this.#blockGroups.value;
 	}
+	getBlockGroupName(unique: string) {
+		return this.#blockGroups.getValue().find((group) => group.key === unique)?.name;
+	}
 
 	constructor(host: UmbControllerHost) {
 		super(host);
@@ -63,9 +77,9 @@ export class UmbBlockGridManagerContext<
 	create(
 		contentElementTypeKey: string,
 		partialLayoutEntry?: Omit<BlockLayoutType, 'contentUdi'>,
-		// TODO: [v15] Ignore unused parameter to avoid breaking changes
+		// This property is used by some implementations, but not used in this.
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		modalData?: UmbBlockGridWorkspaceData,
+		originData?: UmbBlockGridWorkspaceOriginData,
 	) {
 		return super.createBlockData(contentElementTypeKey, partialLayoutEntry);
 	}
@@ -154,24 +168,24 @@ export class UmbBlockGridManagerContext<
 		layoutEntry: BlockLayoutType,
 		content: UmbBlockDataType,
 		settings: UmbBlockDataType | undefined,
-		modalData: UmbBlockGridWorkspaceData,
+		originData: UmbBlockGridWorkspaceOriginData,
 	) {
-		this.setOneLayout(layoutEntry, modalData);
-		this.insertBlockData(layoutEntry, content, settings, modalData);
+		this.setOneLayout(layoutEntry, originData);
+		this.insertBlockData(layoutEntry, content, settings, originData);
 
 		return true;
 	}
 
-	override setOneLayout(layoutEntry: BlockLayoutType, modalData?: UmbBlockGridWorkspaceData) {
-		const index = modalData?.originData.index ?? -1;
+	override setOneLayout(layoutEntry: BlockLayoutType, originData?: UmbBlockGridWorkspaceOriginData) {
+		const index = originData?.index ?? -1;
 
-		if (modalData?.originData.parentUnique && modalData?.originData.areaKey) {
+		if (originData?.parentUnique && originData?.areaKey) {
 			// Find layout entry based on parentUnique, recursively, as it needs to check layout of areas as well:
 			const layoutEntries = this.#appendLayoutEntryToArea(
 				layoutEntry,
 				this._layouts.getValue(),
-				modalData.originData.parentUnique,
-				modalData.originData.areaKey,
+				originData?.parentUnique,
+				originData?.areaKey,
 				index,
 			);
 
