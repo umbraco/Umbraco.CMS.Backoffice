@@ -8,9 +8,12 @@ export class UmbBlockWorkspaceEditorElement extends UmbLitElement {
 	@property({ type: String, attribute: false })
 	workspaceAlias?: string;
 
+	@property({ type: String, attribute: false })
+	headline?: String;
+
 	override render() {
 		return this.workspaceAlias
-			? html` <umb-workspace-editor alias=${this.workspaceAlias} headline=${'BLOCK EDITOR'}> </umb-workspace-editor> `
+			? html` <umb-workspace-editor alias=${this.workspaceAlias} headline=${this.headline ?? 'BLOCK EDITOR'}> </umb-workspace-editor> `
 			: '';
 	}
 
