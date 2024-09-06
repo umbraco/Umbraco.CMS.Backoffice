@@ -98,7 +98,7 @@ export class UmbDropzoneElement extends UmbLitElement {
 					dropzoneManager.destroy();
 				}
 			},
-			'_observeCompleted',
+			'_observeCompleted' + Date.now(), // Unique key to avoid multiple drops overriding each other
 		);
 
 		if (event.detail.folders) {

@@ -14,6 +14,7 @@ import { UmbRequestReloadChildrenOfEntityEvent } from '@umbraco-cms/backoffice/e
 export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 	#mediaCollection?: UmbMediaCollectionContext;
 	#refreshInCooldown: boolean = false;
+	#shouldRefreshCollection: boolean = false;
 
 	@state()
 	private _progress = -1;
@@ -52,7 +53,15 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 		if (!this.#refreshInCooldown) {
 			this.#mediaCollection?.requestCollection();
 			this.#refreshInCooldown = true;
-			setTimeout(() => (this.#refreshInCooldown = false), 350);
+			setTimeout(() => {
+				this.#refreshInCooldown = false;
+				if (this.#shouldRefreshCollection) {
+					this.#refreshCollection();
+					this.#shouldRefreshCollection = false;
+				}
+			}, 350);
+		} else {
+			this.#shouldRefreshCollection = true;
 		}
 	}
 
