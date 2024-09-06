@@ -1,4 +1,4 @@
-import type { UmbBlockManagerContext } from '../index.js';
+import type { UmbBlockManagerContext, UmbBlockWorkspaceOriginData } from '../index.js';
 import type { UmbBlockLayoutBaseModel, UmbBlockDataType } from '../types.js';
 import type { UmbBlockEntriesContext } from './block-entries.context.js';
 import type { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
@@ -25,10 +25,12 @@ export abstract class UmbBlockEntryContext<
 		BlockManagerContextTokenType,
 		BlockManagerContextType,
 		BlockType,
-		BlockLayoutType
+		BlockLayoutType,
+		BlockOriginData
 	>,
 	BlockType extends UmbBlockTypeBaseModel = UmbBlockTypeBaseModel,
 	BlockLayoutType extends UmbBlockLayoutBaseModel = UmbBlockLayoutBaseModel,
+	BlockOriginData extends UmbBlockWorkspaceOriginData = UmbBlockWorkspaceOriginData,
 > extends UmbContextBase<any> {
 	//
 	_manager?: BlockManagerContextType;
@@ -232,11 +234,11 @@ export abstract class UmbBlockEntryContext<
 	}
 
 	#updateCreatePaths() {
-		const index = this.#index.value;
-		if (this._entries && index !== undefined) {
+		if (this._entries) {
 			this.observe(
-				observeMultiple([this._entries.catalogueRouteBuilder, this._entries.canCreate]),
-				([catalogueRouteBuilder, canCreate]) => {
+				observeMultiple([this.index, this._entries.catalogueRouteBuilder, this._entries.canCreate]),
+				([index, catalogueRouteBuilder, canCreate]) => {
+					if (index === undefined) return;
 					if (catalogueRouteBuilder && canCreate) {
 						this.#createBeforePath.setValue(this._entries!.getPathForCreateBlock(index));
 						this.#createAfterPath.setValue(this._entries!.getPathForCreateBlock(index + 1));

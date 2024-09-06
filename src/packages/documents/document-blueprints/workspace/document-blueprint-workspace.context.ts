@@ -33,6 +33,7 @@ import { UMB_INVARIANT_CULTURE, UmbVariantId } from '@umbraco-cms/backoffice/var
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import type { UmbLanguageDetailModel } from '@umbraco-cms/backoffice/language';
 import type { UmbContentWorkspaceContext } from '@umbraco-cms/backoffice/content';
+import { UmbReadOnlyVariantStateManager } from '@umbraco-cms/backoffice/utils';
 
 type EntityType = UmbDocumentBlueprintDetailModel;
 
@@ -58,6 +59,8 @@ export class UmbDocumentBlueprintWorkspaceContext
 	#languageRepository = new UmbLanguageCollectionRepository(this);
 	#languages = new UmbArrayState<UmbLanguageDetailModel>([], (x) => x.unique);
 	public readonly languages = this.#languages.asObservable();
+
+	public readonly readOnlyState = new UmbReadOnlyVariantStateManager(this);
 
 	public isLoaded() {
 		return this.#getDataPromise;
@@ -251,7 +254,13 @@ export class UmbDocumentBlueprintWorkspaceContext
 	async propertyStructureById(propertyId: string) {
 		return this.structure.propertyStructureById(propertyId);
 	}
-
+	/**
+	 * @function propertyValueByAlias
+	 * @param variantId
+	 * @param {string} propertyAlias
+	 * @returns {Promise<Observable<ReturnType | undefined> | undefined>}
+	 * @description Get an Observable for the value of this property.
+	 */
 	async propertyValueByAlias<PropertyValueType = unknown>(propertyAlias: string, variantId?: UmbVariantId) {
 		return this.#currentData.asObservablePart(
 			(data) =>

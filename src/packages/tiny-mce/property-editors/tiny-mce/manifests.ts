@@ -13,7 +13,8 @@ const manifest: ManifestPropertyEditorUi = {
 		label: 'Rich Text Editor',
 		propertyEditorSchemaAlias: UMB_BLOCK_RTE_PROPERTY_EDITOR_SCHEMA_ALIAS,
 		icon: 'icon-browser-window',
-		group: 'richText',
+		group: 'richContent',
+		supportsReadOnly: true,
 		settings: {
 			properties: [
 				{

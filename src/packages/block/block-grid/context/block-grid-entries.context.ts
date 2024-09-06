@@ -3,12 +3,18 @@ import { UMB_BLOCK_CATALOGUE_MODAL, UmbBlockEntriesContext } from '../../block/i
 import {
 	UMB_BLOCK_GRID_ENTRY_CONTEXT,
 	UMB_BLOCK_GRID_WORKSPACE_MODAL,
-	type UmbBlockGridWorkspaceData,
+	type UmbBlockGridWorkspaceOriginData,
 } from '../index.js';
 import type { UmbBlockGridLayoutModel, UmbBlockGridTypeAreaType, UmbBlockGridTypeModel } from '../types.js';
 import { UMB_BLOCK_GRID_MANAGER_CONTEXT } from './block-grid-manager.context-token.js';
 import type { UmbBlockGridScalableContainerContext } from './block-grid-scale-manager/block-grid-scale-manager.controller.js';
-import { UmbArrayState, UmbNumberState, UmbObjectState, UmbStringState } from '@umbraco-cms/backoffice/observable-api';
+import {
+	UmbArrayState,
+	UmbBooleanState,
+	UmbNumberState,
+	UmbObjectState,
+	UmbStringState,
+} from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
 import { pathFolderName } from '@umbraco-cms/backoffice/utils';
@@ -19,13 +25,17 @@ export class UmbBlockGridEntriesContext
 		typeof UMB_BLOCK_GRID_MANAGER_CONTEXT,
 		typeof UMB_BLOCK_GRID_MANAGER_CONTEXT.TYPE,
 		UmbBlockGridTypeModel,
-		UmbBlockGridLayoutModel
+		UmbBlockGridLayoutModel,
+		UmbBlockGridWorkspaceOriginData
 	>
 	implements UmbBlockGridScalableContainerContext
 {
 	//
-	#catalogueModal: UmbModalRouteRegistrationController<typeof UMB_BLOCK_CATALOGUE_MODAL.DATA, undefined>;
-	#workspaceModal: UmbModalRouteRegistrationController;
+	#catalogueModal: UmbModalRouteRegistrationController<
+		typeof UMB_BLOCK_CATALOGUE_MODAL.DATA,
+		typeof UMB_BLOCK_CATALOGUE_MODAL.VALUE
+	>;
+	#workspaceModal;
 
 	#parentEntry?: typeof UMB_BLOCK_GRID_ENTRY_CONTEXT.TYPE;
 
@@ -44,6 +54,9 @@ export class UmbBlockGridEntriesContext
 	public readonly allowedBlockTypes = this.#allowedBlockTypes.asObservable();
 	public readonly amountOfAllowedBlockTypes = this.#allowedBlockTypes.asObservablePart((x) => x.length);
 	public readonly canCreate = this.#allowedBlockTypes.asObservablePart((x) => x.length > 0);
+
+	#hasTypeLimits = new UmbBooleanState(undefined);
+	public readonly hasTypeLimits = this.#hasTypeLimits.asObservable();
 
 	firstAllowedBlockTypeName() {
 		if (!this._manager) {
@@ -80,6 +93,10 @@ export class UmbBlockGridEntriesContext
 		this.#workspaceModal.setUniquePathValue('areaKey', areaKey ?? 'null');
 		this.#catalogueModal.setUniquePathValue('areaKey', areaKey ?? 'null');
 		this.#gotAreaKey();
+
+		// Idea: If we need to parse down a validation data path to target the specific layout object: [NL]
+		// If we have a areaKey, we want to inherit our layoutDataPath from nearest blockGridEntry context.
+		// If not, we want to set the layoutDataPath to a base one.
 	}
 
 	setLayoutColumns(columns: number | undefined) {
@@ -87,6 +104,20 @@ export class UmbBlockGridEntriesContext
 	}
 	getLayoutColumns() {
 		return this.#layoutColumns.getValue();
+	}
+
+	getMinAllowed() {
+		if (this.#areaKey) {
+			return this.#areaType?.minAllowed ?? 0;
+		}
+		return this._manager?.getMinAllowed() ?? 0;
+	}
+
+	getMaxAllowed() {
+		if (this.#areaKey) {
+			return this.#areaType?.maxAllowed ?? Infinity;
+		}
+		return this._manager?.getMaxAllowed() ?? Infinity;
 	}
 
 	getLayoutContainerElement() {
@@ -114,9 +145,30 @@ export class UmbBlockGridEntriesContext
 						blocks: this.#allowedBlockTypes.getValue(),
 						blockGroups: this._manager?.getBlockGroups() ?? [],
 						openClipboard: routingInfo.view === 'clipboard',
-						blockOriginData: { index: index, areaKey: this.#areaKey, parentUnique: this.#parentUnique },
+						originData: { index: index, areaKey: this.#areaKey, parentUnique: this.#parentUnique },
+						createBlockInWorkspace: true,
 					},
 				};
+			})
+			.onSubmit(async (value, data) => {
+				if (value?.create && data) {
+					const created = await this.create(
+						value.create.contentElementTypeKey,
+						// We can parse an empty object, cause the rest will be filled in by others.
+						{} as any,
+						data.originData as UmbBlockGridWorkspaceOriginData,
+					);
+					if (created) {
+						this.insert(
+							created.layout,
+							created.content,
+							created.settings,
+							data.originData as UmbBlockGridWorkspaceOriginData,
+						);
+					} else {
+						throw new Error('Failed to create block');
+					}
+				}
 			})
 			.observeRouteBuilder((routeBuilder) => {
 				// TODO: Does it make any sense that this is a state? Check usage and confirm. [NL]
@@ -131,7 +183,7 @@ export class UmbBlockGridEntriesContext
 					data: {
 						entityType: 'block',
 						preset: {},
-						originData: { areaKey: this.#areaKey, parentUnique: this.#parentUnique },
+						originData: { areaKey: this.#areaKey, parentUnique: this.#parentUnique, baseDataPath: this._dataPath },
 					},
 					modal: { size: 'medium' },
 				};
@@ -145,8 +197,8 @@ export class UmbBlockGridEntriesContext
 	protected _gotBlockManager() {
 		if (!this._manager) return;
 
-		this.#getAllowedBlockTypes();
-		this.#getRangeLimits();
+		this.#setupAllowedBlockTypes();
+		this.#setupRangeLimits();
 
 		this.observe(
 			this._manager.propertyAlias,
@@ -198,8 +250,6 @@ export class UmbBlockGridEntriesContext
 				'observeThisLayouts',
 			);
 
-			this.removeUmbControllerByAlias('observeAreaType');
-
 			const hostEl = this.getHostElement() as HTMLElement | undefined;
 			if (hostEl) {
 				hostEl.removeAttribute('data-area-alias');
@@ -211,8 +261,8 @@ export class UmbBlockGridEntriesContext
 			}
 
 			this.removeUmbControllerByAlias('observeAreaType');
-			this.#getAllowedBlockTypes();
-			this.#getRangeLimits();
+			this.#setupAllowedBlockTypes();
+			this.#setupRangeLimits();
 		} else {
 			if (!this.#parentEntry) return;
 
@@ -255,22 +305,44 @@ export class UmbBlockGridEntriesContext
 					hostEl.style.setProperty('--umb-block-grid--grid-columns', areaType?.columnSpan?.toString() ?? '');
 					hostEl.style.setProperty('--umb-block-grid--area-column-span', areaType?.columnSpan?.toString() ?? '');
 					hostEl.style.setProperty('--umb-block-grid--area-row-span', areaType?.rowSpan?.toString() ?? '');
-					this.#getAllowedBlockTypes();
-					this.#getRangeLimits();
+					this.#setupAllowedBlockTypes();
+					this.#setupRangeLimits();
 				},
 				'observeAreaType',
 			);
 		}
 	}
 
-	#getAllowedBlockTypes() {
+	#setupAllowedBlockTypes() {
 		if (!this._manager) return;
 		this.#allowedBlockTypes.setValue(this.#retrieveAllowedElementTypes());
+		this.#setupAllowedBlockTypesLimits();
 	}
-	#getRangeLimits() {
+	#setupRangeLimits() {
 		if (!this._manager) return;
-		const range = this.#retrieveRangeLimits();
-		this.#rangeLimits.setValue(range);
+		//const range = this.#retrieveRangeLimits();
+		if (this.#areaKey != null) {
+			this.removeUmbControllerByAlias('observeConfigurationRootLimits');
+			// Area entries:
+			if (!this.#areaType) return undefined;
+			// No need to observe as this method is called every time the area is changed.
+			this.#rangeLimits.setValue({
+				min: this.#areaType.minAllowed ?? 0,
+				max: this.#areaType.maxAllowed ?? Infinity,
+			});
+		} else if (this.#areaKey === null) {
+			if (!this._manager) return undefined;
+
+			this.observe(
+				this._manager.editorConfiguration,
+				(config) => {
+					const min = config?.getValueByAlias<UmbNumberRangeValueType>('validationLimit')?.min ?? 0;
+					const max = config?.getValueByAlias<UmbNumberRangeValueType>('validationLimit')?.max ?? Infinity;
+					this.#rangeLimits.setValue({ min, max });
+				},
+				'observeConfigurationRootLimits',
+			);
+		}
 	}
 
 	getPathForCreateBlock(index: number) {
@@ -298,10 +370,10 @@ export class UmbBlockGridEntriesContext
 	async create(
 		contentElementTypeKey: string,
 		partialLayoutEntry?: Omit<UmbBlockGridLayoutModel, 'contentUdi'>,
-		modalData?: UmbBlockGridWorkspaceData,
+		originData?: UmbBlockGridWorkspaceOriginData,
 	) {
 		await this._retrieveManager;
-		return this._manager?.create(contentElementTypeKey, partialLayoutEntry, modalData);
+		return this._manager?.create(contentElementTypeKey, partialLayoutEntry, originData);
 	}
 
 	// insert Block?
@@ -310,11 +382,11 @@ export class UmbBlockGridEntriesContext
 		layoutEntry: UmbBlockGridLayoutModel,
 		content: UmbBlockDataType,
 		settings: UmbBlockDataType | undefined,
-		modalData: UmbBlockGridWorkspaceData,
+		originData: UmbBlockGridWorkspaceOriginData,
 	) {
 		await this._retrieveManager;
 		// TODO: Insert layout entry at the right spot.
-		return this._manager?.insert(layoutEntry, content, settings, modalData) ?? false;
+		return this._manager?.insert(layoutEntry, content, settings, originData) ?? false;
 	}
 
 	// create Block?
@@ -367,24 +439,95 @@ export class UmbBlockGridEntriesContext
 
 	/**
 	 * @internal
-	 * @returns an NumberRange of the min and max allowed items in the current area. Or undefined if not ready jet.
 	 */
-	#retrieveRangeLimits(): UmbNumberRangeValueType | undefined {
-		if (this.#areaKey != null) {
+	#setupAllowedBlockTypesLimits() {
+		if (!this._manager) return;
+
+		if (this.#areaKey) {
 			// Area entries:
-			if (!this.#areaType) return undefined;
+			if (!this.#areaType) return;
 
-			return { min: this.#areaType.minAllowed ?? 0, max: this.#areaType.maxAllowed ?? Infinity };
+			if (this.#areaType.specifiedAllowance && this.#areaType.specifiedAllowance?.length > 0) {
+				this.#hasTypeLimits.setValue(true);
+			}
 		} else if (this.#areaKey === null) {
-			if (!this._manager) return undefined;
-
-			const config = this._manager.getEditorConfiguration();
-			const min = config?.getValueByAlias<UmbNumberRangeValueType>('validationLimit')?.min ?? 0;
-			const max = config?.getValueByAlias<UmbNumberRangeValueType>('validationLimit')?.max ?? Infinity;
-			return { min, max };
+			// RESET
 		}
+	}
 
-		return undefined;
+	#invalidBlockTypeLimits?: Array<{
+		groupKey?: string;
+		key?: string;
+		name: string;
+		amount: number;
+		minRequirement: number;
+		maxRequirement: number;
+	}>;
+
+	getInvalidBlockTypeLimits() {
+		return this.#invalidBlockTypeLimits ?? [];
+	}
+	/**
+	 * @internal
+	 * @returns {boolean} - True if the block type limits are valid, otherwise false.
+	 */
+	checkBlockTypeLimitsValidity(): boolean {
+		if (!this.#areaType || !this.#areaType.specifiedAllowance) return false;
+
+		const layoutEntries = this._layoutEntries.getValue();
+
+		this.#invalidBlockTypeLimits = [];
+
+		const hasInvalidRules = this.#areaType.specifiedAllowance.some((rule) => {
+			const minAllowed = rule.minAllowed || 0;
+			const maxAllowed = rule.maxAllowed || 0;
+
+			// For block groups:
+			if (rule.groupKey) {
+				const groupElementTypeKeys =
+					this._manager
+						?.getBlockTypes()
+						.filter((blockType) => blockType.groupKey === rule.groupKey && blockType.allowInAreas === true)
+						.map((x) => x.contentElementTypeKey) ?? [];
+				const groupAmount = layoutEntries.filter((entry) => {
+					const contentTypeKey = this._manager!.getContentTypeKeyOf(entry.contentUdi);
+					return contentTypeKey ? groupElementTypeKeys.indexOf(contentTypeKey) !== -1 : false;
+				}).length;
+
+				if (groupAmount < minAllowed || (maxAllowed > 0 && groupAmount > maxAllowed)) {
+					this.#invalidBlockTypeLimits!.push({
+						groupKey: rule.groupKey,
+						name: this._manager!.getBlockGroupName(rule.groupKey) ?? '?',
+						amount: groupAmount,
+						minRequirement: minAllowed,
+						maxRequirement: maxAllowed,
+					});
+					return true;
+				}
+			}
+			// For specific elementTypes:
+			else if (rule.elementTypeKey) {
+				const amount = layoutEntries.filter((entry) => {
+					const contentTypeKey = this._manager!.getContentOf(entry.contentUdi)?.contentTypeKey;
+					return contentTypeKey === rule.elementTypeKey;
+				}).length;
+				if (amount < minAllowed || (maxAllowed > 0 ? amount > maxAllowed : false)) {
+					this.#invalidBlockTypeLimits!.push({
+						key: rule.elementTypeKey,
+						name: this._manager!.getContentTypeNameOf(rule.elementTypeKey) ?? '?',
+						amount: amount,
+						minRequirement: minAllowed,
+						maxRequirement: maxAllowed,
+					});
+					return true;
+				}
+			}
+
+			// Lets fail cause the rule was bad.
+			console.error('Invalid block type limit rule.', rule);
+			return false;
+		});
+		return hasInvalidRules === false;
 	}
 
 	/**

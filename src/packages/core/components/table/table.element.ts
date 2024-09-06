@@ -124,12 +124,20 @@ export class UmbTableElement extends LitElement {
 
 	private _handleRowCheckboxChange(event: Event, item: UmbTableItem) {
 		const checkboxElement = event.target as HTMLInputElement;
-		checkboxElement.checked ? this._selectRow(item.id) : this._deselectRow(item.id);
+		if (checkboxElement.checked) {
+			this._selectRow(item.id);
+		} else {
+			this._deselectRow(item.id);
+		}
 	}
 
 	private _handleAllRowsCheckboxChange(event: Event) {
 		const checkboxElement = event.target as HTMLInputElement;
-		checkboxElement.checked ? this._selectAllRows() : this._deselectAllRows();
+		if (checkboxElement.checked) {
+			this._selectAllRows();
+		} else {
+			this._deselectAllRows();
+		}
 	}
 
 	private _handleOrderingChange(column: UmbTableColumn) {
@@ -204,7 +212,7 @@ export class UmbTableElement extends LitElement {
 		if (this.config.hideIcon && !this.config.allowSelection) return;
 
 		return html`
-			<uui-table-head-cell style="--uui-table-cell-padding: 0">
+			<uui-table-head-cell style="--uui-table-cell-padding: 0; text-align: center;">
 				${when(
 					this.config.allowSelection,
 					() =>
@@ -236,7 +244,7 @@ export class UmbTableElement extends LitElement {
 		if (this.config.hideIcon && !this.config.allowSelection) return;
 
 		return html`
-			<uui-table-cell>
+			<uui-table-cell style="text-align: center;">
 				${when(!this.config.hideIcon, () => html`<umb-icon name="${ifDefined(item.icon ?? undefined)}"></umb-icon>`)}
 				${when(
 					this.config.allowSelection,
