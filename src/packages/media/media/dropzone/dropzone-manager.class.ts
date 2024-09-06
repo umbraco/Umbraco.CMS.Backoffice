@@ -103,13 +103,13 @@ export class UmbDropzoneManager extends UmbControllerBase {
 		mediaTypeUnique?: string | null,
 	): Promise<void> {
 		const folderOptions = await this.#buildAllowedFolderTypes(parentUnique);
-		if (!folderOptions || !folderOptions.length) {
+		if (!folderOptions?.length) {
 			this.#notifyInvalidFolders(folders);
 			return;
 		}
 
-		mediaTypeUnique ??= await this.#pickFolderMediaType(folderOptions, folders);
-		const uploadableFolders = folders.map((folder) => ({ folder, mediaTypeUnique }));
+		const pickedMediaTypeUnique = mediaTypeUnique ?? (await this.#pickFolderMediaType(folderOptions, folders));
+		const uploadableFolders = folders.map((folder) => ({ folder, mediaTypeUnique: pickedMediaTypeUnique }));
 
 		for (const uploadableFolder of uploadableFolders) {
 			const folderUnique = UmbId.new();
@@ -194,7 +194,7 @@ export class UmbDropzoneManager extends UmbControllerBase {
 		for (const extension of Object.keys(filesByExtension)) {
 			const options = optionsArray.find((option) => option.fileExtension === extension)?.mediaTypes;
 
-			if (!options || !options.length) {
+			if (!options?.length) {
 				// TODO Current dropped file not allowed in this area. Find a good way to show this to the user after we finish uploading the rest of the files.
 				notAllowedFiles.push(...filesByExtension[extension]);
 				continue;

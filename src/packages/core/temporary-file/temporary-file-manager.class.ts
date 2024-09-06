@@ -69,7 +69,6 @@ export class UmbTemporaryFileManager<
 	async #handleQueue(options?: UploadOptions<UploadableItem>): Promise<Array<UploadableItem>> {
 		const filesCompleted: Array<UploadableItem> = [];
 		const queue = this.#queue.getValue();
-		const uploads = [];
 		const chunkSize = options?.chunkSize ?? 5;
 
 		if (!queue.length) return filesCompleted;
@@ -85,7 +84,7 @@ export class UmbTemporaryFileManager<
 
 		for (let i = 0; i < chunks; i++) {
 			const chunk = queue.slice(i * chunkSize, i * chunkSize + chunkSize);
-			uploads.push(await Promise.all(chunk.map(handler)));
+			await Promise.all(chunk.map(handler));
 		}
 
 		return filesCompleted;
