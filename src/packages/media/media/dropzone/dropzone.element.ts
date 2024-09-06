@@ -1,9 +1,10 @@
-import { UmbDropzoneManager, type UmbUploadableFileModel } from './dropzone-manager.class.js';
+import type { UmbUploadableFolderModel, UmbUploadableFileModel } from './dropzone-manager.class.js';
+import { UmbDropzoneManager } from './dropzone-manager.class.js';
 import { UmbProgressEvent } from '@umbraco-cms/backoffice/event';
 import { css, html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
-import type { UUIFileDropzoneElement, UUIFileDropzoneEvent } from '@umbraco-cms/backoffice/external/uui';
+import type { UUIFileDropzoneElement, UUIFileDropzoneEvent, UUIFileFolder } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import type { UmbTemporaryFileModel } from '@umbraco-cms/backoffice/temporary-file';
+import { UMB_NOTIFICATION_CONTEXT, type UmbNotificationContext } from '@umbraco-cms/backoffice/notification';
 
 @customElement('umb-dropzone')
 export class UmbDropzoneElement extends UmbLitElement {
@@ -21,7 +22,11 @@ export class UmbDropzoneElement extends UmbLitElement {
 
 	//TODO: logic to disable the dropzone?
 
-	#files: Array<UmbUploadableFileModel | UmbTemporaryFileModel> = [];
+	#init: Promise<unknown>;
+
+	#notificationContext?: UmbNotificationContext;
+
+	#files: Array<UmbUploadableFileModel | UmbUploadableFolderModel> = [];
 
 	public getFiles() {
 		return this.#files;
@@ -37,6 +42,12 @@ export class UmbDropzoneElement extends UmbLitElement {
 		document.addEventListener('dragenter', this.#handleDragEnter.bind(this));
 		document.addEventListener('dragleave', this.#handleDragLeave.bind(this));
 		document.addEventListener('drop', this.#handleDrop.bind(this));
+
+		this.#init = Promise.all([
+			this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance) => {
+				this.#notificationContext = instance;
+			}).asPromise(),
+		]);
 	}
 
 	override disconnectedCallback(): void {
@@ -63,34 +74,76 @@ export class UmbDropzoneElement extends UmbLitElement {
 	}
 
 	async #onDropFiles(event: UUIFileDropzoneEvent) {
-		// TODO Handle of folder uploads.
+		if (!event.detail.folders && !event.detail.files) return;
 
-		const files: Array<File> = event.detail.files;
-		if (!files.length) return;
+		await this.#init;
+
+		const folderFileCount = this.#countFilesInFolders(event.detail.folders);
+		const fileCount = folderFileCount + (event.detail.files?.length ?? 0);
 
 		const dropzoneManager = new UmbDropzoneManager(this);
 		this.observe(
 			dropzoneManager.completed,
 			(completed) => {
 				if (!completed.length) return;
+				this.#displayProgress(dropzoneManager, completed.length, fileCount);
 
-				const progress = Math.floor(completed.length / files.length);
+				const progress = Math.floor(completed.length / fileCount);
 				this.dispatchEvent(new UmbProgressEvent(progress));
 
-				if (completed.length === files.length) {
-					this.#files = completed;
-					this.dispatchEvent(new CustomEvent('change', { detail: { completed } }));
+				this.#files = completed;
+				this.dispatchEvent(new CustomEvent('change', { detail: { completed } }));
+
+				if (completed.length === fileCount) {
+					this.dispatchEvent(new UmbProgressEvent(-1));
 					dropzoneManager.destroy();
 				}
 			},
 			'_observeCompleted',
 		);
-		//TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
-		if (this.createAsTemporary) {
-			await dropzoneManager.createFilesAsTemporary(files);
-		} else {
-			await dropzoneManager.createFilesAsMedia(files, this.parentUnique);
+
+		if (event.detail.folders) {
+			await dropzoneManager.createFoldersAsMedia(event.detail.folders, this.parentUnique);
 		}
+
+		if (event.detail.files) {
+			if (this.createAsTemporary) {
+				await dropzoneManager.createFilesAsTemporary(event.detail.files);
+			} else {
+				await dropzoneManager.createFilesAsMedia(event.detail.files, this.parentUnique);
+			}
+		}
+	}
+
+	#displayProgress(dropzoneManager: UmbDropzoneManager, progress: number, total: number) {
+		if (dropzoneManager.notificationHandler) {
+			this.#notificationContext?.update(dropzoneManager.notificationHandler, {
+				data: {
+					message: `${progress}/${total} items uploaded.`,
+				},
+				color: progress == total ? 'positive' : 'default',
+				duration: progress == total ? 6000 : null,
+			});
+			return;
+		}
+
+		dropzoneManager.notificationHandler = this.#notificationContext?.stay('default', {
+			data: {
+				headline: 'Uploading files',
+				message: `${progress}/${total} items uploaded.`,
+			},
+			color: progress == total ? 'positive' : 'default',
+			duration: progress == total ? 6000 : null,
+		});
+	}
+
+	#countFilesInFolders(folders: UUIFileFolder[] | null): number {
+		if (!folders) return 0;
+
+		return (
+			folders.reduce((count, folder) => count + folder.files.length + this.#countFilesInFolders(folder.folders), 0) +
+			folders.length
+		);
 	}
 
 	override render() {

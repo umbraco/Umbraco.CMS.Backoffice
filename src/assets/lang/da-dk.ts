@@ -353,6 +353,9 @@ export default {
 		uploadNotAllowed: 'Upload er ikke tiladt på denne lokation',
 		disallowedMediaType: "Cannot upload this file, the media type with alias '%0%' is not allowed here",
 		invalidFileName: 'Cannot upload this file, it does not have a valid file name',
+		selectMediaTypeForUpload: 'Vælg medie type for uploadet filer.',
+		selectMediaTypeForUploadHelp: 'Se påvirket filer.',
+		selectMediaTypeAutoPick: 'Automatisk',
 	},
 	member: {
 		createNewMember: 'Opret et nyt medlem',

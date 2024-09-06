@@ -13,6 +13,7 @@ import { UmbRequestReloadChildrenOfEntityEvent } from '@umbraco-cms/backoffice/e
 @customElement('umb-media-collection')
 export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 	#mediaCollection?: UmbMediaCollectionContext;
+	#refreshInCooldown: boolean = false;
 
 	@state()
 	private _progress = -1;
@@ -33,8 +34,7 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 	}
 
 	async #onChange() {
-		this._progress = -1;
-		this.#mediaCollection?.requestCollection();
+		this.#refreshCollection();
 
 		const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
 		const event = new UmbRequestReloadChildrenOfEntityEvent({
@@ -46,6 +46,14 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 
 	#onProgress(event: UmbProgressEvent) {
 		this._progress = event.progress;
+	}
+
+	#refreshCollection() {
+		if (!this.#refreshInCooldown) {
+			this.#mediaCollection?.requestCollection();
+			this.#refreshInCooldown = true;
+			setTimeout(() => (this.#refreshInCooldown = false), 350);
+		}
 	}
 
 	protected override renderToolbar() {

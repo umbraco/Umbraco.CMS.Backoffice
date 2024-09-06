@@ -368,6 +368,9 @@ export default {
 		fileSecurityValidationFailure: 'One or more file security validations have failed',
 		moveToSameFolderFailed: 'Parent and destination folders cannot be the same',
 		uploadNotAllowed: 'Upload is not allowed in this location.',
+		selectMediaTypeForUpload: 'Select media type for uploaded files.',
+		selectMediaTypeForUploadHelp: 'See files affected files.',
+		selectMediaTypeAutoPick: 'Auto pick',
 	},
 	member: {
 		createNewMember: 'Create a new member',

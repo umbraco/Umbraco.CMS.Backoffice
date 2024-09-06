@@ -3,8 +3,6 @@ import { UmbArrayState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 
-///export type TemporaryFileStatus = 'success' | 'waiting' | 'error';
-
 export enum TemporaryFileStatus {
 	SUCCESS = 'success',
 	WAITING = 'waiting',
@@ -16,6 +14,13 @@ export interface UmbTemporaryFileModel {
 	temporaryUnique: string;
 	status?: TemporaryFileStatus;
 }
+
+type QueueHandlerCallback<TItem extends UmbTemporaryFileModel> = (item: TItem) => Promise<void>;
+
+type UploadOptions<TItem extends UmbTemporaryFileModel> = {
+	chunkSize?: number;
+	callback?: QueueHandlerCallback<TItem>;
+};
 
 export class UmbTemporaryFileManager<
 	UploadableItem extends UmbTemporaryFileModel = UmbTemporaryFileModel,
@@ -30,7 +35,7 @@ export class UmbTemporaryFileManager<
 		this.#temporaryFileRepository = new UmbTemporaryFileRepository(host);
 	}
 
-	async uploadOne(uploadableItem: UploadableItem): Promise<UploadableItem> {
+	async uploadOne(uploadableItem: UploadableItem, options?: UploadOptions<UploadableItem>): Promise<UploadableItem> {
 		this.#queue.setValue([]);
 
 		const item: UploadableItem = {
@@ -39,15 +44,18 @@ export class UmbTemporaryFileManager<
 		};
 
 		this.#queue.appendOne(item);
-		return (await this.#handleQueue())[0];
+		return (await this.#handleQueue({ ...options, chunkSize: 1 }))[0];
 	}
 
-	async upload(queueItems: Array<UploadableItem>): Promise<Array<UploadableItem>> {
+	async upload(
+		queueItems: Array<UploadableItem>,
+		options?: UploadOptions<UploadableItem>,
+	): Promise<Array<UploadableItem>> {
 		this.#queue.setValue([]);
 
 		const items = queueItems.map((item): UploadableItem => ({ status: TemporaryFileStatus.WAITING, ...item }));
 		this.#queue.append(items);
-		return this.#handleQueue();
+		return this.#handleQueue(options);
 	}
 
 	removeOne(unique: string) {
@@ -58,30 +66,45 @@ export class UmbTemporaryFileManager<
 		this.#queue.remove(uniques);
 	}
 
-	async #handleQueue() {
+	async #handleQueue(options?: UploadOptions<UploadableItem>): Promise<Array<UploadableItem>> {
 		const filesCompleted: Array<UploadableItem> = [];
 		const queue = this.#queue.getValue();
+		const uploads = [];
+		const chunkSize = options?.chunkSize ?? 5;
 
 		if (!queue.length) return filesCompleted;
 
-		for (const item of queue) {
-			if (!item.temporaryUnique) throw new Error(`Unique is missing for item ${item}`);
+		const chunks = Math.ceil(queue.length / chunkSize);
 
-			const { error } = await this.#temporaryFileRepository.upload(item.temporaryUnique, item.file);
-			//await new Promise((resolve) => setTimeout(resolve, (Math.random() + 0.5) * 1000)); // simulate small delay so that the upload badge is properly shown
+		const handler: QueueHandlerCallback<UploadableItem> = async (item) => {
+			const completedUpload = await this.#handleUpload(item);
+			filesCompleted.push(completedUpload);
 
-			let status: TemporaryFileStatus;
-			if (error) {
-				status = TemporaryFileStatus.ERROR;
-				this.#queue.updateOne(item.temporaryUnique, { ...item, status });
-			} else {
-				status = TemporaryFileStatus.SUCCESS;
-				this.#queue.updateOne(item.temporaryUnique, { ...item, status });
-			}
+			if (options?.callback) await options.callback(completedUpload);
+		};
 
-			filesCompleted.push({ ...item, status });
+		for (let i = 0; i < chunks; i++) {
+			const chunk = queue.slice(i * chunkSize, i * chunkSize + chunkSize);
+			uploads.push(await Promise.all(chunk.map(handler)));
 		}
 
 		return filesCompleted;
+	}
+
+	async #handleUpload(item: UploadableItem) {
+		if (!item.temporaryUnique) throw new Error(`Unique is missing for item ${item}`);
+
+		const { error } = await this.#temporaryFileRepository.upload(item.temporaryUnique, item.file);
+
+		let status: TemporaryFileStatus;
+		if (error) {
+			status = TemporaryFileStatus.ERROR;
+			this.#queue.updateOne(item.temporaryUnique, { ...item, status });
+		} else {
+			status = TemporaryFileStatus.SUCCESS;
+			this.#queue.updateOne(item.temporaryUnique, { ...item, status });
+		}
+
+		return { ...item, status };
 	}
 }

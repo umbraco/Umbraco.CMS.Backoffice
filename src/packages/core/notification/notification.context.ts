@@ -94,6 +94,18 @@ export class UmbNotificationContext extends UmbContextBase<UmbNotificationContex
 	public stay(color: UmbNotificationColor, options: UmbNotificationOptions): UmbNotificationHandler {
 		return this._open({ ...options, color, duration: null });
 	}
+
+	/**
+	 * Updates the notification
+	 * @param {UmbNotificationHandler} handler The handler of the notification
+	 * @param {UmbNotificationOptions} options The new options
+	 */
+	public update(handler: UmbNotificationHandler, options: UmbNotificationOptions) {
+		const notification = this._notifications.getValue().find((notification) => notification.key === handler.key);
+		if (notification) {
+			notification.Update(options);
+		}
+	}
 }
 
 export const UMB_NOTIFICATION_CONTEXT = new UmbContextToken<UmbNotificationContext>('UmbNotificationContext');
