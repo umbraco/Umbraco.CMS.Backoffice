@@ -12,7 +12,7 @@ export class UmbDropzoneElement extends UmbLitElement {
 	parentUnique: string | null = null;
 
 	@property({ type: Boolean })
-	multiple: boolean = true;
+	multiple: boolean = false;
 
 	@property({ type: Boolean })
 	createAsTemporary: boolean = false;
@@ -85,7 +85,6 @@ export class UmbDropzoneElement extends UmbLitElement {
 		this.observe(
 			dropzoneManager.completed,
 			(completed) => {
-				if (!completed.length) return;
 				this.#displayProgress(dropzoneManager, completed.length, fileCount);
 
 				const progress = Math.floor(completed.length / fileCount);
@@ -121,8 +120,8 @@ export class UmbDropzoneElement extends UmbLitElement {
 				data: {
 					message: `${progress}/${total} items uploaded.`,
 				},
-				color: progress == total ? 'positive' : 'default',
-				duration: progress == total ? 6000 : null,
+				color: progress === total ? 'positive' : 'default',
+				duration: progress === total ? 6000 : null,
 			});
 			return;
 		}
@@ -132,8 +131,8 @@ export class UmbDropzoneElement extends UmbLitElement {
 				headline: 'Uploading files',
 				message: `${progress}/${total} items uploaded.`,
 			},
-			color: progress == total ? 'positive' : 'default',
-			duration: progress == total ? 6000 : null,
+			color: progress === total ? 'positive' : 'default',
+			duration: progress === total ? 6000 : null,
 		});
 	}
 

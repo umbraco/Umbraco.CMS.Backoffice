@@ -62,6 +62,7 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 			${when(this._progress >= 0, () => html`<uui-loader-bar progress=${this._progress}></uui-loader-bar>`)}
 			<umb-dropzone
 				.parentUnique=${this._unique}
+				multiple
 				@change=${this.#onChange}
 				@progress=${this.#onProgress}></umb-dropzone>
 		`;

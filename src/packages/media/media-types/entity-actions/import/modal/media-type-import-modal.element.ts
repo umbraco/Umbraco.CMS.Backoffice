@@ -42,7 +42,7 @@ export class UmbMediaTypeImportModalLayout extends UmbModalBaseElement<
 
 	#onFileDropped() {
 		const data = this.dropzone?.getFiles()[0];
-		if (!data) return;
+		if (!data || !('temporaryUnique' in data)) return;
 
 		this.#temporaryUnique = data.temporaryUnique;
 		this.#fileReader.readAsText(data.file);
