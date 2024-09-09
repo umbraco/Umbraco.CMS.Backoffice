@@ -4,4 +4,3 @@ export abstract class UmbUfmFilterBase implements UmbUfmFilterApi {
 	abstract filter(...args: Array<unknown>): string | undefined | null;
 	destroy() {}
 }
-

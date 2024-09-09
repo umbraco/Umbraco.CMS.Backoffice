@@ -1,6 +1,6 @@
 import { expect } from '@open-wc/testing';
 import { ufm } from './marked-ufm.plugin.js';
-import { UmbMarked } from '../index.js';
+import { UmbMarked } from '../contexts/ufm.context.js';
 import { UmbUfmContentNameComponent } from '../components/content-name/content-name.component.js';
 import { UmbUfmLabelValueComponent } from '../components/label-value/label-value.component.js';
 import { UmbUfmLocalizeComponent } from '../components/localize/localize.component.js';
