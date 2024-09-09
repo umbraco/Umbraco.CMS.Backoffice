@@ -139,6 +139,9 @@ export abstract class UmbBlockManagerContext<
 		this.#contentTypes.appendOne(data);
 	}
 
+	getContentTypeKeyOfContentUdi(contentUdi: string) {
+		return this.getContentOf(contentUdi)?.contentTypeKey;
+	}
 	contentTypeOf(contentTypeKey: string) {
 		return this.#contentTypes.asObservablePart((source) => source.find((x) => x.unique === contentTypeKey));
 	}
@@ -147,6 +150,10 @@ export abstract class UmbBlockManagerContext<
 	}
 	getContentTypeNameOf(contentTypeKey: string) {
 		return this.#contentTypes.getValue().find((x) => x.unique === contentTypeKey)?.name;
+	}
+	getContentTypeHasProperties(contentTypeKey: string) {
+		const properties = this.#contentTypes.getValue().find((x) => x.unique === contentTypeKey)?.properties;
+		return properties ? properties.length > 0 : false;
 	}
 	blockTypeOf(contentTypeKey: string) {
 		return this.#blockTypes.asObservablePart((source) =>

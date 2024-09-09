@@ -9,11 +9,12 @@ import {
 import { UmbClassState, UmbObjectState, UmbStringState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import type { ManifestWorkspace } from '@umbraco-cms/backoffice/extension-registry';
-import { UMB_MODAL_CONTEXT } from '@umbraco-cms/backoffice/modal';
-import { decodeFilePath } from '@umbraco-cms/backoffice/utils';
+import { UMB_MODAL_CONTEXT, type UmbModalContext } from '@umbraco-cms/backoffice/modal';
+import { decodeFilePath, UmbReadOnlyVariantStateManager } from '@umbraco-cms/backoffice/utils';
 import {
 	UMB_BLOCK_ENTRIES_CONTEXT,
 	UMB_BLOCK_MANAGER_CONTEXT,
+	type UmbBlockWorkspaceOriginData,
 	type UmbBlockWorkspaceData,
 } from '@umbraco-cms/backoffice/block';
 import { UMB_PROPERTY_CONTEXT } from '@umbraco-cms/backoffice/property';
@@ -32,7 +33,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 	#retrieveBlockManager;
 	#blockEntries?: typeof UMB_BLOCK_ENTRIES_CONTEXT.TYPE;
 	#retrieveBlockEntries;
-	#modalContext?: typeof UMB_MODAL_CONTEXT.TYPE;
+	#modalContext?: UmbModalContext<UmbBlockWorkspaceData>;
 	#retrieveModalContext;
 
 	#entityType: string;
@@ -59,6 +60,8 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 	#variantId = new UmbClassState<UmbVariantId | undefined>(undefined);
 	readonly variantId = this.#variantId.asObservable();
 
+	public readonly readOnlyState = new UmbReadOnlyVariantStateManager(this);
+
 	constructor(host: UmbControllerHost, workspaceArgs: { manifest: ManifestWorkspace }) {
 		super(host, workspaceArgs.manifest.alias);
 		const manifest = workspaceArgs.manifest;
@@ -68,7 +71,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 		this.addValidationContext(this.settings.validation);
 
 		this.#retrieveModalContext = this.consumeContext(UMB_MODAL_CONTEXT, (context) => {
-			this.#modalContext = context;
+			this.#modalContext = context as any;
 			context.onSubmit().catch(this.#modalRejected);
 		}).asPromise();
 
@@ -90,6 +93,25 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 		this.consumeContext(UMB_PROPERTY_CONTEXT, (context) => {
 			this.observe(context.variantId, (variantId) => {
 				this.#variantId.setValue(variantId);
+			});
+
+			// If the current property is readonly all inner block content should also be readonly.
+			this.observe(context.isReadOnly, (isReadOnly) => {
+				const unique = 'UMB_PROPERTY_CONTEXT';
+				const variantId = this.#variantId.getValue();
+				if (variantId === undefined) return;
+
+				if (isReadOnly) {
+					const state = {
+						unique,
+						variantId,
+						message: '',
+					};
+
+					this.readOnlyState?.addState(state);
+				} else {
+					this.readOnlyState?.removeState(unique);
+				}
 			});
 		});
 
@@ -180,7 +202,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 		const blockCreated = await this.#blockEntries.create(
 			contentElementTypeId,
 			{},
-			this.#modalContext.data as UmbBlockWorkspaceData,
+			this.#modalContext.data.originData as UmbBlockWorkspaceOriginData,
 		);
 		if (!blockCreated) {
 			throw new Error('Block Entries could not create block');
@@ -200,7 +222,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 				blockCreated.layout,
 				blockCreated.content,
 				blockCreated.settings,
-				this.#modalContext.data as UmbBlockWorkspaceData,
+				this.#modalContext.data.originData as UmbBlockWorkspaceOriginData,
 			);
 			if (!blockInserted) {
 				throw new Error('Block Entries could not insert block');
@@ -360,7 +382,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 					layoutData,
 					contentData,
 					settingsData,
-					this.#modalContext.data as UmbBlockWorkspaceData,
+					this.#modalContext.data.originData as UmbBlockWorkspaceOriginData,
 				);
 				if (!blockInserted) {
 					throw new Error('Block Entries could not insert block');
@@ -368,7 +390,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 			} else {
 				// Update data:
 
-				this.#blockManager.setOneLayout(layoutData, this.#modalContext.data as UmbBlockWorkspaceData);
+				this.#blockManager.setOneLayout(layoutData, this.#modalContext.data.originData as UmbBlockWorkspaceOriginData);
 				if (contentData) {
 					this.#blockManager.setOneContent(contentData);
 				}
