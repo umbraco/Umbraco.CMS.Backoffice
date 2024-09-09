@@ -1,7 +1,7 @@
 import type { ManifestApi, UmbApi } from '@umbraco-cms/backoffice/extension-api';
 
 export interface UmbUfmFilterApi extends UmbApi {
-	filter(...args: Array<unknown>): string;
+	filter(...args: Array<unknown>): string | undefined | null;
 }
 
 export interface MetaUfmFilter {

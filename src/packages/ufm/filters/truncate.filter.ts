@@ -1,6 +1,6 @@
-import type { UmbUfmFilterApi } from '@umbraco-cms/backoffice/extension-registry';
+import { UmbUfmFilterBase } from '../types.js';
 
-class UmbUfmTruncateFilterApi implements UmbUfmFilterApi {
+class UmbUfmTruncateFilterApi extends UmbUfmFilterBase {
 	filter(str: string, length: number, tail?: string) {
 		if (tail === 'false') tail = '';
 		if (tail === 'true') tail = '…';
@@ -8,8 +8,6 @@ class UmbUfmTruncateFilterApi implements UmbUfmFilterApi {
 
 		return str.slice(0, length).trim() + tail;
 	}
-
-	destroy() {}
 }
 
 export { UmbUfmTruncateFilterApi as api };

@@ -1,11 +1,9 @@
-import type { UmbUfmFilterApi } from '@umbraco-cms/backoffice/extension-registry';
+import { UmbUfmFilterBase } from '../types.js';
 
-class UmbUfmLowercaseFilterApi implements UmbUfmFilterApi {
-	filter(str: string) {
-		return str.toLocaleLowerCase();
+class UmbUfmLowercaseFilterApi extends UmbUfmFilterBase {
+	filter(str?: string) {
+		return str?.toLocaleLowerCase();
 	}
-
-	destroy() {}
 }
 
 export { UmbUfmLowercaseFilterApi as api };

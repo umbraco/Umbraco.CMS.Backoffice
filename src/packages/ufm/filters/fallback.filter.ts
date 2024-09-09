@@ -1,11 +1,9 @@
-import type { UmbUfmFilterApi } from '@umbraco-cms/backoffice/extension-registry';
+import { UmbUfmFilterBase } from '../types.js';
 
-class UmbUfmFallbackFilterApi implements UmbUfmFilterApi {
+class UmbUfmFallbackFilterApi extends UmbUfmFilterBase {
 	filter(str: string, fallback: string) {
 		return typeof str !== 'string' || str ? str : fallback;
 	}
-
-	destroy() {}
 }
 
 export { UmbUfmFallbackFilterApi as api };

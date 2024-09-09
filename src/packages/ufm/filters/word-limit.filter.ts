@@ -1,12 +1,10 @@
-import type { UmbUfmFilterApi } from '@umbraco-cms/backoffice/extension-registry';
+import { UmbUfmFilterBase } from '../types.js';
 
-class UmbUfmWordLimitFilterApi implements UmbUfmFilterApi {
+class UmbUfmWordLimitFilterApi extends UmbUfmFilterBase {
 	filter(str: string, limit: number) {
-		const words = str.split(/\s+/);
-		return words.length > limit ? words.slice(0, limit).join(' ') : str;
+		const words = str?.split(/\s+/) ?? [];
+		return limit && words.length > limit ? words.slice(0, limit).join(' ') : str;
 	}
-
-	destroy() {}
 }
 
 export { UmbUfmWordLimitFilterApi as api };

@@ -1,6 +1,6 @@
-import type { UmbUfmFilterApi } from '@umbraco-cms/backoffice/extension-registry';
+import { UmbUfmFilterBase } from '../types.js';
 
-class UmbUfmStripHtmlFilterApi implements UmbUfmFilterApi {
+class UmbUfmStripHtmlFilterApi extends UmbUfmFilterBase {
 	filter(value: string | { markup: string } | undefined | null) {
 		if (!value) return '';
 
@@ -10,8 +10,6 @@ class UmbUfmStripHtmlFilterApi implements UmbUfmFilterApi {
 
 		return doc.body.textContent ?? '';
 	}
-
-	destroy() {}
 }
 
 export { UmbUfmStripHtmlFilterApi as api };

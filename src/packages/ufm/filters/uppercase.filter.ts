@@ -1,11 +1,9 @@
-import type { UmbUfmFilterApi } from '@umbraco-cms/backoffice/extension-registry';
+import { UmbUfmFilterBase } from '../types.js';
 
-class UmbUfmUppercaseFilterApi implements UmbUfmFilterApi {
-	filter(str: string) {
-		return str.toLocaleUpperCase();
+class UmbUfmUppercaseFilterApi extends UmbUfmFilterBase {
+	filter(str?: string) {
+		return str?.toLocaleUpperCase();
 	}
-
-	destroy() {}
 }
 
 export { UmbUfmUppercaseFilterApi as api };
