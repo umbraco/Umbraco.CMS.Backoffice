@@ -5,7 +5,6 @@ import { tryExecute, tryExecuteAndNotify } from '@umbraco-cms/backoffice/resourc
 
 /**
  * A data source for the current user that fetches data from the server
- * @export
  * @class UmbCurrentUserServerDataSource
  */
 export class UmbCurrentUserServerDataSource {
@@ -13,7 +12,7 @@ export class UmbCurrentUserServerDataSource {
 
 	/**
 	 * Creates an instance of UmbCurrentUserServerDataSource.
-	 * @param {UmbControllerHost} host
+	 * @param {UmbControllerHost} host - The controller host for this controller to be appended to
 	 * @memberof UmbCurrentUserServerDataSource
 	 */
 	constructor(host: UmbControllerHost) {
@@ -115,5 +114,25 @@ export class UmbCurrentUserServerDataSource {
 		}
 
 		return {};
+	}
+
+	/**
+	 * Change the password for current user
+	 * @param id
+	 * @param newPassword
+	 * @param oldPassword
+	 * @param isCurrentUser
+	 * @returns
+	 */
+	async changePassword(newPassword: string, oldPassword: string) {
+		return tryExecuteAndNotify(
+			this.#host,
+			UserService.postUserCurrentChangePassword({
+				requestBody: {
+					newPassword,
+					oldPassword,
+				},
+			}),
+		);
 	}
 }

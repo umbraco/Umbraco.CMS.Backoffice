@@ -73,6 +73,7 @@ import type { ManifestMonacoMarkdownEditorAction } from './monaco-markdown-edito
 import type { ManifestSectionRoute } from './section-route.model.js';
 import type { ManifestCollectionSomething } from './collection-something.model.js';
 import type { ManifestCollectionSomethingItem } from './collection-something-item.model.js';
+import type { ManifestPickerSearchResultItem } from './picker-search-result-item.model.js';
 import type { ManifestBase, ManifestBundle, ManifestCondition } from '@umbraco-cms/backoffice/extension-api';
 
 export type * from './app-entry-point.model.js';
@@ -104,6 +105,7 @@ export type * from './mfa-login-provider.model.js';
 export type * from './modal.model.js';
 export type * from './monaco-markdown-editor-action.model.js';
 export type * from './package-view.model.js';
+export type * from './picker-search-result-item.model.js';
 export type * from './preview-app.model.js';
 export type * from './property-action.model.js';
 export type * from './property-editor.model.js';
@@ -195,6 +197,7 @@ export type ManifestTypes =
 	| ManifestModal
 	| ManifestMonacoMarkdownEditorAction
 	| ManifestPackageView
+	| ManifestPickerSearchResultItem
 	| ManifestPreviewAppProvider
 	| ManifestPropertyActions
 	| ManifestPropertyEditorSchema
@@ -203,10 +206,10 @@ export type ManifestTypes =
 	| ManifestSearchProvider
 	| ManifestSearchResultItem
 	| ManifestSection
+	| ManifestSectionRoute
 	| ManifestSectionSidebarApp
 	| ManifestSectionSidebarAppMenuKind
 	| ManifestSectionView
-	| ManifestSectionRoute
 	| ManifestStore
 	| ManifestTheme
 	| ManifestTinyMcePlugin

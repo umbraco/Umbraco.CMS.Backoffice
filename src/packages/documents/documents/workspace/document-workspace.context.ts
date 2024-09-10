@@ -25,6 +25,7 @@ import {
 } from '../paths.js';
 import { UMB_DOCUMENTS_SECTION_PATH } from '../../section/paths.js';
 import { UmbDocumentPreviewRepository } from '../repository/preview/index.js';
+
 import { UMB_DOCUMENT_WORKSPACE_ALIAS } from './manifests.js';
 import { UmbEntityContext } from '@umbraco-cms/backoffice/entity';
 import { UMB_INVARIANT_CULTURE, UmbVariantId } from '@umbraco-cms/backoffice/variant';
@@ -45,7 +46,7 @@ import {
 } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbLanguageCollectionRepository, type UmbLanguageDetailModel } from '@umbraco-cms/backoffice/language';
-import { type Observable, firstValueFrom } from '@umbraco-cms/backoffice/external/rxjs';
+import { type Observable, firstValueFrom, map } from '@umbraco-cms/backoffice/external/rxjs';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
 import {
 	UmbRequestReloadChildrenOfEntityEvent,
@@ -66,6 +67,8 @@ import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
 import type { UmbContentWorkspaceContext } from '@umbraco-cms/backoffice/content';
 import type { UmbDocumentTypeDetailModel } from '@umbraco-cms/backoffice/document-type';
 import { UmbIsTrashedEntityContext } from '@umbraco-cms/backoffice/recycle-bin';
+import { UmbReadOnlyVariantStateManager } from '@umbraco-cms/backoffice/utils';
+import { sortVariants } from '../utils.js';
 
 type EntityType = UmbDocumentDetailModel;
 export class UmbDocumentWorkspaceContext
@@ -101,6 +104,8 @@ export class UmbDocumentWorkspaceContext
 	#blueprintRepository = new UmbDocumentBlueprintDetailRepository(this);
 	/*#blueprint = new UmbObjectState<UmbDocumentBlueprintDetailModel | undefined>(undefined);
 	public readonly blueprint = this.#blueprint.asObservable();*/
+
+	public readOnlyState = new UmbReadOnlyVariantStateManager(this);
 
 	public isLoaded() {
 		return this.#getDataPromise;
@@ -157,7 +162,7 @@ export class UmbDocumentWorkspaceContext
 			}
 			return [] as Array<UmbDocumentVariantOptionModel>;
 		},
-	);
+	).pipe(map((results) => results.sort(sortVariants)));
 
 	// TODO: this should be set up for all entity workspace contexts in a base class
 	#entityContext = new UmbEntityContext(this);
@@ -364,6 +369,13 @@ export class UmbDocumentWorkspaceContext
 		return this.structure.propertyStructureById(propertyId);
 	}
 
+	/**
+	 * @function propertyValueByAlias
+	 * @param {string} propertyAlias
+	 * @param {UmbVariantId} variantId
+	 * @returns {Promise<Observable<ReturnType | undefined> | undefined>}
+	 * @description Get an Observable for the value of this property.
+	 */
 	async propertyValueByAlias<PropertyValueType = unknown>(
 		propertyAlias: string,
 		variantId?: UmbVariantId,
@@ -626,6 +638,11 @@ export class UmbDocumentWorkspaceContext
 		}
 	}
 
+	#readOnlyLanguageVariantsFilter = (option: UmbDocumentVariantOptionModel) => {
+		const readOnlyCultures = this.readOnlyState.getStates().map((s) => s.variantId.culture);
+		return readOnlyCultures.includes(option.culture) === false;
+	};
+
 	async #handleSaveAndPreview() {
 		const unique = this.getUnique();
 		if (!unique) throw new Error('Unique is missing');
@@ -670,6 +687,7 @@ export class UmbDocumentWorkspaceContext
 				.open(this, UMB_DOCUMENT_PUBLISH_MODAL, {
 					data: {
 						options,
+						pickableFilter: this.#readOnlyLanguageVariantsFilter,
 					},
 					value: { selection: selected },
 				})
@@ -775,6 +793,7 @@ export class UmbDocumentWorkspaceContext
 				.open(this, UMB_DOCUMENT_SAVE_MODAL, {
 					data: {
 						options,
+						pickableFilter: this.#readOnlyLanguageVariantsFilter,
 					},
 					value: { selection: selected },
 				})
@@ -822,6 +841,7 @@ export class UmbDocumentWorkspaceContext
 			.open(this, UMB_DOCUMENT_SCHEDULE_MODAL, {
 				data: {
 					options,
+					pickableFilter: this.#readOnlyLanguageVariantsFilter,
 				},
 				value: { selection: selected.map((unique) => ({ unique, schedule: {} })) },
 			})
@@ -862,6 +882,7 @@ export class UmbDocumentWorkspaceContext
 			.open(this, UMB_DOCUMENT_PUBLISH_WITH_DESCENDANTS_MODAL, {
 				data: {
 					options,
+					pickableFilter: this.#readOnlyLanguageVariantsFilter,
 				},
 				value: { selection: selected },
 			})
