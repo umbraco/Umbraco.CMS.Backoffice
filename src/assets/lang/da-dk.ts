@@ -2226,6 +2226,7 @@ export default {
 		labelForArrayOfItems: 'Samling af %0%',
 		labelForRemoveAllEntries: 'Fjern alle elementer',
 		labelForClearClipboard: 'Ryd udklipsholder',
+		labelForCopyToClipboard: 'Kopier til udklipsholder',
 	},
 	propertyActions: {
 		tooltipForPropertyActionsMenu: 'Åben egenskabshandlinger',
