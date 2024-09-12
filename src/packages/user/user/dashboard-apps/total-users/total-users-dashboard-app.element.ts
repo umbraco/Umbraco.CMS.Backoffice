@@ -2,6 +2,7 @@ import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbUserCollectionRepository } from '@umbraco-cms/backoffice/user';
+import { UmbMasonryItemUpdatedEvent } from '@umbraco-cms/backoffice/components';
 
 const elementName = 'umb-total-users-dashboard-app';
 @customElement(elementName)
@@ -19,7 +20,7 @@ export class UmbTotalUsersDashboardAppElement extends UmbLitElement {
 	async #loadTotalUsers() {
 		const { data } = await this.#userCollectionRepository.requestCollection({ take: 1 });
 		this._userCount = data?.total ?? 0;
-		this.dispatchEvent(new CustomEvent('masonry-item-updated', { bubbles: true, composed: true }));
+		this.dispatchEvent(new UmbMasonryItemUpdatedEvent());
 	}
 
 	override render() {
