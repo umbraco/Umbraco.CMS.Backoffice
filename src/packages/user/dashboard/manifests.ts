@@ -7,7 +7,7 @@ export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 		kind: 'default',
 		alias: 'Umb.Dashboard.UserManagement.Overview',
 		name: 'User Management Overview Dashboard',
-		weight: 500,
+		weight: 1000,
 		meta: {
 			label: 'Overview',
 			pathname: 'overview',
