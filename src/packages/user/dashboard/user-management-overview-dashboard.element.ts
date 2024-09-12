@@ -44,7 +44,6 @@ export class UmbUserManagementOverviewDashboardElement extends UmbLitElement {
 		super();
 		this.#loadTotalUserGroups();
 		this.#loadLastLoggedInUsers();
-		this.#loadInvitedUsers();
 	}
 
 	async #loadTotalUserGroups() {
@@ -65,15 +64,6 @@ export class UmbUserManagementOverviewDashboardElement extends UmbLitElement {
 		this._recentActiveUsersElement.dispatchEvent(
 			new CustomEvent('masonry-item-updated', { bubbles: true, composed: true }),
 		);
-	}
-
-	async #loadInvitedUsers() {
-		const { data } = await this.#userCollectionRepository.requestCollection({
-			take: 5,
-			userStates: [UmbUserStateFilter.INVITED],
-		});
-		this._invitedUsers = data?.items ?? [];
-		this._invitedUsersElement.dispatchEvent(new CustomEvent('masonry-item-updated', { bubbles: true, composed: true }));
 	}
 
 	override render() {

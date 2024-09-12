@@ -6,6 +6,7 @@ import { manifests as modalManifests } from './modals/manifests.js';
 import { manifests as repositoryManifests } from './repository/manifests.js';
 import { manifests as sectionViewManifests } from './section-view/manifests.js';
 import { manifests as workspaceManifests } from './workspace/manifests.js';
+import { manifests as dashboardAppsManifests } from './dashboard-apps/manifests.js';
 
 import type { ManifestTypes, UmbBackofficeManifestKind } from '@umbraco-cms/backoffice/extension-registry';
 
@@ -18,4 +19,5 @@ export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 	...repositoryManifests,
 	...sectionViewManifests,
 	...workspaceManifests,
+	...dashboardAppsManifests,
 ];
