@@ -27,12 +27,6 @@ export class UmbUserManagementOverviewDashboardElement extends UmbLitElement {
 	@state()
 	private _invitedUsers: UmbUserDetailModel[] = [];
 
-	@state()
-	private _inactiveUsers: UmbUserDetailModel[] = [];
-
-	@query('#total-users')
-	private _totalUsersElement!: HTMLElement;
-
 	@query('#total-user-groups')
 	private _totalUserGroupsElement!: HTMLElement;
 
@@ -42,26 +36,15 @@ export class UmbUserManagementOverviewDashboardElement extends UmbLitElement {
 	@query('#invited-users')
 	private _invitedUsersElement!: HTMLElement;
 
-	@query('#inactive-users')
-	private _inactiveUsersElement!: HTMLElement;
-
 	#masonryLayoutOptions: UmbMasonryLayoutOptions = {
 		gap: 20,
 	};
 
 	constructor() {
 		super();
-		this.#loadTotalUsers();
 		this.#loadTotalUserGroups();
 		this.#loadLastLoggedInUsers();
 		this.#loadInvitedUsers();
-		this.#loadInactiveUsers();
-	}
-
-	async #loadTotalUsers() {
-		const { data } = await this.#userCollectionRepository.requestCollection({ take: 1 });
-		this._userCount = data?.total ?? 0;
-		this._totalUsersElement.dispatchEvent(new CustomEvent('masonry-item-updated', { bubbles: true, composed: true }));
 	}
 
 	async #loadTotalUserGroups() {
@@ -93,34 +76,14 @@ export class UmbUserManagementOverviewDashboardElement extends UmbLitElement {
 		this._invitedUsersElement.dispatchEvent(new CustomEvent('masonry-item-updated', { bubbles: true, composed: true }));
 	}
 
-	async #loadInactiveUsers() {
-		const { data } = await this.#userCollectionRepository.requestCollection({
-			take: 5,
-			orderDirection: UmbDirection.ASCENDING,
-			orderBy: UmbUserOrderBy.CREATE_DATE,
-			userStates: [UmbUserStateFilter.INACTIVE],
-		});
-		this._inactiveUsers = data?.items ?? [];
-		this._inactiveUsersElement.dispatchEvent(
-			new CustomEvent('masonry-item-updated', { bubbles: true, composed: true }),
-		);
-	}
-
 	override render() {
 		return html`
 			<section id="content">
 				<umb-masonry-layout .options=${this.#masonryLayoutOptions}>
-					${this.#renderUserCount()} ${this.#renderUserGroupCount()} ${this.#renderLastLoggedInUsers()}
-					${this.#renderInvitedUsers()} ${this.#renderInactiveUsers()}
+					${this.#renderUserGroupCount()} ${this.#renderLastLoggedInUsers()} ${this.#renderInvitedUsers()}
 				</umb-masonry-layout>
 			</section>
 		`;
-	}
-
-	#renderUserCount() {
-		return html` <uui-box id="total-users" headline="Total users">
-			<span class="large">${this._userCount}</span>
-		</uui-box>`;
 	}
 
 	#renderUserGroupCount() {
@@ -138,12 +101,6 @@ export class UmbUserManagementOverviewDashboardElement extends UmbLitElement {
 	#renderInvitedUsers() {
 		return html` <uui-box id="invited-users" headline="Invited users">
 			${this._invitedUsers.map((user) => this.#renderUserRef(user))}
-		</uui-box>`;
-	}
-
-	#renderInactiveUsers() {
-		return html` <uui-box id="inactive-users" headline="Inactive users">
-			${this._inactiveUsers.map((user) => this.#renderUserRef(user))}
 		</uui-box>`;
 	}
 
