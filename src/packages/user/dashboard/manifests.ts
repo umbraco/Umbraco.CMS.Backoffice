@@ -4,9 +4,9 @@ import type { ManifestTypes, UmbBackofficeManifestKind } from '@umbraco-cms/back
 export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 	{
 		type: 'dashboard',
+		kind: 'default',
 		alias: 'Umb.Dashboard.UserManagement.Overview',
 		name: 'User Management Overview Dashboard',
-		element: () => import('./user-management-overview-dashboard.element.js'),
 		weight: 500,
 		meta: {
 			label: 'Overview',
