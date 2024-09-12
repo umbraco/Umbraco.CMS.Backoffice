@@ -19,6 +19,7 @@ export default defineConfig({
 			'content-type/index': './content-type/index.ts',
 			'content/index': './content/index.ts',
 			'culture/index': './culture/index.ts',
+			'dashboard/index': './dashboard/index.ts',
 			'debug/index': './debug/index.ts',
 			'entity-action/index': './entity-action/index.ts',
 			'entity-bulk-action/index': './entity-bulk-action/index.ts',
