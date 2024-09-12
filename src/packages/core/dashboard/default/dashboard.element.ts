@@ -13,9 +13,8 @@ export class UmbDashboardElement extends UmbLitElement {
 	override render() {
 		return html`
 			<section id="content">
-				DASHBOARD HERE
 				<umb-masonry-layout .options=${this.#masonryLayoutOptions}>
-					<umb-extension-with-api-slot type="dashboardApp"></umb-extension-with-api-slot>
+					<umb-extension-slot type="dashboardApp"></umb-extension-slot>
 				</umb-masonry-layout>
 			</section>
 		`;
