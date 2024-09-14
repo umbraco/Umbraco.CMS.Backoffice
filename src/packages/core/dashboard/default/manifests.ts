@@ -9,6 +9,7 @@ export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 		manifest: {
 			type: 'dashboard',
 			element: () => import('./dashboard.element.js'),
+			api: () => import('./dashboard.context.js'),
 		},
 	},
 ];
