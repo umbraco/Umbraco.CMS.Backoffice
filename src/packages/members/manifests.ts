@@ -6,7 +6,9 @@ import { manifests as sectionManifests } from './section/manifests.js';
 import './member/components/index.js';
 import './member-group/components/index.js';
 
-export const manifests: Array<UmbExtensionManifest> = [
+import type { UmbExtensionManifestKind } from '@umbraco-cms/backoffice/extension-registry';
+
+export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> = [
 	...memberGroupManifests,
 	...memberManifests,
 	...memberTypeManifests,
