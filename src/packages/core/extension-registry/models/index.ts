@@ -1,10 +1,7 @@
 import type { ManifestAuthProvider } from './auth-provider.model.js';
-import type { ManifestCollection } from './collection.models.js';
-import type { ManifestCollectionView } from './collection-view.model.js';
 import type { ManifestCurrentUserAction, ManifestCurrentUserActionDefaultKind } from './current-user-action.model.js';
 import type { ManifestDashboard } from './dashboard.model.js';
 import type { ManifestDashboardApp } from './dashboard-app.model.js';
-import type { ManifestDashboardCollection } from './dashboard-collection.model.js';
 import type {
 	ManifestEntityAction,
 	ManifestEntityActionDeleteKind,
@@ -43,8 +40,6 @@ import type { ManifestSectionView } from './section-view.model.js';
 import type { ManifestStore, ManifestTreeStore, ManifestItemStore } from './store.model.js';
 import type { ManifestTheme } from './theme.model.js';
 import type { ManifestTinyMcePlugin } from './tinymce-plugin.model.js';
-import type { ManifestTree } from './tree.model.js';
-import type { ManifestTreeItem } from './tree-item.model.js';
 import type { ManifestUfmComponent } from './ufm-component.model.js';
 import type { ManifestUfmFilter } from './ufm-filter.model.js';
 import type { ManifestUserProfileApp } from './user-profile-app.model.js';
@@ -63,10 +58,7 @@ import type {
 } from './workspace-view.model.js';
 import type { ManifestEntityUserPermission } from './entity-user-permission.model.js';
 import type { ManifestGranularUserPermission } from './user-granular-permission.model.js';
-import type { ManifestCollectionAction } from './collection-action.model.js';
 import type { ManifestMfaLoginProvider } from './mfa-login-provider.model.js';
-import type { ManifestSearchProvider } from './search-provider.model.js';
-import type { ManifestSearchResultItem } from './search-result-item.model.js';
 import type { ManifestAppEntryPoint } from './app-entry-point.model.js';
 import type { ManifestBackofficeEntryPoint } from './backoffice-entry-point.model.js';
 import type { ManifestEntryPoint } from './entry-point.model.js';
@@ -78,12 +70,8 @@ import type { ManifestBase, ManifestBundle, ManifestCondition } from '@umbraco-c
 export type * from './app-entry-point.model.js';
 export type * from './auth-provider.model.js';
 export type * from './backoffice-entry-point.model.js';
-export type * from './collection-action.model.js';
-export type * from './collection-view.model.js';
-export type * from './collection.models.js';
 export type * from './current-user-action.model.js';
 export type * from './dashboard-app.model.js';
-export type * from './dashboard-collection.model.js';
 export type * from './dashboard.model.js';
 export type * from './dynamic-root.model.js';
 export type * from './entity-action.model.js';
@@ -107,16 +95,12 @@ export type * from './preview-app.model.js';
 export type * from './property-action.model.js';
 export type * from './property-editor.model.js';
 export type * from './repository.model.js';
-export type * from './search-provider.model.js';
-export type * from './search-result-item.model.js';
 export type * from './section-sidebar-app.model.js';
 export type * from './section-view.model.js';
 export type * from './section.model.js';
 export type * from './store.model.js';
 export type * from './theme.model.js';
 export type * from './tinymce-plugin.model.js';
-export type * from './tree-item.model.js';
-export type * from './tree.model.js';
 export type * from './ufm-component.model.js';
 export type * from './ufm-filter.model.js';
 export type * from './user-granular-permission.model.js';
@@ -161,15 +145,11 @@ export type ManifestTypes =
 	| ManifestAuthProvider
 	| ManifestBackofficeEntryPoint
 	| ManifestBundle<ManifestTypes>
-	| ManifestCollection
-	| ManifestCollectionAction
-	| ManifestCollectionView
 	| ManifestCondition
 	| ManifestCurrentUserAction
 	| ManifestCurrentUserActionDefaultKind
 	| ManifestDashboard
 	| ManifestDashboardApp
-	| ManifestDashboardCollection
 	| ManifestDynamicRootOrigin
 	| ManifestDynamicRootQueryStep
 	| ManifestEntityActions
@@ -199,8 +179,6 @@ export type ManifestTypes =
 	| ManifestPropertyEditorSchema
 	| ManifestPropertyEditorUi
 	| ManifestRepository
-	| ManifestSearchProvider
-	| ManifestSearchResultItem
 	| ManifestSection
 	| ManifestSectionRoute
 	| ManifestSectionSidebarApp
@@ -209,8 +187,6 @@ export type ManifestTypes =
 	| ManifestStore
 	| ManifestTheme
 	| ManifestTinyMcePlugin
-	| ManifestTree
-	| ManifestTreeItem
 	| ManifestTreeStore
 	| ManifestUfmComponent
 	| ManifestUfmFilter
