@@ -907,6 +907,7 @@ export default {
 		lastUpdated: 'Last Updated',
 		skipToMenu: 'Skip to menu',
 		skipToContent: 'Skip to content',
+		newVersionAvailable: 'Ny version tilgængelig',
 	},
 	colors: {
 		blue: 'Blå',
@@ -2223,6 +2224,7 @@ export default {
 		labelForArrayOfItems: 'Samling af %0%',
 		labelForRemoveAllEntries: 'Fjern alle elementer',
 		labelForClearClipboard: 'Ryd udklipsholder',
+		labelForCopyToClipboard: 'Kopier til udklipsholder',
 	},
 	propertyActions: {
 		tooltipForPropertyActionsMenu: 'Åben egenskabshandlinger',

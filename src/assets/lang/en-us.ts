@@ -918,6 +918,7 @@ export default {
 		skipToMenu: 'Skip to menu',
 		skipToContent: 'Skip to content',
 		restore: 'Restore',
+		newVersionAvailable: 'New version available',
 	},
 	colors: {
 		blue: 'Blue',
@@ -2288,6 +2289,7 @@ export default {
 		labelForArrayOfItems: 'Collection of %0%',
 		labelForRemoveAllEntries: 'Remove all items',
 		labelForClearClipboard: 'Clear clipboard',
+		labelForCopyToClipboard: 'Copy to clipboard',
 	},
 	propertyActions: {
 		tooltipForPropertyActionsMenu: 'Open Property Actions',

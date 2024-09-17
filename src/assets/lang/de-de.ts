@@ -879,6 +879,7 @@ export default {
 		header: 'Kopf',
 		systemField: 'System Feld',
 		lastUpdated: 'Zuletzt geändert',
+		newVersionAvailable: 'Neue Version verfügbar',
 	},
 	colors: {
 		blue: 'Blau',
@@ -1966,6 +1967,14 @@ export default {
 	logViewer: {
 		selectAllLogLevelFilters: 'Wählen Sie Alle',
 		deselectAllLogLevelFilters: 'Alle abwählen',
+	},
+	clipboard: {
+		labelForCopyAllEntries: '%0% kopieren',
+		labelForArrayOfItemsFrom: '%0% von %1%',
+		labelForArrayOfItems: 'Sammlung von %0%',
+		labelForRemoveAllEntries: 'Alle Elemente entfernen',
+		labelForClearClipboard: 'Zwischenablage löschen',
+		labelForCopyToClipboard: 'Kopieren in Zwischenablage',
 	},
 	formsDashboard: {
 		formsHeadline: 'Umbraco Forms',
