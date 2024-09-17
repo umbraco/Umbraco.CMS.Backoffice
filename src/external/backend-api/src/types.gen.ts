@@ -652,6 +652,7 @@ export type DocumentItemResponseModel = {
 
 export type DocumentNotificationResponseModel = {
     actionId: string;
+    alias: string;
     subscribed: boolean;
 };
 
@@ -2149,6 +2150,7 @@ export type ServerConfigurationItemResponseModel = {
 
 export type ServerConfigurationResponseModel = {
     allowPasswordReset: boolean;
+    versionCheckPeriod: number;
 };
 
 export type ServerInformationResponseModel = {
@@ -2606,6 +2608,12 @@ export type UpdateWebhookRequestModel = {
         [key: string]: (string);
     };
     events: Array<(string)>;
+};
+
+export type UpgradeCheckResponseModel = {
+    type: string;
+    comment: string;
+    url: string;
 };
 
 export type UpgradeSettingsResponseModel = {
@@ -3494,6 +3502,7 @@ export type GetItemDocumentData = {
 export type GetItemDocumentResponse = (Array<(DocumentItemResponseModel)>);
 
 export type GetItemDocumentSearchData = {
+    parentId?: string;
     query?: string;
     skip?: number;
     take?: number;
@@ -3947,6 +3956,7 @@ export type GetItemMediaData = {
 export type GetItemMediaResponse = (Array<(MediaItemResponseModel)>);
 
 export type GetItemMediaSearchData = {
+    parentId?: string;
     query?: string;
     skip?: number;
     take?: number;
@@ -4666,6 +4676,8 @@ export type GetServerInformationResponse = ((ServerInformationResponseModel));
 export type GetServerStatusResponse = ((ServerStatusResponseModel));
 
 export type GetServerTroubleshootingResponse = ((ServerTroubleshootingResponseModel));
+
+export type GetServerUpgradeCheckResponse = ((UpgradeCheckResponseModel));
 
 export type GetItemStaticFileData = {
     path?: Array<(string)>;
