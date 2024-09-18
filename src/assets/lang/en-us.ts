@@ -820,6 +820,7 @@ export default {
 		logout: 'Logout',
 		macro: 'Macro',
 		mandatory: 'Mandatory',
+		manifest: 'Manifest',
 		media: 'Media',
 		message: 'Message',
 		move: 'Move',
@@ -917,6 +918,7 @@ export default {
 		skipToMenu: 'Skip to menu',
 		skipToContent: 'Skip to content',
 		restore: 'Restore',
+		newVersionAvailable: 'New version available',
 	},
 	colors: {
 		blue: 'Blue',
@@ -1083,8 +1085,8 @@ export default {
 		relateToOriginal: 'Relate copied items to original',
 	},
 	notifications: {
-		editNotifications: 'Select your notification for <strong>%0%</strong>',
-		notificationsSavedFor: 'Notification settings saved for',
+		editNotifications: 'Select your notification for %0%',
+		notificationsSavedFor: 'Notification settings saved for %0%',
 		notifications: 'Notifications',
 	},
 	packager: {
@@ -1641,12 +1643,12 @@ export default {
 		andAllMediaItems: 'and all media items using this type',
 		andAllMembers: 'and all members using this type',
 		memberCanEdit: 'Member can edit',
-		memberCanEditDescription: 'Allow this property value to be edited by the member on their profile page\n    ',
+		memberCanEditDescription: 'Allow this property value to be edited by the member on their profile page',
 		isSensitiveData: 'Is sensitive data',
 		isSensitiveDataDescription:
-			"Hide this property value from content editors that don't have access to view\n      sensitive information\n    ",
+			"Hide this property value from content editors that don't have access to view sensitive information",
 		showOnMemberProfile: 'Show on member profile',
-		showOnMemberProfileDescription: 'Allow this property value to be displayed on the member profile page\n    ',
+		showOnMemberProfileDescription: 'Allow this property value to be displayed on the member profile page',
 		tabHasNoSortOrder: 'tab has no sort order',
 		compositionUsageHeading: 'Where is this composition used?',
 		compositionUsageSpecification:
@@ -2287,6 +2289,7 @@ export default {
 		labelForArrayOfItems: 'Collection of %0%',
 		labelForRemoveAllEntries: 'Remove all items',
 		labelForClearClipboard: 'Clear clipboard',
+		labelForCopyToClipboard: 'Copy to clipboard',
 	},
 	propertyActions: {
 		tooltipForPropertyActionsMenu: 'Open Property Actions',
@@ -2403,6 +2406,7 @@ export default {
 		tabClipboard: 'Clipboard',
 		tabBlockSettings: 'Settings',
 		headlineAdvanced: 'Advanced',
+		headlineCustomView: 'Custom View',
 		forceHideContentEditor: 'Hide content editor',
 		forceHideContentEditorHelp: 'Hide the content edit button and the content editor from the Block Editor overlay',
 		gridInlineEditing: 'Inline editing',

@@ -7,7 +7,6 @@ import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 /**
  * A data source for Partial View folders that fetches data from the server
- * @export
  * @class UmbPartialViewFolderServerDataSource
  * @implements {RepositoryDetailDataSource}
  */
@@ -17,7 +16,7 @@ export class UmbPartialViewFolderServerDataSource implements UmbFolderDataSource
 
 	/**
 	 * Creates an instance of UmbPartialViewFolderServerDataSource.
-	 * @param {UmbControllerHost} host
+	 * @param {UmbControllerHost} host - The controller host for this controller to be appended to
 	 * @memberof UmbPartialViewFolderServerDataSource
 	 */
 	constructor(host: UmbControllerHost) {
@@ -27,7 +26,7 @@ export class UmbPartialViewFolderServerDataSource implements UmbFolderDataSource
 	/**
 	 * Fetches a Partial View folder from the server
 	 * @param {string} unique
-	 * @return {UmbDataSourceResponse<UmbFolderModel>}
+	 * @returns {UmbDataSourceResponse<UmbFolderModel>}
 	 * @memberof UmbPartialViewFolderServerDataSource
 	 */
 	async read(unique: string) {
@@ -59,7 +58,7 @@ export class UmbPartialViewFolderServerDataSource implements UmbFolderDataSource
 	/**
 	 * Creates a Partial View folder on the server
 	 * @param {UmbCreateFolderModel} args
-	 * @return {UmbDataSourceResponse<UmbFolderModel>}
+	 * @returns {UmbDataSourceResponse<UmbFolderModel>}
 	 * @memberof UmbPartialViewFolderServerDataSource
 	 */
 	async create(args: UmbCreateFolderModel) {
@@ -92,7 +91,7 @@ export class UmbPartialViewFolderServerDataSource implements UmbFolderDataSource
 	/**
 	 * Deletes a Partial View folder on the server
 	 * @param {string} unique
-	 * @return {UmbDataSourceErrorResponse}
+	 * @returns {UmbDataSourceErrorResponse}
 	 * @memberof UmbPartialViewServerDataSource
 	 */
 	async delete(unique: string) {

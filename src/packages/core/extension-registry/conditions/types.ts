@@ -3,9 +3,11 @@ import type { CollectionBulkActionPermissionConditionConfig } from '../../collec
 import type { UmbSectionUserPermissionConditionConfig } from '../../section/conditions/index.js';
 import type { SectionAliasConditionConfig } from './section-alias.condition.js';
 import type { SwitchConditionConfig } from './switch.condition.js';
+import type { UmbMultipleAppLanguageConditionConfig } from './multiple-app-languages.condition.js';
 import type {
 	WorkspaceAliasConditionConfig,
 	WorkspaceEntityTypeConditionConfig,
+	WorkspaceContentTypeAliasConditionConfig,
 } from '@umbraco-cms/backoffice/workspace';
 import type { UmbConditionConfigBase } from '@umbraco-cms/backoffice/extension-api';
 import type { UmbDocumentUserPermissionConditionConfig } from '@umbraco-cms/backoffice/document';
@@ -29,8 +31,10 @@ export type ConditionTypes =
 	| CollectionBulkActionPermissionConditionConfig
 	| SectionAliasConditionConfig
 	| SwitchConditionConfig
+	| UmbConditionConfigBase
 	| UmbDocumentUserPermissionConditionConfig
+	| UmbMultipleAppLanguageConditionConfig
 	| UmbSectionUserPermissionConditionConfig
 	| WorkspaceAliasConditionConfig
-	| WorkspaceEntityTypeConditionConfig
-	| UmbConditionConfigBase;
+	| WorkspaceContentTypeAliasConditionConfig
+	| WorkspaceEntityTypeConditionConfig;

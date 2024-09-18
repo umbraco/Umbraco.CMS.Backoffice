@@ -1,5 +1,5 @@
 import type { UmbMediaTypeItemModel } from '../../repository/index.js';
-import { UmbMediaTypePickerContext } from './input-media-type.context.js';
+import { UmbMediaTypePickerInputContext } from './input-media-type.context.js';
 import { css, html, customElement, property, state, repeat, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
@@ -33,7 +33,7 @@ export class UmbInputMediaTypeElement extends UmbFormControlMixin<string | undef
 	 * This is a minimum amount of selected items in this input.
 	 * @type {number}
 	 * @attr
-	 * @default 0
+	 * @default
 	 */
 	@property({ type: Number })
 	public set min(value: number) {
@@ -56,7 +56,7 @@ export class UmbInputMediaTypeElement extends UmbFormControlMixin<string | undef
 	 * This is a maximum amount of selected items in this input.
 	 * @type {number}
 	 * @attr
-	 * @default Infinity
+	 * @default
 	 */
 	@property({ type: Number })
 	public set max(value: number) {
@@ -98,7 +98,7 @@ export class UmbInputMediaTypeElement extends UmbFormControlMixin<string | undef
 	@state()
 	private _editPath = '';
 
-	#pickerContext = new UmbMediaTypePickerContext(this);
+	#pickerContext = new UmbMediaTypePickerInputContext(this);
 
 	constructor() {
 		super();
@@ -174,7 +174,7 @@ export class UmbInputMediaTypeElement extends UmbFormControlMixin<string | undef
 		if (!item.unique) return;
 		const href = `${this._editPath}edit/${item.unique}`;
 		return html`
-			<uui-ref-node-document-type name=${item.name} id=${item.unique}>
+			<uui-ref-node-document-type name=${this.localize.string(item.name)} id=${item.unique}>
 				${this.#renderIcon(item)}
 				<uui-action-bar slot="actions">
 					<uui-button href=${href} label=${this.localize.term('general_open')}></uui-button>

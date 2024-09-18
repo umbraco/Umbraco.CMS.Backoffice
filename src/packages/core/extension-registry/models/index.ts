@@ -23,6 +23,7 @@ import type {
 } from './entity-action.model.js';
 import type { ManifestDynamicRootOrigin, ManifestDynamicRootQueryStep } from './dynamic-root.model.js';
 import type { ManifestEntityBulkAction } from './entity-bulk-action.model.js';
+import type { ManifestFileUploadPreview } from './file-upload-preview.model.js';
 import type { ManifestExternalLoginProvider } from './external-login-provider.model.js';
 import type { ManifestGlobalContext } from './global-context.model.js';
 import type { ManifestHeaderApp, ManifestHeaderAppButtonKind } from './header-app.model.js';
@@ -46,6 +47,7 @@ import type { ManifestTinyMcePlugin } from './tinymce-plugin.model.js';
 import type { ManifestTree } from './tree.model.js';
 import type { ManifestTreeItem } from './tree-item.model.js';
 import type { ManifestUfmComponent } from './ufm-component.model.js';
+import type { ManifestUfmFilter } from './ufm-filter.model.js';
 import type { ManifestUserProfileApp } from './user-profile-app.model.js';
 import type { ManifestWorkspace, ManifestWorkspaceRoutableKind } from './workspace.model.js';
 import type { ManifestWorkspaceAction, ManifestWorkspaceActionDefaultKind } from './workspace-action.model.js';
@@ -71,6 +73,7 @@ import type { ManifestBackofficeEntryPoint } from './backoffice-entry-point.mode
 import type { ManifestEntryPoint } from './entry-point.model.js';
 import type { ManifestMonacoMarkdownEditorAction } from './monaco-markdown-editor-action.model.js';
 import type { ManifestSectionRoute } from './section-route.model.js';
+import type { ManifestPickerSearchResultItem } from './picker-search-result-item.model.js';
 import type { ManifestBase, ManifestBundle, ManifestCondition } from '@umbraco-cms/backoffice/extension-api';
 
 export type * from './app-entry-point.model.js';
@@ -88,6 +91,7 @@ export type * from './entity-action.model.js';
 export type * from './entity-bulk-action.model.js';
 export type * from './entity-user-permission.model.js';
 export type * from './entry-point.model.js';
+export type * from './file-upload-preview.model.js';
 export type * from './external-login-provider.model.js';
 export type * from './global-context.model.js';
 export type * from './header-app.model.js';
@@ -100,6 +104,7 @@ export type * from './mfa-login-provider.model.js';
 export type * from './modal.model.js';
 export type * from './monaco-markdown-editor-action.model.js';
 export type * from './package-view.model.js';
+export type * from './picker-search-result-item.model.js';
 export type * from './preview-app.model.js';
 export type * from './property-action.model.js';
 export type * from './property-editor.model.js';
@@ -115,6 +120,7 @@ export type * from './tinymce-plugin.model.js';
 export type * from './tree-item.model.js';
 export type * from './tree.model.js';
 export type * from './ufm-component.model.js';
+export type * from './ufm-filter.model.js';
 export type * from './user-granular-permission.model.js';
 export type * from './user-profile-app.model.js';
 export type * from './workspace-action-menu-item.model.js';
@@ -172,6 +178,7 @@ export type ManifestTypes =
 	| ManifestEntityBulkAction
 	| ManifestEntityUserPermission
 	| ManifestEntryPoint
+	| ManifestFileUploadPreview
 	| ManifestExternalLoginProvider
 	| ManifestGlobalContext
 	| ManifestGranularUserPermission
@@ -188,6 +195,7 @@ export type ManifestTypes =
 	| ManifestModal
 	| ManifestMonacoMarkdownEditorAction
 	| ManifestPackageView
+	| ManifestPickerSearchResultItem
 	| ManifestPreviewAppProvider
 	| ManifestPropertyActions
 	| ManifestPropertyEditorSchema
@@ -196,10 +204,10 @@ export type ManifestTypes =
 	| ManifestSearchProvider
 	| ManifestSearchResultItem
 	| ManifestSection
+	| ManifestSectionRoute
 	| ManifestSectionSidebarApp
 	| ManifestSectionSidebarAppMenuKind
 	| ManifestSectionView
-	| ManifestSectionRoute
 	| ManifestStore
 	| ManifestTheme
 	| ManifestTinyMcePlugin
@@ -207,6 +215,7 @@ export type ManifestTypes =
 	| ManifestTreeItem
 	| ManifestTreeStore
 	| ManifestUfmComponent
+	| ManifestUfmFilter
 	| ManifestUserProfileApp
 	| ManifestWorkspaceActionMenuItem
 	| ManifestWorkspaceActions

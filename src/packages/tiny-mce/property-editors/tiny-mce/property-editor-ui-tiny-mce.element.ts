@@ -3,14 +3,15 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbPropertyValueChangeEvent } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
-
-import '../../components/input-tiny-mce/input-tiny-mce.element.js';
 import {
+	UmbBlockRteEntriesContext,
 	type UmbBlockRteLayoutModel,
 	UmbBlockRteManagerContext,
 	type UmbBlockRteTypeModel,
 } from '@umbraco-cms/backoffice/block-rte';
 import type { UmbBlockValueType } from '@umbraco-cms/backoffice/block';
+
+import '../../components/input-tiny-mce/input-tiny-mce.element.js';
 
 export interface UmbRichTextEditorValueType {
 	markup: string;
@@ -59,6 +60,15 @@ export class UmbPropertyEditorUITinyMceElement extends UmbLitElement implements 
 		return this._value;
 	}
 
+	/**
+	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
+	 * @type {boolean}
+	 * @attr
+	 * @default false
+	 */
+	@property({ type: Boolean, reflect: true })
+	readonly = false;
+
 	@state()
 	_config?: UmbPropertyEditorConfigCollection;
 
@@ -74,9 +84,15 @@ export class UmbPropertyEditorUITinyMceElement extends UmbLitElement implements 
 	private _latestMarkup = ''; // The latest value gotten from the TinyMCE editor.
 
 	#managerContext = new UmbBlockRteManagerContext(this);
+	#entriesContext = new UmbBlockRteEntriesContext(this);
 
 	constructor() {
 		super();
+
+		this.observe(this.#entriesContext.layoutEntries, (layouts) => {
+			// Update manager:
+			this.#managerContext.setLayouts(layouts);
+		});
 
 		this.observe(this.#managerContext.layouts, (layouts) => {
 			this._value = {
@@ -138,7 +154,11 @@ export class UmbPropertyEditorUITinyMceElement extends UmbLitElement implements 
 
 	override render() {
 		return html`
-			<umb-input-tiny-mce .configuration=${this._config} .value=${this._markup} @change=${this.#onChange}>
+			<umb-input-tiny-mce
+				.configuration=${this._config}
+				.value=${this._markup}
+				@change=${this.#onChange}
+				?readonly=${this.readonly}>
 			</umb-input-tiny-mce>
 		`;
 	}

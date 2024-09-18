@@ -15,6 +15,7 @@ export interface ManifestEntityBulkAction<MetaType extends MetaEntityBulkAction 
 	meta: MetaType;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface MetaEntityBulkAction {}
 
 export interface ManifestEntityBulkActionDefaultKind extends ManifestEntityBulkAction<MetaEntityBulkActionDefaultKind> {
@@ -25,7 +26,6 @@ export interface ManifestEntityBulkActionDefaultKind extends ManifestEntityBulkA
 export interface MetaEntityBulkActionDefaultKind extends MetaEntityBulkAction {
 	/**
 	 * An icon to represent the action to be performed
-	 *
 	 * @examples [
 	 *   "icon-box",
 	 *   "icon-grid"
@@ -35,7 +35,6 @@ export interface MetaEntityBulkActionDefaultKind extends MetaEntityBulkAction {
 
 	/**
 	 * The friendly name of the action to perform
-	 *
 	 * @examples [
 	 *   "Create",
 	 *   "Create Content Template"

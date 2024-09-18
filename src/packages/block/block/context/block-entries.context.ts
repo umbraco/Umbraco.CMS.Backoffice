@@ -1,4 +1,4 @@
-import type { UmbBlockWorkspaceData } from '../workspace/block-workspace.modal-token.js';
+import type { UmbBlockWorkspaceOriginData } from '../workspace/block-workspace.modal-token.js';
 import type { UmbBlockDataType, UmbBlockLayoutBaseModel } from '../types.js';
 import type { UmbBlockDataObjectModel, UmbBlockManagerContext } from './block-manager.context.js';
 import { UMB_BLOCK_ENTRIES_CONTEXT } from './block-entries.context-token.js';
@@ -11,11 +11,18 @@ import type { UmbModalRouteBuilder } from '@umbraco-cms/backoffice/router';
 
 export abstract class UmbBlockEntriesContext<
 	BlockManagerContextTokenType extends UmbContextToken<BlockManagerContextType, BlockManagerContextType>,
-	BlockManagerContextType extends UmbBlockManagerContext<BlockType, BlockLayoutType>,
+	BlockManagerContextType extends UmbBlockManagerContext<BlockType, BlockLayoutType, BlockOriginData>,
 	BlockType extends UmbBlockTypeBaseModel,
 	BlockLayoutType extends UmbBlockLayoutBaseModel,
+	BlockOriginData extends UmbBlockWorkspaceOriginData,
 > extends UmbContextBase<
-	UmbBlockEntriesContext<BlockManagerContextTokenType, BlockManagerContextType, BlockType, BlockLayoutType>
+	UmbBlockEntriesContext<
+		BlockManagerContextTokenType,
+		BlockManagerContextType,
+		BlockType,
+		BlockLayoutType,
+		BlockOriginData
+	>
 > {
 	//
 	_manager?: BlockManagerContextType;
@@ -27,11 +34,17 @@ export abstract class UmbBlockEntriesContext<
 	protected _workspacePath = new UmbStringState(undefined);
 	workspacePath = this._workspacePath.asObservable();
 
+	protected _dataPath?: string;
+
 	public abstract readonly canCreate: Observable<boolean>;
 
 	protected _layoutEntries = new UmbArrayState<BlockLayoutType>([], (x) => x.contentUdi);
 	readonly layoutEntries = this._layoutEntries.asObservable();
 	readonly layoutEntriesLength = this._layoutEntries.asObservablePart((x) => x.length);
+
+	getLength() {
+		return this._layoutEntries.getValue().length;
+	}
 
 	constructor(host: UmbControllerHost, blockManagerContextToken: BlockManagerContextTokenType) {
 		super(host, UMB_BLOCK_ENTRIES_CONTEXT.toString());
@@ -46,6 +59,10 @@ export abstract class UmbBlockEntriesContext<
 	async getManager() {
 		await this._retrieveManager;
 		return this._manager!;
+	}
+
+	setDataPath(path: string) {
+		this._dataPath = path;
 	}
 
 	protected abstract _gotBlockManager(): void;
@@ -71,14 +88,14 @@ export abstract class UmbBlockEntriesContext<
 	public abstract create(
 		contentElementTypeKey: string,
 		layoutEntry?: Omit<BlockLayoutType, 'contentUdi'>,
-		modalData?: UmbBlockWorkspaceData,
+		originData?: BlockOriginData,
 	): Promise<UmbBlockDataObjectModel<BlockLayoutType> | undefined>;
 
 	abstract insert(
 		layoutEntry: BlockLayoutType,
 		content: UmbBlockDataType,
 		settings: UmbBlockDataType | undefined,
-		modalData: UmbBlockWorkspaceData,
+		originData: BlockOriginData,
 	): Promise<boolean>;
 	//edit?
 	//editSettings

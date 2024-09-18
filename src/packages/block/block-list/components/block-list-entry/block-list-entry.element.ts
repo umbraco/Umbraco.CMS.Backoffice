@@ -1,5 +1,7 @@
+import { UmbBlockListEntryContext } from '../../context/block-list-entry.context.js';
+import { UMB_BLOCK_LIST, type UmbBlockListLayoutModel } from '../../types.js';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { html, css, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
+import { html, css, customElement, property, state, nothing } from '@umbraco-cms/backoffice/external/lit';
 import type {
 	ManifestBlockEditorCustomView,
 	UmbBlockEditorCustomViewProperties,
@@ -8,8 +10,8 @@ import type {
 import '../ref-list-block/index.js';
 import '../inline-list-block/index.js';
 import { stringOrStringArrayContains } from '@umbraco-cms/backoffice/utils';
-import { UmbBlockListEntryContext } from '../../context/block-list-entry.context.js';
-import { UMB_BLOCK_LIST, type UmbBlockListLayoutModel } from '../../types.js';
+import { UmbObserveValidationStateController } from '@umbraco-cms/backoffice/validation';
+import { UmbDataPathBlockElementDataQuery } from '@umbraco-cms/backoffice/block';
 
 /**
  * @element umb-block-list-entry
@@ -33,8 +35,27 @@ export class UmbBlockListEntryElement extends UmbLitElement implements UmbProper
 		if (!value) return;
 		this._contentUdi = value;
 		this.#context.setContentUdi(value);
+
+		new UmbObserveValidationStateController(
+			this,
+			`$.contentData[${UmbDataPathBlockElementDataQuery({ udi: value })}]`,
+			(hasMessages) => {
+				this._contentInvalid = hasMessages;
+				this._blockViewProps.contentInvalid = hasMessages;
+			},
+			'observeMessagesForContent',
+		);
 	}
 	private _contentUdi?: string | undefined;
+
+	/**
+	 * Sets the element to readonly mode, meaning value cannot be changed but still able to read and select its content.
+	 * @type {boolean}
+	 * @attr
+	 * @default false
+	 */
+	@property({ type: Boolean, reflect: true })
+	public readonly = false;
 
 	#context = new UmbBlockListEntryContext(this);
 
@@ -60,6 +81,14 @@ export class UmbBlockListEntryElement extends UmbLitElement implements UmbProper
 
 	@state()
 	_inlineEditingMode?: boolean;
+
+	// 'content-invalid' attribute is used for styling purpose.
+	@property({ type: Boolean, attribute: 'content-invalid', reflect: true })
+	_contentInvalid?: boolean;
+
+	// 'settings-invalid' attribute is used for styling purpose.
+	@property({ type: Boolean, attribute: 'settings-invalid', reflect: true })
+	_settingsInvalid?: boolean;
 
 	@state()
 	_blockViewProps: UmbBlockEditorCustomViewProperties<UmbBlockListLayoutModel> = {
@@ -141,6 +170,20 @@ export class UmbBlockListEntryElement extends UmbLitElement implements UmbProper
 			this.#context.settings,
 			(settings) => {
 				this.#updateBlockViewProps({ settings });
+
+				this.removeUmbControllerByAlias('observeMessagesForSettings');
+				if (settings) {
+					// Observe settings validation state:
+					new UmbObserveValidationStateController(
+						this,
+						`$.settingsData[${UmbDataPathBlockElementDataQuery(settings)}]`,
+						(hasMessages) => {
+							this._settingsInvalid = hasMessages;
+							this._blockViewProps.settingsInvalid = hasMessages;
+						},
+						'observeMessagesForSettings',
+					);
+				}
 			},
 			null,
 		);
@@ -200,11 +243,11 @@ export class UmbBlockListEntryElement extends UmbLitElement implements UmbProper
 	};
 
 	#renderRefBlock() {
-		return html`<umb-ref-list-block .label=${this._label}></umb-ref-list-block>`;
+		return html`<umb-ref-list-block .label=${this._label} .icon=${this._icon}></umb-ref-list-block>`;
 	}
 
 	#renderInlineBlock() {
-		return html`<umb-inline-list-block .label=${this._label}></umb-inline-list-block>`;
+		return html`<umb-inline-list-block .label=${this._label} .icon=${this._icon}></umb-inline-list-block>`;
 	}
 
 	#renderBlock() {
@@ -214,24 +257,55 @@ export class UmbBlockListEntryElement extends UmbLitElement implements UmbProper
 				default-element=${this._inlineEditingMode ? 'umb-inline-list-block' : 'umb-ref-list-block'}
 				.props=${this._blockViewProps}
 				.filter=${this.#extensionSlotFilterMethod}
+				single
 				>${this._inlineEditingMode ? this.#renderInlineBlock() : this.#renderRefBlock()}</umb-extension-slot
 			>
 			<uui-action-bar>
-				${this._showContentEdit && this._workspaceEditContentPath
-					? html`<uui-button label="edit" compact href=${this._workspaceEditContentPath}>
-							<uui-icon name="icon-edit"></uui-icon>
-						</uui-button>`
-					: ''}
-				${this._hasSettings && this._workspaceEditSettingsPath
-					? html`<uui-button label="Edit settings" compact href=${this._workspaceEditSettingsPath}>
-							<uui-icon name="icon-settings"></uui-icon>
-						</uui-button>`
-					: ''}
-				<uui-button label="delete" compact @click=${() => this.#context.requestDelete()}>
-					<uui-icon name="icon-remove"></uui-icon>
-				</uui-button>
+				${this.#renderEditContentAction()} ${this.#renderEditSettingsAction()} ${this.#renderDeleteAction()}
 			</uui-action-bar>
+			${!this._showContentEdit && this._contentInvalid
+				? html`<uui-badge attention color="danger" label="Invalid content">!</uui-badge>`
+				: nothing}
 		`;
+	}
+
+	#renderEditContentAction() {
+		return html` ${this._showContentEdit && this._workspaceEditContentPath
+			? html`<uui-button
+					label="edit"
+					look="secondary"
+					color=${this._contentInvalid ? 'danger' : ''}
+					href=${this._workspaceEditContentPath}>
+					<uui-icon name="icon-edit"></uui-icon>
+					${this._contentInvalid
+						? html`<uui-badge attention color="danger" label="Invalid content">!</uui-badge>`
+						: nothing}
+				</uui-button>`
+			: nothing}`;
+	}
+
+	#renderEditSettingsAction() {
+		return html`
+			${this._hasSettings && this._workspaceEditSettingsPath
+				? html`<uui-button
+						label="Edit settings"
+						look="secondary"
+						color=${this._settingsInvalid ? 'danger' : ''}
+						href=${this._workspaceEditSettingsPath}>
+						<uui-icon name="icon-settings"></uui-icon>
+						${this._settingsInvalid
+							? html`<uui-badge attention color="danger" label="Invalid settings">!</uui-badge>`
+							: nothing}
+					</uui-button>`
+				: nothing}
+		`;
+	}
+
+	#renderDeleteAction() {
+		if (this.readonly) return nothing;
+		return html` <uui-button label="delete" look="secondary" @click=${() => this.#context.requestDelete()}>
+			<uui-icon name="icon-remove"></uui-icon>
+		</uui-button>`;
 	}
 
 	override render() {
@@ -243,15 +317,41 @@ export class UmbBlockListEntryElement extends UmbLitElement implements UmbProper
 			:host {
 				position: relative;
 				display: block;
+				--umb-block-list-entry-actions-opacity: 0;
 			}
+
+			:host([settings-invalid]),
+			:host([content-invalid]),
+			:host(:hover),
+			:host(:focus-within) {
+				--umb-block-list-entry-actions-opacity: 1;
+			}
+
 			uui-action-bar {
 				position: absolute;
 				top: var(--uui-size-2);
 				right: var(--uui-size-2);
+				opacity: var(--umb-block-list-entry-actions-opacity, 0);
+				transition: opacity 120ms;
 			}
 
 			:host([drag-placeholder]) {
 				opacity: 0.2;
+				--umb-block-list-entry-actions-opacity: 0;
+			}
+
+			:host([settings-invalid])::after,
+			:host([content-invalid])::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+				border: 1px solid var(--uui-color-danger);
+				border-radius: var(--uui-border-radius);
+			}
+
+			uui-badge {
+				z-index: 2;
 			}
 		`,
 	];

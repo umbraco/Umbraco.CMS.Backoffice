@@ -87,7 +87,9 @@ export class UmbDataTypeWorkspaceViewInfoReferenceElement extends UmbLitElement 
 					(item) => html`
 						<uui-table-row>
 							<uui-table-cell>
-								<uui-ref-node-document-type href=${this.#getEditPath(item)} name=${item.name ?? item.unique}>
+								<uui-ref-node-document-type
+									href=${this.#getEditPath(item)}
+									name=${this.localize.string(item.name ?? item.unique)}>
 									<umb-icon slot="icon" name=${item.icon ?? 'icon-document'}></umb-icon>
 								</uui-ref-node-document-type>
 							</uui-table-cell>
@@ -103,6 +105,9 @@ export class UmbDataTypeWorkspaceViewInfoReferenceElement extends UmbLitElement 
 	static override styles = [
 		UmbTextStyles,
 		css`
+			:host {
+				display: contents;
+			}
 			uui-table-cell {
 				color: var(--uui-color-text-alt);
 			}

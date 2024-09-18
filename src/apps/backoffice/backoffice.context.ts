@@ -10,6 +10,7 @@ import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import type { UmbExtensionManifestInitializer } from '@umbraco-cms/backoffice/extension-api';
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
 import { UMB_CURRENT_USER_CONTEXT } from '@umbraco-cms/backoffice/current-user';
+import { UmbSysinfoRepository } from '@umbraco-cms/backoffice/sysinfo';
 
 export class UmbBackofficeContext extends UmbContextBase<UmbBackofficeContext> {
 	#activeSectionAlias = new UmbStringState(undefined);
@@ -19,8 +20,8 @@ export class UmbBackofficeContext extends UmbContextBase<UmbBackofficeContext> {
 	#allowedSections = new UmbBasicState<Array<UmbExtensionManifestInitializer<ManifestSection>>>([]);
 	public readonly allowedSections = this.#allowedSections.asObservable();
 
-	#verison = new UmbStringState(undefined);
-	public readonly version = this.#verison.asObservable();
+	#version = new UmbStringState(undefined);
+	public readonly version = this.#version.asObservable();
 
 	constructor(host: UmbControllerHost) {
 		super(host, UMB_BACKOFFICE_CONTEXT);
@@ -70,11 +71,17 @@ export class UmbBackofficeContext extends UmbContextBase<UmbBackofficeContext> {
 			) ?? [];
 
 		const version = [major, minor, patch].join('.') + (prerelease ? `-${prerelease}` : '');
-		this.#verison.setValue(version);
+		this.#version.setValue(version);
 	}
 
 	public setActiveSectionAlias(alias: string) {
 		this.#activeSectionAlias.setValue(alias);
+	}
+
+	public async serverUpgradeCheck(): Promise<boolean> {
+		const repository = new UmbSysinfoRepository(this);
+		const check = await repository.serverUpgradeCheck();
+		return !!check;
 	}
 }
 

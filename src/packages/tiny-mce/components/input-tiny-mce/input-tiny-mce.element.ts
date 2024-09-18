@@ -21,6 +21,7 @@ import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/
 
 /**
  * Handles the resize event
+ * @param e
  */
 // TODO: This does somehow not belong as a utility method as it is very specific to this implementation. [NL]
 async function onResize(
@@ -74,6 +75,24 @@ export class UmbInputTinyMceElement extends UUIFormControlMixin(UmbLitElement, '
 		return super.value;
 	}
 
+	/**
+	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
+	 * @type {boolean}
+	 * @attr
+	 * @default false
+	 */
+	@property({ type: Boolean, reflect: true })
+	public get readonly() {
+		return this.#readonly;
+	}
+	public set readonly(value) {
+		this.#readonly = value;
+		const editor = this.getEditor();
+		const mode = value ? 'readonly' : 'design';
+		editor?.mode.set(mode);
+	}
+	#readonly = false;
+
 	@query('.editor', true)
 	private _editorElement?: HTMLElement;
 
@@ -83,7 +102,6 @@ export class UmbInputTinyMceElement extends UUIFormControlMixin(UmbLitElement, '
 
 	constructor() {
 		super();
-
 		this.#loadEditor();
 	}
 
@@ -114,6 +132,7 @@ export class UmbInputTinyMceElement extends UUIFormControlMixin(UmbLitElement, '
 	 * need the editor instance as a ctor argument. If we load them in the editor
 	 * setup method, the asynchronous nature means the editor is loaded before
 	 * the plugins are ready and so are not associated with the editor.
+	 * @param manifests
 	 */
 	async #loadPlugins(manifests: Array<ManifestTinyMcePlugin>) {
 		const promises = [];
@@ -244,6 +263,7 @@ export class UmbInputTinyMceElement extends UUIFormControlMixin(UmbLitElement, '
 			language: this.#getLanguage(),
 			promotion: false,
 			convert_unsafe_embeds: true, // [JOV] Workaround for CVE-2024-29881
+			readonly: this.#readonly,
 
 			// Extend with configuration options
 			...configurationOptions,
@@ -265,7 +285,7 @@ export class UmbInputTinyMceElement extends UUIFormControlMixin(UmbLitElement, '
 
 	/**
 	 * Gets the language to use for TinyMCE
-	 **/
+	 */
 	#getLanguage() {
 		const localeId = this.localize.lang();
 		//try matching the language using full locale format

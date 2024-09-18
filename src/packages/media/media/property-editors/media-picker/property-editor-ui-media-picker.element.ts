@@ -1,5 +1,5 @@
 import type { UmbInputRichMediaElement } from '../../components/input-rich-media/input-rich-media.element.js';
-import type { UmbCropModel, UmbMediaPickerPropertyValue } from './index.js';
+import type { UmbCropModel, UmbMediaPickerPropertyValue } from '../types.js';
 import { customElement, html, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbPropertyValueChangeEvent } from '@umbraco-cms/backoffice/property-editor';
@@ -33,6 +33,15 @@ export class UmbPropertyEditorUIMediaPickerElement extends UmbLitElement impleme
 		this._min = minMax?.min ?? 0;
 		this._max = minMax?.max ?? Infinity;
 	}
+
+	/**
+	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
+	 * @type {boolean}
+	 * @attr
+	 * @default false
+	 */
+	@property({ type: Boolean, reflect: true })
+	readonly = false;
 
 	@state()
 	private _startNode: string = '';
@@ -88,7 +97,8 @@ export class UmbPropertyEditorUIMediaPickerElement extends UmbLitElement impleme
 				.startNode=${this._startNode}
 				.variantId=${this._variantId}
 				?multiple=${this._multiple}
-				@change=${this.#onChange}>
+				@change=${this.#onChange}
+				?readonly=${this.readonly}>
 			</umb-input-rich-media>
 		`;
 	}
