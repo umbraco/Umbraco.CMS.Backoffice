@@ -18,6 +18,15 @@ export class UmbPropertyEditorUICollectionElement extends UmbLitElement implemen
 	@property()
 	value?: string;
 
+	/**
+	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
+	 * @type {boolean}
+	 * @attr
+	 * @default false
+	 */
+	@property({ type: Boolean, reflect: true })
+	readonly = false;
+
 	@state()
 	private _collectionAlias: string = UMB_DOCUMENT_COLLECTION_ALIAS;
 
@@ -67,7 +76,10 @@ export class UmbPropertyEditorUICollectionElement extends UmbLitElement implemen
 
 	override render() {
 		if (!this._config?.unique || !this._config?.dataTypeId) return html`<uui-loader></uui-loader>`;
-		return html`<umb-collection .alias=${this._collectionAlias} .config=${this._config}></umb-collection>`;
+		return html`<umb-collection
+			.alias=${this._collectionAlias}
+			.config=${this._config}
+			?readonly=${this.readonly}></umb-collection>`;
 	}
 }
 

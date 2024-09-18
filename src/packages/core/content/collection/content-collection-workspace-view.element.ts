@@ -1,17 +1,17 @@
-import type { UmbCollectionBulkActionPermissions, UmbCollectionConfiguration } from '../../../collection/types.js';
+import type { UmbCollectionBulkActionPermissions, UmbCollectionConfiguration } from '../../collection/types.js';
+import { UMB_CONTENT_PROPERTY_DATASET_CONTEXT } from '../property-dataset-context/content-property-dataset.context.token.js';
+import type { UmbContentPropertyDatasetContext } from '../property-dataset-context/index.js';
+import { UMB_CONTENT_COLLECTION_WORKSPACE_CONTEXT } from './content-collection-workspace.context.token.js';
 import { customElement, html, nothing, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbDataTypeDetailRepository } from '@umbraco-cms/backoffice/data-type';
 import { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
-import { UMB_COLLECTION_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/workspace';
 import type { UmbDataTypeDetailModel } from '@umbraco-cms/backoffice/data-type';
 import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-registry';
 
-// TODO: clean up this code and make it more generic
-/* Be aware this code has been duplicated in the UmbContentCollectionWorkspaceViewElement as is should only be specific for collections based on a content type.
-This element is currently no longer in use in the code base but we will need it in the future with a different implementation without knowledge of content and data types */
-@customElement('umb-workspace-view-collection')
-export class UmbWorkspaceViewCollectionElement extends UmbLitElement implements UmbWorkspaceViewElement {
+const elementName = 'umb-content-collection-workspace-view';
+@customElement(elementName)
+export class UmbContentCollectionWorkspaceViewElement extends UmbLitElement implements UmbWorkspaceViewElement {
 	@state()
 	private _loading = true;
 
@@ -24,15 +24,24 @@ export class UmbWorkspaceViewCollectionElement extends UmbLitElement implements 
 	@state()
 	private _documentUnique?: string;
 
+	@state()
+	_readOnly = false;
+
 	#dataTypeDetailRepository = new UmbDataTypeDetailRepository(this);
+	#datasetContext?: UmbContentPropertyDatasetContext;
 
 	constructor() {
 		super();
 		this.#observeConfig();
+
+		this.consumeContext(UMB_CONTENT_PROPERTY_DATASET_CONTEXT, (context) => {
+			this.#datasetContext = context;
+			this.#observeReadOnlyDataset();
+		});
 	}
 
 	async #observeConfig() {
-		this.consumeContext(UMB_COLLECTION_WORKSPACE_CONTEXT, (workspaceContext) => {
+		this.consumeContext(UMB_CONTENT_COLLECTION_WORKSPACE_CONTEXT, (workspaceContext) => {
 			this._collectionAlias = workspaceContext.getCollectionAlias();
 			this._documentUnique = workspaceContext.getUnique() ?? '';
 
@@ -75,16 +84,30 @@ export class UmbWorkspaceViewCollectionElement extends UmbLitElement implements 
 		};
 	}
 
+	#observeReadOnlyDataset() {
+		if (!this.#datasetContext) return;
+		this.observe(
+			this.#datasetContext.currentVariantCultureIsReadOnly,
+			(isReadOnly) => {
+				this._readOnly = isReadOnly;
+			},
+			'umbIObserveReadOnlyDataset',
+		);
+	}
+
 	override render() {
 		if (this._loading) return nothing;
-		return html`<umb-collection .alias=${this._collectionAlias} .config=${this._config}></umb-collection>`;
+		return html`<umb-collection
+			.alias=${this._collectionAlias}
+			.config=${this._config}
+			?readonly=${this._readOnly}></umb-collection>`;
 	}
 }
 
-export default UmbWorkspaceViewCollectionElement;
+export { UmbContentCollectionWorkspaceViewElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-workspace-view-collection': UmbWorkspaceViewCollectionElement;
+		[elementName]: UmbContentCollectionWorkspaceViewElement;
 	}
 }

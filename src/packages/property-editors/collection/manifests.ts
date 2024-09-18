@@ -15,6 +15,7 @@ const propertyEditorUiManifest: ManifestPropertyEditorUi = {
 		propertyEditorSchemaAlias: 'Umbraco.ListView',
 		icon: 'icon-layers',
 		group: 'lists',
+		supportsReadOnly: true,
 		settings: {
 			properties: [
 				{
