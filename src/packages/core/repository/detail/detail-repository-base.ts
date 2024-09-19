@@ -87,8 +87,8 @@ export abstract class UmbDetailRepositoryBase<
 			this.#detailStore?.append(createdData);
 
 			// TODO: how do we handle generic notifications? Is this the correct place to do it?
-			const notification = { data: { message: `Created` } };
-			this.#notificationContext!.peek('positive', notification);
+			// const notification = { data: { message: `Created` } };
+			// this.#notificationContext!.peek('positive', notification);
 		}
 
 		return { data: createdData, error };

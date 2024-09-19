@@ -21,6 +21,10 @@ export class UmbMediaTypeStructureServerDataSource extends UmbContentTypeStructu
 	getMediaTypesOfFileExtension({ fileExtension, skip, take }: { fileExtension: string; skip: number; take: number }) {
 		return getAllowedMediaTypesOfExtension({ fileExtension, skip, take });
 	}
+
+	getMediaTypesFolders({ skip, take }: { skip: number; take: number }) {
+		return getItemMediaTypeFolders({ skip, take });
+	}
 }
 
 const getAllowedChildrenOf = (unique: string | null) => {
@@ -53,5 +57,11 @@ const getAllowedMediaTypesOfExtension = async ({
 }) => {
 	// eslint-disable-next-line local-rules/no-direct-api-import
 	const { items } = await MediaTypeService.getItemMediaTypeAllowed({ fileExtension, skip, take });
+	return items.map((item) => mapper(item));
+};
+
+const getItemMediaTypeFolders = async ({ skip, take }: { skip: number; take: number }) => {
+	// eslint-disable-next-line local-rules/no-direct-api-import
+	const { items } = await MediaTypeService.getItemMediaTypeFolders({ skip, take });
 	return items.map((item) => mapper(item));
 };

@@ -359,6 +359,9 @@ export default {
 		renameFolderFailed: 'Failed to rename the folder with id %0%',
 		dragAndDropYourFilesIntoTheArea: 'Drag and drop your file(s) into the area',
 		uploadNotAllowed: 'Upload is not allowed in this location.',
+		selectMediaTypeForUpload: 'Select media type for uploaded files.',
+		selectMediaTypeForUploadHelp: 'See files affected files.',
+		selectMediaTypeAutoPick: 'Auto pick',
 	},
 	member: {
 		createNewMember: 'Create a new member',

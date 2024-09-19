@@ -13,6 +13,8 @@ import { UmbRequestReloadChildrenOfEntityEvent } from '@umbraco-cms/backoffice/e
 @customElement('umb-media-collection')
 export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 	#mediaCollection?: UmbMediaCollectionContext;
+	#refreshInCooldown: boolean = false;
+	#shouldRefreshCollection: boolean = false;
 
 	@state()
 	private _progress = -1;
@@ -33,8 +35,7 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 	}
 
 	async #onChange() {
-		this._progress = -1;
-		this.#mediaCollection?.requestCollection();
+		this.#refreshCollection();
 
 		const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
 		const event = new UmbRequestReloadChildrenOfEntityEvent({
@@ -48,12 +49,29 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 		this._progress = event.progress;
 	}
 
+	#refreshCollection() {
+		if (!this.#refreshInCooldown) {
+			this.#mediaCollection?.requestCollection();
+			this.#refreshInCooldown = true;
+			setTimeout(() => {
+				this.#refreshInCooldown = false;
+				if (this.#shouldRefreshCollection) {
+					this.#refreshCollection();
+					this.#shouldRefreshCollection = false;
+				}
+			}, 350);
+		} else {
+			this.#shouldRefreshCollection = true;
+		}
+	}
+
 	protected override renderToolbar() {
 		return html`
 			<umb-media-collection-toolbar slot="header"></umb-media-collection-toolbar>
 			${when(this._progress >= 0, () => html`<uui-loader-bar progress=${this._progress}></uui-loader-bar>`)}
 			<umb-dropzone
 				.parentUnique=${this._unique}
+				multiple
 				@change=${this.#onChange}
 				@progress=${this.#onProgress}></umb-dropzone>
 		`;

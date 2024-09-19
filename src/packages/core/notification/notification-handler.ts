@@ -31,10 +31,10 @@ export class UmbNotificationHandler {
 	 */
 	constructor(options: UmbNotificationOptions) {
 		this.key = UmbId.new();
-		this.color = options.color || this._defaultColor;
+		this.color = options.color ?? this._defaultColor;
 		this.duration = options.duration !== undefined ? options.duration : this._defaultDuration;
 
-		this._elementName = options.elementName || this._defaultLayout;
+		this._elementName = options.elementName ?? this._defaultLayout;
 		this._data = options.data;
 
 		this._closePromise = new Promise((res) => {
@@ -63,6 +63,27 @@ export class UmbNotificationHandler {
 		notification.appendChild(element);
 
 		this.element = notification;
+	}
+
+	/**
+	 * Updates the notification
+	 * @param {UmbNotificationOptions} options - The new options
+	 */
+	public Update(options: UmbNotificationOptions) {
+		this.color = options.color ?? this.color;
+		this.duration = options.duration !== undefined ? options.duration : this.duration;
+
+		this._elementName = options.elementName ?? this._elementName;
+
+		this._data = options.data;
+
+		this.element.color = this.color;
+		this.element.autoClose = this.duration;
+
+		const notificationChild = this.element.children?.[0];
+		if (notificationChild?.data) {
+			notificationChild.data = { ...this.element.children[0].data, ...this._data };
+		}
 	}
 
 	/**
