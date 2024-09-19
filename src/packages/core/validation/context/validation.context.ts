@@ -30,6 +30,7 @@ function ReplaceStartOfString(path: string, startFrom: string, startTo: string):
 export class UmbValidationContext extends UmbControllerBase implements UmbValidator {
 	// The current provider controller, that is providing this context:
 	#providerCtrl?: UmbContextProviderController<UmbValidationContext, UmbValidationContext, UmbValidationContext>;
+	#preventHostProvide?: boolean;
 
 	// Local version of the data send to the server, only use-case is for translation.
 	#translationData = new UmbObjectState<any>(undefined);
@@ -59,6 +60,21 @@ export class UmbValidationContext extends UmbControllerBase implements UmbValida
 		super(host);
 	}
 
+	override hostConnected(): void {
+		// If we do not have a provider
+		if (!this.#providerCtrl && !this.#preventHostProvide) {
+			this.provide();
+		}
+	}
+
+	/**
+	 * Turns off providing this context at its host.
+	 * In this case you must ensure to provide the context at another host, when feasible.
+	 */
+	preventProvidingAtHost() {
+		this.#preventHostProvide = true;
+	}
+
 	/**
 	 * Add a path translator to this validation context.
 	 * @param translator
@@ -81,7 +97,7 @@ export class UmbValidationContext extends UmbControllerBase implements UmbValida
 	 */
 	provide(): UmbValidationContext {
 		if (this.#providerCtrl) return this;
-		this.provideContext(UMB_VALIDATION_CONTEXT, this);
+		this.#providerCtrl = this.provideContext(UMB_VALIDATION_CONTEXT, this);
 		return this;
 	}
 	/**

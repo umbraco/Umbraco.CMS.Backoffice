@@ -34,6 +34,8 @@ export class UmbBlockElementManager extends UmbControllerBase {
 	constructor(host: UmbControllerHost, dataPathPropertyName: string) {
 		super(host);
 
+		this.validation.preventProvidingAtHost();
+
 		this.observe(this.contentTypeId, (id) => this.structure.loadType(id));
 		this.observe(this.unique, (udi) => {
 			if (udi) {
