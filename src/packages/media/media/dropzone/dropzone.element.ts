@@ -1,10 +1,12 @@
-import { UmbFileDropzoneManager } from './file-dropzone-manager.class.js';
-import { css, html, customElement, property } from '@umbraco-cms/backoffice/external/lit';
+import { UmbDropzoneManager } from './dropzone-manager.class.js';
+import { UmbFileDropzoneItemStatus, type UmbUploadableItem } from './types.js';
+import { css, html, customElement, property, state, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 import type { UUIFileDropzoneElement, UUIFileDropzoneEvent } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
 @customElement('umb-dropzone')
 export class UmbDropzoneElement extends UmbLitElement {
+	/** Where the uploads should be stored. */
 	@property({ attribute: false })
 	parentUnique: string | null = null;
 
@@ -14,18 +16,39 @@ export class UmbDropzoneElement extends UmbLitElement {
 	@property({ type: Boolean })
 	createAsTemporary: boolean = false;
 
-	@property({ type: Array, attribute: false })
-	accept: Array<string> = [];
+	@property({ type: String })
+	accept?: string;
 
-	//TODO: logic to disable the dropzone?
+	@property({ type: Boolean })
+	disabled = false;
+
+	private _disableFolderUpload = false;
+	@property({ type: Boolean, attribute: 'disable-folder-upload', reflect: true })
+	public get disableFolderUpload() {
+		return this._disableFolderUpload;
+	}
+	public set disableFolderUpload(isAllowed: boolean) {
+		this.dropzoneManager.setIsFoldersAllowed(!isAllowed);
+	}
+
+	@state()
+	private _progressItems: Array<UmbUploadableItem> = [];
+
+	public dropzoneManager: UmbDropzoneManager;
+
+	public getItems() {
+		return this._progressItems;
+	}
 
 	public browse() {
+		if (this.disabled) return;
 		const element = this.shadowRoot?.querySelector('#dropzone') as UUIFileDropzoneElement;
 		return element.browse();
 	}
 
 	constructor() {
 		super();
+		this.dropzoneManager = new UmbDropzoneManager(this);
 		document.addEventListener('dragenter', this.#handleDragEnter.bind(this));
 		document.addEventListener('dragleave', this.#handleDragLeave.bind(this));
 		document.addEventListener('drop', this.#handleDrop.bind(this));
@@ -33,60 +56,68 @@ export class UmbDropzoneElement extends UmbLitElement {
 
 	override disconnectedCallback(): void {
 		super.disconnectedCallback();
+		this.dropzoneManager.destroy();
 		document.removeEventListener('dragenter', this.#handleDragEnter.bind(this));
 		document.removeEventListener('dragleave', this.#handleDragLeave.bind(this));
 		document.removeEventListener('drop', this.#handleDrop.bind(this));
 	}
 
 	#handleDragEnter(e: DragEvent) {
+		if (this.disabled) return;
 		// Avoid collision with UmbSorterController
 		const types = e.dataTransfer?.types;
 		if (!types?.length || !types?.includes('Files')) return;
+
 		this.toggleAttribute('dragging', true);
 	}
 
 	#handleDragLeave() {
+		if (this.disabled) return;
 		this.toggleAttribute('dragging', false);
 	}
 
 	#handleDrop(event: DragEvent) {
 		event.preventDefault();
+		if (this.disabled) return;
 		this.toggleAttribute('dragging', false);
 	}
 
 	async #onDropFiles(event: UUIFileDropzoneEvent) {
+		if (this.disabled) return;
 		if (!event.detail.files.length && !event.detail.folders.length) return;
 
-		const fileDropzoneManager = new UmbFileDropzoneManager(this, this.parentUnique);
 		// TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
-		// TODO We can observe progressItems and check for any files that did not succeed, then show some kind of dialog to the user with the information.
+		// We can observe progressItems and check for any files that did not succeed, then show some kind of dialog to the user with the information.
 
 		this.observe(
-			fileDropzoneManager.progress,
-			(progress) => {
-				this.dispatchEvent(new ProgressEvent('progress', { loaded: progress.completed, total: progress.total }));
-				if (progress.total && progress.completed === progress.total) {
-					this.dispatchEvent(new CustomEvent('change'));
-					fileDropzoneManager.destroy();
-				}
-			},
+			this.dropzoneManager.progress,
+			(progress) =>
+				this.dispatchEvent(new ProgressEvent('progress', { loaded: progress.completed, total: progress.total })),
 			'_observeProgress',
 		);
 
+		this.observe(this.dropzoneManager.progressItems, (progressItems: Array<UmbUploadableItem>) => {
+			this._progressItems = progressItems;
+			const waiting = progressItems.find((item) => item.status === UmbFileDropzoneItemStatus.WAITING);
+			if (progressItems.length && !waiting) {
+				this.dispatchEvent(new CustomEvent('complete', { detail: progressItems }));
+			}
+		});
+
 		if (this.createAsTemporary) {
-			fileDropzoneManager.createTemporaryFiles(event.detail.files);
+			this.dropzoneManager.createTemporaryFiles(event.detail.files);
 		} else {
-			fileDropzoneManager.createMediaItems(event.detail);
+			this.dropzoneManager.createMediaItems(event.detail, this.parentUnique);
 		}
 	}
 
 	override render() {
 		return html`<uui-file-dropzone
 			id="dropzone"
-			.accept=${this.accept?.join(',')}
+			accept=${ifDefined(this.accept)}
 			?multiple=${this.multiple}
 			@change=${this.#onDropFiles}
-			label="${this.localize.term('media_dragAndDropYourFilesIntoTheArea')}"></uui-file-dropzone>`;
+			label=${this.localize.term('media_dragAndDropYourFilesIntoTheArea')}></uui-file-dropzone>`;
 	}
 
 	static override styles = [

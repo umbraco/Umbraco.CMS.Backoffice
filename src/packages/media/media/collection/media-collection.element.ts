@@ -30,7 +30,7 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 		});
 	}
 
-	async #onChange() {
+	async #onComplete() {
 		this._progress = -1;
 		this.#mediaCollection?.requestCollection();
 
@@ -52,7 +52,7 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 			${when(this._progress >= 0, () => html`<uui-loader-bar progress=${this._progress}></uui-loader-bar>`)}
 			<umb-dropzone
 				.parentUnique=${this._unique}
-				@change=${this.#onChange}
+				@complete=${this.#onComplete}
 				@progress=${this.#onProgress}></umb-dropzone>
 		`;
 	}
