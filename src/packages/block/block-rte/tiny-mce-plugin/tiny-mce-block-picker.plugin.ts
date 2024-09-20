@@ -27,8 +27,6 @@ export default class UmbTinyMceMultiUrlPickerPlugin extends UmbTinyMcePluginBase
 		});
 
 		this.consumeContext(UMB_BLOCK_RTE_MANAGER_CONTEXT, (context) => {
-			context.setTinyMceEditor(args.editor);
-
 			this.observe(
 				context.blockTypes,
 				(blockTypes) => {
