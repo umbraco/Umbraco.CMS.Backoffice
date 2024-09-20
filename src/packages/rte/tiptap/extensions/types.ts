@@ -24,8 +24,8 @@ export interface UmbTiptapExtensionArgs {
 }
 
 export interface UmbTiptapToolbarElementApi extends UmbTiptapExtensionApi {
-	execute(editor?: Editor): void;
-	isActive(editor?: Editor): boolean;
+	execute(editor: Editor): void;
+	isActive(editor: Editor): boolean;
 }
 
 export abstract class UmbTiptapToolbarElementApiBase
