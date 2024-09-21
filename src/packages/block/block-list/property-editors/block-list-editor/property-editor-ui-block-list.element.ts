@@ -53,7 +53,7 @@ export class UmbPropertyEditorUIBlockListElement
 		},
 	});
 
-	#validationContext = new UmbValidationContext(this).provide();
+	#validationContext = new UmbValidationContext(this);
 	#contentDataPathTranslator?: UmbBlockElementDataValidationPathTranslator;
 	#settingsDataPathTranslator?: UmbBlockElementDataValidationPathTranslator;
 
@@ -118,7 +118,7 @@ export class UmbPropertyEditorUIBlockListElement
 	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
 	 * @type {boolean}
 	 * @attr
-	 * @default false
+	 * @default
 	 */
 	@property({ type: Boolean, reflect: true })
 	public get readonly() {
