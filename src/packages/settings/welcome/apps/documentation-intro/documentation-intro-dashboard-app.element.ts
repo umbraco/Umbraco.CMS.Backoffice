@@ -1,5 +1,5 @@
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { html, customElement } from '@umbraco-cms/backoffice/external/lit';
+import { html, customElement, css } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
 const elementName = 'umb-documentation-intro-dashboard-app';
@@ -21,7 +21,15 @@ export class UmbDocumentationIntroDashboardAppElement extends UmbLitElement {
 		`;
 	}
 
-	static override styles = [UmbTextStyles];
+	static override styles = [
+		UmbTextStyles,
+		css`
+			p {
+				margin-top: 0;
+				max-width: 300px;
+			}
+		`,
+	];
 }
 
 export { UmbDocumentationIntroDashboardAppElement as element };
