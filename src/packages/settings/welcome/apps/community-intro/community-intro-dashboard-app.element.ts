@@ -8,21 +8,21 @@ export class UmbCommunityIntroDashboardAppElement extends UmbLitElement {
 	override render() {
 		return html`
 			<uui-box headline=${this.localize.term('settingsDashboard_communityHeader')}>
-				<umb-localize key="settingsDashboard_communityDescription"></umb-localize>
-				<div>
-					<uui-button
-						look="primary"
-						href="https://our.umbraco.com/forum"
-						label=${this.localize.term('settingsDashboard_goForum')}
-						target="_blank"
-						rel="noopener"></uui-button>
-					<uui-button
-						look="primary"
-						href="https://discord.umbraco.com"
-						label=${this.localize.term('settingsDashboard_chatWithCommunity')}
-						target="_blank"
-						rel="noopener"></uui-button>
-				</div>
+				<p>
+					<umb-localize key="settingsDashboard_communityDescription"></umb-localize>
+				</p>
+				<uui-button
+					look="primary"
+					href="https://our.umbraco.com/forum"
+					label=${this.localize.term('settingsDashboard_goForum')}
+					target="_blank"
+					rel="noopener"></uui-button>
+				<uui-button
+					look="primary"
+					href="https://discord.umbraco.com"
+					label=${this.localize.term('settingsDashboard_chatWithCommunity')}
+					target="_blank"
+					rel="noopener"></uui-button>
 			</uui-box>
 		`;
 	}

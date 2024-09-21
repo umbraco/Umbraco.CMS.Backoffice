@@ -8,15 +8,15 @@ export class UmbDocumentationIntroDashboardAppElement extends UmbLitElement {
 	override render() {
 		return html`
 			<uui-box headline=${this.localize.term('settingsDashboard_documentationHeader')}>
-				<umb-localize key="settingsDashboard_documentationDescription"></umb-localize>
-				<div>
-					<uui-button
-						look="primary"
-						href="https://docs.umbraco.com/umbraco-cms/umbraco-cms"
-						label=${this.localize.term('settingsDashboard_getHelp')}
-						target="_blank"
-						rel="noopener"></uui-button>
-				</div>
+				<p>
+					<umb-localize key="settingsDashboard_documentationDescription"></umb-localize>
+				</p>
+				<uui-button
+					look="primary"
+					href="https://docs.umbraco.com/umbraco-cms/umbraco-cms"
+					label=${this.localize.term('settingsDashboard_getHelp')}
+					target="_blank"
+					rel="noopener"></uui-button>
 			</uui-box>
 		`;
 	}
