@@ -1,12 +1,13 @@
 import { UMB_SETTINGS_SECTION_ALIAS } from '../section/index.js';
+import { manifests as dashboardAppManifests } from './apps/manifests.js';
 import type { UmbExtensionManifestKind } from '@umbraco-cms/backoffice/extension-registry';
 
 export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> = [
 	{
 		type: 'dashboard',
+		kind: 'default',
 		alias: 'Umb.Dashboard.SettingsWelcome',
-		name: 'Welcome Settings Dashboard',
-		element: () => import('./settings-welcome-dashboard.element.js'),
+		name: 'Settings Welcome Dashboard',
 		weight: 500,
 		meta: {
 			label: '#dashboardTabs_settingsWelcome',
@@ -19,4 +20,5 @@ export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> =
 			},
 		],
 	},
+	...dashboardAppManifests,
 ];
