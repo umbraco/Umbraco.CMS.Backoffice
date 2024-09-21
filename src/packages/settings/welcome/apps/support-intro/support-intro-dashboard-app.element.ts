@@ -14,7 +14,7 @@ export class UmbSupportIntroDashboardAppElement extends UmbLitElement {
 				<uui-button
 					look="primary"
 					href="https://umbraco.com/support/"
-					label=${this.localize.term('settingsDashboard_getHelp')}
+					label=${this.localize.term('settingsDashboard_getSupport')}
 					target="_blank"
 					rel="noopener"></uui-button>
 			</uui-box>

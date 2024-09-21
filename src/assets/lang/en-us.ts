@@ -2355,11 +2355,12 @@ export default {
 		videosHeader: 'Videos',
 		videosDescription:
 			'Watch our free tutorial videos on the Umbraco Learning Base YouTube channel, to get up to speed quickly with Umbraco.',
-		getHelp: 'Get the help you need',
-		getCertified: 'Get Certified',
-		goForum: 'Go to the forum',
-		chatWithCommunity: 'Chat with the community',
-		watchVideos: 'Watch the videos',
+		getHelp: 'Documentation',
+		getSupport: 'Support',
+		getCertified: 'Training',
+		goForum: 'Forum',
+		chatWithCommunity: 'Discord',
+		watchVideos: 'Youtube',
 	},
 	startupDashboard: {
 		fallbackHeadline: 'Welcome to The Friendly CMS',

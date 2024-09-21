@@ -2506,11 +2506,12 @@ export default {
 		videosHeader: 'Videoer',
 		videosDescription:
 			'Se vores gratis tutortial videoer på Umbraco Learning Base YouTube-kanel, for hurtigt at komme i gang med Umbraco.',
-		getHelp: 'Få den hjælp du har brug for',
-		getCertified: 'Bliv certificeret',
-		goForum: 'Gå til forummet',
-		chatWithCommunity: 'Chat med communitiet',
-		watchVideos: 'Se videoerne',
+		getHelp: 'Dokumentation',
+		getSupport: 'Support',
+		getCertified: 'Træning',
+		goForum: 'Forum',
+		chatWithCommunity: 'Discord',
+		watchVideos: 'Youtube',
 	},
 	startupDashboard: {
 		fallbackHeadline: 'Welcome to The Friendly CMS',
