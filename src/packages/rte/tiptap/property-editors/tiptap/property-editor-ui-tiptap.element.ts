@@ -127,21 +127,22 @@ export class UmbPropertyEditorUiTiptapElement extends UmbLitElement implements U
 			markup: this._latestMarkup,
 		};
 
-		// TODO: Validate blocks
-		// Loop through used, to remove the classes on these.
-		/*const blockEls = div.querySelectorAll(`umb-rte-block, umb-rte-block-inline`);
-		blockEls.forEach((blockEl) => {
-			blockEl.removeAttribute('contenteditable');
-			blockEl.removeAttribute('class');
-		});
-
 		// Remove unused Blocks of Blocks Layout. Leaving only the Blocks that are present in Markup.
-		//const blockElements = editor.dom.select(`umb-rte-block, umb-rte-block-inline`);
-		const usedContentUdis = Array.from(blockEls).map((blockElement) => blockElement.getAttribute('data-content-udi'));
+		const usedContentUdis: string[] = [];
+		const regex = new RegExp(
+			/<umb-rte-block(-inline)?.*?data-content-udi="(.+?)"[^>]*>.*?<\/umb-rte-block(-inline)?>/gi,
+		);
+		let blockElement: RegExpExecArray | null;
+		while ((blockElement = regex.exec(this._latestMarkup)) !== null) {
+			if (blockElement) {
+				usedContentUdis.push(blockElement[2]);
+			}
+		}
+
 		const unusedBlocks = this.#managerContext.getLayouts().filter((x) => usedContentUdis.indexOf(x.contentUdi) === -1);
 		unusedBlocks.forEach((blockLayout) => {
 			this.#managerContext.removeOneLayout(blockLayout.contentUdi);
-		});*/
+		});
 
 		this.#fireChangeEvent();
 	}
