@@ -23,12 +23,12 @@ export interface UmbUploadableFolder extends UmbUploadableItem {
 	folder: { name: string };
 }
 
-export interface UmbAllowedMediaByFileExtension {
-	fileExtension: string | null;
-	mediaTypes: Array<UmbAllowedMediaTypeModel>;
+export interface UmbAllowedMediaTypesOfExtension {
+	extension: string | null; // Null is considered a folder.
+	availableMediaTypes: Array<UmbAllowedMediaTypeModel>;
 }
 
-export interface UmbAllowedChildrenByMediaType {
+export interface UmbAllowedChildrenOfMediaType {
 	mediaTypeUnique: string | null;
 	allowedChildren: Array<UmbAllowedMediaTypeModel>;
 }
@@ -40,8 +40,7 @@ export interface UmbFileDropzoneProgress {
 
 export enum UmbFileDropzoneItemStatus {
 	WAITING = 'waiting',
-	UPLOADED = 'uploaded',
-	CREATED = 'created',
+	COMPLETE = 'complete',
 	NOT_ALLOWED = 'not allowed',
 	CANCELLED = 'cancelled',
 	ERROR = 'error',
