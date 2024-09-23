@@ -25,7 +25,7 @@ const umbRteBlock = Node.create({
 	content: undefined, // We do not allow content inside the block.
 	marks: '', // We do not allow marks on the block
 	draggable: true,
-	selectable: true,
+	//selectable: true,
 
 	addAttributes() {
 		return {
@@ -40,7 +40,7 @@ const umbRteBlock = Node.create({
 	},
 
 	renderHTML({ HTMLAttributes }) {
-		return ['umb-rte-block', HTMLAttributes, 0];
+		return ['umb-rte-block', HTMLAttributes];
 	},
 
 	addCommands() {
