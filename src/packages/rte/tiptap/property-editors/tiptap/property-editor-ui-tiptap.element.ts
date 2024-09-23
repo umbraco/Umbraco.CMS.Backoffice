@@ -10,13 +10,12 @@ import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extensi
 import '../../components/input-tiptap/input-tiptap.element.js';
 import type { UmbBlockValueType } from '@umbraco-cms/backoffice/block';
 
-// Look at Tiny for correct types
 export interface UmbRichTextEditorValueType {
 	markup: string;
 	blocks: UmbBlockValueType<UmbBlockRteLayoutModel>;
 }
 
-const UMB_BLOCK_RTE_BLOCK_LAYOUT_ALIAS = 'Umbraco.RichText';
+const UMB_BLOCK_RTE_BLOCK_LAYOUT_ALIAS = 'Umbraco.TinyMCE';
 
 const elementName = 'umb-property-editor-ui-tiptap';
 
