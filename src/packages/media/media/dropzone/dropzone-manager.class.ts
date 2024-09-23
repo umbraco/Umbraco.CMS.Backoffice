@@ -2,13 +2,13 @@ import { UmbMediaDetailRepository } from '../repository/index.js';
 import type { UmbMediaDetailModel } from '../types.js';
 import {
 	UmbFileDropzoneItemStatus,
-	type UmbAllowedMediaByFileExtension,
 	type UmbUploadableFile,
 	type UmbUploadableFolder,
 	type UmbFileDropzoneDroppedItems,
 	type UmbFileDropzoneProgress,
 	type UmbUploadableItem,
-	type UmbAllowedChildrenByMediaType,
+	type UmbAllowedMediaTypesOfExtension,
+	type UmbAllowedChildrenOfMediaType,
 } from './types.js';
 import { getExtensionFromMime } from './utils.js';
 import { UMB_DROPZONE_MEDIA_TYPE_PICKER_MODAL } from './modals/index.js';
@@ -40,9 +40,11 @@ export class UmbDropzoneManager extends UmbControllerBase {
 
 	#tempFileManager = new UmbTemporaryFileManager(this);
 
-	#optionsByExt = new UmbArrayState<UmbAllowedMediaByFileExtension>([], (x) => x.fileExtension);
-	#allowedMediaTypes = new UmbArrayState<UmbAllowedChildrenByMediaType>([], (x) => x.mediaTypeUnique);
-	#parentMediaTypes = new UmbArrayState<{ unique: string; mediaType: string }>([], (x) => x.unique);
+	// The available media types for a file extension.
+	#availableMediaTypesOf = new UmbArrayState<UmbAllowedMediaTypesOfExtension>([], (x) => x.extension);
+
+	// The media types that the parent will allow to be created under it.
+	#allowedChildrenOf = new UmbArrayState<UmbAllowedChildrenOfMediaType>([], (x) => x.mediaTypeUnique);
 
 	#progress = new UmbObjectState<UmbFileDropzoneProgress>({ total: 0, completed: 0 });
 	public readonly progress = this.#progress.asObservable();
@@ -75,7 +77,7 @@ export class UmbDropzoneManager extends UmbControllerBase {
 			// When there is only one item being uploaded, allow the user to pick the media type, if more than one is allowed.
 			await this.#createOneMediaItem(uploadableItems[0]);
 		} else {
-			// When there are multiple items being uploaded, automatically pick the media types for each item.
+			// When there are multiple items being uploaded, automatically pick the media types for each item. We probably want to allow the user to pick the media type in the future.
 			await this.#createMediaItems(uploadableItems);
 		}
 	}
@@ -102,7 +104,7 @@ export class UmbDropzoneManager extends UmbControllerBase {
 			this.#progress.update({ completed: progress.completed + 1 });
 
 			if (uploaded.status === TemporaryFileStatus.SUCCESS) {
-				this.#progressItems.updateOne(item.unique, { status: UmbFileDropzoneItemStatus.UPLOADED });
+				this.#progressItems.updateOne(item.unique, { status: UmbFileDropzoneItemStatus.COMPLETE });
 			} else {
 				this.#progressItems.updateOne(item.unique, { status: UmbFileDropzoneItemStatus.ERROR });
 			}
@@ -122,12 +124,12 @@ export class UmbDropzoneManager extends UmbControllerBase {
 	}
 
 	async #createOneMediaItem(item: UmbUploadableItem) {
-		const allowed = await this.#getAllowedMediaTypes(item);
-		if (!allowed.length) {
+		const options = await this.#getMediaTypeOptions(item);
+		if (!options.length) {
 			return this.#updateProgress(item, UmbFileDropzoneItemStatus.NOT_ALLOWED);
 		}
 
-		const mediaTypeUnique = allowed.length > 1 ? await this.#showDialogMediaTypePicker(allowed) : allowed[0].unique;
+		const mediaTypeUnique = options.length > 1 ? await this.#showDialogMediaTypePicker(options) : options[0].unique;
 
 		if (!mediaTypeUnique) {
 			return this.#updateProgress(item, UmbFileDropzoneItemStatus.CANCELLED);
@@ -142,10 +144,13 @@ export class UmbDropzoneManager extends UmbControllerBase {
 
 	async #createMediaItems(uploadableItems: Array<UmbUploadableItem>) {
 		for (const item of uploadableItems) {
-			const allowed = await this.#getAllowedMediaTypes(item);
-			if (!allowed.length) continue;
+			const options = await this.#getMediaTypeOptions(item);
+			if (!options.length) {
+				await this.#updateProgress(item, UmbFileDropzoneItemStatus.NOT_ALLOWED);
+				continue;
+			}
 
-			const mediaTypeUnique = allowed[0].unique;
+			const mediaTypeUnique = options[0].unique;
 
 			// Handle files and folders differently: a file is uploaded as temp then created as a media item, and a folder is created as a media item directly
 			if (item.temporaryFile) {
@@ -164,14 +169,12 @@ export class UmbDropzoneManager extends UmbControllerBase {
 			return;
 		}
 
-		this.#updateProgress(item, UmbFileDropzoneItemStatus.UPLOADED, true);
-
 		// Create the media item.
 		const scaffold = await this.#getItemScaffold(item, mediaTypeUnique);
-		const { data } = await this.#mediaDetailRepository.create(scaffold!, item.parentUnique);
+		const { data } = await this.#mediaDetailRepository.create(scaffold, item.parentUnique);
 
 		if (data) {
-			this.#updateProgress(item, UmbFileDropzoneItemStatus.CREATED);
+			this.#updateProgress(item, UmbFileDropzoneItemStatus.COMPLETE);
 		} else {
 			this.#updateProgress(item, UmbFileDropzoneItemStatus.ERROR);
 		}
@@ -179,86 +182,70 @@ export class UmbDropzoneManager extends UmbControllerBase {
 
 	async #handleFolder(item: UmbUploadableFolder, mediaTypeUnique: string) {
 		const scaffold = await this.#getItemScaffold(item, mediaTypeUnique);
-		const { data } = await this.#mediaDetailRepository.create(scaffold!, item.parentUnique);
+		const { data } = await this.#mediaDetailRepository.create(scaffold, item.parentUnique);
 		if (data) {
-			this.#updateProgress(item, UmbFileDropzoneItemStatus.CREATED);
+			this.#updateProgress(item, UmbFileDropzoneItemStatus.COMPLETE);
 		} else {
 			this.#updateProgress(item, UmbFileDropzoneItemStatus.ERROR);
 		}
 	}
 
 	async #uploadAsTemporaryFile(item: UmbUploadableFile) {
-		const uploaded = await this.#tempFileManager.uploadOne({
+		return await this.#tempFileManager.uploadOne({
 			temporaryUnique: item.temporaryFile.temporaryUnique,
 			file: item.temporaryFile.file,
 		});
-		return uploaded;
 	}
 
 	// Media types
+	async #getMediaTypeOptions(item: UmbUploadableItem): Promise<Array<UmbAllowedMediaTypeModel>> {
+		// Check the parent which children media types are allowed
+		const parent = item.parentUnique ? await this.#mediaDetailRepository.requestByUnique(item.parentUnique) : null;
+		const allowedChildren = await this.#getAllowedChildrenOf(parent?.data?.mediaType.unique || null);
 
-	async #prepareMediaTypeOptions() {
-		// Look up possible media types for all the different file types based on the progress items.
-		const progressItems = this.#progressItems.getValue();
+		const extension = getExtensionFromMime(item.temporaryFile?.file.type ?? '');
+		// Check which media types allow the file's extension
+		const availableMediaType = await this.#getAvailableMediaTypesOf(extension);
 
-		const allTypes = progressItems.map((item) => item.temporaryFile?.file.type || null);
-		const mimetypes = [...new Set(allTypes)]; // Duplicate types removed
-		const extensions = mimetypes.map((mime) => getExtensionFromMime(mime ?? '') || null);
+		if (!availableMediaType.length) return [];
 
-		for (const fileExtension of extensions) {
-			// Check if we already have media types for this extension, otherwise request it.
-			const stored = this.#optionsByExt.getValue().find((x) => x.fileExtension === fileExtension);
-			if (stored) continue;
-
-			// TODO Add skip and take logic, but the repository doesn't return the data as paged.
-			if (fileExtension) {
-				const mediaTypes = await this.#mediaTypeStructure.requestMediaTypesOf({ fileExtension });
-				this.#optionsByExt.appendOne({ fileExtension, mediaTypes });
-			} else {
-				const mediaTypes = await this.#mediaTypeStructure.requestMediaTypesOfFolders();
-				this.#optionsByExt.appendOne({ fileExtension: null, mediaTypes: mediaTypes });
-			}
-		}
+		const options = allowedChildren.filter((x) => availableMediaType.find((y) => y.unique === x.unique));
+		return options;
 	}
 
-	async #getAllowedMediaTypes(item: UmbUploadableItem): Promise<Array<UmbAllowedMediaTypeModel>> {
-		const extension = getExtensionFromMime(item.temporaryFile?.file.type ?? '') || null;
-		const optionsByExt = this.#optionsByExt.getValue().find((x) => x.fileExtension === extension)?.mediaTypes ?? [];
+	async #getAvailableMediaTypesOf(extension: string | null) {
+		// Check if we already have information on this file extension.
+		const available = this.#availableMediaTypesOf
+			.getValue()
+			.find((x) => x.extension === extension)?.availableMediaTypes;
+		if (available) return available;
 
-		const parentMediaType = await this.#getParentMediaType(item.parentUnique);
+		// Request information on this file extension
+		const availableMediaTypes = extension
+			? await this.#mediaTypeStructure.requestMediaTypesOf({ fileExtension: extension })
+			: await this.#mediaTypeStructure.requestMediaTypesOfFolders();
 
-		const stored = this.#allowedMediaTypes.getValue().find((x) => x.mediaTypeUnique === parentMediaType);
-		if (stored) {
-			return stored.allowedChildren.filter((x) => optionsByExt.find((option) => option.unique === x.unique));
-		}
-
-		const { data: mediaTypes } = await this.#mediaTypeStructure.requestAllowedChildrenOf(parentMediaType);
-		if (mediaTypes) {
-			this.#allowedMediaTypes.appendOne({ mediaTypeUnique: parentMediaType, allowedChildren: mediaTypes.items });
-			const filtered = optionsByExt.filter((x) => mediaTypes.items.find((option) => option.unique === x.unique));
-			return filtered;
-		} else {
-			this.#allowedMediaTypes.appendOne({ mediaTypeUnique: parentMediaType, allowedChildren: [] });
-			this.#updateProgress(item, UmbFileDropzoneItemStatus.NOT_ALLOWED);
-			return [];
-		}
+		this.#availableMediaTypesOf.appendOne({ extension, availableMediaTypes });
+		return availableMediaTypes;
 	}
 
-	async #getParentMediaType(unique: string | null) {
-		if (!unique) return null;
+	async #getAllowedChildrenOf(mediaTypeUnique: string | null) {
+		//Check if we already got information on this media type.
+		const allowed = this.#allowedChildrenOf
+			.getValue()
+			.find((x) => x.mediaTypeUnique === mediaTypeUnique)?.allowedChildren;
+		if (allowed) return allowed;
 
-		const mediaType = this.#parentMediaTypes.getValue().find((x) => x.unique === unique)?.mediaType;
-		if (mediaType) return mediaType;
+		// Request information on this media type.
+		const { data } = await this.#mediaTypeStructure.requestAllowedChildrenOf(mediaTypeUnique);
+		if (!data) throw new Error('Parent media type does not exists');
 
-		const { data: parent } = await this.#mediaDetailRepository.requestByUnique(unique);
-		if (!parent) return null;
-
-		this.#parentMediaTypes.appendOne({ unique, mediaType: parent.mediaType.unique });
-		return parent.mediaType.unique;
+		this.#allowedChildrenOf.appendOne({ mediaTypeUnique, allowedChildren: data.items });
+		return data.items;
 	}
 
 	// Scaffold
-	async #getItemScaffold(item: UmbUploadableItem, mediaTypeUnique: string) {
+	async #getItemScaffold(item: UmbUploadableItem, mediaTypeUnique: string): Promise<UmbMediaDetailModel> {
 		const name = item.temporaryFile ? item.temporaryFile.file.name : (item.folder?.name ?? '');
 		const umbracoFile = {
 			alias: 'umbracoFile',
@@ -274,11 +261,10 @@ export class UmbDropzoneManager extends UmbControllerBase {
 			values: item.temporaryFile ? [umbracoFile] : undefined,
 		};
 		const { data } = await this.#mediaDetailRepository.createScaffold(preset);
-		return data;
+		return data!;
 	}
 
 	// Progress handling
-
 	async #setupProgress(items: UmbFileDropzoneDroppedItems, parent: string | null) {
 		const current = this.#progress.getValue();
 		const currentItems = this.#progressItems.getValue();
@@ -288,18 +274,13 @@ export class UmbDropzoneManager extends UmbControllerBase {
 		this.#progressItems.setValue([...currentItems, ...uploadableItems]);
 		this.#progress.setValue({ total: current.total + uploadableItems.length, completed: current.completed });
 
-		// Prepare media type options based on the items' different file types. We need this later when checking which media types are allowed by the parent.
-		await this.#prepareMediaTypeOptions();
-
 		return uploadableItems;
 	}
 
-	#updateProgress(item: UmbUploadableItem, status: UmbFileDropzoneItemStatus, updateItemOnly = false) {
+	#updateProgress(item: UmbUploadableItem, status: UmbFileDropzoneItemStatus) {
 		this.#progressItems.updateOne(item.unique, { status });
 		const progress = this.#progress.getValue();
-		if (!updateItemOnly) {
-			this.#progress.update({ completed: progress.completed + 1 });
-		}
+		this.#progress.update({ completed: progress.completed + 1 });
 	}
 
 	#prepareItemsAsUploadable = (
