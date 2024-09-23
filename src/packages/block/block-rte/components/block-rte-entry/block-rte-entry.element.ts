@@ -183,6 +183,7 @@ export class UmbBlockRteEntryElement extends UmbLitElement implements UmbPropert
 				display: block;
 				user-select: none;
 				user-drag: auto;
+				white-space: nowrap;
 			}
 			uui-action-bar {
 				position: absolute;
