@@ -1,7 +1,6 @@
-import type { ManifestTypes, UmbBackofficeManifestKind } from '@umbraco-cms/backoffice/extension-registry';
 import { UMB_USER_ENTITY_TYPE } from '@umbraco-cms/backoffice/user';
 
-export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
+export const manifests: Array<UmbExtensionManifest> = [
 	{
 		type: 'entityAction',
 		kind: 'default',
@@ -14,6 +13,11 @@ export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 			icon: 'icon-key',
 			label: '#user_changePassword',
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.User.AllowChangePassword',
+			},
+		],
 	},
 	{
 		type: 'modal',

@@ -1,4 +1,4 @@
-import type { ManifestModal, ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
+import type { ManifestModal } from '@umbraco-cms/backoffice/extension-registry';
 
 export const UMB_DOCUMENT_SAVE_MODAL_ALIAS = 'Umb.Modal.DocumentSave';
 export const UMB_DOCUMENT_PUBLISH_MODAL_ALIAS = 'Umb.Modal.DocumentPublish';
@@ -39,4 +39,4 @@ const modals: Array<ManifestModal> = [
 	},
 ];
 
-export const manifests: Array<ManifestTypes> = [...modals];
+export const manifests: Array<UmbExtensionManifest> = [...modals];
