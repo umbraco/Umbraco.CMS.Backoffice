@@ -1,7 +1,7 @@
 import { UMB_BLOCK_RTE_MANAGER_CONTEXT } from '../context/block-rte-manager.context-token.js';
 import { UMB_BLOCK_RTE_ENTRIES_CONTEXT } from '../context/block-rte-entries.context-token.js';
-import { UMB_BLOCK_MANAGER_CONTEXT } from '../../block/context/block-manager.context-token.js';
 import type { UmbBlockDataType } from '../../block/types.js';
+import type { UmbBlockRteLayoutModel } from '../types.js';
 import type { UmbBlockTypeBaseModel } from '@umbraco-cms/backoffice/block-type';
 import { UmbTiptapToolbarElementApiBase } from '@umbraco-cms/backoffice/tiptap';
 import { Node, type Editor } from '@umbraco-cms/backoffice/external/tiptap';
@@ -62,7 +62,6 @@ const umbRteBlockInline = umbRteBlock.extend({
 	name: 'umbRteBlockInline',
 	group: 'inline',
 	inline: true,
-	content: undefined, // The block does not have any content, it is just a wrapper.
 
 	parseHTML() {
 		return [{ tag: 'umb-rte-block-inline' }];
@@ -104,18 +103,16 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 				},
 				'blockType',
 			);
-		});
-		this.consumeContext(UMB_BLOCK_RTE_ENTRIES_CONTEXT, (context) => {
-			this.#entriesContext = context;
-		});
-		this.consumeContext(UMB_BLOCK_MANAGER_CONTEXT, (context) => {
 			this.observe(
 				context.contents,
 				(contents) => {
-					this.#handleBlocks(contents);
+					this.#handleBlocks(contents, context.getLayouts());
 				},
 				'contents',
 			);
+		});
+		this.consumeContext(UMB_BLOCK_RTE_ENTRIES_CONTEXT, (context) => {
+			this.#entriesContext = context;
 		});
 	}
 
@@ -171,7 +168,7 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 		}
 	}
 
-	#handleBlocks(blocks: UmbBlockDataType[]) {
+	#handleBlocks(blocks: UmbBlockDataType[], layouts: Array<UmbBlockRteLayoutModel>) {
 		const editor = this.#editor;
 		if (!editor) return;
 
@@ -189,7 +186,10 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 
 			newBlocks.push(block);
 
-			const inline = false; // TODO: Check if block is inline or not.
+			// Find layout for block
+			const layout = layouts.find((x) => x.contentUdi === block.udi);
+			const inline = layout?.displayInline ?? false;
+
 			if (inline) {
 				editor.commands.setBlockInline({ contentUdi: block.udi });
 				return;
