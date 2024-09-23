@@ -167,7 +167,7 @@ export class UmbDropzoneManager extends UmbControllerBase {
 		this.#updateProgress(item, UmbFileDropzoneItemStatus.UPLOADED, true);
 
 		// Create the media item.
-		const scaffold = await this.#createItemScaffold(item, mediaTypeUnique);
+		const scaffold = await this.#getItemScaffold(item, mediaTypeUnique);
 		const { data } = await this.#mediaDetailRepository.create(scaffold!, item.parentUnique);
 
 		if (data) {
@@ -178,7 +178,7 @@ export class UmbDropzoneManager extends UmbControllerBase {
 	}
 
 	async #handleFolder(item: UmbUploadableFolder, mediaTypeUnique: string) {
-		const scaffold = await this.#createItemScaffold(item, mediaTypeUnique);
+		const scaffold = await this.#getItemScaffold(item, mediaTypeUnique);
 		const { data } = await this.#mediaDetailRepository.create(scaffold!, item.parentUnique);
 		if (data) {
 			this.#updateProgress(item, UmbFileDropzoneItemStatus.CREATED);
@@ -258,52 +258,21 @@ export class UmbDropzoneManager extends UmbControllerBase {
 	}
 
 	// Scaffold
+	async #getItemScaffold(item: UmbUploadableItem, mediaTypeUnique: string) {
+		const name = item.temporaryFile ? item.temporaryFile.file.name : (item.folder?.name ?? '');
+		const umbracoFile = {
+			alias: 'umbracoFile',
+			value: { temporaryFileId: item.temporaryFile?.temporaryUnique },
+			culture: null,
+			segment: null,
+		};
 
-	async #createItemScaffold(item: UmbUploadableItem, mediaTypeUnique: string) {
-		let preset: Partial<UmbMediaDetailModel> = {};
-		if (item.temporaryFile) {
-			preset = {
-				unique: item.unique,
-				mediaType: {
-					unique: mediaTypeUnique,
-					collection: null,
-				},
-				variants: [
-					{
-						culture: null,
-						segment: null,
-						name: item.temporaryFile.file.name,
-						createDate: null,
-						updateDate: null,
-					},
-				],
-				values: [
-					{
-						alias: 'umbracoFile',
-						value: { temporaryFileId: item.temporaryFile.temporaryUnique },
-						culture: null,
-						segment: null,
-					},
-				],
-			};
-		} else if (item.folder) {
-			preset = {
-				unique: item.unique,
-				mediaType: {
-					unique: mediaTypeUnique,
-					collection: null,
-				},
-				variants: [
-					{
-						culture: null,
-						segment: null,
-						name: item.folder.name,
-						createDate: null,
-						updateDate: null,
-					},
-				],
-			};
-		}
+		const preset: Partial<UmbMediaDetailModel> = {
+			unique: item.unique,
+			mediaType: { unique: mediaTypeUnique, collection: null },
+			variants: [{ culture: null, segment: null, createDate: null, updateDate: null, name }],
+			values: item.temporaryFile ? [umbracoFile] : undefined,
+		};
 		const { data } = await this.#mediaDetailRepository.createScaffold(preset);
 		return data;
 	}
