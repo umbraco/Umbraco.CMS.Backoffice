@@ -175,7 +175,7 @@ export class UmbBlockRteEntryElement extends UmbLitElement implements UmbPropert
 		return this.#renderBlock();
 	}
 
-	static override styles = [
+	static override readonly styles = [
 		UmbTextStyles,
 		css`
 			:host {
