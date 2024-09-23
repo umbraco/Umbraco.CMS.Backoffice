@@ -14,10 +14,6 @@ export class UmbBlockRteManagerContext<
 		this._layouts.removeOne(contentUdi);
 	}
 
-	getLayouts(): Array<BlockLayoutType> {
-		return this._layouts.getValue();
-	}
-
 	create(contentElementTypeKey: string, partialLayoutEntry?: Omit<BlockLayoutType, 'contentUdi'>) {
 		const data = super.createBlockData(contentElementTypeKey, partialLayoutEntry);
 
