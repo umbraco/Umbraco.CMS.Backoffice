@@ -7,11 +7,12 @@ import { UmbTiptapToolbarElementApiBase } from '@umbraco-cms/backoffice/tiptap';
 import { Node, type Editor } from '@umbraco-cms/backoffice/external/tiptap';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
+const DATA_CONTENT_UDI = 'data-content-udi';
+
 declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
 		umbRteBlock: {
 			setBlock: (options: { contentUdi: string }) => ReturnType;
-			removeBlock: (options: { contentUdi: string }) => ReturnType;
 		};
 		umbRteBlockInline: {
 			setBlockInline: (options: { contentUdi: string }) => ReturnType;
@@ -26,10 +27,11 @@ const umbRteBlock = Node.create({
 	atom: true, // The block is an atom, meaning it is a single unit that cannot be split.
 	marks: '', // We do not allow marks on the block
 	draggable: true,
+	selectable: true,
 
 	addAttributes() {
 		return {
-			'data-content-udi': {
+			[DATA_CONTENT_UDI]: {
 				isRequired: true,
 			},
 		};
@@ -48,20 +50,11 @@ const umbRteBlock = Node.create({
 			setBlock:
 				(options) =>
 				({ commands }) => {
-					const attrs = { 'data-content-udi': options.contentUdi };
+					const attrs = { [DATA_CONTENT_UDI]: options.contentUdi };
 					return commands.insertContent({
 						type: this.name,
 						attrs,
 					});
-				},
-			removeBlock:
-				(options) =>
-				({ commands, editor }) => {
-					const block = editor.$node('umb-rte-block, umb-rte-block-inline', { 'data-content-udi': options.contentUdi });
-					if (block) {
-						return commands.deleteRange({ from: block.pos, to: block.pos + block.node.nodeSize });
-					}
-					return false;
 				},
 		};
 	},
@@ -85,7 +78,7 @@ const umbRteBlockInline = umbRteBlock.extend({
 			setBlockInline:
 				(options) =>
 				({ commands }) => {
-					const attrs = { 'data-content-udi': options.contentUdi };
+					const attrs = { [DATA_CONTENT_UDI]: options.contentUdi };
 					return commands.insertContent({
 						type: this.name,
 						attrs,
@@ -96,7 +89,7 @@ const umbRteBlockInline = umbRteBlock.extend({
 });
 
 export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarElementApiBase {
-	private _blocks?: Array<UmbBlockTypeBaseModel>;
+	#blocks?: Array<UmbBlockTypeBaseModel>;
 	#entriesContext?: typeof UMB_BLOCK_RTE_ENTRIES_CONTEXT.TYPE;
 
 	constructor(host: UmbControllerHost) {
@@ -106,7 +99,7 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 			this.observe(
 				context.blockTypes,
 				(blockTypes) => {
-					this._blocks = blockTypes;
+					this.#blocks = blockTypes;
 				},
 				'blockType',
 			);
@@ -129,28 +122,13 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 
 	override isActive(editor: Editor) {
 		return (
-			editor.isActive('umb-rte-block[data-content-udi]') || editor.isActive('umb-rte-block-inline[data-content-udi]')
+			editor.isActive(`umb-rte-block[${DATA_CONTENT_UDI}]`) ||
+			editor.isActive(`umb-rte-block-inline[${DATA_CONTENT_UDI}]`)
 		);
 	}
 
 	override async execute() {
-		return this.#showDialog();
-	}
-
-	async #showDialog() {
-		//const blockEl = this.editor.selection.getNode();
-
-		/*if (blockEl.nodeName === 'UMB-RTE-BLOCK' || blockEl.nodeName === 'UMB-RTE-BLOCK-INLINE') {
-			const blockUdi = blockEl.getAttribute('data-content-udi') ?? undefined;
-			if (blockUdi) {
-				// TODO: Missing a solution to edit a block from this scope. [NL]
-				this.#editBlock(blockUdi);
-				return;
-			}
-		}*/
-
-		// If no block is selected, open the block picker:
-		this.#createBlock();
+		return this.#createBlock();
 	}
 
 	#createBlock() {
@@ -162,8 +140,8 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 		// TODO: Missing solution to skip catalogue if only one type available. [NL]
 		let createPath: string | undefined = undefined;
 
-		if (this._blocks?.length === 1) {
-			const elementKey = this._blocks[0].contentElementTypeKey;
+		if (this.#blocks?.length === 1) {
+			const elementKey = this.#blocks[0].contentElementTypeKey;
 			createPath = this.#entriesContext.getPathForCreateBlock() + 'modal/umb-modal-workspace/create/' + elementKey;
 		} else {
 			createPath = this.#entriesContext.getPathForCreateBlock();
@@ -178,27 +156,10 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 		const editor = this._editor;
 		if (!editor) return;
 
-		const existingBlocks =
-			editor.$nodes('umbRteBlock')?.map((x) => ({ contentUdi: x.node.attrs['data-content-udi'], range: x.range })) ??
-			[];
-		const existingInlineBlocks =
-			editor
-				.$nodes('umbRteBlockInline')
-				?.map((x) => ({ contentUdi: x.node.attrs['data-content-udi'], range: x.range })) ?? [];
-
-		const currentBlocks = [...existingBlocks, ...existingInlineBlocks];
-
-		const newBlocks = blocks.filter((x) => !currentBlocks.find((y) => y.contentUdi === x.udi));
-		const blocksToRemove = currentBlocks.filter((x) => !blocks.find((y) => y.udi === x.contentUdi));
-
-		console.log('new blocks', newBlocks);
-		console.log('current blocks', currentBlocks);
-		console.log('block diffs', blocksToRemove);
-
-		// Remove unused blocks
-		blocksToRemove.forEach((block) => {
-			editor.commands.deleteRange(block.range);
-		});
+		const existingBlocks = Array.from(editor.view.dom.querySelectorAll('umb-rte-block, umb-rte-block-inline')).map(
+			(x) => x.getAttribute(DATA_CONTENT_UDI),
+		);
+		const newBlocks = blocks.filter((x) => !existingBlocks.find((contentUdi) => contentUdi === x.udi));
 
 		newBlocks.forEach((block) => {
 			// Find layout for block
