@@ -11,6 +11,7 @@ declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
 		umbRteBlock: {
 			setBlock: (options: { contentUdi: string }) => ReturnType;
+			removeBlock: (options: { contentUdi: string }) => ReturnType;
 		};
 		umbRteBlockInline: {
 			setBlockInline: (options: { contentUdi: string }) => ReturnType;
@@ -25,7 +26,6 @@ const umbRteBlock = Node.create({
 	atom: true, // The block is an atom, meaning it is a single unit that cannot be split.
 	marks: '', // We do not allow marks on the block
 	draggable: true,
-	//selectable: true,
 
 	addAttributes() {
 		return {
@@ -53,6 +53,15 @@ const umbRteBlock = Node.create({
 						type: this.name,
 						attrs,
 					});
+				},
+			removeBlock:
+				(options) =>
+				({ commands, editor }) => {
+					const block = editor.$node('umb-rte-block, umb-rte-block-inline', { 'data-content-udi': options.contentUdi });
+					if (block) {
+						return commands.deleteRange({ from: block.pos, to: block.pos + block.node.nodeSize });
+					}
+					return false;
 				},
 		};
 	},
@@ -90,8 +99,6 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 	private _blocks?: Array<UmbBlockTypeBaseModel>;
 	#entriesContext?: typeof UMB_BLOCK_RTE_ENTRIES_CONTEXT.TYPE;
 
-	#editor?: Editor;
-
 	constructor(host: UmbControllerHost) {
 		super(host);
 
@@ -106,7 +113,7 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 			this.observe(
 				context.contents,
 				(contents) => {
-					this.#handleBlocks(contents, context.getLayouts());
+					this.#updateBlocks(contents, context.getLayouts());
 				},
 				'contents',
 			);
@@ -126,8 +133,7 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 		);
 	}
 
-	override async execute(editor: Editor) {
-		this.#editor = editor;
+	override async execute() {
 		return this.#showDialog();
 	}
 
@@ -168,42 +174,41 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 		}
 	}
 
-	#handleBlocks(blocks: UmbBlockDataType[], layouts: Array<UmbBlockRteLayoutModel>) {
-		const editor = this.#editor;
+	#updateBlocks(blocks: UmbBlockDataType[], layouts: Array<UmbBlockRteLayoutModel>) {
+		const editor = this._editor;
 		if (!editor) return;
 
-		const existingBlocks = Array.from(
-			editor.view.dom.querySelectorAll('umb-rte-block[data-content-udi], umb-rte-block-inline[data-content-udi]'),
-		);
-		const newBlocks: UmbBlockDataType[] = [];
+		const existingBlocks =
+			editor.$nodes('umbRteBlock')?.map((x) => ({ contentUdi: x.node.attrs['data-content-udi'], range: x.range })) ??
+			[];
+		const existingInlineBlocks =
+			editor
+				.$nodes('umbRteBlockInline')
+				?.map((x) => ({ contentUdi: x.node.attrs['data-content-udi'], range: x.range })) ?? [];
 
-		blocks.forEach((block) => {
-			// Find existing block
-			const existingBlock = existingBlocks.find((el) => el.getAttribute('data-content-udi') === block.udi);
-			if (existingBlock) {
-				return;
-			}
+		const currentBlocks = [...existingBlocks, ...existingInlineBlocks];
 
-			newBlocks.push(block);
+		const newBlocks = blocks.filter((x) => !currentBlocks.find((y) => y.contentUdi === x.udi));
+		const blocksToRemove = currentBlocks.filter((x) => !blocks.find((y) => y.udi === x.contentUdi));
 
+		console.log('new blocks', newBlocks);
+		console.log('current blocks', currentBlocks);
+		console.log('block diffs', blocksToRemove);
+
+		// Remove unused blocks
+		blocksToRemove.forEach((block) => {
+			editor.commands.deleteRange(block.range);
+		});
+
+		newBlocks.forEach((block) => {
 			// Find layout for block
 			const layout = layouts.find((x) => x.contentUdi === block.udi);
 			const inline = layout?.displayInline ?? false;
 
 			if (inline) {
 				editor.commands.setBlockInline({ contentUdi: block.udi });
-				return;
-			}
-			editor.commands.setBlock({ contentUdi: block.udi });
-		});
-
-		// Remove unused blocks
-		existingBlocks.forEach((block) => {
-			const blockUdi = block.getAttribute('data-content-udi');
-
-			const found = newBlocks.find((x) => x.udi === blockUdi);
-			if (!found) {
-				//editor.commands.deleteNode(block);
+			} else {
+				editor.commands.setBlock({ contentUdi: block.udi });
 			}
 		});
 	}
