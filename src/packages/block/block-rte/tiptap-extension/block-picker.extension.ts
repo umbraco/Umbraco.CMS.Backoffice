@@ -21,8 +21,8 @@ declare module '@tiptap/core' {
 const umbRteBlock = Node.create({
 	name: 'umbRteBlock',
 	group: 'block',
+	content: undefined, // The block does not have any content, it is just a wrapper.
 	atom: true, // The block is an atom, meaning it is a single unit that cannot be split.
-	content: undefined, // We do not allow content inside the block.
 	marks: '', // We do not allow marks on the block
 	draggable: true,
 	//selectable: true,
@@ -62,13 +62,14 @@ const umbRteBlockInline = umbRteBlock.extend({
 	name: 'umbRteBlockInline',
 	group: 'inline',
 	inline: true,
+	content: undefined, // The block does not have any content, it is just a wrapper.
 
 	parseHTML() {
 		return [{ tag: 'umb-rte-block-inline' }];
 	},
 
 	renderHTML({ HTMLAttributes }) {
-		return ['umb-rte-block-inline', HTMLAttributes, 0];
+		return ['umb-rte-block-inline', HTMLAttributes];
 	},
 
 	addCommands() {
