@@ -1,13 +1,11 @@
 import { UMB_BLOCK_RTE_MANAGER_CONTEXT } from '../context/block-rte-manager.context-token.js';
 import { UMB_BLOCK_RTE_ENTRIES_CONTEXT } from '../context/block-rte-entries.context-token.js';
 import type { UmbBlockDataType } from '../../block/types.js';
-import type { UmbBlockRteLayoutModel } from '../types.js';
+import { UMB_DATA_CONTENT_UDI, type UmbBlockRteLayoutModel } from '../types.js';
 import type { UmbBlockTypeBaseModel } from '@umbraco-cms/backoffice/block-type';
 import { UmbTiptapToolbarElementApiBase } from '@umbraco-cms/backoffice/tiptap';
 import { Node, type Editor } from '@umbraco-cms/backoffice/external/tiptap';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-
-const DATA_CONTENT_UDI = 'data-content-udi';
 
 declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
@@ -31,7 +29,7 @@ const umbRteBlock = Node.create({
 
 	addAttributes() {
 		return {
-			[DATA_CONTENT_UDI]: {
+			[UMB_DATA_CONTENT_UDI]: {
 				isRequired: true,
 			},
 		};
@@ -50,7 +48,7 @@ const umbRteBlock = Node.create({
 			setBlock:
 				(options) =>
 				({ commands }) => {
-					const attrs = { [DATA_CONTENT_UDI]: options.contentUdi };
+					const attrs = { [UMB_DATA_CONTENT_UDI]: options.contentUdi };
 					return commands.insertContent({
 						type: this.name,
 						attrs,
@@ -78,7 +76,7 @@ const umbRteBlockInline = umbRteBlock.extend({
 			setBlockInline:
 				(options) =>
 				({ commands }) => {
-					const attrs = { [DATA_CONTENT_UDI]: options.contentUdi };
+					const attrs = { [UMB_DATA_CONTENT_UDI]: options.contentUdi };
 					return commands.insertContent({
 						type: this.name,
 						attrs,
@@ -122,8 +120,8 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 
 	override isActive(editor: Editor) {
 		return (
-			editor.isActive(`umb-rte-block[${DATA_CONTENT_UDI}]`) ||
-			editor.isActive(`umb-rte-block-inline[${DATA_CONTENT_UDI}]`)
+			editor.isActive(`umb-rte-block[${UMB_DATA_CONTENT_UDI}]`) ||
+			editor.isActive(`umb-rte-block-inline[${UMB_DATA_CONTENT_UDI}]`)
 		);
 	}
 
@@ -157,7 +155,7 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 		if (!editor) return;
 
 		const existingBlocks = Array.from(editor.view.dom.querySelectorAll('umb-rte-block, umb-rte-block-inline')).map(
-			(x) => x.getAttribute(DATA_CONTENT_UDI),
+			(x) => x.getAttribute(UMB_DATA_CONTENT_UDI),
 		);
 		const newBlocks = blocks.filter((x) => !existingBlocks.find((contentUdi) => contentUdi === x.udi));
 

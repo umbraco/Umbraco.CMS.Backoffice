@@ -3,6 +3,7 @@ import type { UmbBlockLayoutBaseModel, UmbBlockValueType } from '@umbraco-cms/ba
 
 export const UMB_BLOCK_RTE_TYPE = 'block-rte-type';
 export const UMB_BLOCK_RTE = 'block-rte';
+export const UMB_DATA_CONTENT_UDI = 'data-content-udi';
 
 export interface UmbBlockRteTypeModel extends UmbBlockTypeBaseModel {
 	displayInline: boolean;
