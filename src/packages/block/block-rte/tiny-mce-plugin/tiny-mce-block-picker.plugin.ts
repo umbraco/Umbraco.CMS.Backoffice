@@ -93,12 +93,10 @@ export default class UmbTinyMceMultiUrlPickerPlugin extends UmbTinyMcePluginBase
 	#updateBlocks(blocks: UmbBlockDataType[], layouts: Array<UmbBlockRteLayoutModel>) {
 		const editor = this.#editor;
 		if (!editor?.dom) return;
-		console.log('🚀 ~ UmbTinyMceMultiUrlPickerPlugin ~ #updateBlocks ~ editor:', editor);
 
 		const existingBlocks = editor.dom
 			.select('umb-rte-block, umb-rte-block-inline')
 			.map((x) => x.getAttribute(UMB_DATA_CONTENT_UDI));
-		console.log('🚀 ~ UmbTinyMceMultiUrlPickerPlugin ~ #updateBlocks ~ editor:', editor);
 		const newBlocks = blocks.filter((x) => !existingBlocks.find((contentUdi) => contentUdi === x.udi));
 
 		newBlocks.forEach((block) => {
