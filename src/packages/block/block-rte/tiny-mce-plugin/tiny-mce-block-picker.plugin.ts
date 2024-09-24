@@ -75,7 +75,6 @@ export default class UmbTinyMceMultiUrlPickerPlugin extends UmbTinyMcePluginBase
 			return;
 		}
 
-		// TODO: Missing solution to skip catalogue if only one type available. [NL]
 		let createPath: string | undefined = undefined;
 
 		if (this.#blocks?.length === 1) {

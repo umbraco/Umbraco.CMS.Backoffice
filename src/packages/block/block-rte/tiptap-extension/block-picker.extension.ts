@@ -6,6 +6,7 @@ import type { UmbBlockTypeBaseModel } from '@umbraco-cms/backoffice/block-type';
 import { UmbTiptapToolbarElementApiBase } from '@umbraco-cms/backoffice/tiptap';
 import { Node, type Editor } from '@umbraco-cms/backoffice/external/tiptap';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { distinctUntilChanged } from '@umbraco-cms/backoffice/external/rxjs';
 
 declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
@@ -102,7 +103,9 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 				'blockType',
 			);
 			this.observe(
-				context.contents,
+				context.contents.pipe(
+					distinctUntilChanged((prev, curr) => prev.map((y) => y.udi).join() === curr.map((y) => y.udi).join()),
+				),
 				(contents) => {
 					this.#updateBlocks(contents, context.getLayouts());
 				},
@@ -135,7 +138,6 @@ export default class UmbTiptapBlockPickerExtension extends UmbTiptapToolbarEleme
 			return;
 		}
 
-		// TODO: Missing solution to skip catalogue if only one type available. [NL]
 		let createPath: string | undefined = undefined;
 
 		if (this.#blocks?.length === 1) {
