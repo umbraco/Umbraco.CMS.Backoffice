@@ -163,9 +163,6 @@ export class UmbBlockRteEntryElement extends UmbLitElement implements UmbPropert
 								<uui-icon name="icon-settings"></uui-icon>
 							</uui-button>`
 						: ''}
-					<uui-button label="delete" compact @click=${() => this.#context.requestDelete()}>
-						<uui-icon name="icon-remove"></uui-icon>
-					</uui-button>
 				</uui-action-bar>
 			</div>
 		`;
