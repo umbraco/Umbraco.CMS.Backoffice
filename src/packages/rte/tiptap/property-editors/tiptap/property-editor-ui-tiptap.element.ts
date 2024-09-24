@@ -129,13 +129,15 @@ export class UmbPropertyEditorUiTiptapElement extends UmbLitElement implements U
 
 		// Remove unused Blocks of Blocks Layout. Leaving only the Blocks that are present in Markup.
 		const usedContentUdis: string[] = [];
+
+		// Regex matching all block elements in the markup, and extracting the content UDI. It's the same as the one used on the backend.
 		const regex = new RegExp(
-			/<umb-rte-block(-inline)?.*?data-content-udi="(.+?)"[^>]*>.*?<\/umb-rte-block(-inline)?>/gi,
+			/<umb-rte-block(?:-inline)?(?: class="(?:.[^"]*)")? data-content-udi="(?<udi>.[^"]*)">(?:<!--Umbraco-Block-->)?<\/umb-rte-block(?:-inline)?>/gi,
 		);
 		let blockElement: RegExpExecArray | null;
 		while ((blockElement = regex.exec(this._latestMarkup)) !== null) {
-			if (blockElement) {
-				usedContentUdis.push(blockElement[2]);
+			if (blockElement.groups?.udi) {
+				usedContentUdis.push(blockElement.groups.udi);
 			}
 		}
 
