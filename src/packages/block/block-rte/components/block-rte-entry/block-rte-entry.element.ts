@@ -202,6 +202,12 @@ export class UmbBlockRteEntryElement extends UmbLitElement implements UmbPropert
 				user-drag: auto;
 				white-space: nowrap;
 			}
+			:host(.ProseMirror-selectednode) {
+				umb-ref-rte-block {
+					cursor: not-allowed;
+					outline: 3px solid #b4d7ff;
+				}
+			}
 			uui-action-bar {
 				position: absolute;
 				top: var(--uui-size-2);
