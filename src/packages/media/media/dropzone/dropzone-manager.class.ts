@@ -146,7 +146,7 @@ export class UmbDropzoneManager extends UmbControllerBase {
 		for (const item of uploadableItems) {
 			const options = await this.#getMediaTypeOptions(item);
 			if (!options.length) {
-				await this.#updateProgress(item, UmbFileDropzoneItemStatus.NOT_ALLOWED);
+				this.#updateProgress(item, UmbFileDropzoneItemStatus.NOT_ALLOWED);
 				continue;
 			}
 
@@ -201,7 +201,7 @@ export class UmbDropzoneManager extends UmbControllerBase {
 	async #getMediaTypeOptions(item: UmbUploadableItem): Promise<Array<UmbAllowedMediaTypeModel>> {
 		// Check the parent which children media types are allowed
 		const parent = item.parentUnique ? await this.#mediaDetailRepository.requestByUnique(item.parentUnique) : null;
-		const allowedChildren = await this.#getAllowedChildrenOf(parent?.data?.mediaType.unique || null);
+		const allowedChildren = await this.#getAllowedChildrenOf(parent?.data?.mediaType.unique ?? null);
 
 		const extension = getExtensionFromMime(item.temporaryFile?.file.type ?? '');
 		// Check which media types allow the file's extension
