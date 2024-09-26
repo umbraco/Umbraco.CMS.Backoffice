@@ -6,10 +6,7 @@
 export function getExtensionFromMime(mime: string): string | null {
 	if (!mime) return null;
 	const extension = mime.split('/')[1];
-	switch (extension) {
-		case 'svg+xml':
-			return 'svg';
-		default:
-			return extension;
-	}
+
+	if (extension === 'svg+xml') return 'svg';
+	return extension;
 }
