@@ -6,6 +6,24 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 export abstract class UmbUfmElementBase extends UmbLitElement {
 	#filterFuncArgs?: Array<{ alias: string; args: Array<string> }>;
 
+
+	getValueFromExpression(dataSource: any, expression: string) {
+		const keys = [];
+		const regex = /([a-zA-Z_$][\w$]*)|\[(\d+)\]/g;
+	
+		let match;
+		while ((match = regex.exec(expression)) !== null) {
+		  if (match[1]) {
+			keys.push(match[1]);
+		  } else if (match[2]) {
+			keys.push(parseInt(match[2], 10));
+		  }
+		}
+		let target = dataSource;
+		for (const key of keys) target = target[key];
+		return target;
+	}
+	  
 	@property()
 	public set filters(value: string | undefined) {
 		this.#filters = value;
