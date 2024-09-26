@@ -19,7 +19,7 @@ export class UmbDropzoneElement extends UmbLitElement {
 	@property({ type: String })
 	accept?: string;
 
-	@property({ type: Boolean })
+	@property({ type: Boolean, reflect: true })
 	disabled = false;
 
 	private _disableFolderUpload = false;
@@ -122,7 +122,7 @@ export class UmbDropzoneElement extends UmbLitElement {
 
 	static override styles = [
 		css`
-			:host([dragging]) #dropzone {
+			:host(:not([disabled])[dragging]) #dropzone {
 				opacity: 1;
 				pointer-events: all;
 			}
