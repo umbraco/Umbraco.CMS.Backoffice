@@ -13,9 +13,8 @@ export class UmbUfmUrlPickerInListElement extends UmbUfmElementBase {
 		this.consumeContext(UMB_BLOCK_ENTRY_CONTEXT, (context) => {
 			this.observe(
 				context.content,
-				(value: any) => {
-					var text = this.getValueFromExpression(value, this.alias!);
-					this.value = text;
+				(value) => {
+					this.value = this.getValueFromExpression(value, this.alias!);
 				},
 				'observeValue',
 			);
