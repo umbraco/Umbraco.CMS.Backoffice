@@ -10,8 +10,9 @@ import type { UmbInputDocumentElement } from '@umbraco-cms/backoffice/document';
 import type { UmbInputSectionElement } from '@umbraco-cms/backoffice/section';
 import type { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import type { UmbInputMediaElement } from '@umbraco-cms/backoffice/media';
-import { UMB_ICON_PICKER_MODAL, UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import type { UmbInputLanguageElement } from '@umbraco-cms/backoffice/language';
+import { UMB_ICON_PICKER_MODAL } from '@umbraco-cms/backoffice/icon';
 
 import './components/user-group-entity-user-permission-list.element.js';
 import './components/user-group-granular-permission-list.element.js';
@@ -72,7 +73,7 @@ export class UmbUserGroupWorkspaceEditorElement extends UmbLitElement {
 	#observeUserGroup() {
 		if (!this.#workspaceContext) return;
 		this.observe(this.#workspaceContext.isNew, (value) => (this._isNew = value), '_observeIsNew');
-		this.observe(this.#workspaceContext.unique, (value) => (this._unique = value), '_observeUnique');
+		this.observe(this.#workspaceContext.unique, (value) => (this._unique = value ?? undefined), '_observeUnique');
 		this.observe(this.#workspaceContext.name, (value) => (this._name = value), '_observeName');
 		this.observe(this.#workspaceContext.alias, (value) => (this._alias = value), '_observeAlias');
 		this.observe(
