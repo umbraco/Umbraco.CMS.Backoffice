@@ -1,24 +1,40 @@
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { css, html, customElement } from '@umbraco-cms/backoffice/external/lit';
+import { css, html, customElement, nothing, ifDefined } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import type { UmbExtensionElementInitializer } from '@umbraco-cms/backoffice/extension-api';
+import type { ManifestDashboardApp } from '@umbraco-cms/backoffice/extension-registry';
 
 const elementName = 'umb-dashboard';
 @customElement('umb-dashboard')
 export class UmbDashboardElement extends UmbLitElement {
+	#defaultSize = 'small';
+
+	#sizeMap = new Map([
+		['small', 'small'],
+		['medium', 'medium'],
+		['large', 'large'],
+	]);
+
 	override render() {
 		return html`
 			<section id="content">
 				<div class="grid-container">
-					<div class="medium app">App 1</div>
-					<div class="medium app">App 2</div>
-					<div class="small app">App 3</div>
-					<div class="small app">App 4</div>
-					<div class="small app">App 5</div>
-					<div class="small app">App 6</div>
+					<umb-extension-slot type="dashboardApp" .renderMethod=${this.#extensionSlotRenderMethod}></umb-extension-slot>
 				</div>
 			</section>
 		`;
 	}
+
+	#extensionSlotRenderMethod = (ext: UmbExtensionElementInitializer<ManifestDashboardApp>) => {
+		if (ext.component && ext.manifest) {
+			const sizeClass = this.#sizeMap.get(ext.manifest.meta?.size) ?? this.#defaultSize;
+			ext.component.classList.add(sizeClass);
+			const headline = ext.manifest?.meta?.headline ? this.localize.string(ext.manifest?.meta?.headline) : undefined;
+			return html`<uui-box headline=${ifDefined(headline)}>${ext.component}</uui-box>`;
+		}
+
+		return nothing;
+	};
 
 	static override styles = [
 		UmbTextStyles,
@@ -30,7 +46,7 @@ export class UmbDashboardElement extends UmbLitElement {
 			.grid-container {
 				display: grid;
 				grid-template-columns: repeat(4, 1fr);
-				grid-template-rows: repeat(4, 150px);
+				grid-template-rows: repeat(1, 225px);
 				gap: var(--uui-size-layout-1);
 			}
 

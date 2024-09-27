@@ -7,5 +7,9 @@ export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> =
 		name: 'Training Intro Dashboard App',
 		weight: 400,
 		element: () => import('./training-intro-dashboard-app.element.js'),
+		meta: {
+			headline: '#settingsDashboard_trainingHeader',
+			size: 'small',
+		},
 	},
 ];

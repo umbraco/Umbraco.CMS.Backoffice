@@ -7,5 +7,9 @@ export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> =
 		name: 'Community Intro Dashboard App',
 		weight: 400,
 		element: () => import('./community-intro-dashboard-app.element.js'),
+		meta: {
+			headline: '#settingsDashboard_communityHeader',
+			size: 'small',
+		},
 	},
 ];

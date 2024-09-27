@@ -7,17 +7,15 @@ const elementName = 'umb-videos-intro-dashboard-app';
 export class UmbVideosIntroDashboardAppElement extends UmbLitElement {
 	override render() {
 		return html`
-			<uui-box headline=${this.localize.term('settingsDashboard_videosHeader')}>
-				<p>
-					<umb-localize key="settingsDashboard_videosDescription"></umb-localize>
-				</p>
-				<uui-button
-					look="primary"
-					href="https://www.youtube.com/c/UmbracoLearningBase"
-					label=${this.localize.term('settingsDashboard_watchVideos')}
-					target="_blank"
-					rel="noopener"></uui-button>
-			</uui-box>
+			<p>
+				<umb-localize key="settingsDashboard_videosDescription"></umb-localize>
+			</p>
+			<uui-button
+				look="primary"
+				href="https://www.youtube.com/c/UmbracoLearningBase"
+				label=${this.localize.term('settingsDashboard_watchVideos')}
+				target="_blank"
+				rel="noopener"></uui-button>
 		`;
 	}
 

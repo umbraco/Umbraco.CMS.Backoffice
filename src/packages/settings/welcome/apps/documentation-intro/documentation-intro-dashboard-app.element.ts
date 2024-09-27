@@ -7,17 +7,15 @@ const elementName = 'umb-documentation-intro-dashboard-app';
 export class UmbDocumentationIntroDashboardAppElement extends UmbLitElement {
 	override render() {
 		return html`
-			<uui-box headline=${this.localize.term('settingsDashboard_documentationHeader')}>
-				<p>
-					<umb-localize key="settingsDashboard_documentationDescription"></umb-localize>
-				</p>
-				<uui-button
-					look="primary"
-					href="https://docs.umbraco.com/umbraco-cms/umbraco-cms"
-					label=${this.localize.term('settingsDashboard_getHelp')}
-					target="_blank"
-					rel="noopener"></uui-button>
-			</uui-box>
+			<p>
+				<umb-localize key="settingsDashboard_documentationDescription"></umb-localize>
+			</p>
+			<uui-button
+				look="primary"
+				href="https://docs.umbraco.com/umbraco-cms/umbraco-cms"
+				label=${this.localize.term('settingsDashboard_getHelp')}
+				target="_blank"
+				rel="noopener"></uui-button>
 		`;
 	}
 

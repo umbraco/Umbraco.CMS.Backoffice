@@ -7,5 +7,9 @@ export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> =
 		name: 'Videos Intro Dashboard App',
 		weight: 400,
 		element: () => import('./videos-intro-dashboard-app.element.js'),
+		meta: {
+			headline: '#settingsDashboard_videosHeader',
+			size: 'small',
+		},
 	},
 ];
