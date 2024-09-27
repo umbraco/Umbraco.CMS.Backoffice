@@ -5,7 +5,6 @@ import { UMB_USER_WORKSPACE_PATH } from '../../paths.js';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { UmbMasonryItemUpdatedEvent } from '@umbraco-cms/backoffice/components';
 
 const elementName = 'umb-invited-users-dashboard-app';
 @customElement(elementName)
@@ -25,26 +24,23 @@ export class UmbInvitedUsersDashboardAppElement extends UmbLitElement {
 			userStates: [UmbUserStateFilter.INVITED],
 		});
 		this._invitedUsers = data?.items ?? [];
-		this.dispatchEvent(new UmbMasonryItemUpdatedEvent());
 	}
 
 	override render() {
 		return html`
-			<uui-box headline="Pending invites">
-				${this._invitedUsers.map(
-					(user) => html`
-						<uui-ref-node-user name=${user.name} href=${UMB_USER_WORKSPACE_PATH + '/edit/' + user.unique}>
-							<umb-user-avatar
-								style="font-size: 0.5em"
-								slot="icon"
-								.name=${user.name}
-								.kind=${user.kind}
-								.imgUrls=${user.avatarUrls}>
-							</umb-user-avatar>
-						</uui-ref-node-user>
-					`,
-				)}
-			</uui-box>
+			${this._invitedUsers.map(
+				(user) => html`
+					<uui-ref-node-user name=${user.name} href=${UMB_USER_WORKSPACE_PATH + '/edit/' + user.unique}>
+						<umb-user-avatar
+							style="font-size: 0.5em"
+							slot="icon"
+							.name=${user.name}
+							.kind=${user.kind}
+							.imgUrls=${user.avatarUrls}>
+						</umb-user-avatar>
+					</uui-ref-node-user>
+				`,
+			)}
 		`;
 	}
 

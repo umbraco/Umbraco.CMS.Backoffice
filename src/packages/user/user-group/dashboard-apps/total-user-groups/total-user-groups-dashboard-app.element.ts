@@ -19,15 +19,10 @@ export class UmbTotalUserGroupsDashboardAppElement extends UmbLitElement {
 	async #loadTotalUserGroups() {
 		const { data } = await this.#userGroupCollectionRepository.requestCollection({ take: 1 });
 		this._userGroupCount = data?.total ?? 0;
-		this.dispatchEvent(new CustomEvent('masonry-item-updated', { bubbles: true, composed: true }));
 	}
 
 	override render() {
-		return html`
-			<uui-box headline="Total users groups">
-				<span class="large">${this._userGroupCount}</span>
-			</uui-box>
-		`;
+		return html` <span class="large">${this._userGroupCount}</span> `;
 	}
 
 	static override styles = [

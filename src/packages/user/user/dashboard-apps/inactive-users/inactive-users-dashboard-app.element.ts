@@ -28,26 +28,23 @@ export class UmbInactiveUsersDashboardAppElement extends UmbLitElement {
 			userStates: [UmbUserStateFilter.INACTIVE],
 		});
 		this._inactiveUsers = data?.items ?? [];
-		this.dispatchEvent(new UmbMasonryItemUpdatedEvent());
 	}
 
 	override render() {
 		return html`
-			<uui-box headline="Inactive users">
-				${this._inactiveUsers.map(
-					(user) => html`
-						<uui-ref-node-user name=${user.name} href=${UMB_USER_WORKSPACE_PATH + '/edit/' + user.unique}>
-							<umb-user-avatar
-								style="font-size: 0.5em"
-								slot="icon"
-								.name=${user.name}
-								.kind=${user.kind}
-								.imgUrls=${user.avatarUrls}>
-							</umb-user-avatar>
-						</uui-ref-node-user>
-					`,
-				)}
-			</uui-box>
+			${this._inactiveUsers.map(
+				(user) => html`
+					<uui-ref-node-user name=${user.name} href=${UMB_USER_WORKSPACE_PATH + '/edit/' + user.unique}>
+						<umb-user-avatar
+							style="font-size: 0.5em"
+							slot="icon"
+							.name=${user.name}
+							.kind=${user.kind}
+							.imgUrls=${user.avatarUrls}>
+						</umb-user-avatar>
+					</uui-ref-node-user>
+				`,
+			)}
 		`;
 	}
 

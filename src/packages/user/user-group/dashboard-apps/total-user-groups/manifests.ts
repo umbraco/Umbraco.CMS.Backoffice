@@ -7,5 +7,9 @@ export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 		name: 'Total User Groups Dashboard App',
 		weight: 490,
 		element: () => import('./total-user-groups-dashboard-app.element.js'),
+		meta: {
+			headline: 'Total User Groups',
+			size: 'medium',
+		},
 	},
 ];

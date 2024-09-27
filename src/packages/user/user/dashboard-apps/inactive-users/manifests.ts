@@ -9,6 +9,10 @@ export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 		name: 'Inactive Users Dashboard App',
 		weight: 400,
 		element: () => import('./inactive-users-dashboard-app.element.js'),
+		meta: {
+			headline: 'Inactive Users',
+			size: 'large',
+		},
 		conditions: [
 			{
 				alias: UMB_DASHBOARD_ALIAS_CONDITION_ALIAS,

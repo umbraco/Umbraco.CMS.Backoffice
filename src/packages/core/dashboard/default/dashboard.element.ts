@@ -18,9 +18,10 @@ export class UmbDashboardElement extends UmbLitElement {
 	override render() {
 		return html`
 			<section id="content">
-				<div class="grid-container">
-					<umb-extension-slot type="dashboardApp" .renderMethod=${this.#extensionSlotRenderMethod}></umb-extension-slot>
-				</div>
+				<umb-extension-slot
+					type="dashboardApp"
+					.renderMethod=${this.#extensionSlotRenderMethod}
+					class="grid-container"></umb-extension-slot>
 			</section>
 		`;
 	}
@@ -28,9 +29,8 @@ export class UmbDashboardElement extends UmbLitElement {
 	#extensionSlotRenderMethod = (ext: UmbExtensionElementInitializer<ManifestDashboardApp>) => {
 		if (ext.component && ext.manifest) {
 			const sizeClass = this.#sizeMap.get(ext.manifest.meta?.size) ?? this.#defaultSize;
-			ext.component.classList.add(sizeClass);
 			const headline = ext.manifest?.meta?.headline ? this.localize.string(ext.manifest?.meta?.headline) : undefined;
-			return html`<uui-box headline=${ifDefined(headline)}>${ext.component}</uui-box>`;
+			return html`<uui-box headline=${ifDefined(headline)} class=${sizeClass}>${ext.component}</uui-box>`;
 		}
 
 		return nothing;
@@ -48,16 +48,6 @@ export class UmbDashboardElement extends UmbLitElement {
 				grid-template-columns: repeat(4, 1fr);
 				grid-template-rows: repeat(1, 225px);
 				gap: var(--uui-size-layout-1);
-			}
-
-			.app {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				color: white;
-				border-radius: 10px;
-				padding: 10px;
-				background-color: blue;
 			}
 
 			.small {
