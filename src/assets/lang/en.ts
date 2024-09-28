@@ -2215,7 +2215,7 @@ export default {
 		contentIntro: 'Getting Started',
 		contentRedirectManager: 'Redirect URL Management',
 		mediaFolderBrowser: 'Content',
-		settingsWelcome: 'Welcome',
+		settingsWelcome: 'Overview',
 		settingsExamine: 'Examine Management',
 		settingsPublishedStatus: 'Published Status',
 		settingsModelsBuilder: 'Models Builder',

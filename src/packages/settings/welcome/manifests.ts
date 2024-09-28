@@ -6,12 +6,12 @@ export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> =
 	{
 		type: 'dashboard',
 		kind: 'default',
-		alias: 'Umb.Dashboard.SettingsWelcome',
-		name: 'Settings Welcome Dashboard',
+		alias: 'Umb.Dashboard.Settings.Overview',
+		name: 'Settings Overview Dashboard',
 		weight: 500,
 		meta: {
 			label: '#dashboardTabs_settingsWelcome',
-			pathname: 'welcome',
+			pathname: 'overview',
 		},
 		conditions: [
 			{

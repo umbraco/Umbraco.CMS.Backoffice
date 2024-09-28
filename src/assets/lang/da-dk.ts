@@ -2093,7 +2093,7 @@ export default {
 		contentIntro: 'Kom godt i gang',
 		contentRedirectManager: 'Redirects håndtering',
 		mediaFolderBrowser: 'Indhold',
-		settingsWelcome: 'Velkommen',
+		settingsWelcome: 'Oversigt',
 		settingsExamine: 'Examine Management',
 		settingsPublishedStatus: 'Published Cache',
 		settingsModelsBuilder: 'Models Builder',
