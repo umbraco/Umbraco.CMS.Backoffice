@@ -19,6 +19,23 @@ export const manifests: Array<UmbExtensionManifest> = [
 		],
 	},
 	{
+		type: 'dashboard',
+		kind: 'default',
+		alias: 'Umb.Dashboard.Content.Overview',
+		name: 'Content Overview Dashboard',
+		weight: 500,
+		meta: {
+			label: '#dashboardTabs_contentIntro',
+			pathname: 'overview',
+		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.SectionAlias',
+				match: UMB_CONTENT_SECTION_ALIAS,
+			},
+		],
+	},
+	{
 		type: 'sectionSidebarApp',
 		kind: 'menuWithEntityActions',
 		alias: 'Umb.SidebarMenu.Content',
