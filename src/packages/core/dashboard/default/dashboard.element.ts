@@ -28,9 +28,9 @@ export class UmbDashboardElement extends UmbLitElement {
 
 	#extensionSlotRenderMethod = (ext: UmbExtensionElementInitializer<ManifestDashboardApp>) => {
 		if (ext.component && ext.manifest) {
-			const sizeClass = this.#sizeMap.get(ext.manifest.meta?.size) ?? this.#defaultSize;
+			const size = this.#sizeMap.get(ext.manifest.meta?.size) ?? this.#defaultSize;
 			const headline = ext.manifest?.meta?.headline ? this.localize.string(ext.manifest?.meta?.headline) : undefined;
-			return html`<uui-box headline=${ifDefined(headline)} class=${sizeClass}>${ext.component}</uui-box>`;
+			return html`<uui-box part="umb-dashboard-app-${size}" headline=${ifDefined(headline)}>${ext.component}</uui-box>`;
 		}
 
 		return nothing;
@@ -50,17 +50,17 @@ export class UmbDashboardElement extends UmbLitElement {
 				gap: var(--uui-size-layout-1);
 			}
 
-			.small {
+			umb-extension-slot::part(umb-dashboard-app-small) {
 				grid-column: span 1;
 				grid-row: span 1;
 			}
 
-			.medium {
+			umb-extension-slot::part(umb-dashboard-app-medium) {
 				grid-column: span 2;
 				grid-row: span 2;
 			}
 
-			.large {
+			umb-extension-slot::part(umb-dashboard-app-large) {
 				grid-column: span 2;
 				grid-row: span 8;
 			}
