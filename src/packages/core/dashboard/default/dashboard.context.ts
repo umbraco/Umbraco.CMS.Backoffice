@@ -18,7 +18,6 @@ export class UmbDashboardContext extends UmbContextBase<UmbDashboardContext> imp
 	}
 
 	public setManifest(manifest?: ManifestDashboard) {
-		debugger;
 		this.#manifestAlias.setValue(manifest?.alias);
 		this.#manifestPathname.setValue(manifest?.meta?.pathname);
 		this.#manifestLabel.setValue(manifest ? manifest.meta?.label || manifest.name : undefined);
