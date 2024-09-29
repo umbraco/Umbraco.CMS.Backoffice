@@ -4,7 +4,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
 const elementName = 'umb-training-intro-dashboard-app';
 @customElement(elementName)
-export class UmbTrainingIntroDashboardAppElement extends UmbLitElement {
+export class UmbCertificationIntroDashboardAppElement extends UmbLitElement {
 	override render() {
 		return html`
 			<p>
@@ -30,10 +30,10 @@ export class UmbTrainingIntroDashboardAppElement extends UmbLitElement {
 	];
 }
 
-export { UmbTrainingIntroDashboardAppElement as element };
+export { UmbCertificationIntroDashboardAppElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbTrainingIntroDashboardAppElement;
+		[elementName]: UmbCertificationIntroDashboardAppElement;
 	}
 }
