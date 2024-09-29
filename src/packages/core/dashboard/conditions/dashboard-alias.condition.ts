@@ -5,7 +5,7 @@ import type {
 	UmbConditionControllerArguments,
 	UmbExtensionCondition,
 } from '@umbraco-cms/backoffice/extension-api';
-import { UMB_SECTION_CONTEXT as UMB_DASHBOARD_CONTEXT } from '@umbraco-cms/backoffice/section';
+import { UMB_DASHBOARD_CONTEXT } from '@umbraco-cms/backoffice/dashboard';
 
 export class UmbDashboardAliasCondition
 	extends UmbConditionBase<UmbDashboardAliasConditionConfig>

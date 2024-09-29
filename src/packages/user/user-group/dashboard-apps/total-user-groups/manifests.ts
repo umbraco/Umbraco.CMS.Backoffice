@@ -1,3 +1,5 @@
+import { UMB_USER_MANAGEMENT_DASHBOARD_ALIAS } from '../../../dashboard/index.js';
+import { UMB_DASHBOARD_ALIAS_CONDITION_ALIAS } from '@umbraco-cms/backoffice/dashboard';
 import type { ManifestTypes, UmbBackofficeManifestKind } from '@umbraco-cms/backoffice/extension-registry';
 
 export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
@@ -11,5 +13,11 @@ export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 			headline: 'Total User Groups',
 			size: 'medium',
 		},
+		conditions: [
+			{
+				alias: UMB_DASHBOARD_ALIAS_CONDITION_ALIAS,
+				match: UMB_USER_MANAGEMENT_DASHBOARD_ALIAS,
+			},
+		],
 	},
 ];
