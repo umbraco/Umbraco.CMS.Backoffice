@@ -8,9 +8,15 @@ import type {
 	UmbSectionViewElement,
 } from '@umbraco-cms/backoffice/extension-registry';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
-import { UmbExtensionsManifestInitializer, createExtensionElement } from '@umbraco-cms/backoffice/extension-api';
+import {
+	UmbExtensionsManifestInitializer,
+	createExtensionApi,
+	createExtensionElement,
+	createExtensionElementWithApi,
+} from '@umbraco-cms/backoffice/extension-api';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { pathFolderName } from '@umbraco-cms/backoffice/utils';
+import type { UmbDashboardContext } from '../../dashboard/default/dashboard.context';
 
 @customElement('umb-section-main-views')
 export class UmbSectionMainViewElement extends UmbLitElement {
@@ -61,7 +67,10 @@ export class UmbSectionMainViewElement extends UmbLitElement {
 			return {
 				path: this.#constructDashboardPath(manifest),
 				component: () => createExtensionElement(manifest),
-				setup: (component: UmbDashboardElement) => {
+				setup: async (component: UmbDashboardElement) => {
+					// TODO: hack. We shouldn't have to spin up the api manually here.
+					const api = await createExtensionApi<UmbDashboardContext>(component, manifest);
+					api?.setManifest(manifest);
 					component.manifest = manifest;
 				},
 			} as UmbRoute;
