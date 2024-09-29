@@ -24,7 +24,6 @@ export class UmbCertificationIntroDashboardAppElement extends UmbLitElement {
 		css`
 			p {
 				margin-top: 0;
-				max-width: 300px;
 			}
 		`,
 	];

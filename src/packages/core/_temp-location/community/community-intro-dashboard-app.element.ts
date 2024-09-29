@@ -30,7 +30,6 @@ export class UmbCommunityIntroDashboardAppElement extends UmbLitElement {
 		css`
 			p {
 				margin-top: 0;
-				max-width: 300px;
 			}
 		`,
 	];
