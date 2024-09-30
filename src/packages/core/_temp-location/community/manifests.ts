@@ -11,5 +11,11 @@ export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> =
 			headline: '#settingsDashboard_communityHeader',
 			size: 'small',
 		},
+		conditions: [
+			{
+				alias: 'Umb.Condition.DashboardAlias',
+				oneOf: ['Umb.Dashboard.Content.Overview', 'Umb.Dashboard.Settings.Overview'], // These are magic string on purpose so we don't have an import to the packages from core.
+			},
+		],
 	},
 ];
