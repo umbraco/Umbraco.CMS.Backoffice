@@ -8,5 +8,12 @@ const dist = '../../../dist-cms/packages/tiny-mce';
 rmSync(dist, { recursive: true, force: true });
 
 export default defineConfig({
-	...getDefaultConfig({ dist }),
+	...getDefaultConfig({
+		dist,
+		entry: {
+			index: 'index.ts',
+			'umbraco-package': 'umbraco-package.ts',
+			manifests: 'manifests.ts',
+		},
+	}),
 });
