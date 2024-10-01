@@ -8,6 +8,7 @@ import {
 	UmbWorkspaceIsNewRedirectController,
 	type UmbRoutableWorkspaceContext,
 	UmbEntityDetailWorkspaceContextBase,
+	UmbWorkspaceIsNewRedirectControllerAlias,
 } from '@umbraco-cms/backoffice/workspace';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
@@ -45,6 +46,7 @@ export class UmbDictionaryWorkspaceContext
 				path: 'edit/:unique',
 				component: UmbDictionaryWorkspaceEditorElement,
 				setup: (_component, info) => {
+					this.removeUmbControllerByAlias(UmbWorkspaceIsNewRedirectControllerAlias);
 					const unique = info.match.params.unique;
 					this.load(unique);
 				},
