@@ -12,9 +12,11 @@ import {
 } from '@umbraco-cms/backoffice/observable-api';
 import { UmbContextToken } from '@umbraco-cms/backoffice/context-api';
 import type { UmbVariantId } from '@umbraco-cms/backoffice/variant';
-import type { UmbPropertyEditorConfigProperty } from '@umbraco-cms/backoffice/property-editor';
+import type {
+	UmbPropertyEditorConfigProperty,
+	UmbPropertyEditorUiElement,
+} from '@umbraco-cms/backoffice/property-editor';
 import { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
-import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/extension-registry';
 import type {
 	UmbPropertyTypeAppearanceModel,
 	UmbPropertyTypeValidationModel,
@@ -128,7 +130,7 @@ export class UmbPropertyContext<ValueType = any> extends UmbContextBase<UmbPrope
 			'observeValue',
 		);
 
-		this.observe(this.#datasetContext.currentVariantCultureIsReadOnly, (value) => {
+		this.observe(this.#datasetContext.readOnly, (value) => {
 			this.#isReadOnly.setValue(value);
 		});
 	}

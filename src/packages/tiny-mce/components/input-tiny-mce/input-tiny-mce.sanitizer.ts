@@ -1,5 +1,3 @@
-// TODO: clean up this file
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Editor } from '@umbraco-cms/backoffice/external/tinymce';
 
 /**
@@ -28,13 +26,7 @@ export const uriAttributeSanitizer = (editor: Editor) => {
 
 		return function parseUri(uri: string, tagName: string) {
 			uri = uri.replace(trimRegExp, '');
-			try {
-				// Might throw malformed URI sequence
-				uri = decodeURIComponent(uri);
-			} catch (ex) {
-				// Fallback to non UTF-8 decoder
-				uri = unescape(uri);
-			}
+			uri = decodeURIComponent(uri);
 
 			if (scriptUriRegExp.test(uri)) {
 				return;
@@ -48,20 +40,15 @@ export const uriAttributeSanitizer = (editor: Editor) => {
 		};
 	})();
 
-	// TODO: sanitizeTinyMce is not defined in the global scope, so this will not work. Instead we need to get this setting from somewhere else:
-	/*
-	if (window.Umbraco?.Sys.ServerVariables.umbracoSettings.sanitizeTinyMce) {
-		uriAttributesToSanitize.forEach((attribute) => {
-			editor.serializer.addAttributeFilter(attribute, (nodes: AstNode[]) => {
-				nodes.forEach((node: AstNode) => {
-					node.attributes?.forEach((attr) => {
-						if (uriAttributesToSanitize.includes(attr.name.toLowerCase())) {
-							attr.value = parseUri(attr.value, node.name) ?? '';
-						}
-					});
-				});
-			});
+	editor.serializer.addAttributeFilter('uriAttributesToSanitize', function (nodes) {
+		nodes.forEach(function (node) {
+			if (!node.attributes) return;
+			for (const attr of node.attributes) {
+				const attrName = attr.name.toLowerCase();
+				if (uriAttributesToSanitize.indexOf(attrName) !== -1) {
+					attr.value = parseUri(attr.value, node.name) ?? '';
+				}
+			}
 		});
-	}
-	*/
+	});
 };

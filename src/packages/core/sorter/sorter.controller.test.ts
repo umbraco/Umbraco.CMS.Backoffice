@@ -16,6 +16,7 @@ class UmbSorterTestElement extends UmbLitElement {
 		itemSelector: '.item',
 		containerSelector: '#container',
 		disabledItemSelector: '.disabled',
+		// TODO: In theory missing model change callback? [NL]
 	});
 
 	getAllItems() {
@@ -147,9 +148,14 @@ describe('UmbSorterController', () => {
 	});
 
 	describe('enable', () => {
-		it('sets all allowed items to draggable', () => {
+		it('sets all allowed items to draggable', async () => {
 			const items = element.getSortableItems();
 			expect(items.length).to.equal(3);
+
+			await aTimeout(100);
+			await element.updateComplete;
+
+			// Expect all items to be draggable
 			items.forEach((item) => {
 				expect(item.draggable).to.be.true;
 			});

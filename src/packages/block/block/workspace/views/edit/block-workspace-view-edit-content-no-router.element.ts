@@ -5,7 +5,7 @@ import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UmbContentTypeContainerStructureHelper } from '@umbraco-cms/backoffice/content-type';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { UmbPropertyTypeContainerModel } from '@umbraco-cms/backoffice/content-type';
-import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-registry';
+import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/workspace';
 
 /**
  * @element umb-block-workspace-view-edit-content-no-router
@@ -39,7 +39,7 @@ export class UmbBlockWorkspaceViewEditContentNoRouterElement extends UmbLitEleme
 		this.#tabsStructureHelper.setContainerChildType('Tab');
 		this.observe(this.#tabsStructureHelper.mergedContainers, (tabs) => {
 			this._tabs = tabs;
-			this._checkDefaultTabName();
+			this.#checkDefaultTabName();
 		});
 
 		// _hasRootProperties can be gotten via _tabsStructureHelper.hasProperties. But we do not support root properties currently.
@@ -49,24 +49,24 @@ export class UmbBlockWorkspaceViewEditContentNoRouterElement extends UmbLitEleme
 			this.#tabsStructureHelper.setStructureManager(workspaceContext.content.structure);
 
 			workspaceContext.content.setup(this);
-			this._observeRootGroups();
+			this.#observeRootGroups();
 		});
 	}
 
-	private _observeRootGroups() {
+	async #observeRootGroups() {
 		if (!this.#blockWorkspace) return;
 
 		this.observe(
-			this.#blockWorkspace.content.structure.hasRootContainers('Group'),
+			await this.#blockWorkspace.content.structure.hasRootContainers('Group'),
 			(hasRootGroups) => {
 				this._hasRootGroups = hasRootGroups;
-				this._checkDefaultTabName();
+				this.#checkDefaultTabName();
 			},
 			'observeGroups',
 		);
 	}
 
-	private _checkDefaultTabName() {
+	#checkDefaultTabName() {
 		if (!this._tabs || !this.#blockWorkspace) return;
 
 		// Find the default tab to grab:

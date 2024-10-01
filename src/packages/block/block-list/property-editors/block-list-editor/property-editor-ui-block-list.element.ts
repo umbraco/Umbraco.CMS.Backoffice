@@ -2,14 +2,13 @@ import { UmbBlockListManagerContext } from '../../context/block-list-manager.con
 import { UmbBlockListEntriesContext } from '../../context/block-list-entries.context.js';
 import type { UmbBlockListLayoutModel, UmbBlockListValueModel } from '../../types.js';
 import type { UmbBlockListEntryElement } from '../../components/block-list-entry/index.js';
-import { UMB_BLOCK_LIST_PROPERTY_EDITOR_ALIAS } from './manifests.js';
+import { UMB_BLOCK_LIST_PROPERTY_EDITOR_SCHEMA_ALIAS } from './manifests.js';
 import { UmbLitElement, umbDestroyOnDisconnect } from '@umbraco-cms/backoffice/lit-element';
-import { html, customElement, property, state, repeat, css } from '@umbraco-cms/backoffice/external/lit';
+import { html, customElement, property, state, repeat, css, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import type { UmbPropertyEditorUiElement, UmbBlockTypeBaseModel } from '@umbraco-cms/backoffice/extension-registry';
-import {
-	UmbPropertyValueChangeEvent,
-	type UmbPropertyEditorConfigCollection,
+import type {
+	UmbPropertyEditorConfigCollection,
+	UmbPropertyEditorUiElement,
 } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbNumberRangeValueType } from '@umbraco-cms/backoffice/models';
 import type { UmbModalRouteBuilder } from '@umbraco-cms/backoffice/router';
@@ -19,26 +18,26 @@ import {
 	UmbBlockElementDataValidationPathTranslator,
 	type UmbBlockLayoutBaseModel,
 } from '@umbraco-cms/backoffice/block';
+import type { UmbBlockTypeBaseModel } from '@umbraco-cms/backoffice/block-type';
 
 import '../../components/block-list-entry/index.js';
-import { UMB_PROPERTY_CONTEXT } from '@umbraco-cms/backoffice/property';
+import { UMB_PROPERTY_CONTEXT, UMB_PROPERTY_DATASET_CONTEXT } from '@umbraco-cms/backoffice/property';
 import { UmbFormControlMixin, UmbValidationContext } from '@umbraco-cms/backoffice/validation';
+import { observeMultiple } from '@umbraco-cms/backoffice/observable-api';
+import { debounceTime } from '@umbraco-cms/backoffice/external/rxjs';
 
 const SORTER_CONFIG: UmbSorterConfig<UmbBlockListLayoutModel, UmbBlockListEntryElement> = {
 	getUniqueOfElement: (element) => {
-		return element.contentUdi!;
+		return element.contentKey!;
 	},
 	getUniqueOfModel: (modelEntry) => {
-		return modelEntry.contentUdi;
+		return modelEntry.contentKey;
 	},
 	//identifier: 'block-list-editor',
 	itemSelector: 'umb-block-list-entry',
 	//containerSelector: 'EMPTY ON PURPOSE, SO IT BECOMES THE HOST ELEMENT',
 };
 
-/**
- * @element umb-property-editor-ui-block-list
- */
 @customElement('umb-property-editor-ui-block-list')
 export class UmbPropertyEditorUIBlockListElement
 	extends UmbFormControlMixin<UmbBlockListValueModel | undefined, typeof UmbLitElement, undefined>(UmbLitElement)
@@ -52,7 +51,7 @@ export class UmbPropertyEditorUIBlockListElement
 		},
 	});
 
-	#validationContext = new UmbValidationContext(this).provide();
+	#validationContext = new UmbValidationContext(this);
 	#contentDataPathTranslator?: UmbBlockElementDataValidationPathTranslator;
 	#settingsDataPathTranslator?: UmbBlockElementDataValidationPathTranslator;
 
@@ -62,6 +61,7 @@ export class UmbPropertyEditorUIBlockListElement
 		layout: {},
 		contentData: [],
 		settingsData: [],
+		expose: [],
 	};
 
 	@property({ attribute: false })
@@ -70,11 +70,13 @@ export class UmbPropertyEditorUIBlockListElement
 		buildUpValue.layout ??= {};
 		buildUpValue.contentData ??= [];
 		buildUpValue.settingsData ??= [];
+		buildUpValue.expose ??= [];
 		this._value = buildUpValue as UmbBlockListValueModel;
 
-		this.#managerContext.setLayouts(this._value.layout[UMB_BLOCK_LIST_PROPERTY_EDITOR_ALIAS] ?? []);
-		this.#managerContext.setContents(buildUpValue.contentData);
-		this.#managerContext.setSettings(buildUpValue.settingsData);
+		this.#managerContext.setLayouts(this._value.layout[UMB_BLOCK_LIST_PROPERTY_EDITOR_SCHEMA_ALIAS] ?? []);
+		this.#managerContext.setContents(this._value.contentData);
+		this.#managerContext.setSettings(this._value.settingsData);
+		this.#managerContext.setExposes(this._value.expose);
 	}
 	public override get value(): UmbBlockListValueModel | undefined {
 		return this._value;
@@ -113,6 +115,27 @@ export class UmbPropertyEditorUIBlockListElement
 		}
 	}
 
+	/**
+	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
+	 * @type {boolean}
+	 * @attr
+	 * @default
+	 */
+	@property({ type: Boolean, reflect: true })
+	public get readonly() {
+		return this.#readonly;
+	}
+	public set readonly(value) {
+		this.#readonly = value;
+
+		if (this.#readonly) {
+			this.#sorter.disable();
+		} else {
+			this.#sorter.enable();
+		}
+	}
+	#readonly = false;
+
 	@state()
 	private _limitMin?: number;
 	@state()
@@ -139,37 +162,61 @@ export class UmbPropertyEditorUIBlockListElement
 			this.observe(
 				context.dataPath,
 				(dataPath) => {
-					// Translate paths for content elements:
+					// Translate paths for content/settings:
 					this.#contentDataPathTranslator?.destroy();
-					if (dataPath) {
-						// Set the data path for the local validation context:
-						this.#validationContext.setDataPath(dataPath);
-
-						this.#contentDataPathTranslator = new UmbBlockElementDataValidationPathTranslator(this, 'contentData');
-					}
-
-					// Translate paths for settings elements:
 					this.#settingsDataPathTranslator?.destroy();
 					if (dataPath) {
 						// Set the data path for the local validation context:
 						this.#validationContext.setDataPath(dataPath);
 
+						this.#contentDataPathTranslator = new UmbBlockElementDataValidationPathTranslator(this, 'contentData');
 						this.#settingsDataPathTranslator = new UmbBlockElementDataValidationPathTranslator(this, 'settingsData');
 					}
 				},
 				'observeDataPath',
 			);
+
+			this.observe(
+				context?.alias,
+				(alias) => {
+					this.#managerContext.setPropertyAlias(alias);
+				},
+				'observePropertyAlias',
+			);
+
+			this.observe(
+				observeMultiple([
+					this.#managerContext.layouts,
+					this.#managerContext.contents,
+					this.#managerContext.settings,
+					this.#managerContext.exposes,
+				]).pipe(debounceTime(20)),
+				([layouts, contents, settings, exposes]) => {
+					this._value = {
+						...this._value,
+						layout: { [UMB_BLOCK_LIST_PROPERTY_EDITOR_SCHEMA_ALIAS]: layouts },
+						contentData: contents,
+						settingsData: settings,
+						expose: exposes,
+					};
+					context.setValue(this._value);
+				},
+				'motherObserver',
+			);
+		});
+		this.consumeContext(UMB_PROPERTY_DATASET_CONTEXT, (context) => {
+			this.#managerContext.setVariantId(context.getVariantId());
 		});
 
 		this.addValidator(
 			'rangeUnderflow',
-			() => this.localize.term('validation_entriesShort'),
+			() => '#validation_entriesShort',
 			() => !!this._limitMin && this.#entriesContext.getLength() < this._limitMin,
 		);
 
 		this.addValidator(
 			'rangeOverflow',
-			() => this.localize.term('validation_entriesExceed'),
+			() => '#validation_entriesExceed',
 			() => !!this._limitMax && this.#entriesContext.getLength() > this._limitMax,
 		);
 
@@ -181,19 +228,6 @@ export class UmbPropertyEditorUIBlockListElement
 			this.#managerContext.setLayouts(layouts);
 		});
 
-		// TODO: Prevent initial notification from these observes:
-		this.observe(this.#managerContext.layouts, (layouts) => {
-			this._value = { ...this._value, layout: { [UMB_BLOCK_LIST_PROPERTY_EDITOR_ALIAS]: layouts } };
-			this.#fireChangeEvent();
-		});
-		this.observe(this.#managerContext.contents, (contents) => {
-			this._value = { ...this._value, contentData: contents };
-			this.#fireChangeEvent();
-		});
-		this.observe(this.#managerContext.settings, (settings) => {
-			this._value = { ...this._value, settingsData: settings };
-			this.#fireChangeEvent();
-		});
 		this.observe(this.#managerContext.blockTypes, (blockTypes) => {
 			this._blocks = blockTypes;
 		});
@@ -203,15 +237,37 @@ export class UmbPropertyEditorUIBlockListElement
 		});
 	}
 
-	#fireChangeEvent = () => {
-		this.dispatchEvent(new UmbPropertyValueChangeEvent());
-	};
-
 	protected override getFormElement() {
 		return undefined;
 	}
 
 	override render() {
+		return html` ${repeat(
+				this._layouts,
+				(x) => x.contentKey,
+				(layoutEntry, index) => html`
+					${this.#renderInlineCreateButton(index)}
+					<umb-block-list-entry
+						.contentKey=${layoutEntry.contentKey}
+						.layout=${layoutEntry}
+						?readonly=${this.readonly}
+						${umbDestroyOnDisconnect()}>
+					</umb-block-list-entry>
+				`,
+			)}
+			<uui-button-group> ${this.#renderCreateButton()} ${this.#renderPasteButton()} </uui-button-group>`;
+	}
+
+	#renderInlineCreateButton(index: number) {
+		if (this.readonly) return nothing;
+		return html`<uui-button-inline-create
+			label=${this._createButtonLabel}
+			href=${this._catalogueRouteBuilder?.({ view: 'create', index: index }) ?? ''}></uui-button-inline-create>`;
+	}
+
+	#renderCreateButton() {
+		if (this.readonly) return nothing;
+
 		let createPath: string | undefined;
 		if (this._blocks?.length === 1) {
 			const elementKey = this._blocks[0].contentElementTypeKey;
@@ -220,28 +276,22 @@ export class UmbPropertyEditorUIBlockListElement
 		} else {
 			createPath = this._catalogueRouteBuilder?.({ view: 'create', index: -1 });
 		}
-		return html` ${repeat(
-				this._layouts,
-				(x) => x.contentUdi,
-				(layoutEntry, index) =>
-					html`<uui-button-inline-create
-							label=${this._createButtonLabel}
-							href=${this._catalogueRouteBuilder?.({ view: 'create', index: index }) ?? ''}></uui-button-inline-create>
-						<umb-block-list-entry
-							.contentUdi=${layoutEntry.contentUdi}
-							.layout=${layoutEntry}
-							${umbDestroyOnDisconnect()}>
-						</umb-block-list-entry> `,
-			)}
-			<uui-button-group>
-				<uui-button look="placeholder" label=${this._createButtonLabel} href=${createPath ?? ''}></uui-button>
-				<uui-button
-					label=${this.localize.term('content_createFromClipboard')}
-					look="placeholder"
-					href=${this._catalogueRouteBuilder?.({ view: 'clipboard', index: -1 }) ?? ''}>
-					<uui-icon name="icon-paste-in"></uui-icon>
-				</uui-button>
-			</uui-button-group>`;
+
+		return html`
+			<uui-button look="placeholder" label=${this._createButtonLabel} href=${createPath ?? ''}></uui-button>
+		`;
+	}
+
+	#renderPasteButton() {
+		if (this.readonly) return nothing;
+		return html`
+			<uui-button
+				label=${this.localize.term('content_createFromClipboard')}
+				look="placeholder"
+				href=${this._catalogueRouteBuilder?.({ view: 'clipboard', index: -1 }) ?? ''}>
+				<uui-icon name="icon-paste-in"></uui-icon>
+			</uui-button>
+		`;
 	}
 
 	static override styles = [

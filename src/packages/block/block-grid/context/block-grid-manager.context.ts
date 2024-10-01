@@ -5,7 +5,7 @@ import { removeLastSlashFromPath, transformServerPathToClientPath } from '@umbra
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UMB_APP_CONTEXT } from '@umbraco-cms/backoffice/app';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
-import { type UmbBlockDataType, UmbBlockManagerContext } from '@umbraco-cms/backoffice/block';
+import { type UmbBlockDataModel, UmbBlockManagerContext } from '@umbraco-cms/backoffice/block';
 import type { UmbBlockTypeGroup } from '@umbraco-cms/backoffice/block-type';
 import type { UmbNumberRangeValueType } from '@umbraco-cms/backoffice/models';
 
@@ -62,6 +62,9 @@ export class UmbBlockGridManagerContext<
 	getBlockGroups() {
 		return this.#blockGroups.value;
 	}
+	getBlockGroupName(unique: string) {
+		return this.#blockGroups.getValue().find((group) => group.key === unique)?.name;
+	}
 
 	constructor(host: UmbControllerHost) {
 		super(host);
@@ -73,12 +76,12 @@ export class UmbBlockGridManagerContext<
 
 	create(
 		contentElementTypeKey: string,
-		partialLayoutEntry?: Omit<BlockLayoutType, 'contentUdi'>,
+		partialLayoutEntry?: Omit<BlockLayoutType, 'contentKey'>,
 		// This property is used by some implementations, but not used in this.
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		originData?: UmbBlockGridWorkspaceOriginData,
 	) {
-		return super.createBlockData(contentElementTypeKey, partialLayoutEntry);
+		return super._createBlockData(contentElementTypeKey, partialLayoutEntry);
 	}
 
 	/**
@@ -109,13 +112,13 @@ export class UmbBlockGridManagerContext<
 		while (i--) {
 			const currentEntry = entries[i];
 			// Lets check if we found the right parent layout entry:
-			if (currentEntry.contentUdi === parentId) {
+			if (currentEntry.contentKey === parentId) {
 				// Append the layout entry to be inserted and unfreeze the rest of the data:
 				const areas = currentEntry.areas.map((x) =>
 					x.key === areaKey
 						? {
 								...x,
-								items: pushAtToUniqueArray([...x.items], insert, (x) => x.contentUdi === insert.contentUdi, index),
+								items: pushAtToUniqueArray([...x.items], insert, (x) => x.contentKey === insert.contentKey, index),
 							}
 						: x,
 				);
@@ -125,7 +128,7 @@ export class UmbBlockGridManagerContext<
 						...currentEntry,
 						areas,
 					},
-					(x) => x.contentUdi === currentEntry.contentUdi,
+					(x) => x.contentKey === currentEntry.contentKey,
 				);
 			}
 			// Otherwise check if any items of the areas are the parent layout entry we are looking for. We do so based on parentId, recursively:
@@ -152,7 +155,7 @@ export class UmbBlockGridManagerContext<
 								(z) => z.key === area.key,
 							),
 						},
-						(x) => x.contentUdi === currentEntry.contentUdi,
+						(x) => x.contentKey === currentEntry.contentKey,
 					);
 				}
 			}
@@ -163,12 +166,12 @@ export class UmbBlockGridManagerContext<
 	// TODO: Remove dependency on modalData object here. [NL] Maybe change it into requiring the originData object instead.
 	insert(
 		layoutEntry: BlockLayoutType,
-		content: UmbBlockDataType,
-		settings: UmbBlockDataType | undefined,
+		content: UmbBlockDataModel,
+		settings: UmbBlockDataModel | undefined,
 		originData: UmbBlockGridWorkspaceOriginData,
 	) {
 		this.setOneLayout(layoutEntry, originData);
-		this.insertBlockData(layoutEntry, content, settings, originData);
+		this.insertBlockData(layoutEntry, content, settings);
 
 		return true;
 	}

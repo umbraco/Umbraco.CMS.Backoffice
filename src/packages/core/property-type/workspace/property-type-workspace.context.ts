@@ -4,15 +4,16 @@ import type { UmbPropertyDatasetContext } from '@umbraco-cms/backoffice/property
 import type {
 	UmbInvariantDatasetWorkspaceContext,
 	UmbRoutableWorkspaceContext,
+	ManifestWorkspace,
 } from '@umbraco-cms/backoffice/workspace';
 import {
 	UmbSubmittableWorkspaceContextBase,
 	UmbInvariantWorkspacePropertyDatasetContext,
 	UmbWorkspaceIsNewRedirectController,
+	UmbWorkspaceIsNewRedirectControllerAlias,
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import type { ManifestWorkspace } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbPropertyTypeModel } from '@umbraco-cms/backoffice/content-type';
 import { UMB_CONTENT_TYPE_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/content-type';
 import { UmbId } from '@umbraco-cms/backoffice/id';
@@ -41,7 +42,7 @@ export class UmbPropertyTypeWorkspaceContext<PropertyTypeData extends UmbPropert
 	constructor(host: UmbControllerHost, args: { manifest: ManifestWorkspace }) {
 		super(host, args.manifest.alias);
 
-		this.addValidationContext(new UmbValidationContext(this).provide());
+		this.addValidationContext(new UmbValidationContext(this));
 
 		const manifest = args.manifest;
 		this.#entityType = manifest.meta?.entityType;
@@ -87,7 +88,7 @@ export class UmbPropertyTypeWorkspaceContext<PropertyTypeData extends UmbPropert
 	protected override resetState() {
 		super.resetState();
 		this.#data.setValue(undefined);
-		this.removeUmbControllerByAlias('isNewRedirectController');
+		this.removeUmbControllerByAlias(UmbWorkspaceIsNewRedirectControllerAlias);
 		this.removeUmbControllerByAlias('observePropertyTypeData');
 	}
 

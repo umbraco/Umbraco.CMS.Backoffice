@@ -1,5 +1,6 @@
 import type { UmbMemberDetailModel } from '../../types.js';
 import { UMB_MEMBER_ENTITY_TYPE } from '../../entity.js';
+import { UmbMemberKind } from '../../utils/index.js';
 import { UmbId } from '@umbraco-cms/backoffice/id';
 import type { UmbDetailDataSource } from '@umbraco-cms/backoffice/repository';
 import type { CreateMemberRequestModel, UpdateMemberRequestModel } from '@umbraco-cms/backoffice/external/backend-api';
@@ -42,6 +43,7 @@ export class UmbMemberServerDataSource implements UmbDetailDataSource<UmbMemberD
 			isApproved: false,
 			isLockedOut: false,
 			isTwoFactorEnabled: false,
+			kind: UmbMemberKind.DEFAULT,
 			failedPasswordAttempts: 0,
 			lastLoginDate: null,
 			lastLockoutDate: null,
@@ -90,6 +92,7 @@ export class UmbMemberServerDataSource implements UmbDetailDataSource<UmbMemberD
 			isApproved: data.isApproved,
 			isLockedOut: data.isLockedOut,
 			isTwoFactorEnabled: data.isTwoFactorEnabled,
+			kind: data.kind,
 			failedPasswordAttempts: data.failedPasswordAttempts,
 			lastLoginDate: data.lastLoginDate || null,
 			lastLockoutDate: data.lastLockoutDate || null,
@@ -97,6 +100,7 @@ export class UmbMemberServerDataSource implements UmbDetailDataSource<UmbMemberD
 			groups: data.groups,
 			values: data.values.map((value) => {
 				return {
+					editorAlias: value.editorAlias,
 					culture: value.culture || null,
 					segment: value.segment || null,
 					alias: value.alias,
