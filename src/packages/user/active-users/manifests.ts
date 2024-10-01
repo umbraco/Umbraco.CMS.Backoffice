@@ -1,4 +1,4 @@
-export const manifests = [
+export const manifests: Array<UmbExtensionManifest> = [
 	{
 		type: 'globalContext',
 		alias: 'Umb.GlobalContext.ActiveUsers',
@@ -11,9 +11,5 @@ export const manifests = [
 		name: 'Active Users Header App',
 		element: () => import('./active-users-header-app.element.js'),
 		weight: 1000,
-		meta: {
-			label: 'TODO: how should we enable this to not be set.',
-			icon: 'TODO: how should we enable this to not be set.',
-		},
 	},
 ];
