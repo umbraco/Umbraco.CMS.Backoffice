@@ -17,6 +17,9 @@ export class UmbChangePasswordModalElement extends UmbModalBaseElement<
 	@state()
 	private _isCurrentUser: boolean = false;
 
+	@state()
+	private _isMatchedPassword: boolean = true;
+
 	#userItemRepository = new UmbUserItemRepository(this);
 	#currentUserContext?: typeof UMB_CURRENT_USER_CONTEXT.TYPE;
 
@@ -38,7 +41,15 @@ export class UmbChangePasswordModalElement extends UmbModalBaseElement<
 		// TODO: validate that the new password and confirm password match
 		const oldPassword = formData.get('oldPassword') as string;
 		const newPassword = formData.get('newPassword') as string;
-		//const confirmPassword = formData.get('confirmPassword') as string;
+		const confirmPassword = formData.get('confirmPassword') as string;
+
+		if(confirmPassword == newPassword){
+			this._isMatchedPassword = true;
+		}
+		else{
+			this._isMatchedPassword = false;
+			return;
+		}
 
 		this.value = { oldPassword, newPassword };
 		this.modalContext?.submit();
@@ -77,6 +88,10 @@ export class UmbChangePasswordModalElement extends UmbModalBaseElement<
 		}
 	}
 
+	#onPasswordUpdate(){
+		this._isMatchedPassword = true;
+	}
+
 	override render() {
 		return html`
 			<uui-dialog-layout class="uui-text" headline=${this._headline}>
@@ -99,8 +114,10 @@ export class UmbChangePasswordModalElement extends UmbModalBaseElement<
 								id="confirmPassword"
 								name="confirmPassword"
 								required
-								required-message="Confirm password is required"></uui-input-password>
+								required-message="Confirm password is required"
+								@input=${() => this.#onPasswordUpdate()}></uui-input-password>
 						</uui-form-layout-item>
+						${this._isMatchedPassword ? nothing: html `<span class="validation-error">The confirmed password doesn't match the new password!</span>`}
 					</form>
 				</uui-form>
 
@@ -134,6 +151,10 @@ export class UmbChangePasswordModalElement extends UmbModalBaseElement<
 		css`
 			uui-input-password {
 				width: 100%;
+			}
+			.validation-error {
+				margin-top: 0 !important;
+				color: var(--uui-color-danger);
 			}
 		`,
 	];
