@@ -1,5 +1,6 @@
 import type { MediaValueType } from '../../property-editors/upload-field/types.js';
 import { getMimeTypeFromExtension } from './utils.js';
+import type { ManifestFileUploadPreview } from './file-upload-preview.extension.js';
 import { TemporaryFileStatus, UmbTemporaryFileManager } from '@umbraco-cms/backoffice/temporary-file';
 import type { UmbTemporaryFileModel } from '@umbraco-cms/backoffice/temporary-file';
 import { UmbId } from '@umbraco-cms/backoffice/id';
@@ -18,7 +19,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 
 import { UmbExtensionsManifestInitializer } from '@umbraco-cms/backoffice/extension-api';
-import { type ManifestFileUploadPreview, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
+import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 
 @customElement('umb-input-upload-field')
 export class UmbInputUploadFieldElement extends UmbLitElement {

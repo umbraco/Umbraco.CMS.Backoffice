@@ -34,7 +34,9 @@ export class UmbBackofficeHeaderLogoElement extends UmbLitElement {
 
 			this.#backofficeContext = context;
 		});
+	}
 
+	protected override async firstUpdated() {
 		this.#isAdmin();
 	}
 

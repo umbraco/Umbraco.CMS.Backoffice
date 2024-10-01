@@ -58,7 +58,6 @@ export default defineConfig({
 			'validation/index': './validation/index.ts',
 			'variant/index': './variant/index.ts',
 			'workspace/index': './workspace/index.ts',
-			//'settings/index': './settings/index.ts', // currently no index file so it is left out
 			manifests: 'manifests.ts',
 		},
 	}),
