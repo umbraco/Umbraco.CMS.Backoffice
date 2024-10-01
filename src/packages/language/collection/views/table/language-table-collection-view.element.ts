@@ -6,12 +6,12 @@ import type { UmbTableColumn, UmbTableConfig, UmbTableItem } from '@umbraco-cms/
 import { css, html, customElement, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { UmbModalRouteBuilder, UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
-import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
+import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/workspace';
 
 import './column-layouts/boolean/language-table-boolean-column-layout.element.js';
 import './column-layouts/name/language-table-name-column-layout.element.js';
 import './column-layouts/entity-actions/language-table-entity-actions-column-layout.element.js';
+import { UmbModalRouteRegistrationController, type UmbModalRouteBuilder } from '@umbraco-cms/backoffice/router';
 
 @customElement('umb-language-table-collection-view')
 export class UmbLanguageTableCollectionViewElement extends UmbLitElement {

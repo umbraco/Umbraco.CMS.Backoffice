@@ -1,5 +1,5 @@
-import type { ConditionTypes } from '../../extension-registry/conditions/types.js';
 import type { ManifestElementAndApi, ManifestWithDynamicConditions } from '@umbraco-cms/backoffice/extension-api';
+import type { ConditionTypes } from '@umbraco-cms/backoffice/extension-registry';
 
 export interface ManifestCollectionSomething
 	extends ManifestElementAndApi,
@@ -10,4 +10,10 @@ export interface ManifestCollectionSomething
 
 export interface MetaCollectionSomething {
 	repositoryAlias: string;
+}
+
+declare global {
+	interface UmbExtensionManifestMap {
+		umbCollectionSomething: ManifestCollectionSomething;
+	}
 }

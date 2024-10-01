@@ -1,5 +1,5 @@
+import type { ManifestCollectionSomething } from './collection-something.extension.js';
 import { customElement } from '@umbraco-cms/backoffice/external/lit';
-import type { ManifestCollectionSomething } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbExtensionElementAndApiSlotElementBase } from '@umbraco-cms/backoffice/extension-registry';
 
 @customElement('umb-collection-something')

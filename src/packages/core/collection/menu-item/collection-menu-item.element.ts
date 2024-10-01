@@ -1,6 +1,7 @@
+import type { ManifestMenuItemCollectionKind } from '../collection-something/types.js';
 import { html, customElement, property, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import type { ManifestMenuItemCollectionKind, UmbMenuItemElement } from '@umbraco-cms/backoffice/extension-registry';
+import type { UmbMenuItemElement } from '@umbraco-cms/backoffice/menu';
 
 const elementName = 'umb-collection-menu-item';
 @customElement(elementName)

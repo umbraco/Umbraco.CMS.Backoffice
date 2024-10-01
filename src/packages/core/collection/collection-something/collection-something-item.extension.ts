@@ -5,3 +5,9 @@ export interface ManifestCollectionSomethingItem extends ManifestElementAndApi<U
 	type: 'collectionSomethingItem';
 	forEntityTypes: Array<string>;
 }
+
+declare global {
+	interface UmbExtensionManifestMap {
+		umbCollectionSomethingItem: ManifestCollectionSomethingItem;
+	}
+}

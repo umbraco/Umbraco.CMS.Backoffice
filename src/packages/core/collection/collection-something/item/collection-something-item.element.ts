@@ -1,5 +1,5 @@
+import type { ManifestCollectionSomethingItem } from '../collection-something-item.extension.js';
 import { customElement, property } from '@umbraco-cms/backoffice/external/lit';
-import type { ManifestTreeItem } from '@umbraco-cms/backoffice/extension-registry';
 import {
 	UmbExtensionElementAndApiSlotElementBase,
 	umbExtensionsRegistry,
@@ -7,7 +7,7 @@ import {
 import { createObservablePart } from '@umbraco-cms/backoffice/observable-api';
 
 @customElement('umb-collection-something-item')
-export class UmbCollectionSomethingItemElement extends UmbExtensionElementAndApiSlotElementBase<ManifestTreeItem> {
+export class UmbCollectionSomethingItemElement extends UmbExtensionElementAndApiSlotElementBase<ManifestCollectionSomethingItem> {
 	_entityType?: string;
 	@property({ type: String, reflect: true })
 	get entityType() {
@@ -21,7 +21,7 @@ export class UmbCollectionSomethingItemElement extends UmbExtensionElementAndApi
 	#observeEntityType() {
 		if (!this._entityType) return;
 
-		const filterByEntityType = (manifest: ManifestTreeItem) => {
+		const filterByEntityType = (manifest: ManifestCollectionSomethingItem) => {
 			if (!this._entityType) return false;
 			return manifest.forEntityTypes.includes(this._entityType);
 		};

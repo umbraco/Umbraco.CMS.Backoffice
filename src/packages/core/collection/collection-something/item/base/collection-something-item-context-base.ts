@@ -2,13 +2,13 @@ import { type UmbDefaultCollectionSomethingContext, UMB_COLLECTION_SOMETHING_CON
 import type { UmbCollectionItemModel } from '../../../types.js';
 import { UMB_COLLECTION_SOMETHING_ITEM_CONTEXT } from '../collection-something-item.context-token.js';
 import type { UmbCollectionSomethingItemContext } from '../types.js';
+import type { ManifestCollectionSomethingItem } from '../../collection-something-item.extension.js';
 import { map } from '@umbraco-cms/backoffice/external/rxjs';
 import { UmbBooleanState, UmbObjectState, UmbStringState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import { UMB_SECTION_CONTEXT, UMB_SECTION_SIDEBAR_CONTEXT } from '@umbraco-cms/backoffice/section';
 import type { UmbSectionContext, UmbSectionSidebarContext } from '@umbraco-cms/backoffice/section';
-import type { ManifestCollectionSomethingItem } from '@umbraco-cms/backoffice/extension-registry';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UMB_ACTION_EVENT_CONTEXT, type UmbActionEventContext } from '@umbraco-cms/backoffice/action';
 import { UmbRequestReloadStructureForEntityEvent } from '@umbraco-cms/backoffice/entity-action';

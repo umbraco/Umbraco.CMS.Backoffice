@@ -1,15 +1,12 @@
 import type { UmbCollectionItemModel, UmbCollectionRootModel } from '../../types.js';
+import type { ManifestCollectionSomething } from '../collection-something.extension.js';
 import { UMB_COLLECTION_SOMETHING_CONTEXT } from './default-collection-something.context-token.js';
 import type { UmbActionEventContext } from '@umbraco-cms/backoffice/action';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import type { UmbCollectionRepository } from '@umbraco-cms/backoffice/collection';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import {
-	type ManifestRepository,
-	umbExtensionsRegistry,
-	type ManifestCollectionSomething,
-} from '@umbraco-cms/backoffice/extension-registry';
+import { type ManifestRepository, umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbArrayState, UmbBooleanState, UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import { debounce, UmbPaginationManager, UmbSelectionManager } from '@umbraco-cms/backoffice/utils';
 import {
