@@ -10,7 +10,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		element: () => import('./inactive-users-dashboard-app.element.js'),
 		meta: {
 			headline: 'Inactive Users',
-			size: 'large',
+			size: 'medium',
 		},
 		conditions: [
 			{

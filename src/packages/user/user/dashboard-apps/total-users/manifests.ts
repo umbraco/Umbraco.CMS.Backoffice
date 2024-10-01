@@ -10,7 +10,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		element: () => import('./total-users-dashboard-app.element.js'),
 		meta: {
 			headline: 'Total Users',
-			size: 'large',
+			size: 'small',
 		},
 		conditions: [
 			{

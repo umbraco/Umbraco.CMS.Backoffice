@@ -11,7 +11,7 @@ export const manifests: Array<ManifestTypes | UmbBackofficeManifestKind> = [
 		element: () => import('./total-user-groups-dashboard-app.element.js'),
 		meta: {
 			headline: 'Total User Groups',
-			size: 'medium',
+			size: 'small',
 		},
 		conditions: [
 			{

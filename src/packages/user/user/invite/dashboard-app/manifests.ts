@@ -9,8 +9,8 @@ export const manifests: Array<UmbExtensionManifest> = [
 		weight: 300,
 		element: () => import('./invited-users-dashboard-app.element.js'),
 		meta: {
-			headline: 'Pending Users',
-			size: 'large',
+			headline: 'Pending Invites',
+			size: 'medium',
 		},
 		conditions: [
 			{
