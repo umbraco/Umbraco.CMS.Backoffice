@@ -2,8 +2,9 @@ import { UMB_DATA_TYPE_WORKSPACE_CONTEXT } from '../../data-type-workspace.conte
 import { css, customElement, html, nothing, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { UMB_MODAL_MANAGER_CONTEXT, UMB_PROPERTY_EDITOR_UI_PICKER_MODAL } from '@umbraco-cms/backoffice/modal';
-import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/extension-registry';
+import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import { UMB_PROPERTY_EDITOR_UI_PICKER_MODAL } from '@umbraco-cms/backoffice/property-editor';
+import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/workspace';
 import { umbBindToValidation } from '@umbraco-cms/backoffice/validation';
 
 @customElement('umb-data-type-details-workspace-view')

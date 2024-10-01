@@ -17,7 +17,7 @@ import type { UmbRoute, UmbRouterSlotChangeEvent, UmbRouterSlotInitEvent } from 
 import type {
 	ManifestWorkspaceViewContentTypeDesignEditorKind,
 	UmbWorkspaceViewElement,
-} from '@umbraco-cms/backoffice/extension-registry';
+} from '@umbraco-cms/backoffice/workspace';
 import type { UmbConfirmModalData } from '@umbraco-cms/backoffice/modal';
 import { UMB_MODAL_MANAGER_CONTEXT, umbConfirmModal } from '@umbraco-cms/backoffice/modal';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
@@ -143,7 +143,7 @@ export class UmbContentTypeDesignEditorElement extends UmbLitElement implements 
 			this.#tabsStructureHelper.setStructureManager(workspaceContext.structure);
 			new UmbContentTypeMoveRootGroupsIntoFirstTabHelper(this, workspaceContext.structure);
 
-			this._observeRootGroups();
+			this.#observeRootGroups();
 		});
 	}
 
@@ -151,11 +151,11 @@ export class UmbContentTypeDesignEditorElement extends UmbLitElement implements 
 		this.#designContext?.setIsSorting(!this._sortModeActive);
 	}
 
-	private _observeRootGroups() {
+	async #observeRootGroups() {
 		if (!this.#workspaceContext) return;
 
 		this.observe(
-			this.#workspaceContext.structure.hasRootContainers('Group'),
+			await this.#workspaceContext.structure.hasRootContainers('Group'),
 			(hasRootGroups) => {
 				this._hasRootGroups = hasRootGroups;
 				this._createRoutes();

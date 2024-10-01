@@ -1,7 +1,9 @@
 import type { UmbMemberEntityType } from './entity.js';
-import type { UmbVariantModel, UmbVariantOptionModel } from '@umbraco-cms/backoffice/variant';
+import type { UmbMemberKindType } from './utils/index.js';
+import type { UmbEntityVariantModel, UmbEntityVariantOptionModel } from '@umbraco-cms/backoffice/variant';
+import type { UmbContentDetailModel, UmbContentValueModel } from '@umbraco-cms/backoffice/content';
 
-export interface UmbMemberDetailModel {
+export interface UmbMemberDetailModel extends UmbContentDetailModel {
 	email: string;
 	entityType: UmbMemberEntityType;
 	failedPasswordAttempts: number;
@@ -9,6 +11,7 @@ export interface UmbMemberDetailModel {
 	isApproved: boolean;
 	isLockedOut: boolean;
 	isTwoFactorEnabled: boolean;
+	kind: UmbMemberKindType;
 	lastLockoutDate: string | null;
 	lastLoginDate: string | null;
 	lastPasswordChangeDate: string | null;
@@ -18,18 +21,14 @@ export interface UmbMemberDetailModel {
 	unique: string;
 	username: string;
 	values: Array<UmbMemberValueModel>;
-	variants: Array<UmbVariantModel>;
+	variants: Array<UmbEntityVariantModel>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface UmbMemberVariantModel extends UmbVariantModel {}
-
-export interface UmbMemberValueModel<ValueType = unknown> {
-	culture: string | null;
-	segment: string | null;
-	alias: string;
-	value: ValueType;
-}
+export interface UmbMemberVariantModel extends UmbEntityVariantModel {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface UmbMemberVariantOptionModel extends UmbVariantOptionModel<UmbMemberVariantModel> {}
+export interface UmbMemberValueModel<ValueType = unknown> extends UmbContentValueModel<ValueType> {}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UmbMemberVariantOptionModel extends UmbEntityVariantOptionModel<UmbMemberVariantModel> {}

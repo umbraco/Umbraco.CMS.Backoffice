@@ -1,8 +1,6 @@
 import { UMB_LANGUAGE_COLLECTION_SOMETHING_ALIAS } from '../collection/index.js';
-import type { ManifestKind } from '@umbraco-cms/backoffice/extension-api';
-import type { ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 
-export const manifests: Array<ManifestTypes | ManifestKind<ManifestTypes>> = [
+export const manifests: Array<UmbExtensionManifest> = [
 	{
 		type: 'menuItem',
 		kind: 'collection',

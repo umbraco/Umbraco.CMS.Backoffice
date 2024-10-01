@@ -1,5 +1,5 @@
+import type { ManifestCollection } from './extensions/index.js';
 import type { Observable } from '@umbraco-cms/backoffice/external/rxjs';
-import type { ManifestCollection } from '@umbraco-cms/backoffice/extension-registry';
 import type { UmbPaginationManager } from '@umbraco-cms/backoffice/utils';
 import type { UmbEntityModel } from '@umbraco-cms/backoffice/entity';
 
@@ -22,7 +22,6 @@ export type UmbCollectionSelectionConfiguration = {
 	selection?: Array<string | null>;
 };
 
-// TODO: this interface should only be applied for content collections.
 export interface UmbCollectionBulkActionPermissions {
 	allowBulkCopy: boolean;
 	allowBulkDelete: boolean;
@@ -71,3 +70,5 @@ export interface UmbCollectionContext {
 	items: Observable<any[]>;
 	totalItems: Observable<number>;
 }
+
+export * from './extensions/index.js';

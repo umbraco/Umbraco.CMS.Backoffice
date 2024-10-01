@@ -10,6 +10,7 @@ export * from './collection-item-picker-modal/index.js';
 export * from './default/collection-default.context.js';
 export * from './default/collection-default.context-token.js';
 export * from './collection-filter-model.interface.js';
+export * from './types.js';
 
 // Collection Structure Menu
 export * from './collection-something/index.js';
@@ -19,8 +20,3 @@ export { UMB_COLLECTION_BULK_ACTION_PERMISSION_CONDITION } from './collection-bu
 
 export { UmbCollectionActionElement, UmbCollectionActionBase } from './action/index.js';
 export type { UmbCollectionDataSource, UmbCollectionRepository } from './repository/index.js';
-export type {
-	UmbCollectionBulkActionPermissions,
-	UmbCollectionConfiguration,
-	UmbCollectionColumnConfiguration,
-} from './types.js';

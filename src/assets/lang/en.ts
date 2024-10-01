@@ -664,6 +664,8 @@ export default {
 		a11yCreateItem: 'Create item',
 		a11yEdit: 'Edit',
 		a11yName: 'Name',
+		rteParagraph: 'Write something amazing...',
+		rteHeading: "What's the title?",
 	},
 	editcontenttype: {
 		createListView: 'Create custom list view',
@@ -934,6 +936,7 @@ export default {
 		media: 'Media',
 		revert: 'Revert',
 		validate: 'Validate',
+		newVersionAvailable: 'New version available',
 	},
 	colors: {
 		blue: 'Blue',
@@ -1104,8 +1107,8 @@ export default {
 		relateToOriginal: 'Relate copied items to original',
 	},
 	notifications: {
-		editNotifications: 'Select your notification for <strong>%0%</strong>',
-		notificationsSavedFor: 'Notification settings saved for',
+		editNotifications: 'Select your notification for %0%',
+		notificationsSavedFor: 'Notification settings saved for %0%',
 		notifications: 'Notifications',
 	},
 	packager: {
@@ -1326,7 +1329,7 @@ export default {
 		packages: 'Packages',
 		marketplace: 'Marketplace',
 		settings: 'Settings',
-		translation: 'Dictionary',
+		translation: 'Translation',
 		users: 'Users',
 	},
 	help: {
@@ -1667,12 +1670,12 @@ export default {
 		andAllMediaItems: 'and all media items using this type',
 		andAllMembers: 'and all members using this type',
 		memberCanEdit: 'Member can edit',
-		memberCanEditDescription: 'Allow this property value to be edited by the member on their profile page\n    ',
+		memberCanEditDescription: 'Allow this property value to be edited by the member on their profile page',
 		isSensitiveData: 'Is sensitive data',
 		isSensitiveDataDescription:
-			"Hide this property value from content editors that don't have access to view\n      sensitive information\n    ",
+			"Hide this property value from content editors that don't have access to view sensitive information",
 		showOnMemberProfile: 'Show on member profile',
-		showOnMemberProfileDescription: 'Allow this property value to be displayed on the member profile page\n    ',
+		showOnMemberProfileDescription: 'Allow this property value to be displayed on the member profile page',
 		tabHasNoSortOrder: 'tab has no sort order',
 		compositionUsageHeading: 'Where is this composition used?',
 		compositionUsageSpecification:
@@ -2624,5 +2627,11 @@ export default {
 		minimapConfigDescription: 'Show a minimap in the code editor.',
 		wordWrapConfigLabel: 'Word wrap',
 		wordWrapConfigDescription: 'Enable word wrapping in the code editor.',
+	},
+	tiptap: {
+		extGroup_formatting: 'Text formatting',
+		extGroup_interactive: 'Interactive elements',
+		extGroup_media: 'Embeds and media',
+		extGroup_structure: 'Content structure',
 	},
 } as UmbLocalizationDictionary;

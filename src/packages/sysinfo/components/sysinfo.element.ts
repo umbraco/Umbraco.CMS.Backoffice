@@ -1,4 +1,4 @@
-import { UmbSysinfoRepository } from '../repository/sysinfo.repository.js';
+import { UmbSysinfoRepository } from '../repository/index.js';
 import { css, customElement, html, state, when } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
@@ -78,7 +78,7 @@ export class UmbSysinfoElement extends UmbModalBaseElement {
 					${when(
 						this._loading,
 						() => html`<uui-loader-bar></uui-loader-bar>`,
-						() => html` <umb-code-block id="codeblock"> ${this._systemInformation} </umb-code-block> `,
+						() => html` <umb-code-block id="codeblock">${this._systemInformation}</umb-code-block> `,
 					)}
 
 					<uui-button
