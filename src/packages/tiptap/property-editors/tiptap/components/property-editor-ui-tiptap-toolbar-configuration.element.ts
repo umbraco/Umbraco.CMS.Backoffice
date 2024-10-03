@@ -1,16 +1,19 @@
+import { UmbTiptapToolbarConfigurationContext } from '../contexts/tiptap-toolbar-configuration.context.js';
+import type {
+	UmbTiptapToolbarExtension,
+	UmbTiptapToolbarRowViewModel,
+} from '../contexts/tiptap-toolbar-configuration.context.js';
 import type { UmbTiptapToolbarValue } from '../../../extensions/types.js';
-import { customElement, css, html, property, state, repeat, nothing } from '@umbraco-cms/backoffice/external/lit';
-import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
+import { customElement, css, html, property, repeat, state, when } from '@umbraco-cms/backoffice/external/lit';
+import { debounce } from '@umbraco-cms/backoffice/utils';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { UmbPropertyValueChangeEvent, type UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/property-editor';
-import type { PropertyValueMap } from '@umbraco-cms/backoffice/external/lit';
+import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
+import { UMB_PROPERTY_CONTEXT } from '@umbraco-cms/backoffice/property';
+import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/property-editor';
+import type { UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 
-type UmbTiptapToolbarExtension = {
-	alias: string;
-	label: string;
-	icon: string;
-};
+import './tiptap-toolbar-configuration-row.element.js';
+
 const elementName = 'umb-property-editor-ui-tiptap-toolbar-configuration';
 
 @customElement(elementName)
@@ -18,318 +21,251 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 	extends UmbLitElement
 	implements UmbPropertyEditorUiElement
 {
-	readonly #inUse: Set<string> = new Set();
+	#context = new UmbTiptapToolbarConfigurationContext(this);
 
-	#currentDragItem?: {
-		alias: string;
-		fromPos?: [number, number, number];
-	};
+	#debouncedFilterInput = debounce(() => {
+		this._availableExtensions = this.#context.filterExtensions(this.#filterQuery);
+	}, 250);
 
-	#lookup?: Map<string, UmbTiptapToolbarExtension>;
+	#filterQuery = '';
+
+	#sorter = new UmbSorterController<UmbTiptapToolbarRowViewModel>(this, {
+		getUniqueOfElement: (element: HTMLElement) => {
+			return element.id;
+		},
+		getUniqueOfModel: (modelEntry) => {
+			return modelEntry.unique;
+		},
+		itemSelector: 'umb-tiptap-toolbar-configuration-row',
+		containerSelector: '#rows',
+		onChange: ({ model }) => {
+			this.#value = model.map((rows) => rows.data.map((groups) => [...groups.data]));
+			this.#context.setToolbar(this.#value);
+		},
+	});
 
 	@state()
-	private _extensions: Array<UmbTiptapToolbarExtension> = [];
+	private _availableExtensions: Array<UmbTiptapToolbarExtension> = [];
+
+	@state()
+	private _toolbar: Array<UmbTiptapToolbarRowViewModel> = [];
 
 	@property({ attribute: false })
 	set value(value: UmbTiptapToolbarValue | undefined) {
-		if (!this.#isValidTiptapToolbarValue(value)) {
-			this.#value = [[[]]];
-			return;
-		}
-
-		if (value.length > 0) {
-			this.#value = value.map((rows) => rows.map((groups) => [...groups]));
-			value.forEach((row) => row.forEach((group) => group.forEach((alias) => this.#inUse.add(alias))));
-		}
+		if (!value) value = [[[]]];
+		if (value === this.#value) return;
+		console.log('set value', value);
+		this.#context.setToolbar(value);
 	}
-	get value(): UmbTiptapToolbarValue {
-		return this.#value;
+	get value(): UmbTiptapToolbarValue | undefined {
+		return this.#value?.map((rows) => rows.map((groups) => [...groups]));
 	}
-	#value: UmbTiptapToolbarValue = [[[]]];
+	#value?: UmbTiptapToolbarValue;
 
-	protected override async firstUpdated(_changedProperties: PropertyValueMap<unknown>) {
-		super.firstUpdated(_changedProperties);
+	constructor() {
+		super();
 
-		this.observe(umbExtensionsRegistry.byType('tiptapToolbarExtension'), (extensions) => {
-			this._extensions = extensions.map((ext) => ({ alias: ext.alias, label: ext.meta.label, icon: ext.meta.icon }));
-			this.#lookup = new Map(this._extensions.map((ext) => [ext.alias, ext]));
+		this.consumeContext(UMB_PROPERTY_CONTEXT, (propertyContext) => {
+			this.observe(this.#context.extensions, (extensions) => {
+				this._availableExtensions = extensions;
+			});
+
+			this.observe(this.#context.reload, (reload) => {
+				if (reload) {
+					this.requestUpdate();
+				}
+			});
+
+			this.observe(this.#context.toolbar, (toolbar) => {
+				if (!toolbar.length) return;
+
+				this._toolbar = toolbar;
+
+				this.#value = toolbar.map((rows) => rows.data.map((groups) => [...groups.data]));
+
+				console.log('observe toolbar set value', [toolbar, this.#value]);
+
+				propertyContext.setValue(this.#value);
+
+				if (this.#value.length > 1) {
+					this.#sorter.enable();
+					this.#sorter.setModel(this._toolbar);
+				} else {
+					this.#sorter.disable();
+				}
+			});
 		});
 	}
 
-	#isValidTiptapToolbarValue(value: unknown): value is UmbTiptapToolbarValue {
-		if (!Array.isArray(value)) return false;
-		for (const row of value) {
-			if (!Array.isArray(row)) return false;
-			for (const group of row) {
-				if (!Array.isArray(group)) return false;
-				for (const alias of group) {
-					if (typeof alias !== 'string') return false;
-				}
-			}
-		}
-		return true;
+	#onClick(item: UmbTiptapToolbarExtension) {
+		const lastRow = (this.#value?.length ?? 1) - 1;
+		const lastGroup = (this.#value?.[lastRow].length ?? 1) - 1;
+		const lastItem = this.#value?.[lastRow][lastGroup].length ?? 0;
+		console.log('onClick', [item, this.#value, lastRow, lastGroup, lastItem]);
+		this.#context.insertToolbarItem(item.alias, [lastRow, lastGroup, lastItem]);
 	}
 
-	#onDragStart(event: DragEvent, alias: string, fromPos?: [number, number, number]) {
-		event.dataTransfer!.effectAllowed = 'move';
-		this.#currentDragItem = { alias, fromPos };
-	}
-
-	#onDragOver(event: DragEvent) {
-		event.preventDefault();
-		event.dataTransfer!.dropEffect = 'move';
-	}
-
-	#onDragEnd(event: DragEvent) {
-		event.preventDefault();
-		if (event.dataTransfer?.dropEffect === 'none') {
-			const { fromPos } = this.#currentDragItem ?? {};
-			if (!fromPos) return;
-
-			this.#removeItem(fromPos);
-		}
-	}
-
-	#onDrop(event: DragEvent, toPos?: [number, number, number]) {
-		event.preventDefault();
-		const { alias, fromPos } = this.#currentDragItem ?? {};
-
-		// Remove item if no destination position is provided
-		if (fromPos && !toPos) {
-			this.#removeItem(fromPos);
-			return;
-		}
-		// Move item if both source and destination positions are available
-		if (fromPos && toPos) {
-			this.#moveItem(fromPos, toPos);
-			return;
-		}
-		// Insert item if an alias and a destination position are provided
-		if (alias && toPos) {
-			this.#insertItem(alias, toPos);
-		}
-	}
-
-	#moveItem(from: [number, number, number], to: [number, number, number]) {
-		const [rowIndex, groupIndex, itemIndex] = from;
-
-		// Get the item to move from the 'from' position
-		const itemToMove = this.#value[rowIndex][groupIndex][itemIndex];
-
-		// Remove the item from the original position
-		this.#value[rowIndex][groupIndex].splice(itemIndex, 1);
-
-		this.#insertItem(itemToMove, to);
-	}
-
-	#insertItem(alias: string, toPos: [number, number, number]) {
-		const [rowIndex, groupIndex, itemIndex] = toPos;
-
-		// Insert the item into the new position
-		const inserted = this.#value[rowIndex][groupIndex].splice(itemIndex, 0, alias);
-		inserted.forEach((alias) => this.#inUse.add(alias));
-
-		this.dispatchEvent(new UmbPropertyValueChangeEvent());
-	}
-
-	#removeItem(from: [number, number, number]) {
-		const [rowIndex, groupIndex, itemIndex] = from;
-
-		const removed = this.#value[rowIndex][groupIndex].splice(itemIndex, 1);
-		removed.forEach((alias) => this.#inUse.delete(alias));
-
-		this.dispatchEvent(new UmbPropertyValueChangeEvent());
-	}
-
-	#addGroup(rowIndex: number, groupIndex: number) {
-		this.#value[rowIndex].splice(groupIndex, 0, []);
-		this.dispatchEvent(new UmbPropertyValueChangeEvent());
-	}
-
-	#removeGroup(rowIndex: number, groupIndex: number) {
-		if (this.#value[rowIndex].length > groupIndex) {
-			const removed = this.#value[rowIndex].splice(groupIndex, 1);
-			removed.forEach((group) => group.forEach((alias) => this.#inUse.delete(alias)));
-		}
-
-		// Prevent leaving an empty group
-		if (this.#value[rowIndex].length === 0) {
-			this.#value[rowIndex][groupIndex] = [];
-		}
-
-		this.dispatchEvent(new UmbPropertyValueChangeEvent());
-	}
-
-	#addRow(rowIndex: number) {
-		this.#value.splice(rowIndex, 0, [[]]);
-		this.dispatchEvent(new UmbPropertyValueChangeEvent());
-	}
-
-	#removeRow(rowIndex: number) {
-		if (this.#value.length > rowIndex) {
-			const removed = this.#value.splice(rowIndex, 1);
-			removed.forEach((row) => row.forEach((group) => group.forEach((alias) => this.#inUse.delete(alias))));
-		}
-
-		// Prevent leaving an empty row
-		if (this.#value.length === 0) {
-			this.#value[rowIndex] = [[]];
-		}
-
-		this.dispatchEvent(new UmbPropertyValueChangeEvent());
+	#onFilterInput(event: UUIInputEvent) {
+		this.#filterQuery = (event.target.value as string).toLocaleLowerCase();
+		this.#debouncedFilterInput();
 	}
 
 	override render() {
-		return html`
-			${repeat(this.#value, (row, rowIndex) => this.#renderRow(row, rowIndex))}
-			<uui-button look="secondary" @click=${() => this.#addRow(this.#value.length)}>
-				<uui-icon name="add"></uui-icon>
-				<span>Add row</span>
-			</uui-button>
-			${this.#renderExtensions()}
-		`;
+		return html`${this.#renderAvailableItems()} ${this.#renderDesigner()} ${this.#renderDebug()}`;
 	}
 
-	#renderRow(row: string[][], rowIndex: number) {
+	#renderAvailableItems() {
 		return html`
-			<div class="row">
-				${repeat(row, (group, groupIndex) => this.#renderGroup(group, rowIndex, groupIndex))}
-				<uui-button look="secondary" @click=${() => this.#addGroup(rowIndex, row.length)}>
-					<uui-icon name="add"></uui-icon>
-					<span>Add group</span>
-				</uui-button>
-				<uui-button
-					compact
-					color="danger"
-					look="primary"
-					class="remove-row-button ${rowIndex === 0 && row.length === 1 && row[0].length === 0 ? 'hidden' : undefined}"
-					@click=${() => this.#removeRow(rowIndex)}>
-					<umb-icon name="icon-trash"></umb-icon>
-				</uui-button>
-			</div>
-		`;
-	}
-
-	#renderGroup(group: string[], rowIndex: number, groupIndex: number) {
-		return html`
-			<div
-				class="group"
-				dropzone="move"
-				@dragover=${this.#onDragOver}
-				@drop=${(e: DragEvent) => this.#onDrop(e, [rowIndex, groupIndex, group.length])}>
-				${group.map((alias, itemIndex) => this.#renderItem(alias, rowIndex, groupIndex, itemIndex))}
-				<uui-button
-					compact
-					color="danger"
-					look="primary"
-					class="remove-group-button ${groupIndex === 0 && group.length === 0 ? 'hidden' : undefined}"
-					@click=${() => this.#removeGroup(rowIndex, groupIndex)}>
-					<umb-icon name="icon-trash"></umb-icon>
-				</uui-button>
-			</div>
-		`;
-	}
-
-	#renderItem(alias: string, rowIndex: number, groupIndex: number, itemIndex: number) {
-		const extension = this.#lookup?.get(alias);
-		if (!extension) return nothing;
-		return html`
-			<div
-				title=${this.localize.string(extension.label)}
-				class="item"
-				draggable="true"
-				@dragend=${this.#onDragEnd}
-				@dragstart=${(e: DragEvent) => this.#onDragStart(e, alias, [rowIndex, groupIndex, itemIndex])}>
-				<umb-icon name=${extension.icon ?? ''}></umb-icon>
-			</div>
-		`;
-	}
-
-	#renderExtensions() {
-		return html`
-			<div class="extensions" dropzone="move" @drop=${this.#onDrop} @dragover=${this.#onDragOver}>
-				${repeat(
-					this._extensions.filter((ext) => !this.#inUse.has(ext.alias)),
-					(extension) => html`
-						<div
-							class="item"
-							draggable="true"
-							title=${this.localize.string(extension.label)}
-							@dragstart=${(e: DragEvent) => this.#onDragStart(e, extension.alias)}
-							@dragend=${this.#onDragEnd}>
-							<umb-icon name=${extension.icon ?? ''}></umb-icon>
+			<uui-box class="minimal" headline="Available toolbar items">
+				<div slot="header-actions">
+					<uui-input
+						type="search"
+						autocomplete="off"
+						placeholder=${this.localize.term('placeholders_filter')}
+						@input=${this.#onFilterInput}>
+						<div slot="prepend">
+							<uui-icon name="search"></uui-icon>
 						</div>
-					`,
-				)}
-			</div>
+					</uui-input>
+				</div>
+				<div class="available-items">
+					${when(
+						this._availableExtensions.length === 0,
+						() =>
+							html`<umb-localize key="content_noItemsToShow">There are no toolbar extensions to show</umb-localize>`,
+						() => repeat(this._availableExtensions, (item) => this.#renderAvailableItem(item)),
+					)}
+				</div>
+			</uui-box>
+		`;
+	}
+
+	#renderAvailableItem(item: UmbTiptapToolbarExtension) {
+		const forbidden = !this.#context.isExtensionEnabled(item.alias);
+		const inUse = this.#context.isExtensionInUse(item.alias);
+		return html`
+			<uui-button
+				compact
+				class=${forbidden ? 'forbidden' : ''}
+				look=${forbidden ? 'placeholder' : 'outline'}
+				?disabled=${forbidden || inUse}
+				@click=${() => this.#onClick(item)}>
+				<div class="inner">
+					${when(item.icon, () => html`<umb-icon .name=${item.icon}></umb-icon>`)}
+					<span>${this.localize.string(item.label)}</span>
+				</div>
+			</uui-button>
+		`;
+	}
+
+	#renderDesigner() {
+		return html`
+			<uui-box class="minimal" headline="Toolbar designer">
+				<div id="rows">
+					${repeat(
+						this._toolbar,
+						(row) => row.unique,
+						(row, idx) => html`
+							<umb-tiptap-toolbar-configuration-row
+								id=${row.unique}
+								.index=${idx}
+								.row=${row}
+								?hideActionBar=${this._toolbar.length === 1}>
+							</umb-tiptap-toolbar-configuration-row>
+						`,
+					)}
+				</div>
+				<uui-button
+					id="btnAdd"
+					look="placeholder"
+					label=${this.localize.term('grid_addRowConfiguration')}
+					@click=${() => this.#context.insertToolbarRow(this._toolbar.length)}></uui-button>
+			</uui-box>
+		`;
+	}
+
+	#renderDebug() {
+		return html`
+			<details>
+				<summary style="cursor:pointer;">Raw JSON value</summary>
+				<umb-code-block language="#value">${JSON.stringify(this.#value, null, 2)}</umb-code-block>
+			</details>
+			<details>
+				<summary style="cursor:pointer;">Toolbar view model</summary>
+				<umb-code-block language="_toolbar">${JSON.stringify(this._toolbar, null, 2)}</umb-code-block>
+			</details>
 		`;
 	}
 
 	static override readonly styles = [
-		UmbTextStyles,
 		css`
 			:host {
 				display: flex;
 				flex-direction: column;
-				gap: 6px;
+				gap: var(--uui-size-1);
 			}
-			.extensions {
+
+			uui-box.minimal {
+				--uui-box-header-padding: 0;
+				--uui-box-default-padding: var(--uui-size-2) 0;
+				--uui-box-box-shadow: none;
+
+				[slot='header-actions'] {
+					margin-bottom: var(--uui-size-2);
+
+					uui-icon {
+						color: var(--uui-color-border);
+					}
+				}
+			}
+
+			.available-items {
 				display: flex;
 				flex-wrap: wrap;
-				gap: 3px;
-				border-radius: var(--uui-border-radius);
+				gap: var(--uui-size-3);
 				background-color: var(--uui-color-surface-alt);
-				padding: 6px;
-				min-height: 30px;
-				min-width: 30px;
-			}
-			.row {
-				position: relative;
-				display: flex;
-				gap: 12px;
-			}
-			.group {
-				position: relative;
-				display: flex;
-				gap: 3px;
 				border-radius: var(--uui-border-radius);
-				background-color: var(--uui-color-surface-alt);
-				padding: 6px;
-				min-height: 32px;
-				min-width: 32px;
-			}
-			.item {
-				padding: var(--uui-size-space-2);
-				border: 1px solid var(--uui-color-border);
-				border-radius: var(--uui-border-radius);
-				background-color: var(--uui-color-surface);
-				cursor: move;
-				display: flex;
-				box-sizing: border-box;
-				width: 32px;
-				height: 32px;
-				justify-content: center;
+				padding: var(--uui-size-3);
+
+				uui-button {
+					--uui-button-font-weight: normal;
+
+					&[draggable='true'],
+					&[draggable='true'] > .inner {
+						cursor: move;
+					}
+
+					&[disabled],
+					&[disabled] > .inner {
+						cursor: not-allowed;
+					}
+
+					&.forbidden {
+						--color: var(--uui-color-danger);
+						--color-standalone: var(--uui-color-danger-standalone);
+						--color-emphasis: var(--uui-color-danger-emphasis);
+						--color-contrast: var(--uui-color-danger);
+						--uui-button-contrast-disabled: var(--uui-color-danger);
+						--uui-button-border-color-disabled: var(--uui-color-danger);
+						opacity: 0.5;
+					}
+
+					div {
+						display: flex;
+						gap: var(--uui-size-1);
+					}
+				}
 			}
 
-			.remove-row-button,
-			.remove-group-button {
-				display: none;
-			}
-			.remove-group-button {
-				position: absolute;
-				top: -26px;
-				left: 50%;
-				transform: translateX(-50%);
-				z-index: 1;
+			#rows {
+				display: flex;
+				flex-direction: column;
+				gap: var(--uui-size-1);
 			}
 
-			.row:hover .remove-row-button:not(.hidden),
-			.group:hover .remove-group-button:not(.hidden) {
-				display: flex;
-			}
-			umb-icon {
-				/* Prevents titles from bugging out */
-				pointer-events: none;
+			#btnAdd {
+				display: block;
+				margin-top: var(--uui-size-1);
 			}
 		`,
 	];

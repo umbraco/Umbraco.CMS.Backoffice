@@ -99,4 +99,5 @@ export abstract class UmbTiptapToolbarElementApiBase extends UmbControllerBase i
 	}
 }
 
+// TODO: [LK] Move this to the property-editor folder.
 export type UmbTiptapToolbarValue = Array<Array<Array<string>>>;

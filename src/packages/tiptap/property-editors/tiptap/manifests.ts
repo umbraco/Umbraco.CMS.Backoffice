@@ -16,14 +16,18 @@ export const manifests: Array<ManifestPropertyEditorUi> = [
 					{
 						alias: 'toolbar',
 						label: 'Toolbar',
-						description: 'Pick the toolbar items that should be available when editing',
+						description: `Configure the toolbar for the intended editing experience.
+
+_Drag and drop the available items onto the toolbar designer._`,
 						propertyEditorUiAlias: 'Umb.PropertyEditorUi.Tiptap.ToolbarConfiguration',
-						weight: 15,
+						weight: 5,
 					},
 					{
 						alias: 'extensions',
 						label: 'Capabilities',
-						description: 'Enable extensions enhance the capabilities of the Tiptap editor.',
+						description: `Enable extensions enhance the capabilities of the Tiptap editor.
+
+_Once enabled, the extensions will be available in the toolbar._`,
 						propertyEditorUiAlias: 'Umb.PropertyEditorUi.Tiptap.ExtensionsConfiguration',
 						weight: 10,
 					},
