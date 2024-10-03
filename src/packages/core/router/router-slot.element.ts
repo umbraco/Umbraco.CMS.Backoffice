@@ -81,14 +81,14 @@ export class UmbRouterSlotElement extends UmbLitElement {
 		// And we cannot insert the modal router as a slotted-child of the router, as it flushes its children on every route change.
 		this.#modalRouter.parent = this.#router;
 		if (this.#listening === false) {
-			window.addEventListener('navigationsuccess', this._onNavigationChanged);
+			window.addEventListener('willchangestate', this._onNavigationChanged);
 			this.#listening = true;
 		}
 	}
 
 	override disconnectedCallback() {
 		super.disconnectedCallback();
-		window.removeEventListener('navigationsuccess', this._onNavigationChanged);
+		window.removeEventListener('willchangestate', this._onNavigationChanged);
 		this.#listening = false;
 	}
 
@@ -115,7 +115,11 @@ export class UmbRouterSlotElement extends UmbLitElement {
 		}
 	}
 
-	private _onNavigationChanged = (event?: any) => {
+	private _onNavigationChanged = (event: CustomEvent) => {
+		if (event.defaultPrevented) {
+			debugger;
+			return;
+		}
 		if (event.detail.slot === this.#router) {
 			const newActiveLocalPath = this._constructLocalRouterPath();
 			if (this._activeLocalPath !== newActiveLocalPath) {
