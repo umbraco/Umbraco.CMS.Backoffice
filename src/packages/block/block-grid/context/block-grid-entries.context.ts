@@ -51,6 +51,9 @@ export class UmbBlockGridEntriesContext
 	#layoutColumns = new UmbNumberState(undefined);
 	readonly layoutColumns = this.#layoutColumns.asObservable();
 
+	#createLabel = new UmbStringState(undefined);
+	readonly createLabel = this.#createLabel.asObservable();
+
 	#areaType?: UmbBlockGridTypeAreaType;
 
 	#parentUnique?: string | null;
@@ -222,6 +225,14 @@ export class UmbBlockGridEntriesContext
 				this.#workspaceModal.setUniquePathValue('propertyAlias', alias ?? 'null');
 			},
 			'observePropertyAlias',
+		);
+
+		this.observe(
+			this._manager.createLabel,
+			(label) => {
+				this.#createLabel.setValue(label ?? 'Add Block');
+			},
+			'observeCreateLabel',
 		);
 	}
 

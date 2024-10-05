@@ -179,6 +179,12 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 	@state()
 	private _layoutEntries: Array<UmbBlockGridLayoutModel> = [];
 
+	@state()
+	private _resolvedCreateLabel?: string;
+
+	@state()
+	public _createLabel?: string;
+
 	constructor() {
 		super();
 
@@ -202,12 +208,23 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 						this.#context.firstAllowedBlockTypeName(),
 						(firstAllowedName) => {
 							this._singleBlockTypeName = firstAllowedName;
+							this.#finalizeCreateLabel();
 						},
 						'observeSingleBlockTypeName',
 					);
 				} else {
-					this.removeUmbControllerByAlias('observeSingleBlockTypeName');
+					this._singleBlockTypeName = undefined;
+					this.#finalizeCreateLabel();
 				}
+			},
+			null,
+		);
+
+		this.observe(
+			this.#context.createLabel,
+			(createLabel) => {
+				this._createLabel = createLabel;
+				this.#finalizeCreateLabel();
 			},
 			null,
 		);
@@ -242,6 +259,17 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 		});
 
 		new UmbFormControlValidator(this, this /*, this.#dataPath*/);
+	}
+
+	#finalizeCreateLabel() {
+		if (this._createLabel) {
+			this._resolvedCreateLabel = this._createLabel;
+		} else if (this._singleBlockTypeName) {
+			this._resolvedCreateLabel = this.localize.term('blockEditor_addThis', [this._singleBlockTypeName]);
+		} else {
+			this._resolvedCreateLabel = this.localize.term('blockEditor_addBlock');
+		}
+		this.requestUpdate('_createLabel');
 	}
 
 	async #setupRangeValidation(rangeLimit: UmbNumberRangeValueType | undefined) {
@@ -322,7 +350,7 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 					this._layoutEntries,
 					(x) => x.contentKey,
 					(layoutEntry, index) =>
-						html`<umb-block-grid-entry
+						html` <umb-block-grid-entry
 							class="umb-block-grid__layout-item"
 							index=${index}
 							.contentKey=${layoutEntry.contentKey}
@@ -337,12 +365,10 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 
 	#renderCreateButton() {
 		if (this._areaKey === null || this._layoutEntries.length === 0) {
-			return html`<uui-button-group id="createButton">
+			return html` <uui-button-group id="createButton">
 				<uui-button
 					look="placeholder"
-					label=${this._singleBlockTypeName
-						? this.localize.term('blockEditor_addThis', [this._singleBlockTypeName])
-						: this.localize.term('blockEditor_addBlock')}
+					label=${this._resolvedCreateLabel}
 					href=${this.#context.getPathForCreateBlock(-1) ?? ''}></uui-button>
 				${this._areaKey === null
 					? html` <uui-button

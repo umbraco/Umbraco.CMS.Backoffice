@@ -38,6 +38,9 @@ export class UmbBlockGridManagerContext<
 		const value = x?.getValueByAlias('gridColumns') as string | undefined;
 		return parseInt(value && value !== '' ? value : '12');
 	});
+	createLabel = this._editorConfiguration.asObservablePart((x) => {
+		return x?.getValueByAlias<string>('createLabel');
+	});
 
 	getMinAllowed() {
 		return this._editorConfiguration.getValue()?.getValueByAlias<UmbNumberRangeValueType>('validationLimit')?.min ?? 0;
