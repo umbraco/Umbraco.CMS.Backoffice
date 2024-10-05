@@ -62,9 +62,11 @@ export class UmbBlockGridManagerContext<
 	setBlockGroups(blockGroups: Array<UmbBlockTypeGroup>) {
 		this.#blockGroups.setValue(blockGroups);
 	}
+
 	getBlockGroups() {
 		return this.#blockGroups.value;
 	}
+
 	getBlockGroupName(unique: string) {
 		return this.#blockGroups.getValue().find((group) => group.key === unique)?.name;
 	}

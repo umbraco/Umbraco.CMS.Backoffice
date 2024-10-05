@@ -152,6 +152,7 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 			//new UmbBindServerValidationToFormControl(this, this, "$.values.[?(@.alias = 'my-input-alias')].value");
 		}
 	}
+
 	public get areaKey(): string | null | undefined {
 		return this._areaKey;
 	}
@@ -160,6 +161,7 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 	public set layoutColumns(value: number | undefined) {
 		this.#context.setLayoutColumns(value);
 	}
+
 	public get layoutColumns(): number | undefined {
 		return this.#context.getLayoutColumns();
 	}
@@ -396,6 +398,7 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 				display: grid;
 				gap: 1px;
 			}
+
 			:host([disallow-drop])::before {
 				content: '';
 				position: absolute;
@@ -405,6 +408,7 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 				border-radius: calc(var(--uui-border-radius) * 2);
 				pointer-events: none;
 			}
+
 			:host([disallow-drop])::after {
 				content: '';
 				position: absolute;
@@ -429,10 +433,12 @@ export class UmbBlockGridEntriesElement extends UmbFormControlMixin(UmbLitElemen
 			}
 
 			// Only when we are n an area, we like to hide the button on drag
+
 			:host([area-key]) #createButton {
 				--umb-block-grid--is-dragging--variable: var(--umb-block-grid--is-dragging) none;
 				display: var(--umb-block-grid--is-dragging--variable, grid);
 			}
+
 			:host(:not([pristine]):invalid) #createButton {
 				--uui-button-contrast: var(--uui-color-danger);
 				--uui-button-contrast-hover: var(--uui-color-danger);
