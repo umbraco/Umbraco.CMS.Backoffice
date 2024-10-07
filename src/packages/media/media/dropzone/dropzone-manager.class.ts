@@ -1,5 +1,5 @@
 import { UmbMediaDetailRepository } from '../repository/index.js';
-import type { UmbMediaDetailModel } from '../types.js';
+import type { UmbMediaDetailModel, UmbMediaValueModel } from '../types.js';
 import {
 	UmbFileDropzoneItemStatus,
 	type UmbUploadableFile,
@@ -246,8 +246,10 @@ export class UmbDropzoneManager extends UmbControllerBase {
 
 	// Scaffold
 	async #getItemScaffold(item: UmbUploadableItem, mediaTypeUnique: string): Promise<UmbMediaDetailModel> {
+		// TODO: Use a scaffolding feature to ensure consistency. [NL]
 		const name = item.temporaryFile ? item.temporaryFile.file.name : (item.folder?.name ?? '');
-		const umbracoFile = {
+		const umbracoFile: UmbMediaValueModel = {
+			editorAlias: null as any,
 			alias: 'umbracoFile',
 			value: { temporaryFileId: item.temporaryFile?.temporaryUnique },
 			culture: null,

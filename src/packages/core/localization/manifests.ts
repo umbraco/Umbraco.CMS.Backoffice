@@ -1,6 +1,16 @@
-import type { ManifestLocalization } from '../extension-registry/models/localization.model.js';
+import type { ManifestLocalization } from './extensions/localization.extension.js';
 
 export const manifests: Array<ManifestLocalization> = [
+	{
+		type: 'localization',
+		alias: 'Umb.Localization.Ar',
+		weight: -100,
+		name: 'العربية',
+		meta: {
+			culture: 'ar',
+		},
+		js: () => import('../../../assets/lang/ar.js'),
+	},
 	{
 		type: 'localization',
 		alias: 'Umb.Localization.Bs',
@@ -250,5 +260,5 @@ export const manifests: Array<ManifestLocalization> = [
 			culture: 'zh-tw',
 		},
 		js: () => import('../../../assets/lang/zh-tw.js'),
-	},
+	}
 ];

@@ -1,9 +1,8 @@
 import { UmbSubmittableWorkspaceContextBase } from '../submittable/index.js';
 import { UmbEntityWorkspaceDataManager } from '../entity/entity-workspace-data-manager.js';
-import { UMB_WORKSPACE_PATH_PATTERN } from '../paths.js';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import type { UmbEntityModel } from '@umbraco-cms/backoffice/entity';
+import type { UmbEntityModel, UmbEntityUnique } from '@umbraco-cms/backoffice/entity';
 import { UMB_DISCARD_CHANGES_MODAL, UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import {
@@ -20,20 +19,27 @@ export interface UmbEntityWorkspaceContextArgs {
 	detailRepositoryAlias: string;
 }
 
-export interface UmbEntityDetailWorkspaceContextCreateArgs {
+export interface UmbEntityDetailWorkspaceContextCreateArgs<DetailModelType> {
 	parent: UmbEntityModel;
+	preset?: Partial<DetailModelType>;
 }
 
 export abstract class UmbEntityDetailWorkspaceContextBase<
-	EntityModelType extends UmbEntityModel,
-	DetailRepositoryType extends UmbDetailRepository<EntityModelType> = UmbDetailRepository<EntityModelType>,
-> extends UmbSubmittableWorkspaceContextBase<EntityModelType> {
+	DetailModelType extends UmbEntityModel,
+	DetailRepositoryType extends UmbDetailRepository<DetailModelType> = UmbDetailRepository<DetailModelType>,
+	CreateArgsType extends
+		UmbEntityDetailWorkspaceContextCreateArgs<DetailModelType> = UmbEntityDetailWorkspaceContextCreateArgs<DetailModelType>,
+> extends UmbSubmittableWorkspaceContextBase<DetailModelType> {
 	/**
 	 * @description Data manager for the workspace.
 	 * @protected
 	 * @memberof UmbEntityWorkspaceContextBase
 	 */
-	protected readonly _data = new UmbEntityWorkspaceDataManager<EntityModelType>(this);
+	protected readonly _data = new UmbEntityWorkspaceDataManager<DetailModelType>(this);
+
+	public readonly data = this._data.current;
+	public readonly entityType = this._data.createObservablePartOfCurrent((data) => data?.entityType);
+	public readonly unique = this._data.createObservablePartOfCurrent((data) => data?.unique);
 
 	protected _getDataPromise?: Promise<any>;
 
@@ -41,7 +47,7 @@ export abstract class UmbEntityDetailWorkspaceContextBase<
 
 	#entityType: string;
 
-	#parent = new UmbObjectState<{ entityType: string; unique: string | null } | undefined>(undefined);
+	#parent = new UmbObjectState<{ entityType: string; unique: UmbEntityUnique } | undefined>(undefined);
 	readonly parentUnique = this.#parent.asObservablePart((parent) => (parent ? parent.unique : undefined));
 	readonly parentEntityType = this.#parent.asObservablePart((parent) => (parent ? parent.entityType : undefined));
 
@@ -79,7 +85,7 @@ export abstract class UmbEntityDetailWorkspaceContextBase<
 		await this.#init;
 		this.resetState();
 		this._getDataPromise = this._detailRepository!.requestByUnique(unique);
-		type GetDataType = Awaited<ReturnType<UmbDetailRepository<EntityModelType>['requestByUnique']>>;
+		type GetDataType = Awaited<ReturnType<UmbDetailRepository<DetailModelType>['requestByUnique']>>;
 		const response = (await this._getDataPromise) as GetDataType;
 		const data = response.data;
 
@@ -96,58 +102,11 @@ export abstract class UmbEntityDetailWorkspaceContextBase<
 		return this._getDataPromise;
 	}
 
-	async submit() {
-		await this.#init;
-		const currentData = this._data.getCurrent();
-
-		if (!currentData) {
-			throw new Error('Data is not set');
-		}
-		if (!currentData.unique) {
-			throw new Error('Unique is not set');
-		}
-
-		if (this.getIsNew()) {
-			const parent = this.#parent.getValue();
-			if (!parent) throw new Error('Parent is not set');
-			const { error, data } = await this._detailRepository!.create(currentData, parent.unique);
-			if (error || !data) {
-				throw error?.message ?? 'Repository did not return data after create.';
-			}
-
-			this._data.setPersisted(data);
-
-			// TODO: this might not be the right place to alert the tree, but it works for now
-			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-			const event = new UmbRequestReloadChildrenOfEntityEvent({
-				entityType: parent.entityType,
-				unique: parent.unique,
-			});
-			eventContext.dispatchEvent(event);
-			this.setIsNew(false);
-		} else {
-			const { error, data } = await this._detailRepository!.save(currentData);
-			if (error || !data) {
-				throw error?.message ?? 'Repository did not return data after create.';
-			}
-
-			this._data.setPersisted(data);
-
-			const actionEventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-			const event = new UmbRequestReloadStructureForEntityEvent({
-				unique: this.getUnique()!,
-				entityType: this.getEntityType(),
-			});
-
-			actionEventContext.dispatchEvent(event);
-		}
-	}
-
-	async create(args: UmbEntityDetailWorkspaceContextCreateArgs) {
+	async createScaffold(args: CreateArgsType) {
 		await this.#init;
 		this.resetState();
 		this.#parent.setValue(args.parent);
-		const request = this._detailRepository!.createScaffold();
+		const request = this._detailRepository!.createScaffold(args.preset);
 		this._getDataPromise = request;
 		let { data } = await request;
 		if (!data) return undefined;
@@ -159,6 +118,25 @@ export abstract class UmbEntityDetailWorkspaceContextBase<
 		this._data.setPersisted(data);
 		this._data.setCurrent(data);
 		return data;
+	}
+
+	async submit() {
+		await this.#init;
+		const currentData = this._data.getCurrent();
+
+		if (!currentData) {
+			throw new Error('Data is not set');
+		}
+
+		if (currentData.unique === undefined) {
+			throw new Error('Unique is not set');
+		}
+
+		if (this.getIsNew()) {
+			this.#create(currentData);
+		} else {
+			this.#update(currentData);
+		}
 	}
 
 	async delete(unique: string) {
@@ -174,9 +152,45 @@ export abstract class UmbEntityDetailWorkspaceContextBase<
 	 * @memberof UmbEntityWorkspaceContextBase
 	 */
 	protected _checkWillNavigateAway(newUrl: string) {
-		const workspaceBasePath = UMB_WORKSPACE_PATH_PATTERN.generateLocal({ entityType: this.getEntityType() });
-		const currentWorkspacePathIdentifier = '/' + workspaceBasePath + '/' + this.routes.getActiveLocalPath();
-		return !newUrl.includes(currentWorkspacePathIdentifier);
+		return !newUrl.includes(this.routes.getActiveLocalPath());
+	}
+
+	async #create(currentData: DetailModelType) {
+		const parent = this.#parent.getValue();
+		if (!parent) throw new Error('Parent is not set');
+		const { error, data } = await this._detailRepository!.create(currentData, parent.unique);
+		if (error || !data) {
+			throw error?.message ?? 'Repository did not return data after create.';
+		}
+
+		this._data.setPersisted(data);
+		this._data.setCurrent(data);
+
+		const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
+		const event = new UmbRequestReloadChildrenOfEntityEvent({
+			entityType: parent.entityType,
+			unique: parent.unique,
+		});
+		eventContext.dispatchEvent(event);
+		this.setIsNew(false);
+	}
+
+	async #update(currentData: DetailModelType) {
+		const { error, data } = await this._detailRepository!.save(currentData);
+		if (error || !data) {
+			throw error?.message ?? 'Repository did not return data after create.';
+		}
+
+		this._data.setPersisted(data);
+		this._data.setCurrent(data);
+
+		const actionEventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
+		const event = new UmbRequestReloadStructureForEntityEvent({
+			unique: this.getUnique()!,
+			entityType: this.getEntityType(),
+		});
+
+		actionEventContext.dispatchEvent(event);
 	}
 
 	#onWillNavigate = async (e: CustomEvent) => {
