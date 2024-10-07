@@ -43,27 +43,27 @@ export class UmbExtensionCollectionElement extends UmbCollectionDefaultElement {
 
 	protected override renderToolbar() {
 		return html`
-			<div id="toolbar" slot="header">
-				<uui-input @input=${this.#onSearch} label="Search" placeholder="Search..." id="input-search"></uui-input>
-				<uui-select
-					label="Select type..."
-					placeholder="Select type..."
-					.options=${this.#options}
-					@change=${this.#onChange}></uui-select>
-			</div>
+			<umb-collection-toolbar slot="header">
+				<div id="toolbar">
+					<uui-input @input=${this.#onSearch} label="Search" placeholder="Search..." id="input-search"></uui-input>
+					<uui-select
+						label="Select type..."
+						placeholder="Select type..."
+						.options=${this.#options}
+						@change=${this.#onChange}></uui-select>
+				</div>
+			</umb-collection-toolbar>
 		`;
 	}
 
 	static override styles = [
 		css`
 			#toolbar {
+				flex: 1;
 				display: flex;
 				gap: var(--uui-size-space-5);
 				justify-content: space-between;
 				align-items: center;
-				padding-left: var(--uui-size-space-4);
-				padding-right: var(--uui-size-space-6);
-				width: 100%;
 			}
 			uui-input {
 				width: 100%;
