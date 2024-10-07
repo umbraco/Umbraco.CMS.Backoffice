@@ -20,9 +20,9 @@ export class UmbBlockListContentExpressionElement extends UmbUfmElementBase {
 						this.observe(context.contentElementTypeName, (value) => {
 							this.value = this.localize.term(value!);
 						});
-					}else{
+					} else {
 						this.value = exprestionValue;
-					}	
+					}
 				},
 				'observeValue',
 			);
