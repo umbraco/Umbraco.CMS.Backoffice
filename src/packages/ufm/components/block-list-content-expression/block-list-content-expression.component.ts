@@ -1,9 +1,9 @@
 import type { UfmToken } from '../../plugins/marked-ufm.plugin.js';
 import { UmbUfmComponentBase } from '../ufm-component-base.js';
 
-import './url-picker-in-list.element.js';
+import './block-list-content-expression.element.js';
 
-export class UmbUfmUrlPickerInListComponent extends UmbUfmComponentBase {
+export class BlockListContentExpressionComponent extends UmbUfmComponentBase {
 	render(token: UfmToken) {
 		if (!token.text) return;
 
@@ -12,4 +12,4 @@ export class UmbUfmUrlPickerInListComponent extends UmbUfmComponentBase {
 	}
 }
 
-export { UmbUfmUrlPickerInListComponent as api };
+export { BlockListContentExpressionComponent as api };

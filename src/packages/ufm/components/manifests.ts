@@ -26,7 +26,7 @@ export const manifests: Array<ManifestUfmComponent> = [
 		type: 'ufmComponent',
 		alias: 'Umb.Markdown.UrlPickerInList',
 		name: 'Url Picker In List',
-		api: () => import('./url-picker-in-list/url-picker-in-list.component.js'),
+		api: () => import('./block-list-content-expression/block-list-content-expression.component.js'),
 		meta: { marker: '@' },
 	},
 ];
