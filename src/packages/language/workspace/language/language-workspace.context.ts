@@ -8,6 +8,7 @@ import {
 	UmbWorkspaceIsNewRedirectController,
 	type UmbRoutableWorkspaceContext,
 	UmbEntityDetailWorkspaceContextBase,
+	UmbWorkspaceIsNewRedirectControllerAlias,
 } from '@umbraco-cms/backoffice/workspace';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 
@@ -17,9 +18,6 @@ export class UmbLanguageWorkspaceContext
 {
 	public readonly repository: UmbLanguageDetailRepository = new UmbLanguageDetailRepository(this);
 
-	readonly data = this._data.current;
-
-	readonly unique = this._data.createObservablePartOfCurrent((data) => data?.unique);
 	readonly name = this._data.createObservablePartOfCurrent((data) => data?.name);
 
 	constructor(host: UmbControllerHost) {
@@ -47,7 +45,7 @@ export class UmbLanguageWorkspaceContext
 				path: 'edit/:unique',
 				component: UmbLanguageWorkspaceEditorElement,
 				setup: (_component, info) => {
-					this.removeUmbControllerByAlias('isNewRedirectController');
+					this.removeUmbControllerByAlias(UmbWorkspaceIsNewRedirectControllerAlias);
 					this.load(info.match.params.unique);
 				},
 			},
@@ -56,6 +54,10 @@ export class UmbLanguageWorkspaceContext
 
 	setName(name: string) {
 		this._data.updateCurrent({ name });
+	}
+
+	getName() {
+		return this._data.getCurrent()?.name;
 	}
 
 	setCulture(unique: string) {

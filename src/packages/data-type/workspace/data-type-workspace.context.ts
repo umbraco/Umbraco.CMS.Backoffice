@@ -18,7 +18,7 @@ import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import type {
 	PropertyEditorSettingsDefaultData,
 	PropertyEditorSettingsProperty,
-} from '@umbraco-cms/backoffice/extension-registry';
+} from '@umbraco-cms/backoffice/property-editor';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbValidationContext } from '@umbraco-cms/backoffice/validation';
 
@@ -46,9 +46,6 @@ export class UmbDataTypeWorkspaceContext
 	implements UmbInvariantDatasetWorkspaceContext, UmbRoutableWorkspaceContext
 {
 	readonly name = this._data.createObservablePartOfCurrent((data) => data?.name);
-	readonly unique = this._data.createObservablePartOfCurrent((data) => data?.unique);
-	readonly entityType = this._data.createObservablePartOfCurrent((data) => data?.entityType);
-
 	readonly propertyEditorUiAlias = this._data.createObservablePartOfCurrent((data) => data?.editorUiAlias);
 	readonly propertyEditorSchemaAlias = this._data.createObservablePartOfCurrent((data) => data?.editorAlias);
 

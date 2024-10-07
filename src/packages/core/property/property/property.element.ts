@@ -9,8 +9,8 @@ import {
 	UmbFormControlValidator,
 	UmbObserveValidationStateController,
 } from '@umbraco-cms/backoffice/validation';
-import type { ManifestPropertyEditorUi } from '@umbraco-cms/backoffice/extension-registry';
 import type {
+	ManifestPropertyEditorUi,
 	UmbPropertyEditorConfigCollection,
 	UmbPropertyEditorConfig,
 } from '@umbraco-cms/backoffice/property-editor';

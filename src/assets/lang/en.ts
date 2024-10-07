@@ -664,6 +664,8 @@ export default {
 		a11yCreateItem: 'Create item',
 		a11yEdit: 'Edit',
 		a11yName: 'Name',
+		rteParagraph: 'Write something amazing...',
+		rteHeading: "What's the title?",
 	},
 	editcontenttype: {
 		createListView: 'Create custom list view',
@@ -1327,7 +1329,7 @@ export default {
 		packages: 'Packages',
 		marketplace: 'Marketplace',
 		settings: 'Settings',
-		translation: 'Dictionary',
+		translation: 'Translation',
 		users: 'Users',
 	},
 	help: {
@@ -2625,5 +2627,11 @@ export default {
 		minimapConfigDescription: 'Show a minimap in the code editor.',
 		wordWrapConfigLabel: 'Word wrap',
 		wordWrapConfigDescription: 'Enable word wrapping in the code editor.',
+	},
+	tiptap: {
+		extGroup_formatting: 'Text formatting',
+		extGroup_interactive: 'Interactive elements',
+		extGroup_media: 'Embeds and media',
+		extGroup_structure: 'Content structure',
 	},
 } as UmbLocalizationDictionary;
