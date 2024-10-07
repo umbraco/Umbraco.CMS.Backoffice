@@ -24,8 +24,8 @@ export const manifests: Array<ManifestUfmComponent> = [
 	},
 	{
 		type: 'ufmComponent',
-		alias: 'Umb.Markdown.UrlPickerInList',
-		name: 'Url Picker In List',
+		alias: 'Umb.Markdown.BlockListExpressionEvaluater',
+		name: 'Block List Expression Evaluater',
 		api: () => import('./block-list-content-expression/block-list-content-expression.component.js'),
 		meta: { marker: '@' },
 	},
