@@ -1,7 +1,7 @@
 import type { UmbDictionaryItemModel } from '../index.js';
 import { UmbDictionarySearchRepository } from './dictionary-search.repository.js';
-import type { UmbSearchProvider, UmbSearchRequestArgs } from '@umbraco-cms/backoffice/search';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
+import type { UmbSearchProvider, UmbSearchRequestArgs } from '@umbraco-cms/backoffice/search';
 
 export interface UmbDictionarySearchItemModel extends UmbDictionaryItemModel {
 	href: string;

@@ -1,9 +1,9 @@
 import { UMB_DICTIONARY_ENTITY_TYPE } from '../entity.js';
 import type { UmbDictionarySearchItemModel } from './dictionary.search-provider.js';
-import type { UmbSearchDataSource, UmbSearchRequestArgs } from '@umbraco-cms/backoffice/search';
-import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { DictionaryService } from '@umbraco-cms/backoffice/external/backend-api';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { DictionaryService } from '@umbraco-cms/backoffice/external/backend-api';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import type { UmbSearchDataSource, UmbSearchRequestArgs } from '@umbraco-cms/backoffice/search';
 
 /**
  * A data source for the Rollback that fetches data from the server
