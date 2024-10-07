@@ -11,11 +11,11 @@ export class UmbBlockListContentExpressionElement extends UmbUfmElementBase {
 	constructor() {
 		super();
 		this.consumeContext(UMB_BLOCK_ENTRY_CONTEXT, async (context) => {
-			let content = await context.contentValues();
+			const content = await context.contentValues();
 			this.observe(
 				content,
 				(value) => {
-					let exprestionValue = this.getValueFromExpression(value, this.alias!);
+					const exprestionValue = this.getValueFromExpression(value, this.alias!);
 					if (exprestionValue === undefined) {
 						this.observe(context.contentElementTypeName, (value) => {
 							this.value = this.localize.term(value!);
