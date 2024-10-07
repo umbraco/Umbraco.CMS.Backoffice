@@ -3,7 +3,7 @@ import { UmbUfmComponentBase } from '../ufm-component-base.js';
 
 import './block-list-content-expression.element.js';
 
-export class BlockListContentExpressionComponent extends UmbUfmComponentBase {
+export class UmbBlockListContentExpressionComponent extends UmbUfmComponentBase {
 	render(token: UfmToken) {
 		if (!token.text) return;
 
@@ -12,4 +12,4 @@ export class BlockListContentExpressionComponent extends UmbUfmComponentBase {
 	}
 }
 
-export { BlockListContentExpressionComponent as api };
+export { UmbBlockListContentExpressionComponent as api };

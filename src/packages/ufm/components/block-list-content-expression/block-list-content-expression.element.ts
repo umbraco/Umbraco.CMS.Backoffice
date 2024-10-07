@@ -4,7 +4,7 @@ import { UMB_BLOCK_ENTRY_CONTEXT } from '@umbraco-cms/backoffice/block';
 
 const elementName = 'ufm-url-picker-in-list';
 @customElement(elementName)
-export class BlockListContentExpressionElement extends UmbUfmElementBase {
+export class UmbBlockListContentExpressionElement extends UmbUfmElementBase {
 	@property()
 	alias?: string;
 
@@ -29,9 +29,9 @@ export class BlockListContentExpressionElement extends UmbUfmElementBase {
 		});
 	}
 }
-export { BlockListContentExpressionElement as element };
+export { UmbBlockListContentExpressionElement as element };
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: BlockListContentExpressionElement;
+		[elementName]: UmbBlockListContentExpressionElement;
 	}
 }
