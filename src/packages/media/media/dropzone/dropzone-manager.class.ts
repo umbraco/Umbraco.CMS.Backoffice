@@ -1,28 +1,26 @@
 import { UmbMediaDetailRepository } from '../repository/index.js';
 import type { UmbMediaDetailModel, UmbMediaValueModel } from '../types.js';
-import {
-	UmbFileDropzoneItemStatus,
-	type UmbUploadableFile,
-	type UmbUploadableFolder,
-	type UmbFileDropzoneDroppedItems,
-	type UmbFileDropzoneProgress,
-	type UmbUploadableItem,
-	type UmbAllowedMediaTypesOfExtension,
-	type UmbAllowedChildrenOfMediaType,
-} from './types.js';
 import { getExtensionFromMime } from './utils.js';
+import { UmbFileDropzoneItemStatus } from './types.js';
 import { UMB_DROPZONE_MEDIA_TYPE_PICKER_MODAL } from './modals/index.js';
-import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
-import {
-	TemporaryFileStatus,
-	UmbTemporaryFileManager,
-	type UmbTemporaryFileModel,
-} from '@umbraco-cms/backoffice/temporary-file';
+import type {
+	UmbUploadableFile,
+	UmbUploadableFolder,
+	UmbFileDropzoneDroppedItems,
+	UmbFileDropzoneProgress,
+	UmbUploadableItem,
+	UmbAllowedMediaTypesOfExtension,
+	UmbAllowedChildrenOfMediaType,
+} from './types.js';
+import { TemporaryFileStatus, UmbTemporaryFileManager } from '@umbraco-cms/backoffice/temporary-file';
 import { UmbArrayState, UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
+import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 import { UmbId } from '@umbraco-cms/backoffice/id';
-import { type UmbAllowedMediaTypeModel, UmbMediaTypeStructureRepository } from '@umbraco-cms/backoffice/media-type';
+import { UmbMediaTypeStructureRepository } from '@umbraco-cms/backoffice/media-type';
 import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import type { UmbAllowedMediaTypeModel } from '@umbraco-cms/backoffice/media-type';
+import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import type { UmbTemporaryFileModel } from '@umbraco-cms/backoffice/temporary-file';
 
 /**
  * Manages the dropzone and uploads folders and files to the server.
@@ -32,7 +30,7 @@ import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
  * @observable progressItems - Emits the items with their current status.
  */
 export class UmbDropzoneManager extends UmbControllerBase {
-	#host: UmbControllerHost;
+	readonly #host: UmbControllerHost;
 	#isFoldersAllowed = true;
 
 	#mediaTypeStructure = new UmbMediaTypeStructureRepository(this);
@@ -41,15 +39,15 @@ export class UmbDropzoneManager extends UmbControllerBase {
 	#tempFileManager = new UmbTemporaryFileManager(this);
 
 	// The available media types for a file extension.
-	#availableMediaTypesOf = new UmbArrayState<UmbAllowedMediaTypesOfExtension>([], (x) => x.extension);
+	readonly #availableMediaTypesOf = new UmbArrayState<UmbAllowedMediaTypesOfExtension>([], (x) => x.extension);
 
 	// The media types that the parent will allow to be created under it.
-	#allowedChildrenOf = new UmbArrayState<UmbAllowedChildrenOfMediaType>([], (x) => x.mediaTypeUnique);
+	readonly #allowedChildrenOf = new UmbArrayState<UmbAllowedChildrenOfMediaType>([], (x) => x.mediaTypeUnique);
 
-	#progress = new UmbObjectState<UmbFileDropzoneProgress>({ total: 0, completed: 0 });
+	readonly #progress = new UmbObjectState<UmbFileDropzoneProgress>({ total: 0, completed: 0 });
 	public readonly progress = this.#progress.asObservable();
 
-	#progressItems = new UmbArrayState<UmbUploadableItem>([], (x) => x.unique);
+	readonly #progressItems = new UmbArrayState<UmbUploadableItem>([], (x) => x.unique);
 	public readonly progressItems = this.#progressItems.asObservable();
 
 	constructor(host: UmbControllerHost) {
@@ -285,7 +283,7 @@ export class UmbDropzoneManager extends UmbControllerBase {
 		this.#progress.update({ completed: progress.completed + 1 });
 	}
 
-	#prepareItemsAsUploadable = (
+	readonly #prepareItemsAsUploadable = (
 		{ folders, files }: UmbFileDropzoneDroppedItems,
 		parentUnique: string | null,
 	): Array<UmbUploadableItem> => {

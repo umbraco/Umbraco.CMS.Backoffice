@@ -1,12 +1,11 @@
 import { UmbDropzoneManager } from './dropzone-manager.class.js';
 import { UmbFileDropzoneItemStatus, type UmbUploadableItem } from './types.js';
-import { css, html, customElement, property, state, ifDefined } from '@umbraco-cms/backoffice/external/lit';
-import type { UUIFileDropzoneElement, UUIFileDropzoneEvent } from '@umbraco-cms/backoffice/external/uui';
+import { css, customElement, html, ifDefined, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import type { UUIFileDropzoneElement, UUIFileDropzoneEvent } from '@umbraco-cms/backoffice/external/uui';
 
 @customElement('umb-dropzone')
 export class UmbDropzoneElement extends UmbLitElement {
-	/** Where the uploads should be stored. */
 	@property({ attribute: false })
 	parentUnique: string | null = null;
 
@@ -22,7 +21,6 @@ export class UmbDropzoneElement extends UmbLitElement {
 	@property({ type: Boolean, reflect: true })
 	disabled = false;
 
-	private _disableFolderUpload = false;
 	@property({ type: Boolean, attribute: 'disable-folder-upload', reflect: true })
 	public get disableFolderUpload() {
 		return this._disableFolderUpload;
@@ -30,6 +28,7 @@ export class UmbDropzoneElement extends UmbLitElement {
 	public set disableFolderUpload(isAllowed: boolean) {
 		this.dropzoneManager.setIsFoldersAllowed(!isAllowed);
 	}
+	private readonly _disableFolderUpload = false;
 
 	@state()
 	private _progressItems: Array<UmbUploadableItem> = [];
