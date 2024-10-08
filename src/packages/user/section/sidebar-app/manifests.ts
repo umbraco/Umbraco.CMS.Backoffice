@@ -1,3 +1,4 @@
+import { path } from '@umbraco-cms/backoffice/router';
 import { UMB_USER_MANAGEMENT_SECTION_ALIAS } from '../constants.js';
 import { UMB_USER_MANAGEMENT_MENU_ALIAS } from '../menu/index.js';
 
@@ -11,6 +12,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		meta: {
 			label: '#treeHeaders_users',
 			menu: UMB_USER_MANAGEMENT_MENU_ALIAS,
+			path:'/section/user-management'
 		},
 		conditions: [
 			{

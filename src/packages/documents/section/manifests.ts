@@ -26,6 +26,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		weight: 100,
 		meta: {
 			label: '#sections_content',
+			path: '/section/content/dashboard/dashboardTabsContentIntro',
 			menu: UMB_CONTENT_MENU_ALIAS,
 			entityType: UMB_DOCUMENT_ROOT_ENTITY_TYPE,
 		},

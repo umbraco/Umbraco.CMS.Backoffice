@@ -3,6 +3,7 @@ import type { ManifestSectionSidebarApp } from '@umbraco-cms/backoffice/section'
 export interface MetaSectionSidebarAppMenuKind {
 	label: string;
 	menu: string;
+	path:string;
 }
 
 export interface ManifestSectionSidebarAppBaseMenu extends ManifestSectionSidebarApp {

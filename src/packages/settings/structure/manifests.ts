@@ -17,6 +17,7 @@ export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> =
 		meta: {
 			label: '#treeHeaders_structureGroup',
 			menu: UMB_STRUCTURE_SETTINGS_MENU_ALIAS,
+			path:'/section/settings/dashboard/welcome'
 		},
 		conditions: [
 			{

@@ -1,3 +1,4 @@
+import { path } from '@umbraco-cms/backoffice/router';
 import { UMB_TRANSLATION_SECTION_ALIAS } from '../section/index.js';
 import { UMB_TRANSLATION_MENU_ALIAS } from './constants.js';
 
@@ -17,6 +18,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 			label: '#general_dictionary', // We are using dictionary here on purpose until dictionary has its own menu item.
 			menu: UMB_TRANSLATION_MENU_ALIAS,
 			entityType: 'dictionary-root', // hard-coded on purpose to avoid circular dependency. We need another way to add actions to a menu kind.
+			path:'/section/translation/dashboard/dictionary-overview/table'
 		},
 		conditions: [
 			{

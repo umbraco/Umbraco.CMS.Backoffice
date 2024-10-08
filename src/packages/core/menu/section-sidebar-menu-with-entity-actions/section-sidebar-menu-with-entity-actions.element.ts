@@ -21,7 +21,12 @@ export class UmbSectionSidebarMenuWithEntityActionsElement extends UmbSectionSid
 	override renderHeader() {
 		return html`
 			<div id="header">
-				<h3>${this.localize.string(this.manifest?.meta?.label ?? '')}</h3>
+			${this.manifest?.meta?.path 
+			? html`<a id="default-nav" href="${this.localize.string(this.manifest.meta.path)}">
+					 <h3>${this.localize.string(this.manifest.meta.label ?? '')}</h3>
+				   </a>`
+			: html`<h3>${this.localize.string(this.manifest?.meta?.label ?? '')}</h3>`
+		  }
 				<umb-entity-actions-bundle
 					slot="actions"
 					.unique=${null}
@@ -42,6 +47,15 @@ export class UmbSectionSidebarMenuWithEntityActionsElement extends UmbSectionSid
 			}
 			#header > :first-child {
 				flex-grow: 1;
+			}
+			#default-nav {
+				text-decoration: none;
+				color: inherit;
+			}
+
+			#default-nav:hover {
+				text-decoration: none;
+				color: inherit;
 			}
 		`,
 	];

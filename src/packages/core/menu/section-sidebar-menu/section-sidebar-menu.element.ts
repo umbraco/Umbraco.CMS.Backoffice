@@ -27,8 +27,15 @@ export class UmbSectionSidebarMenuElement<
 	manifest?: ManifestType;
 
 	renderHeader() {
-		return html`<h3>${this.localize.string(this.manifest?.meta?.label ?? '')}</h3>`;
-	}
+		return html`
+		  ${this.manifest?.meta?.path 
+			? html`<a id="default-nav" href="${this.localize.string(this.manifest.meta.path)}">
+					 <h3>${this.localize.string(this.manifest.meta.label ?? '')}</h3>
+				   </a>`
+			: html`<h3>${this.localize.string(this.manifest?.meta?.label ?? '')}</h3>`
+		  }
+		`;
+	  }
 
 	override render() {
 		return html`
@@ -45,6 +52,15 @@ export class UmbSectionSidebarMenuElement<
 		css`
 			h3 {
 				padding: var(--uui-size-4) var(--uui-size-8);
+			}
+			#default-nav {
+				text-decoration: none;
+				color: inherit;
+			}
+
+			#default-nav:hover {
+				text-decoration: none;
+				color: inherit;
 			}
 		`,
 	];

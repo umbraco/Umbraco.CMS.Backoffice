@@ -1,3 +1,4 @@
+import { path } from '@umbraco-cms/backoffice/router';
 import { UMB_MEDIA_ROOT_ENTITY_TYPE, UMB_MEDIA_MENU_ALIAS } from '../media/index.js';
 
 const sectionAlias = 'Umb.Section.Media';
@@ -29,6 +30,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 			label: '#sections_media',
 			menu: UMB_MEDIA_MENU_ALIAS,
 			entityType: UMB_MEDIA_ROOT_ENTITY_TYPE,
+			path:'/section/media/view/media/collection/grid'
 		},
 		conditions: [
 			{
