@@ -10,7 +10,6 @@ import {
 	type UmbAllowedMediaTypesOfExtension,
 	type UmbAllowedChildrenOfMediaType,
 } from './types.js';
-import { getExtensionFromMime } from './utils.js';
 import { UMB_DROPZONE_MEDIA_TYPE_PICKER_MODAL } from './modals/index.js';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
@@ -203,7 +202,8 @@ export class UmbDropzoneManager extends UmbControllerBase {
 		const parent = item.parentUnique ? await this.#mediaDetailRepository.requestByUnique(item.parentUnique) : null;
 		const allowedChildren = await this.#getAllowedChildrenOf(parent?.data?.mediaType.unique ?? null);
 
-		const extension = getExtensionFromMime(item.temporaryFile?.file.type ?? '');
+		const extension = item.temporaryFile?.file.name.split('.').pop() ?? null;
+
 		// Check which media types allow the file's extension
 		const availableMediaType = await this.#getAvailableMediaTypesOf(extension);
 
