@@ -63,6 +63,9 @@ export class UmbDropzoneManager extends UmbControllerBase {
 		return this.#isFoldersAllowed;
 	}
 
+	/** @deprecated Please use `createMediaItems()` instead; this method will be removed in Umbraco 17. */
+	public createFilesAsMedia = this.createMediaItems;
+
 	/**
 	 * Uploads files and folders to the server and creates the media items with corresponding media type.\
 	 * Allows the user to pick a media type option if multiple types are allowed.
@@ -79,6 +82,9 @@ export class UmbDropzoneManager extends UmbControllerBase {
 			await this.#createMediaItems(uploadableItems);
 		}
 	}
+
+	/** @deprecated Please use `createTemporaryFiles()` instead; this method will be removed in Umbraco 17. */
+	public createFilesAsTemporary = this.createTemporaryFiles;
 
 	/**
 	 * Uploads the files as temporary files and returns the data.

@@ -35,6 +35,14 @@ export class UmbDropzoneElement extends UmbLitElement {
 
 	public dropzoneManager: UmbDropzoneManager;
 
+	/**
+	 * @deprecated Please use `getItems()` instead; this method will be removed in Umbraco 17.
+	 * @returns {Array<UmbUploadableItem>} An array of uploadable items.
+	 */
+	public getFiles() {
+		return this.getItems();
+	}
+
 	public getItems() {
 		return this._progressItems;
 	}
