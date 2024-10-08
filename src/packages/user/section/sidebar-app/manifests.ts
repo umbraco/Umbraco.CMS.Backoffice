@@ -1,4 +1,3 @@
-import { path } from '@umbraco-cms/backoffice/router';
 import { UMB_USER_MANAGEMENT_SECTION_ALIAS } from '../constants.js';
 import { UMB_USER_MANAGEMENT_MENU_ALIAS } from '../menu/index.js';
 
