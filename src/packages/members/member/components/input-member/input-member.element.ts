@@ -4,7 +4,7 @@ import { css, customElement, html, nothing, property, repeat, state } from '@umb
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
+import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/workspace';
 import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
 import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 import { UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
@@ -106,7 +106,7 @@ export class UmbInputMemberElement extends UmbFormControlMixin<string | undefine
 	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
 	 * @type {boolean}
 	 * @attr
-	 * @default false
+	 * @default
 	 */
 	@property({ type: Boolean, reflect: true })
 	public get readonly() {

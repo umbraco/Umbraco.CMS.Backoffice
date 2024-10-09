@@ -1,8 +1,12 @@
 import { UMB_USER_DETAIL_REPOSITORY_ALIAS, UMB_USER_ITEM_REPOSITORY_ALIAS } from '../repository/index.js';
 import { UMB_USER_ENTITY_TYPE } from '../entity.js';
-import type { ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 
-const entityActions: Array<ManifestTypes> = [
+import { manifests as createManifests } from './create/manifests.js';
+
+import type { UmbExtensionManifestKind } from '@umbraco-cms/backoffice/extension-registry';
+import type { ManifestEntityAction } from '@umbraco-cms/backoffice/entity-action';
+
+const entityActions: Array<ManifestEntityAction> = [
 	{
 		type: 'entityAction',
 		kind: 'delete',
@@ -84,6 +88,7 @@ const entityActions: Array<ManifestTypes> = [
 		meta: {
 			icon: 'icon-settings',
 			label: '#user_configureMfa',
+			additionalOptions: true,
 		},
 		conditions: [
 			{
@@ -93,4 +98,4 @@ const entityActions: Array<ManifestTypes> = [
 	},
 ];
 
-export const manifests: Array<ManifestTypes> = [...entityActions];
+export const manifests: Array<UmbExtensionManifest | UmbExtensionManifestKind> = [...entityActions, ...createManifests];

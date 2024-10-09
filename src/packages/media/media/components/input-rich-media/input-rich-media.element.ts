@@ -3,7 +3,7 @@ import { UmbMediaItemRepository } from '../../repository/index.js';
 import { UMB_IMAGE_CROPPER_EDITOR_MODAL, UMB_MEDIA_PICKER_MODAL } from '../../modals/index.js';
 import type { UmbCropModel, UmbMediaPickerPropertyValue } from '../../types.js';
 import type { UmbMediaItemModel } from '../../repository/index.js';
-import type { UmbUploadableFileModel } from '../../dropzone/index.js';
+import type { UmbUploadableItem } from '../../dropzone/types.js';
 import { customElement, html, nothing, property, repeat, state } from '@umbraco-cms/backoffice/external/lit';
 import { umbConfirmModal, UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
@@ -154,7 +154,7 @@ export class UmbInputRichMediaElement extends UUIFormControlMixin(UmbLitElement,
 	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
 	 * @type {boolean}
 	 * @attr
-	 * @default false
+	 * @default
 	 */
 	@property({ type: Boolean, reflect: true })
 	public get readonly() {
@@ -331,7 +331,7 @@ export class UmbInputRichMediaElement extends UUIFormControlMixin(UmbLitElement,
 	}
 
 	async #onUploadCompleted(e: CustomEvent) {
-		const completed = e.detail?.completed as Array<UmbUploadableFileModel>;
+		const completed = e.detail as Array<UmbUploadableItem>;
 		const uploaded = completed.map((file) => file.unique);
 		this.#addItems(uploaded);
 	}
@@ -346,7 +346,7 @@ export class UmbInputRichMediaElement extends UUIFormControlMixin(UmbLitElement,
 	#renderDropzone() {
 		if (this.readonly) return nothing;
 		if (this._cards && this._cards.length >= this.max) return;
-		return html`<umb-dropzone @change=${this.#onUploadCompleted}></umb-dropzone>`;
+		return html`<umb-dropzone ?multiple=${this.max > 1} @complete=${this.#onUploadCompleted}></umb-dropzone>`;
 	}
 
 	#renderItems() {

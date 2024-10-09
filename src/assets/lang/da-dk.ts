@@ -357,6 +357,7 @@ export default {
 	member: {
 		createNewMember: 'Opret et nyt medlem',
 		allMembers: 'Alle medlemmer',
+		kind: 'Slags',
 		memberGroupNoProperties: 'Medlemgrupper har ingen yderligere egenskaber til redigering.',
 		'2fa': 'Totrinsbekræftelse',
 		duplicateMemberLogin: 'A member with this login already exists',
@@ -364,6 +365,8 @@ export default {
 		memberHasPassword: 'The member already has a password set',
 		memberLockoutNotEnabled: 'Lockout is not enabled for this member',
 		memberNotInGroup: "The member is not in group '%0%'",
+		memberKindDefault: 'Bruger',
+		memberKindApi: 'API Bruger',
 	},
 	contentType: {
 		copyFailed: 'Kopiering af indholdstypen fejlede',
@@ -585,9 +588,9 @@ export default {
 	},
 	dictionaryItem: {
 		description:
-			"\n      Rediger de forskellige sprogversioner for ordbogselementet '%0%' herunder.<br />Du tilføjer flere sprog under 'sprog' i menuen til venstre </key>\n      ",
+			"Rediger de forskellige sprogversioner for ordbogselementet '%0%' herunder. Du tilføjer flere sprog under 'sprog' i menuen til venstre.",
 		displayName: 'Kulturnavn',
-		changeKeyError: "\n      Navnet '%0%' eksisterer allerede.\n   ",
+		changeKeyError: "Navnet '%0%' eksisterer allerede.",
 		overviewTitle: 'Ordbogsoversigt',
 	},
 	examineManagement: {
@@ -640,6 +643,8 @@ export default {
 		a11yCreateItem: 'Opret element',
 		a11yEdit: 'Rediger',
 		a11yName: 'Navn',
+		rteParagraph: 'Udfold din kreativitet...',
+		rteHeading: 'Hvad skal overskriften være?',
 	},
 	editcontenttype: {
 		createListView: 'Opret brugerdefineret listevisning',
@@ -1078,8 +1083,8 @@ export default {
 		relateToOriginal: 'Relater det kopierede element til originalen',
 	},
 	notifications: {
-		editNotifications: 'Vælg dine notificeringer for <strong>%0%</strong>',
-		notificationsSavedFor: 'Notificeringer er gemt for',
+		editNotifications: 'Vælg dine notificeringer for %0%',
+		notificationsSavedFor: 'Notificeringer er gemt for %0%',
 		notifications: 'Notificeringer',
 	},
 	packager: {
@@ -1633,7 +1638,7 @@ export default {
 		memberCanEditDescription: 'Tillad at denne egenskab kan redigeres af medlemmet på dets profil.',
 		isSensitiveData: 'Er følsom data',
 		isSensitiveDataDescription:
-			'Skjul værdien af denne egenskab for indholdsredaktører der ikke har adgang\n      til at se følsomme data\n    ',
+			'Skjul værdien af denne egenskab for indholdsredaktører der ikke har adgang til at se følsomme data',
 		showOnMemberProfile: 'Vis på medlemsprofil',
 		showOnMemberProfileDescription: 'Tillad at denne egenskab kan vises på medlemmets profil.',
 		tabHasNoSortOrder: 'fane har ingen sorteringsrækkefølge',
@@ -1832,6 +1837,9 @@ export default {
 		administrators: 'Administrator',
 		categoryField: 'Kategorifelt',
 		createDate: 'Bruger oprettet',
+		createUserHeadline: (kind: string) => {
+			return kind === 'Api' ? 'Opret API bruger' : 'Opret bruger';
+		},
 		changePassword: 'Skift dit kodeord',
 		changePhoto: 'Skift billede',
 		newPassword: 'Nyt kodeord',
@@ -1858,6 +1866,7 @@ export default {
 		inviteAnotherUser: 'Invitér anden bruger',
 		inviteUserHelp:
 			'Invitér nye brugere til at give dem adgang til Umbraco. En invitation vil blive sendt\n      via e-mail til brugeren med oplysninger om, hvordan man logger ind i Umbraco.\n    ',
+		kind: 'Slags',
 		language: 'Sprog',
 		languageHelp: 'Indstil det sprog, du vil se i menuer og dialoger',
 		lastLockoutDate: 'Senest låst ude',
@@ -1953,6 +1962,8 @@ export default {
 		sortNameDescending: 'Navn (Å-A)',
 		sortCreateDateAscending: 'Nyeste',
 		sortCreateDateDescending: 'Ældste',
+		userKindDefault: 'Bruger',
+		userKindApi: 'API Bruger',
 		sortLastLoginDateDescending: 'Sidst logget ind',
 		noUserGroupsAdded: 'Ingen brugere er blevet tilføjet',
 		'2faDisableText': 'Hvis du ønsker at slå denne totrinsbekræftelse fra, så skal du nu indtaste koden fra din enhed:',
@@ -2274,7 +2285,7 @@ export default {
 		forceHideContentEditorHelp: 'Skjul indholds redigerings knappen samt indholdseditoren i Blok Redigerings vinduet',
 		gridInlineEditing: 'Direkte redigering',
 		gridInlineEditingHelp:
-			'Tilføjer direkte redigering a det første felt. Yderligere felter optræder kun i redigerings vinduet.',
+			'Tilføjer direkte redigering af det første felt. Yderligere felter optræder kun i redigerings vinduet.',
 		blockHasChanges: 'Du har lavet ændringer til dette indhold. Er du sikker på at du vil kassere dem?',
 		confirmCancelBlockCreationHeadline: 'Annuller oprettelse?',
 		confirmCancelBlockCreationMessage: 'Er du sikker på at du vil annullere oprettelsen.',
@@ -2350,6 +2361,9 @@ export default {
 		allowBlockInAreas: 'Allow in areas',
 		allowBlockInAreasHelp:
 			'Make this block available by default within the areas of other Blocks (unless explicit permissions are set for these areas).',
+		createThisFor: 'Opret %0% for %1%',
+		insertBlock: 'Indsæt Block',
+		labelInlineMode: 'Indsæt på linje med tekst',
 	},
 	contentTemplatesDashboard: {
 		whatHeadline: 'Hvad er Indholdsskabeloner?',

@@ -1,8 +1,7 @@
 import { UMB_PROPERTY_TYPE_ENTITY_TYPE, UMB_PROPERTY_TYPE_WORKSPACE_ALIAS } from './constants.js';
 import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
-import type { ManifestTypes } from '@umbraco-cms/backoffice/extension-registry';
 
-export const manifests: Array<ManifestTypes> = [
+export const manifests: Array<UmbExtensionManifest> = [
 	{
 		type: 'workspace',
 		kind: 'routable',
@@ -17,7 +16,7 @@ export const manifests: Array<ManifestTypes> = [
 		type: 'workspaceView',
 		alias: 'Umb.WorkspaceView.PropertyType.Settings',
 		name: 'Property Type Settings Workspace View',
-		js: () => import('./views/settings/property-workspace-view-settings.element.js'),
+		element: () => import('./views/settings/property-workspace-view-settings.element.js'),
 		weight: 1000,
 		meta: {
 			label: '#general_content',

@@ -5,7 +5,8 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/document';
-import { UMB_MODAL_MANAGER_CONTEXT, UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
+import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/workspace';
 import { UMB_TEMPLATE_PICKER_MODAL, UmbTemplateItemRepository } from '@umbraco-cms/backoffice/template';
 import type { DocumentUrlInfoModel } from '@umbraco-cms/backoffice/external/backend-api';
 import type { UmbDocumentTypeDetailModel } from '@umbraco-cms/backoffice/document-type';
@@ -264,7 +265,7 @@ export class UmbDocumentWorkspaceViewInfoElement extends UmbLitElement {
 								standalone
 								name=${ifDefined(this._templateName)}
 								href=${editTemplatePath + 'edit/' + this._templateUnique}>
-								<uui-icon slot="icon" name="icon-newspaper"></uui-icon>
+								<uui-icon slot="icon" name="icon-document-html"></uui-icon>
 								<uui-action-bar slot="actions">
 									<uui-button
 										label=${this.localize.term('general_choose')}

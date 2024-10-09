@@ -1,9 +1,9 @@
+import type { ManifestLocalization } from '../../extensions/localization.extension.js';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { css, html, customElement, query, state, property } from '@umbraco-cms/backoffice/external/lit';
 import type { UUISelectEvent } from '@umbraco-cms/backoffice/external/uui';
 import { UUIFormControlMixin } from '@umbraco-cms/backoffice/external/uui';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import type { ManifestLocalization } from '@umbraco-cms/backoffice/extension-registry';
 import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
 
 interface UmbCultureInputOption {
@@ -65,16 +65,16 @@ export class UmbUiCultureInputElement extends UUIFormControlMixin(UmbLitElement,
 	}
 
 	override render() {
-		return html` 
-		<uui-select
+		return html`
+			<uui-select
 				style="margin-top: var(--uui-size-space-1)"
 				@change=${this.#onCustomValidationChange}
-				.options=${this._options.map(e => ({
+				.options=${this._options.map((e) => ({
 					name: e.name,
 					value: e.value,
-					selected: e.value == this.value
+					selected: e.value == this.value,
 				}))}></uui-select>
-			`;
+		`;
 	}
 
 	static override styles = [

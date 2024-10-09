@@ -14,7 +14,7 @@ import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 import { UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
-import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/modal';
+import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/workspace';
 import { UmbModalRouteRegistrationController } from '@umbraco-cms/backoffice/router';
 import type { UmbDocumentItemModel } from '@umbraco-cms/backoffice/document';
 import type { UmbTreeStartNode } from '@umbraco-cms/backoffice/tree';
@@ -116,7 +116,7 @@ export class UmbInputDocumentElement extends UmbFormControlMixin<string | undefi
 	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
 	 * @type {boolean}
 	 * @attr
-	 * @default false
+	 * @default
 	 */
 	@property({ type: Boolean, reflect: true })
 	public get readonly() {
