@@ -8,7 +8,9 @@ import {
 import { UmbArrayState } from '@umbraco-cms/backoffice/observable-api';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 
-export class UmbTemporaryFileManager<UploadableItem extends UmbTemporaryFileModel> extends UmbControllerBase {
+export class UmbTemporaryFileManager<
+	UploadableItem extends UmbTemporaryFileModel = UmbTemporaryFileModel,
+> extends UmbControllerBase {
 	readonly #temporaryFileRepository = new UmbTemporaryFileRepository(this._host);
 
 	readonly #queue = new UmbArrayState<UploadableItem>([], (item) => item.temporaryUnique);
