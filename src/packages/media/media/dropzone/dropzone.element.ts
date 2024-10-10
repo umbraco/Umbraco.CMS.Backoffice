@@ -59,6 +59,25 @@ export class UmbDropzoneElement extends UmbLitElement {
 		document.addEventListener('dragenter', this.#handleDragEnter.bind(this));
 		document.addEventListener('dragleave', this.#handleDragLeave.bind(this));
 		document.addEventListener('drop', this.#handleDrop.bind(this));
+
+		this.observe(
+			this.dropzoneManager.progress,
+			(progress) =>
+				this.dispatchEvent(new ProgressEvent('progress', { loaded: progress.completed, total: progress.total })),
+			'_observeProgress',
+		);
+
+		this.observe(
+			this.dropzoneManager.progressItems,
+			(progressItems: Array<UmbUploadableItem>) => {
+				this._progressItems = progressItems;
+				const waiting = progressItems.find((item) => item.status === UmbFileDropzoneItemStatus.WAITING);
+				if (progressItems.length && !waiting) {
+					this.dispatchEvent(new CustomEvent('complete', { detail: progressItems }));
+				}
+			},
+			'_observeProgressItems',
+		);
 	}
 
 	override disconnectedCallback(): void {
@@ -96,25 +115,12 @@ export class UmbDropzoneElement extends UmbLitElement {
 		// TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
 		// We can observe progressItems and check for any files that did not succeed, then show some kind of dialog to the user with the information.
 
-		this.observe(
-			this.dropzoneManager.progress,
-			(progress) =>
-				this.dispatchEvent(new ProgressEvent('progress', { loaded: progress.completed, total: progress.total })),
-			'_observeProgress',
-		);
-
-		this.observe(this.dropzoneManager.progressItems, (progressItems: Array<UmbUploadableItem>) => {
-			this._progressItems = progressItems;
-			const waiting = progressItems.find((item) => item.status === UmbFileDropzoneItemStatus.WAITING);
-			if (progressItems.length && !waiting) {
-				this.dispatchEvent(new CustomEvent('complete', { detail: progressItems }));
-			}
-		});
-
 		if (this.createAsTemporary) {
-			this.dropzoneManager.createTemporaryFiles(event.detail.files);
+			const uploadable = this.dropzoneManager.createTemporaryFiles(event.detail.files);
+			this.dispatchEvent(new CustomEvent('submitted', { detail: await uploadable }));
 		} else {
-			this.dropzoneManager.createMediaItems(event.detail, this.parentUnique);
+			const uploadable = this.dropzoneManager.createMediaItems(event.detail, this.parentUnique);
+			this.dispatchEvent(new CustomEvent('submitted', { detail: await uploadable }));
 		}
 	}
 

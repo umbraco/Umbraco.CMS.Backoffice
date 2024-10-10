@@ -75,11 +75,12 @@ export class UmbDropzoneManager extends UmbControllerBase {
 		const uploadableItems = await this.#setupProgress(items, parentUnique);
 		if (uploadableItems.length === 1) {
 			// When there is only one item being uploaded, allow the user to pick the media type, if more than one is allowed.
-			await this.#createOneMediaItem(uploadableItems[0]);
+			this.#createOneMediaItem(uploadableItems[0]);
 		} else {
 			// When there are multiple items being uploaded, automatically pick the media types for each item. We probably want to allow the user to pick the media type in the future.
-			await this.#createMediaItems(uploadableItems);
+			this.#createMediaItems(uploadableItems);
 		}
+		return uploadableItems;
 	}
 
 	/** @deprecated Please use `createTemporaryFiles()` instead; this method will be removed in Umbraco 17. */
