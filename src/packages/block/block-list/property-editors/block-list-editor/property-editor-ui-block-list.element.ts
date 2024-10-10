@@ -110,6 +110,9 @@ export class UmbPropertyEditorUIBlockListElement
 		} else if (blocks.length === 1) {
 			this.#managerContext.contentTypesLoaded.then(() => {
 				const firstContentTypeName = this.#managerContext.getContentTypeNameOf(blocks[0].contentElementTypeKey);
+				if(firstContentTypeName?.startsWith('#')) // Means it's a doctype with translation
+				this._createButtonLabel=`${this.localize.term('general_add')} ${firstContentTypeName !== undefined ? this.localize.term(this.localize.string(firstContentTypeName)) : firstContentTypeName}`;
+				else
 				this._createButtonLabel = `${this.localize.term('general_add')} ${firstContentTypeName}`;
 			});
 		}
