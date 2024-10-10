@@ -110,7 +110,7 @@ export class UmbPropertyEditorUIBlockListElement
 		} else if (blocks.length === 1) {
 			this.#managerContext.contentTypesLoaded.then(() => {
 				const firstContentTypeName = this.#managerContext.getContentTypeNameOf(blocks[0].contentElementTypeKey);
-				this._createButtonLabel = `${this.localize.term('general_add')} ${firstContentTypeName}`;
+				this._createButtonLabel = `${this.localize.term('general_add')} ${firstContentTypeName !== undefined ? this.localize.string(firstContentTypeName) : firstContentTypeName}`;
 			});
 		}
 	}
@@ -276,7 +276,6 @@ export class UmbPropertyEditorUIBlockListElement
 		} else {
 			createPath = this._catalogueRouteBuilder?.({ view: 'create', index: -1 });
 		}
-
 		return html`
 			<uui-button look="placeholder" label=${this._createButtonLabel} href=${createPath ?? ''}></uui-button>
 		`;
