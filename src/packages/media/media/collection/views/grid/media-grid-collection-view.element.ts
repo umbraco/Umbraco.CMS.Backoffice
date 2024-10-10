@@ -4,16 +4,7 @@ import type { UmbMediaCollectionContext } from '../../media-collection.context.j
 import { UMB_MEDIA_COLLECTION_CONTEXT } from '../../media-collection.context-token.js';
 import { UmbFileDropzoneItemStatus } from '../../../dropzone/types.js';
 import { UMB_MEDIA_PLACEHOLDER_ENTITY_TYPE } from '../../../entity.js';
-import {
-	css,
-	customElement,
-	html,
-	ifDefined,
-	nothing,
-	repeat,
-	state,
-	when,
-} from '@umbraco-cms/backoffice/external/lit';
+import { css, customElement, html, ifDefined, repeat, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { UMB_WORKSPACE_MODAL } from '@umbraco-cms/backoffice/workspace';
@@ -28,9 +19,6 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 
 	@state()
 	private _items: Array<UmbMediaCollectionItemModel> = [];
-
-	@state()
-	private _loading = false;
 
 	@state()
 	private _selection: Array<string | null> = [];
@@ -62,8 +50,6 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 
 	#observeCollectionContext() {
 		if (!this.#collectionContext) return;
-
-		this.observe(this.#collectionContext.loading, (loading) => (this._loading = loading), '_observeLoading');
 
 		this.observe(this.#collectionContext.items, (items) => (this._items = items), '_observeItems');
 
@@ -99,23 +85,6 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 	}
 
 	override render() {
-		return this._items.length === 0 ? this.#renderEmpty() : this.#renderItems();
-	}
-
-	#renderEmpty() {
-		if (this._items.length > 0) return nothing;
-		return html`
-			<div class="container">
-				${when(
-					this._loading,
-					() => html`<uui-loader></uui-loader>`,
-					() => html`<p>${this.localize.term('content_listViewNoItems')}</p>`,
-				)}
-			</div>
-		`;
-	}
-
-	#renderItems() {
 		return html`
 			<div id="media-grid">
 				${repeat(
@@ -124,7 +93,6 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 					(item) => this.#renderItem(item),
 				)}
 			</div>
-			${when(this._loading, () => html`<uui-loader-bar></uui-loader-bar>`)}
 		`;
 	}
 

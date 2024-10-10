@@ -40,6 +40,7 @@ export class UmbDefaultCollectionContext<
 	protected _manifest?: ManifestCollection;
 	protected _repository?: UmbCollectionRepository;
 
+	// TODO: replace with a state manager
 	protected _loading = new UmbObjectState<boolean>(false);
 	public readonly loading = this._loading.asObservable();
 
