@@ -1,7 +1,7 @@
-import { writeFileSync } from 'fs';
 import { createImportMap } from '../importmap/index.js';
+import { writeFileWithDir } from '../utils/index.js';
 
-const tsPath = './dist-cms/global.d.ts';
+const tsPath = './dist-cms/packages/extension-types/index.d.ts';
 
 const importmap = createImportMap({
 	rootDir: './src',
@@ -14,4 +14,12 @@ const content = `
 ${paths.map((path) => `import '${path}';`).join('\n')}
 `;
 
-writeFileSync(tsPath, content);
+writeFileWithDir(tsPath, content, (err) => {
+	if (err) {
+		// eslint-disable-next-line no-undef
+		console.log(err);
+	}
+
+	// eslint-disable-next-line no-undef
+	console.log(`global-types file generated`);
+});
