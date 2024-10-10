@@ -1,4 +1,5 @@
 import { UMB_MEDIA_PLACEHOLDER_ENTITY_TYPE } from '../entity.js';
+import type { UmbFileDropzoneItemStatus } from '../dropzone/types.js';
 import { UMB_MEDIA_GRID_COLLECTION_VIEW_ALIAS } from './views/index.js';
 import type { UmbMediaCollectionFilterModel, UmbMediaCollectionItemModel } from './types.js';
 import { UmbDefaultCollectionContext } from '@umbraco-cms/backoffice/collection';
@@ -14,31 +15,37 @@ export class UmbMediaCollectionContext extends UmbDefaultCollectionContext<
 	 */
 	public readonly thumbnailItems = this.items;
 
-	#placeholderItems = new UmbArrayState<UmbMediaCollectionItemModel>([], (x) => x.unique);
-	public readonly placeholderItems = this._items.asObservable();
+	#placeholders = new UmbArrayState<UmbMediaCollectionItemModel>([], (x) => x.unique);
+	public readonly placeholders = this.#placeholders.asObservable();
 
 	constructor(host: UmbControllerHost) {
 		super(host, UMB_MEDIA_GRID_COLLECTION_VIEW_ALIAS);
 	}
 
-	setPlaceholderItems(partialPlaceholders: Array<{ unique: string; name?: string }>) {
-		const currentItems = this._items.getValue();
+	setPlaceholders(partial: Array<{ unique: string; status: UmbFileDropzoneItemStatus; name?: string }>) {
+		const items = this._items.getValue();
 
 		// We do not want to set a placeholder which unique already exists in the collection.
 		const date = new Date();
-		const placeholders: Array<UmbMediaCollectionItemModel> = partialPlaceholders
-			.filter((placeholder) => !currentItems.find((item) => item.unique === placeholder.unique))
+		const placeholders: Array<UmbMediaCollectionItemModel> = partial
+			.filter((placeholder) => !items.find((item) => item.unique === placeholder.unique))
 			.map((placeholder) => ({
 				updateDate: date,
 				createDate: date,
 				entityType: UMB_MEDIA_PLACEHOLDER_ENTITY_TYPE,
 				...placeholder,
-			}));
+			}))
+			.reverse();
+		this.#placeholders.setValue(placeholders);
 
-		this.#placeholderItems.setValue(placeholders);
+		this._items.setValue([...placeholders, ...items]);
+		this._totalItems.setValue(placeholders.length + items.length);
+		this.pagination.setTotalItems(placeholders.length + items.length);
+	}
 
-		this._items.setValue([...placeholders, ...currentItems]);
-		this._totalItems.setValue(this._items.getValue().length);
+	updatePlaceholderStatus(unique: string, status?: UmbFileDropzoneItemStatus) {
+		this._items.updateOne(unique, { status });
+		this.#placeholders.updateOne(unique, { status });
 	}
 
 	/**
@@ -60,24 +67,25 @@ export class UmbMediaCollectionContext extends UmbDefaultCollectionContext<
 
 		if (data) {
 			this.#cleanupPlaceholdersFromCollection(data.items);
-			const placeholderItems = this.#placeholderItems.getValue();
+			const placeholders = this.#placeholders.getValue();
 
-			this._items.setValue([...placeholderItems, ...data.items]);
-			this._totalItems.setValue(data.total + placeholderItems.length);
-			this.pagination.setTotalItems(data.total + placeholderItems.length);
+			this._items.setValue([...placeholders, ...data.items]);
+			this._totalItems.setValue(placeholders.length + data.total);
+			this.pagination.setTotalItems(placeholders.length + data.total);
 		}
 
 		this._loading.setValue(false);
+		console.log('result:', this._items.getValue(), this.#placeholders.getValue());
 	}
 
-	#cleanupPlaceholdersFromCollection(collectionItems: Array<UmbMediaCollectionItemModel>) {
-		const duplicates = this.#placeholderItems
-			.getValue()
-			.filter((placeholder) => collectionItems.find((item) => item.unique === placeholder.unique));
+	#cleanupPlaceholdersFromCollection(collection: Array<UmbMediaCollectionItemModel>) {
+		const placeholderItems = this.#placeholders.getValue();
 
-		for (const duplicate of duplicates) {
-			this.#placeholderItems.removeOne(duplicate.unique);
-		}
+		const dataSet = new Set(collection.map((item) => item.unique));
+		const completedPlaceholders = placeholderItems.filter((item) => dataSet.has(item.unique));
+		completedPlaceholders.forEach((placeholder) => {
+			this.#placeholders.removeOne(placeholder.unique);
+		});
 	}
 }
 

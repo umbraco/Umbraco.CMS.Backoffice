@@ -2,6 +2,7 @@ import { UMB_EDIT_MEDIA_WORKSPACE_PATH_PATTERN } from '../../../paths.js';
 import type { UmbMediaCollectionItemModel } from '../../types.js';
 import type { UmbMediaCollectionContext } from '../../media-collection.context.js';
 import { UMB_MEDIA_COLLECTION_CONTEXT } from '../../media-collection.context-token.js';
+import { UmbFileDropzoneItemStatus } from '../../../dropzone/types.js';
 import { UMB_MEDIA_PLACEHOLDER_ENTITY_TYPE } from '../../../entity.js';
 import {
 	css,
@@ -115,12 +116,11 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 	}
 
 	#renderItems() {
-		if (this._items.length === 0) return nothing;
 		return html`
 			<div id="media-grid">
 				${repeat(
 					this._items,
-					(item) => item.unique,
+					(item) => item.unique + item.status,
 					(item) => this.#renderItem(item),
 				)}
 			</div>
@@ -130,11 +130,8 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 
 	#renderItem(item: UmbMediaCollectionItemModel) {
 		if (item.entityType === UMB_MEDIA_PLACEHOLDER_ENTITY_TYPE) {
-			return html`<uui-card-media disabled class="media-placeholder-item" name=${ifDefined(item.name)}>
-				<umb-temporary-file-badge></umb-temporary-file-badge>
-			</uui-card-media>`;
+			return this.#renderPlaceholder(item);
 		}
-
 		return html`
 			<uui-card-media
 				name=${ifDefined(item.name)}
@@ -151,6 +148,13 @@ export class UmbMediaGridCollectionViewElement extends UmbLitElement {
 					icon=${ifDefined(item.icon)}></umb-imaging-thumbnail>
 			</uui-card-media>
 		`;
+	}
+
+	#renderPlaceholder(item: UmbMediaCollectionItemModel) {
+		const complete = item.status === UmbFileDropzoneItemStatus.COMPLETE;
+		return html`<uui-card-media disabled class="media-placeholder-item" name=${ifDefined(item.name)}>
+			<umb-temporary-file-badge ?complete=${complete}></umb-temporary-file-badge>
+		</uui-card-media>`;
 	}
 
 	static override styles = [

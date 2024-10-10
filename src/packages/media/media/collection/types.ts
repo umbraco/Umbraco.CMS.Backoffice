@@ -1,3 +1,4 @@
+import type { UmbFileDropzoneItemStatus } from '../dropzone/types.js';
 import type { UmbCollectionFilterModel } from '@umbraco-cms/backoffice/collection';
 
 export interface UmbMediaCollectionFilterModel extends UmbCollectionFilterModel {
@@ -21,6 +22,7 @@ export interface UmbMediaCollectionItemModel {
 	updater?: string | null;
 	values?: Array<{ alias: string; value: string }>;
 	url?: string;
+	status?: UmbFileDropzoneItemStatus;
 }
 
 export interface UmbEditableMediaCollectionItemModel {
