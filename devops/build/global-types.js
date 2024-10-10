@@ -11,7 +11,10 @@ const importmap = createImportMap({
 const paths = Object.keys(importmap.imports);
 
 const content = `
-${paths.map((path) => `import '${path}';`).join('\n')}
+${paths
+	.filter((path) => !path.includes('/extension-types'))
+	.map((path) => `import '${path}';`)
+	.join('\n')}
 `;
 
 writeFileWithDir(tsPath, content, (err) => {
