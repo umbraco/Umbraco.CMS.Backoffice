@@ -113,6 +113,10 @@ export class UmbLocalizationController<LocalizationSetType extends UmbLocalizati
 	 * @param {...any} args
 	 */
 	term<K extends keyof LocalizationSetType>(key: K, ...args: FunctionParams<LocalizationSetType[K]>): string {
+		if (typeof key === 'string' && key.startsWith('#')) {
+			key = (this.string(key) as K);
+		}
+
 		if (!this.#usedKeys.includes(key)) {
 			this.#usedKeys.push(key);
 		}

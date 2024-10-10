@@ -44,7 +44,7 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 
 	constructor() {
 		super();
-
+	
 		this.#tabsStructureHelper.setIsRoot(true);
 		this.#tabsStructureHelper.setContainerChildType('Tab');
 		this.observe(
@@ -149,7 +149,7 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 								(tab) => {
 									const path = this._routerPath + '/tab/' + encodeFolderName(tab.name || '');
 									return html`<uui-tab label=${tab.name ?? 'Unnamed'} .active=${path === this._activePath} href=${path}
-										>${tab.name}</uui-tab
+										>${this.localize.term(tab.name)}</uui-tab
 									>`;
 								},
 							)}
