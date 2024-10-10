@@ -152,7 +152,7 @@
 		"build:vite": "tsc && vite build --mode staging",
 		"build:workspaces": "npm run build -ws --if-present",
 		"build": "tsc --project ./src/tsconfig.build.json",
-		"postbuild": "rollup -c ./src/rollup.config.js",
+		"postbuild": "rollup -c ./src/rollup.config.js && node ./devops/build/global-types.js",
 		"check": "npm run lint:errors && npm run compile && npm run build-storybook && npm run generate:jsonschema:dist",
 		"check:paths": "node ./devops/build/check-path-length.js dist-cms 120",
 		"check:circular": "madge --circular --warning --extensions ts ./src",
@@ -189,7 +189,8 @@
 		"generate:tsconfig": "node ./devops/tsconfig/index.js",
 		"generate:manifest": "node ./devops/build/create-umbraco-package.js",
 		"package:validate": "node ./devops/package/validate-exports.js",
-		"generate:ui-api-docs": "typedoc --options typedoc.config.js"
+		"generate:ui-api-docs": "typedoc --options typedoc.config.js",
+		"generate:extension-types": "node ./devops/extension-types/index.js"
 	},
 	"engines": {
 		"node": ">=20.9 <21",
