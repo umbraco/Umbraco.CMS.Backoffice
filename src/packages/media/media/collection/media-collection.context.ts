@@ -75,7 +75,6 @@ export class UmbMediaCollectionContext extends UmbDefaultCollectionContext<
 		}
 
 		this._loading.setValue(false);
-		console.log('result:', this._items.getValue(), this.#placeholders.getValue());
 	}
 
 	#cleanupPlaceholdersFromCollection(collection: Array<UmbMediaCollectionItemModel>) {
