@@ -4,7 +4,10 @@
 	"version": "15.0.0-rc2",
 	"type": "module",
 	"exports": {
-		".": null,
+		".": {
+			"import": null,
+			"types": "./dist-cms/global.d.ts"
+		},
 		"./app": "./dist-cms/apps/app/index.js",
 		"./class-api": "./dist-cms/libs/class-api/index.js",
 		"./context-api": "./dist-cms/libs/context-api/index.js",
