@@ -84,8 +84,8 @@ export class UmbBlockTypeCardElement extends UmbLitElement {
 			const item = items[0];
 			if (item) {
 				this._fallbackIcon = item.icon;
-				this._name = this.localize.term(item.name?? 'Unknown');
-				this._description = this.localize.term(item.description??'');
+				this._name = this.localize.string(item.name ?? 'Unknown');
+				this._description = this.localize.string(item.description ?? '');
 			}
 		});
 	}
