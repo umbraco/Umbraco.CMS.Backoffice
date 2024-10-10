@@ -115,9 +115,6 @@ export class UmbDropzoneElement extends UmbLitElement {
 		if (this.disabled) return;
 		if (!event.detail.files.length && !event.detail.folders.length) return;
 
-		// TODO Create some placeholder items while files are being uploaded? Could update them as they get completed.
-		// We can observe progressItems and check for any files that did not succeed, then show some kind of dialog to the user with the information.
-
 		if (this.createAsTemporary) {
 			const uploadable = this.#dropzoneManager.createTemporaryFiles(event.detail.files);
 			this.dispatchEvent(new CustomEvent('submitted', { detail: await uploadable }));

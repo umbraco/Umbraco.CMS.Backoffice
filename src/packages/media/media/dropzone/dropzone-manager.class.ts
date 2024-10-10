@@ -68,8 +68,9 @@ export class UmbDropzoneManager extends UmbControllerBase {
 	/**
 	 * Uploads files and folders to the server and creates the media items with corresponding media type.\
 	 * Allows the user to pick a media type option if multiple types are allowed.
-	 * @param {UmbFileDropzoneDroppedItems} items - The files and folders to upload
-	 * @param {string | null} parentUnique - Where the items should be uploaded
+	 * @param {UmbFileDropzoneDroppedItems} items - The files and folders to upload.
+	 * @param {string | null} parentUnique - Where the items should be uploaded.
+	 * @returns {Promise<Array<UmbUploadableItem>>} - The items about to be uploaded.
 	 */
 	public async createMediaItems(items: UmbFileDropzoneDroppedItems, parentUnique: string | null = null) {
 		const uploadableItems = await this.#setupProgress(items, parentUnique);
