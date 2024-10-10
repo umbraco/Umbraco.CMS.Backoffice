@@ -17,7 +17,7 @@ export default {
 	],
 } as Meta;
 
-const Template: Story = () => html`<umb-story-notification-default-example></umb-story-notification-default-example>`;
+const Template: StoryFn = () => html`<umb-story-notification-default-example></umb-story-notification-default-example>`;
 
 export const Default = Template.bind({});
 Default.parameters = {

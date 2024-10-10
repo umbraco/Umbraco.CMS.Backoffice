@@ -7,7 +7,7 @@ export default {
 	id: 'umb-icons',
 } as Meta;
 
-const Template: Story = () => {
+const Template: StoryFn = () => {
 	const approvedIcons = icons.filter((x) => x.legacy !== true);
 	return html`
 		<div
