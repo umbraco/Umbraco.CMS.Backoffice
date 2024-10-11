@@ -138,9 +138,9 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 										<uui-tab
 											label="Content"
 											.active=${this._routerPath + '/' === this._activePath}
-											href=${this._routerPath + '/'}
-											>Content</uui-tab
-										>
+											href=${this._routerPath + '/'}>
+											<umb-localize key="general_content">Content</umb-localize>
+										</uui-tab>
 									`
 								: ''}
 							${repeat(
@@ -149,7 +149,7 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 								(tab) => {
 									const path = this._routerPath + '/tab/' + encodeFolderName(tab.name || '');
 									return html`<uui-tab
-										label=${tab.name ?? this.localize.term('general_unknown')}
+										label=${this.localize.string(tab.name ?? '#general_unknown')}
 										.active=${path === this._activePath}
 										href=${path}>
 										${this.localize.string(tab.name)}
