@@ -185,7 +185,7 @@ export class UmbLocalizationController<LocalizationSetType extends UmbLocalizati
 	 * @param {string} text The text to translate.
 	 * @returns {string} The translated text.
 	 */
-	string(text?: string): string {
+	string(text: unknown): string {
 		if (typeof text !== 'string') {
 			return '';
 		}

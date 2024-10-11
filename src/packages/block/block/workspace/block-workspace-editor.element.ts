@@ -19,7 +19,8 @@ export class UmbBlockWorkspaceEditorElement extends UmbLitElement {
 					context.content.structure.ownerContentTypeObservablePart((contentType) => contentType?.name),
 				]),
 				([isNew, name]) => {
-					this._headline = this.localize.term(isNew ? 'general_add' : 'general_edit') + ' ' +  this.localize.string(name!);
+					this._headline =
+						this.localize.term(isNew ? 'general_add' : 'general_edit') + ' ' + this.localize.string(name);
 				},
 				'observeOwnerContentElementTypeName',
 			);

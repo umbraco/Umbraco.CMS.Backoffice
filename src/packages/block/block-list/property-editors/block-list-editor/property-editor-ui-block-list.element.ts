@@ -110,7 +110,7 @@ export class UmbPropertyEditorUIBlockListElement
 		} else if (blocks.length === 1) {
 			this.#managerContext.contentTypesLoaded.then(() => {
 				const firstContentTypeName = this.#managerContext.getContentTypeNameOf(blocks[0].contentElementTypeKey);
-				this._createButtonLabel = `${this.localize.term('general_add')} ${firstContentTypeName !== undefined ? this.localize.string(firstContentTypeName) : firstContentTypeName}`;
+				this._createButtonLabel = `${this.localize.term('general_add')} ${this.localize.string(firstContentTypeName)}`;
 			});
 		}
 	}
