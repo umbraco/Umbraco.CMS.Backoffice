@@ -106,11 +106,11 @@ export class UmbPropertyEditorUIBlockListElement
 
 		const customCreateButtonLabel = config.getValueByAlias<string>('createLabel');
 		if (customCreateButtonLabel) {
-			this._createButtonLabel = customCreateButtonLabel;
+			this._createButtonLabel = this.localize.string(customCreateButtonLabel);
 		} else if (blocks.length === 1) {
 			this.#managerContext.contentTypesLoaded.then(() => {
 				const firstContentTypeName = this.#managerContext.getContentTypeNameOf(blocks[0].contentElementTypeKey);
-				this._createButtonLabel = `${this.localize.term('general_add')} ${this.localize.string(firstContentTypeName)}`;
+				this._createButtonLabel = this.localize.term('blockEditor_addThis', this.localize.string(firstContentTypeName));
 			});
 		}
 	}
