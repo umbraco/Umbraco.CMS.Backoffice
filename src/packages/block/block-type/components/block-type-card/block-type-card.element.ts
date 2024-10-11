@@ -65,7 +65,7 @@ export class UmbBlockTypeCardElement extends UmbLitElement {
 	private _elementTypeKey?: string | undefined;
 
 	@state()
-	_name?: string;
+	_name = '';
 
 	@state()
 	_description?: string;
@@ -84,7 +84,7 @@ export class UmbBlockTypeCardElement extends UmbLitElement {
 			const item = items[0];
 			if (item) {
 				this._fallbackIcon = item.icon;
-				this._name = this.localize.string(item.name);
+				this._name = item.name ? this.localize.string(item.name) : this.localize.term('general_unknown');
 				this._description = this.localize.string(item.description);
 			}
 		});
@@ -100,7 +100,7 @@ export class UmbBlockTypeCardElement extends UmbLitElement {
 			<uui-card-block-type
 				href=${ifDefined(this.href)}
 				@open=${this.#onOpen}
-				.name=${this._name ?? this.localize.term('general_unknown')}
+				.name=${this._name}
 				.description=${this._description}
 				.background=${this.backgroundColor}>
 				${this._iconFile
