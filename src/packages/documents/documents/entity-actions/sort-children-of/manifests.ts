@@ -4,6 +4,7 @@ import { UMB_DOCUMENT_TREE_REPOSITORY_ALIAS } from '../../tree/index.js';
 import { UMB_USER_PERMISSION_DOCUMENT_SORT } from '../../user-permissions/index.js';
 import { UMB_SORT_CHILDREN_OF_DOCUMENT_REPOSITORY_ALIAS } from './repository/constants.js';
 import { manifests as repositoryManifests } from './repository/manifests.js';
+import { UMB_IS_SECTION_SIDEBAR_CONDITION_ALIAS } from '@umbraco-cms/backoffice/section';
 import { UMB_ENTITY_IS_NOT_TRASHED_CONDITION_ALIAS } from '@umbraco-cms/backoffice/recycle-bin';
 
 export const manifests: Array<UmbExtensionManifest> = [
@@ -27,6 +28,9 @@ export const manifests: Array<UmbExtensionManifest> = [
 			},
 			{
 				alias: UMB_ENTITY_IS_NOT_TRASHED_CONDITION_ALIAS,
+			},
+			{
+				alias: UMB_IS_SECTION_SIDEBAR_CONDITION_ALIAS,
 			},
 		],
 	},
