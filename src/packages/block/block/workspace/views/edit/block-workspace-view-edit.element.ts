@@ -13,12 +13,12 @@ import type { ManifestWorkspaceView, UmbWorkspaceViewElement } from '@umbraco-cm
 @customElement('umb-block-workspace-view-edit')
 export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements UmbWorkspaceViewElement {
 	@property({ attribute: false })
-	public get manifest(): ManifestWorkspaceView | undefined {
-		return;
-	}
 	public set manifest(value: ManifestWorkspaceView | undefined) {
 		this.#managerName = (value?.meta as any).blockElementManagerName ?? 'content';
 		this.#setStructureManager();
+	}
+	public get manifest(): ManifestWorkspaceView | undefined {
+		return;
 	}
 	#managerName?: UmbBlockWorkspaceElementManagerNames;
 	#blockWorkspace?: typeof UMB_BLOCK_WORKSPACE_CONTEXT.TYPE;
@@ -172,7 +172,7 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 		`;
 	}
 
-	static override styles = [
+	static override readonly styles = [
 		UmbTextStyles,
 		css`
 			:host {

@@ -11,11 +11,10 @@ import { UUICardEvent } from '@umbraco-cms/backoffice/external/uui';
 
 @customElement('umb-block-type-card')
 export class UmbBlockTypeCardElement extends UmbLitElement {
-	//
-	#init: Promise<void>;
+	readonly #init: Promise<void>;
 	#appUrl: string = '';
 
-	#itemManager = new UmbRepositoryItemsManager<UmbDocumentTypeItemModel>(
+	readonly #itemManager = new UmbRepositoryItemsManager<UmbDocumentTypeItemModel>(
 		this,
 		UMB_DOCUMENT_TYPE_ITEM_REPOSITORY_ALIAS,
 		(x) => x.unique,
@@ -51,9 +50,6 @@ export class UmbBlockTypeCardElement extends UmbLitElement {
 	// TODO: support custom icon/image file
 
 	@property({ type: String, attribute: false })
-	public get contentElementTypeKey(): string | undefined {
-		return this._elementTypeKey;
-	}
 	public set contentElementTypeKey(value: string | undefined) {
 		this._elementTypeKey = value;
 		if (value) {
@@ -62,7 +58,10 @@ export class UmbBlockTypeCardElement extends UmbLitElement {
 			this.#itemManager.setUniques([]);
 		}
 	}
-	private _elementTypeKey?: string | undefined;
+	public get contentElementTypeKey(): string | undefined {
+		return this._elementTypeKey;
+	}
+	private _elementTypeKey?: string;
 
 	@state()
 	_name = '';
@@ -90,7 +89,7 @@ export class UmbBlockTypeCardElement extends UmbLitElement {
 		});
 	}
 
-	#onOpen = () => {
+	readonly #onOpen = () => {
 		this.dispatchEvent(new UUICardEvent(UUICardEvent.OPEN));
 	};
 

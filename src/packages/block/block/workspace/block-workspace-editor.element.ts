@@ -6,7 +6,6 @@ import { observeMultiple } from '@umbraco-cms/backoffice/observable-api';
 
 @customElement('umb-block-workspace-editor')
 export class UmbBlockWorkspaceEditorElement extends UmbLitElement {
-	//
 	@property({ type: String, attribute: false })
 	workspaceAlias?: string;
 
@@ -36,7 +35,7 @@ export class UmbBlockWorkspaceEditorElement extends UmbLitElement {
 			: nothing;
 	}
 
-	static override styles = [
+	static override readonly styles = [
 		UmbTextStyles,
 		css`
 			:host {
