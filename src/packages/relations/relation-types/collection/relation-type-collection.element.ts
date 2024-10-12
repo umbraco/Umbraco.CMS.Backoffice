@@ -10,7 +10,10 @@ export class UmbRelationTypeCollectionElement extends UmbCollectionDefaultElemen
 	}
 }
 
+/** @deprecated Should be exported as `element` only; to be removed in Umbraco 17. */
 export default UmbRelationTypeCollectionElement;
+
+export { UmbRelationTypeCollectionElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {

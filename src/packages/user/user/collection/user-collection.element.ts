@@ -10,7 +10,10 @@ export class UmbUserCollectionElement extends UmbCollectionDefaultElement {
 	}
 }
 
+/** @deprecated Should be exported as `element` only; to be removed in Umbraco 17. */
 export default UmbUserCollectionElement;
+
+export { UmbUserCollectionElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {
