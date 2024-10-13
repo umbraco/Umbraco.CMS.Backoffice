@@ -1,4 +1,4 @@
-import { html, customElement, css } from '@umbraco-cms/backoffice/external/lit';
+import { css, customElement, html } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
 const elementName = 'umb-collection-action-bundle';
