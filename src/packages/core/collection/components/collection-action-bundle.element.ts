@@ -1,7 +1,9 @@
 import { html, customElement, css } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
-@customElement('umb-collection-action-bundle')
+const elementName = 'umb-collection-action-bundle';
+
+@customElement(elementName)
 export class UmbCollectionActionBundleElement extends UmbLitElement {
 	override render() {
 		return html`<umb-extension-slot type="collectionAction"></umb-extension-slot>`;
@@ -18,6 +20,6 @@ export class UmbCollectionActionBundleElement extends UmbLitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'umb-collection-action-bundle': UmbCollectionActionBundleElement;
+		[elementName]: UmbCollectionActionBundleElement;
 	}
 }
