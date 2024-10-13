@@ -3,8 +3,7 @@ import { UMB_MEDIA_WORKSPACE_CONTEXT } from '../workspace/media-workspace.contex
 import { UmbFileDropzoneItemStatus, type UmbUploadableItem } from '../dropzone/types.js';
 import type { UmbDropzoneElement } from '../dropzone/dropzone.element.js';
 import { UMB_MEDIA_COLLECTION_CONTEXT } from './media-collection.context-token.js';
-import type { UmbMediaCollectionContext } from './media-collection.context.js';
-import { css, customElement, html, query, state, when } from '@umbraco-cms/backoffice/external/lit';
+import { customElement, html, query, state, when } from '@umbraco-cms/backoffice/external/lit';
 import { UmbCollectionDefaultElement } from '@umbraco-cms/backoffice/collection';
 import { UmbRequestReloadChildrenOfEntityEvent } from '@umbraco-cms/backoffice/entity-action';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
@@ -13,10 +12,7 @@ const elementName = 'umb-media-collection';
 
 @customElement(elementName)
 export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
-	#collectionContext?: UmbMediaCollectionContext;
-
-	#inputTimer?: NodeJS.Timeout;
-	#inputTimerAmount = 500;
+	#collectionContext?: typeof UMB_MEDIA_COLLECTION_CONTEXT.TYPE;
 
 	@state()
 	private _progress = -1;
@@ -79,12 +75,6 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 		eventContext.dispatchEvent(event);
 	}
 
-	#onInput(event: InputEvent & { target: HTMLInputElement }) {
-		const filter = event.target.value ?? '';
-		clearTimeout(this.#inputTimer);
-		this.#inputTimer = setTimeout(() => this.#collectionContext?.setFilter({ filter }), this.#inputTimerAmount);
-	}
-
 	#onProgress(event: ProgressEvent) {
 		this._progress = (event.loaded / event.total) * 100;
 		if (this._progress >= 100) {
@@ -95,11 +85,7 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 	protected override renderToolbar() {
 		return html`
 			<umb-collection-toolbar slot="header">
-				<uui-input
-					id="input-search"
-					label=${this.localize.term('general_search')}
-					placeholder=${this.localize.term('placeholders_search')}
-					@input=${this.#onInput}></uui-input>
+				<umb-collection-filter-field></umb-collection-filter-field>
 			</umb-collection-toolbar>
 			${when(this._progress >= 0, () => html`<uui-loader-bar progress=${this._progress}></uui-loader-bar>`)}
 			<umb-dropzone
@@ -111,14 +97,6 @@ export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 				@progress=${this.#onProgress}></umb-dropzone>
 		`;
 	}
-
-	static override readonly styles = [
-		css`
-			#input-search {
-				display: block;
-			}
-		`,
-	];
 }
 
 /** @deprecated Should be exported as `element` only; to be removed in Umbraco 17. */
