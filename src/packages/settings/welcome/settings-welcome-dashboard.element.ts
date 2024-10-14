@@ -119,7 +119,7 @@ export class UmbSettingsWelcomeDashboardElement extends UmbLitElement {
 				}
 			}
 
-			.buttson-group {
+			.button-group {
 				display: flex;
 				flex-wrap: wrap;
 				gap: var(--uui-size-space-2);
