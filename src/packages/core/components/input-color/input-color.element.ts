@@ -11,6 +11,10 @@ import type { UUIColorSwatchesEvent } from '@umbraco-cms/backoffice/external/uui
  */
 @customElement('umb-input-color')
 export class UmbInputColorElement extends UUIFormControlMixin(UmbLitElement, '') {
+	protected override getFormElement() {
+		return undefined;
+	}
+
 	/**
 	 * Sets the input to readonly mode, meaning value cannot be changed but still able to read and select its content.
 	 * @attr
@@ -18,10 +22,6 @@ export class UmbInputColorElement extends UUIFormControlMixin(UmbLitElement, '')
 	 */
 	@property({ type: Boolean, reflect: true })
 	readonly = false;
-
-	protected override getFormElement() {
-		return undefined;
-	}
 
 	@property({ type: Boolean })
 	showLabels = false;
