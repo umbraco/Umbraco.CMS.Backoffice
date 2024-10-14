@@ -15,7 +15,7 @@
 			"\t\treturn html`$0`;",
 			"\t}",
 			"",
-			"\tstatic override styles = [UmbTextStyles, css``];",
+			"\tstatic override readonly styles = [UmbTextStyles, css``];",
 			"}",
 			"",
 			"export { Umb${TM_FILENAME_BASE/(.*)$/${1:/pascalcase}/}Element as element };",
