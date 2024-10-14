@@ -1,5 +1,5 @@
 import { UMB_RELATION_TYPE_COLLECTION_ALIAS } from '@umbraco-cms/backoffice/relation-type';
-import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
+import { UMB_WORKSPACE_CONDITION_ALIAS } from '@umbraco-cms/backoffice/workspace';
 
 export const manifests: Array<UmbExtensionManifest> = [
 	{
@@ -25,7 +25,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		},
 		conditions: [
 			{
-				alias: UMB_WORKSPACE_ALIAS_CONDITION,
+				alias: UMB_WORKSPACE_CONDITION_ALIAS,
 				match: 'Umb.Workspace.RelationsRoot',
 			},
 		],

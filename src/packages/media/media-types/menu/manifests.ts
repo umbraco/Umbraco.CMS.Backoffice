@@ -1,4 +1,4 @@
-import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
+import { UMB_WORKSPACE_CONDITION_ALIAS } from '@umbraco-cms/backoffice/workspace';
 import { UMB_MEDIA_TYPE_TREE_ALIAS } from '../tree/index.js';
 
 export const manifests: Array<UmbExtensionManifest> = [
@@ -21,7 +21,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		api: () => import('./media-type-menu-structure.context.js'),
 		conditions: [
 			{
-				alias: UMB_WORKSPACE_ALIAS_CONDITION,
+				alias: UMB_WORKSPACE_CONDITION_ALIAS,
 				match: 'Umb.Workspace.MediaType',
 			},
 		],
@@ -33,7 +33,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		name: 'Media Type Breadcrumb Workspace Footer App',
 		conditions: [
 			{
-				alias: UMB_WORKSPACE_ALIAS_CONDITION,
+				alias: UMB_WORKSPACE_CONDITION_ALIAS,
 				match: 'Umb.Workspace.MediaType',
 			},
 		],

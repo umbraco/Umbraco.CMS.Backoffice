@@ -1,5 +1,5 @@
 import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
-import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
+import { UMB_WORKSPACE_CONDITION_ALIAS } from '@umbraco-cms/backoffice/workspace';
 
 export const UMB_TEMPLATE_WORKSPACE_ALIAS = 'Umb.Workspace.Template';
 
@@ -28,7 +28,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		},
 		conditions: [
 			{
-				alias: UMB_WORKSPACE_ALIAS_CONDITION,
+				alias: UMB_WORKSPACE_CONDITION_ALIAS,
 				match: UMB_TEMPLATE_WORKSPACE_ALIAS,
 			},
 		],
