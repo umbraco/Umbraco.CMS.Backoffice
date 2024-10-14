@@ -1,4 +1,4 @@
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 import { UMB_LANGUAGE_COLLECTION_ALIAS } from '../../collection/index.js';
 import { UMB_LANGUAGE_ROOT_ENTITY_TYPE } from '../../entity.js';
 import { UMB_LANGUAGE_ROOT_WORKSPACE_ALIAS } from './constants.js';

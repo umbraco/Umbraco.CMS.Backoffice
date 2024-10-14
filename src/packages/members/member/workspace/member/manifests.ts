@@ -6,7 +6,7 @@ import type {
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
 import { UMB_CONTENT_HAS_PROPERTIES_WORKSPACE_CONDITION } from '@umbraco-cms/backoffice/content';
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 
 export const UMB_MEMBER_WORKSPACE_ALIAS = 'Umb.Workspace.Member';
 

@@ -8,7 +8,7 @@ import type {
 } from '../types/index.js';
 import { UmbExtensionRegistry } from './extension.registry.js';
 import { expect } from '@open-wc/testing';
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 
 interface TestManifestWithMeta extends ManifestBase {
 	meta: unknown;

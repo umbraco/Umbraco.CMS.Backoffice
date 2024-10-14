@@ -1,5 +1,5 @@
 import { UMB_RELATION_TYPE_COLLECTION_ALIAS } from '@umbraco-cms/backoffice/relation-type';
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 
 export const manifests: Array<UmbExtensionManifest> = [
 	{

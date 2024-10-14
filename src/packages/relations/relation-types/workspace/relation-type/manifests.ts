@@ -1,4 +1,4 @@
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 
 export const UMB_RELATION_TYPE_WORKSPACE_ALIAS = 'Umb.Workspace.RelationType';
 

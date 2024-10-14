@@ -1,4 +1,4 @@
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 import { UMB_PARTIAL_VIEW_TREE_ALIAS } from '../tree/index.js';
 
 export const manifests: Array<UmbExtensionManifest> = [

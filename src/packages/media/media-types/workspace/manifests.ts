@@ -1,4 +1,4 @@
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 import { UMB_MEDIA_TYPE_COMPOSITION_REPOSITORY_ALIAS } from '../repository/index.js';
 import { UMB_MEDIA_TYPE_WORKSPACE_ALIAS } from './constants.js';
 

@@ -1,4 +1,4 @@
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 import { UMB_DOCUMENT_TREE_ALIAS } from '../tree/index.js';
 
 export const UMB_CONTENT_MENU_ALIAS = 'Umb.Menu.Content';

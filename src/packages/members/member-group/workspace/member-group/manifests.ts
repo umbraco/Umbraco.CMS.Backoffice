@@ -5,7 +5,7 @@ import type {
 	ManifestWorkspaceView,
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 
 export const UMB_MEMBER_GROUP_WORKSPACE_ALIAS = 'Umb.Workspace.MemberGroup';
 

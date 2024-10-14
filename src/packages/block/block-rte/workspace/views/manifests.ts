@@ -1,4 +1,4 @@
-import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from '@umbraco-cms/backoffice/workspace';
 import { UMB_BLOCK_RTE_TYPE_WORKSPACE_ALIAS } from '../index.js';
 
 export const manifests: Array<UmbExtensionManifest> = [
