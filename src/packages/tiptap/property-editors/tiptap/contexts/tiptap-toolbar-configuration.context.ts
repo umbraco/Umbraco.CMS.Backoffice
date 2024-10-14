@@ -240,6 +240,55 @@ export class UmbTiptapToolbarConfigurationContext extends UmbContextBase<UmbTipt
 
 		this.#toolbar.setValue(toolbar);
 	}
+
+	/*
+	 * Drag and drop events
+	 */
+
+	#currentDragItem?: { alias: string; fromPos?: [number, number, number] };
+
+	public onDragStart(event: DragEvent, alias: string, fromPos?: [number, number, number]) {
+		event.dataTransfer!.effectAllowed = 'move';
+		this.#currentDragItem = { alias, fromPos };
+	}
+
+	public onDragOver(event: DragEvent) {
+		event.preventDefault();
+		event.dataTransfer!.dropEffect = 'move';
+	}
+
+	public onDragEnd(event: DragEvent) {
+		event.preventDefault();
+		if (event.dataTransfer?.dropEffect === 'none') {
+			const { fromPos } = this.#currentDragItem ?? {};
+			if (!fromPos) return;
+
+			this.removeToolbarItem(fromPos);
+		}
+	}
+
+	public onDrop(event: DragEvent, toPos?: [number, number, number]) {
+		event.preventDefault();
+
+		const { alias, fromPos } = this.#currentDragItem ?? {};
+
+		// Remove item if no destination position is provided
+		if (fromPos && !toPos) {
+			this.removeToolbarItem(fromPos);
+			return;
+		}
+
+		// Move item if both source and destination positions are available
+		if (fromPos && toPos) {
+			this.moveToolbarItem(fromPos, toPos);
+			return;
+		}
+
+		// Insert item if an alias and a destination position are provided
+		if (alias && toPos) {
+			this.insertToolbarItem(alias, toPos);
+		}
+	}
 }
 
 export const UMB_TIPTAP_TOOLBAR_CONFIGURATION_CONTEXT = new UmbContextToken<UmbTiptapToolbarConfigurationContext>(

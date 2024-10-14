@@ -20,8 +20,6 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 {
 	#context = new UmbTiptapToolbarConfigurationContext(this);
 
-	#currentDragItem?: { alias: string; fromPos?: [number, number, number] };
-
 	#debouncedFilter = debounce((query: string) => {
 		this._availableExtensions = this.#context.filterExtensions(query);
 	}, 250);
@@ -73,48 +71,6 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 		this.#context.insertToolbarItem(item.alias, [lastRow, lastGroup, lastItem]);
 	}
 
-	#onDragStart(event: DragEvent, alias: string, fromPos?: [number, number, number]) {
-		event.dataTransfer!.effectAllowed = 'move';
-		this.#currentDragItem = { alias, fromPos };
-	}
-
-	#onDragOver(event: DragEvent) {
-		event.preventDefault();
-		event.dataTransfer!.dropEffect = 'move';
-	}
-
-	#onDragEnd(event: DragEvent) {
-		event.preventDefault();
-		if (event.dataTransfer?.dropEffect === 'none') {
-			const { fromPos } = this.#currentDragItem ?? {};
-			if (!fromPos) return;
-
-			this.#context.removeToolbarItem(fromPos);
-		}
-	}
-
-	#onDrop(event: DragEvent, toPos?: [number, number, number]) {
-		event.preventDefault();
-		const { alias, fromPos } = this.#currentDragItem ?? {};
-
-		// Remove item if no destination position is provided
-		if (fromPos && !toPos) {
-			this.#context.removeToolbarItem(fromPos);
-			return;
-		}
-
-		// Move item if both source and destination positions are available
-		if (fromPos && toPos) {
-			this.#context.moveToolbarItem(fromPos, toPos);
-			return;
-		}
-
-		// Insert item if an alias and a destination position are provided
-		if (alias && toPos) {
-			this.#context.insertToolbarItem(alias, toPos);
-		}
-	}
-
 	#onFilterInput(event: InputEvent & { target: HTMLInputElement }) {
 		const query = (event.target.value ?? '').toLocaleLowerCase();
 		this.#debouncedFilter(query);
@@ -138,7 +94,10 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 						</div>
 					</uui-input>
 				</div>
-				<div class="available-items" dropzone="move" @drop=${this.#onDrop} @dragover=${this.#onDragOver}>
+				<div
+					class="available-items"
+					@drop=${(e: DragEvent) => this.#context.onDrop(e)}
+					@dragover=${(e: DragEvent) => this.#context.onDragOver(e)}>
 					${when(
 						this._availableExtensions.length === 0,
 						() =>
@@ -163,8 +122,8 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 				look=${forbidden ? 'placeholder' : 'outline'}
 				?disabled=${forbidden || inUse}
 				@click=${() => this.#onClick(item)}
-				@dragstart=${(e: DragEvent) => this.#onDragStart(e, item.alias)}
-				@dragend=${this.#onDragEnd}>
+				@dragstart=${(e: DragEvent) => this.#context.onDragStart(e, item.alias)}
+				@dragend=${(e: DragEvent) => this.#context.onDragEnd(e)}>
 				<div class="inner">
 					${when(item.icon, () => html`<umb-icon .name=${item.icon}></umb-icon>`)}
 					<span>${this.localize.string(item.label)}</span>
@@ -235,9 +194,8 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 		return html`
 			<div
 				class="group"
-				dropzone="move"
-				@dragover=${this.#onDragOver}
-				@drop=${(e: DragEvent) => this.#onDrop(e, [rowIndex, groupIndex, group.data.length - 1])}>
+				@dragover=${(e: DragEvent) => this.#context.onDragOver(e)}
+				@drop=${(e: DragEvent) => this.#context.onDrop(e, [rowIndex, groupIndex, group.data.length])}>
 				<div class="items">
 					${when(
 						group?.data.length === 0,
@@ -280,8 +238,8 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 				title=${this.localize.string(item.label)}
 				?disabled=${forbidden}
 				@click=${() => this.#context.removeToolbarItem([rowIndex, groupIndex, itemIndex])}
-				@dragend=${this.#onDragEnd}
-				@dragstart=${(e: DragEvent) => this.#onDragStart(e, alias, [rowIndex, groupIndex, itemIndex])}>
+				@dragend=${(e: DragEvent) => this.#context.onDragEnd(e)}
+				@dragstart=${(e: DragEvent) => this.#context.onDragStart(e, alias, [rowIndex, groupIndex, itemIndex])}>
 				<div class="inner">
 					${when(
 						item.icon,
