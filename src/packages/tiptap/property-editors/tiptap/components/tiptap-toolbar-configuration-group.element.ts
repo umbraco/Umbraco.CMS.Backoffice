@@ -36,13 +36,13 @@ export class UmbTiptapToolbarConfigurationGroupElementElement extends UmbLitElem
 	}
 
 	override render() {
-		//console.log('group.render', this.group);
 		if (!this.group) return nothing;
 		return html`
 			<div
 				class="group"
 				@dragover=${(e: DragEvent) => this.#context?.onDragOver(e)}
 				@drop=${(e: DragEvent) => this.#context?.onDrop(e, [this.rowIndex, this.index, this.group!.data.length])}>
+				${when(!this.hideActionBar, () => html`<uui-icon class="handle" name="icon-navigation"></uui-icon>`)}
 				<div class="items">
 					${when(
 						this.group.data.length === 0,

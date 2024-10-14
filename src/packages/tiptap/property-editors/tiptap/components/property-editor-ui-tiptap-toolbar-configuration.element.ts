@@ -4,6 +4,7 @@ import type { UmbTiptapToolbarValue } from '../../../components/types.js';
 import { customElement, css, html, property, repeat, state, when } from '@umbraco-cms/backoffice/external/lit';
 import { debounce } from '@umbraco-cms/backoffice/utils';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 import { UMB_PROPERTY_CONTEXT } from '@umbraco-cms/backoffice/property';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/property-editor';
 
@@ -21,6 +22,21 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 	#debouncedFilter = debounce((query: string) => {
 		this._availableExtensions = this.#context.filterExtensions(query);
 	}, 250);
+
+	#sorter = new UmbSorterController<UmbTiptapToolbarRowViewModel>(this, {
+		getUniqueOfElement: (element: HTMLElement) => {
+			return element.id;
+		},
+		getUniqueOfModel: (modelEntry) => {
+			return modelEntry.unique;
+		},
+		itemSelector: 'umb-tiptap-toolbar-configuration-row',
+		containerSelector: '#rows',
+		onChange: ({ model }) => {
+			this.#value = model.map((rows) => rows.data.map((groups) => [...groups.data]));
+			this.#context.setToolbar(this.#value);
+		},
+	});
 
 	@state()
 	private _availableExtensions: Array<UmbTiptapToolbarExtension> = [];
@@ -57,7 +73,15 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 				if (!toolbar.length) return;
 				this._toolbar = toolbar;
 				this.#value = toolbar.map((rows) => rows.data.map((groups) => [...groups.data]));
+
 				propertyContext.setValue(this.#value);
+
+				if (this.#value.length > 1) {
+					this.#sorter.enable();
+					this.#sorter.setModel(this._toolbar);
+				} else {
+					this.#sorter.disable();
+				}
 			});
 		});
 	}

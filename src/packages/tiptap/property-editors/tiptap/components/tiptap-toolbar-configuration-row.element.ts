@@ -34,8 +34,9 @@ export class UmbTiptapToolbarConfigurationRowElementElement extends UmbLitElemen
 			<uui-button-inline-create
 				label=${this.localize.term('tiptap_toolbar_addRow')}
 				@click=${() => this.#context?.insertToolbarRow(this.index)}></uui-button-inline-create>
-			<div class="row">
-				<div class="groups">
+			<div id="row">
+				${when(!this.hideActionBar, () => html`<uui-icon class="handle" name="icon-navigation"></uui-icon>`)}
+				<div id="groups">
 					<uui-button-inline-create
 						vertical
 						label=${this.localize.term('tiptap_toolbar_addGroup')}
@@ -78,7 +79,7 @@ export class UmbTiptapToolbarConfigurationRowElementElement extends UmbLitElemen
 				cursor: move;
 			}
 
-			.row {
+			#row {
 				display: flex;
 				align-items: flex-start;
 				justify-content: space-between;
@@ -92,7 +93,7 @@ export class UmbTiptapToolbarConfigurationRowElementElement extends UmbLitElemen
 				}
 			}
 
-			.groups {
+			#groups {
 				flex: 1;
 				display: flex;
 				flex-direction: row;
