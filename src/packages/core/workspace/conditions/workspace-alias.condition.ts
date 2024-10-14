@@ -26,7 +26,7 @@ export class UmbWorkspaceAliasCondition
 			});
 		} else {
 			throw new Error(
-				'Condition [UMB_WORKSPACE_ALIAS_CONDITION] `Umb.Condition.WorkspaceAlias` could not be initialized properly. Either "match" or "oneOf" must be defined',
+				`Condition [UMB_WORKSPACE_ALIAS_CONDITION] (${UMB_WORKSPACE_ALIAS_CONDITION}) could not be initialized properly. Either "match" or "oneOf" must be defined.`,
 			);
 		}
 	}
