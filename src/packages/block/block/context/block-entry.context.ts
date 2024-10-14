@@ -13,7 +13,7 @@ import {
 	mergeObservables,
 	observeMultiple,
 } from '@umbraco-cms/backoffice/observable-api';
-import { encodeFilePath } from '@umbraco-cms/backoffice/utils';
+import { encodeFilePath, UmbReadOnlyVariantStateManager } from '@umbraco-cms/backoffice/utils';
 import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
 import type {
 	UmbContentTypeModel,
@@ -23,6 +23,7 @@ import type {
 import type { Observable } from '@umbraco-cms/backoffice/external/rxjs';
 import type { UmbBlockTypeBaseModel } from '@umbraco-cms/backoffice/block-type';
 import { UmbVariantId } from '@umbraco-cms/backoffice/variant';
+import { UmbUfmVirtualRenderController } from '@umbraco-cms/backoffice/ufm';
 
 export abstract class UmbBlockEntryContext<
 	BlockManagerContextTokenType extends UmbContextToken<BlockManagerContextType>,
@@ -49,6 +50,8 @@ export abstract class UmbBlockEntryContext<
 
 	#hasExpose = new UmbBooleanState(undefined);
 	hasExpose = this.#hasExpose.asObservable();
+
+	public readonly readOnlyState = new UmbReadOnlyVariantStateManager(this);
 
 	// Workspace alike methods, to enables editing of data without the need of a workspace (Custom views and block grid inline editing mode for example).
 	getEntityType() {
@@ -94,6 +97,8 @@ export abstract class UmbBlockEntryContext<
 	#label = new UmbStringState('');
 	public readonly label = this.#label.asObservable();
 
+	#labelRender = new UmbUfmVirtualRenderController(this);
+
 	#generateWorkspaceEditContentPath = (path?: string, contentKey?: string) =>
 		path && contentKey ? path + 'edit/' + encodeFilePath(contentKey) + '/view/content' : '';
 
@@ -119,6 +124,9 @@ export abstract class UmbBlockEntryContext<
 			this.#contentStructurePromiseResolve = undefined;
 		};
 	});
+
+	#contentStructureHasProperties = new UmbBooleanState(undefined);
+	_contentStructureHasProperties = this.#contentStructureHasProperties.asObservable();
 
 	#settingsStructure?: UmbContentTypeStructureManager;
 	#settingsStructurePromiseResolve?: () => void;
@@ -244,6 +252,11 @@ export abstract class UmbBlockEntryContext<
 	) {
 		super(host, 'UmbBlockEntryContext');
 
+		this.observe(this.label, (label) => {
+			this.#labelRender.markdown = label;
+		});
+		this.#watchContentForLabelRender();
+
 		// Consume block manager:
 		this.consumeContext(blockManagerContextToken, (manager) => {
 			this._manager = manager;
@@ -340,6 +353,12 @@ export abstract class UmbBlockEntryContext<
 		);
 	}
 
+	async #watchContentForLabelRender() {
+		this.observe(await this.contentValues(), (content) => {
+			this.#labelRender.value = content;
+		});
+	}
+
 	getContentKey() {
 		return this._layout.value?.contentKey;
 	}
@@ -361,7 +380,7 @@ export abstract class UmbBlockEntryContext<
 	 * @returns {string} - the value of the label.
 	 */
 	getLabel() {
-		return this.#label.value;
+		return this.#labelRender.toString();
 	}
 
 	#updateCreatePaths() {
@@ -409,6 +428,7 @@ export abstract class UmbBlockEntryContext<
 		this.#observeBlockType();
 		this.#observeContentData();
 		this.#observeSettingsData();
+		this.#observeReadOnlyState();
 	}
 
 	abstract _gotManager(): void;
@@ -491,6 +511,31 @@ export abstract class UmbBlockEntryContext<
 		);
 	}
 
+	#observeReadOnlyState() {
+		if (!this._manager) return;
+
+		this.observe(
+			observeMultiple([this._manager.readOnlyState.isReadOnly, this._manager.variantId]),
+			([isReadOnly, variantId]) => {
+				const unique = 'UMB_BLOCK_MANAGER_CONTEXT';
+				if (variantId === undefined) return;
+
+				if (isReadOnly) {
+					const state = {
+						unique,
+						variantId,
+						message: '',
+					};
+
+					this.readOnlyState?.addState(state);
+				} else {
+					this.readOnlyState?.removeState(unique);
+				}
+			},
+			'observeIsReadOnly',
+		);
+	}
+
 	#getContentStructure() {
 		if (!this._manager) return;
 
@@ -512,6 +557,14 @@ export abstract class UmbBlockEntryContext<
 				this._gotContentType(contentType);
 			},
 			'observeContentElementType',
+		);
+
+		this.observe(
+			this.#contentStructure?.contentTypeHasProperties,
+			(has) => {
+				this.#contentStructureHasProperties.setValue(has);
+			},
+			'observeContentTypeHasProperties',
 		);
 	}
 

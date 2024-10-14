@@ -219,6 +219,9 @@ export default {
 		createFolderIllegalChars: 'The folder name cannot contain illegal characters.',
 		deleteItemFailed: 'Failed to delete item: %0%',
 	},
+	collection: {
+		noItemsTitle: 'No items',
+	},
 	content: {
 		isPublished: 'Is Published',
 		about: 'About this page',
@@ -342,6 +345,7 @@ export default {
 		variantScheduleNotAllowed: 'Schedule is not allowed',
 		variantUnpublishNotAllowed: 'Unpublish is not allowed',
 		selectAllVariants: 'Select all variants',
+		saveModalTitle: 'Save',
 	},
 	blueprints: {
 		createBlueprintFrom: "Create a new Document Blueprint from '%0%'",
@@ -927,6 +931,7 @@ export default {
 		header: 'Header',
 		systemField: 'system field',
 		lastUpdated: 'Last Updated',
+		selectAll: 'Select all',
 		skipToMenu: 'Skip to menu',
 		skipToContent: 'Skip to content',
 		restore: 'Restore',
