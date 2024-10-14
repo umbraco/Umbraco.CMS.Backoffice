@@ -1,3 +1,5 @@
+import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+
 export const UMB_RELATION_TYPE_WORKSPACE_ALIAS = 'Umb.Workspace.RelationType';
 
 export const manifests: Array<UmbExtensionManifest> = [
@@ -24,7 +26,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		},
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: UMB_RELATION_TYPE_WORKSPACE_ALIAS,
 			},
 		],

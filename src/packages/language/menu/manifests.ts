@@ -1,3 +1,5 @@
+import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
+
 export const manifests: Array<UmbExtensionManifest> = [
 	{
 		type: 'menuItem',
@@ -18,7 +20,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		api: () => import('./language-menu-structure.context.js'),
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: 'Umb.Workspace.Language',
 			},
 		],
@@ -30,7 +32,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		name: 'Language Breadcrumb Workspace Footer App',
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: 'Umb.Workspace.Language',
 			},
 		],

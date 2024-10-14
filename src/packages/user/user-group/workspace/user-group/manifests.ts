@@ -1,4 +1,5 @@
 import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
 
 export const UMB_USER_GROUP_WORKSPACE_ALIAS = 'Umb.Workspace.UserGroup';
 
@@ -26,7 +27,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		},
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: UMB_USER_GROUP_WORKSPACE_ALIAS,
 			},
 		],

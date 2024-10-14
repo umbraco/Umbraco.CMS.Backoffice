@@ -1,3 +1,4 @@
+import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
 import { UMB_BLOCK_WORKSPACE_ALIAS } from './index.js';
 import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
 
@@ -15,7 +16,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		},
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: UMB_BLOCK_WORKSPACE_ALIAS,
 			},
 			{
@@ -37,7 +38,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		},
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: UMB_BLOCK_WORKSPACE_ALIAS,
 			},
 			{
@@ -69,7 +70,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		},
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: UMB_BLOCK_WORKSPACE_ALIAS,
 			},
 		],
@@ -94,7 +95,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		},
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: UMB_BLOCK_WORKSPACE_ALIAS,
 			},
 			{

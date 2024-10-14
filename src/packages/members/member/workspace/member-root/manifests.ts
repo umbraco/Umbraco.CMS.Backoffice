@@ -1,3 +1,4 @@
+import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
 import { UMB_MEMBER_COLLECTION_ALIAS } from '../../collection/manifests.js';
 import { UMB_MEMBER_ROOT_ENTITY_TYPE } from '../../entity.js';
 import { UMB_MEMBER_ROOT_WORKSPACE_ALIAS } from './constants.js';
@@ -26,7 +27,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 		},
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: UMB_MEMBER_ROOT_WORKSPACE_ALIAS,
 			},
 		],

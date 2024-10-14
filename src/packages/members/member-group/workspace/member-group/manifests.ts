@@ -5,6 +5,7 @@ import type {
 	ManifestWorkspaceView,
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbSubmitWorkspaceAction } from '@umbraco-cms/backoffice/workspace';
+import { UMB_WORKSPACE_ALIAS_CONDITION } from 'src/packages/core/workspace/conditions/const.js';
 
 export const UMB_MEMBER_GROUP_WORKSPACE_ALIAS = 'Umb.Workspace.MemberGroup';
 
@@ -33,7 +34,7 @@ const workspaceActions: Array<ManifestWorkspaceActions> = [
 		},
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: UMB_MEMBER_GROUP_WORKSPACE_ALIAS,
 			},
 		],
@@ -54,7 +55,7 @@ export const workspaceViews: Array<ManifestWorkspaceView> = [
 		},
 		conditions: [
 			{
-				alias: 'Umb.Condition.WorkspaceAlias',
+				alias: UMB_WORKSPACE_ALIAS_CONDITION,
 				match: UMB_MEMBER_GROUP_WORKSPACE_ALIAS,
 			},
 		],
