@@ -1,15 +1,13 @@
 import { UmbTiptapToolbarConfigurationContext } from '../contexts/tiptap-toolbar-configuration.context.js';
-import type {
-	UmbTiptapToolbarExtension,
-	UmbTiptapToolbarGroupViewModel,
-	UmbTiptapToolbarRowViewModel,
-} from '../types.js';
+import type { UmbTiptapToolbarExtension, UmbTiptapToolbarRowViewModel } from '../types.js';
 import type { UmbTiptapToolbarValue } from '../../../components/types.js';
-import { customElement, css, html, property, repeat, state, when, nothing } from '@umbraco-cms/backoffice/external/lit';
+import { customElement, css, html, property, repeat, state, when } from '@umbraco-cms/backoffice/external/lit';
 import { debounce } from '@umbraco-cms/backoffice/utils';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UMB_PROPERTY_CONTEXT } from '@umbraco-cms/backoffice/property';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/property-editor';
+
+import './tiptap-toolbar-configuration-row.element.js';
 
 const elementName = 'umb-property-editor-ui-tiptap-toolbar-configuration';
 
@@ -139,7 +137,14 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 					${repeat(
 						this._toolbar,
 						(row) => row.unique,
-						(row, idx) => this.#renderRow(row, idx),
+						(row, idx) => html`
+							<umb-tiptap-toolbar-configuration-row
+								id=${row.unique}
+								.row=${row}
+								.index=${idx}
+								?hideActionBar=${this._toolbar.length === 1}>
+							</umb-tiptap-toolbar-configuration-row>
+						`,
 					)}
 				</div>
 				<uui-button
@@ -148,106 +153,6 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 					label=${this.localize.term('tiptap_toolbar_addRow')}
 					@click=${() => this.#context.insertToolbarRow(this._toolbar.length)}></uui-button>
 			</uui-box>
-		`;
-	}
-
-	#renderRow(row?: UmbTiptapToolbarRowViewModel, rowIndex = 0) {
-		if (!row) return nothing;
-		const hideActionBar = this._toolbar.length === 1;
-		return html`
-			<uui-button-inline-create
-				label=${this.localize.term('tiptap_toolbar_addRow')}
-				@click=${() => this.#context?.insertToolbarRow(rowIndex)}></uui-button-inline-create>
-			<div class="row">
-				<div class="groups">
-					<uui-button-inline-create
-						vertical
-						label=${this.localize.term('tiptap_toolbar_addGroup')}
-						@click=${() => this.#context?.insertToolbarGroup(rowIndex, 0)}></uui-button-inline-create>
-					${repeat(
-						row.data,
-						(group) => group.unique,
-						(group, idx) => this.#renderGroup(group, rowIndex, idx),
-					)}
-				</div>
-				${when(
-					!hideActionBar,
-					() => html`
-						<uui-action-bar>
-							<uui-button
-								color="danger"
-								look="secondary"
-								label=${this.localize.term('tiptap_toolbar_removeRow')}
-								@click=${() => this.#context?.removeToolbarRow(rowIndex)}>
-								<uui-icon name="icon-trash"></uui-icon>
-							</uui-button>
-						</uui-action-bar>
-					`,
-				)}
-			</div>
-		`;
-	}
-
-	#renderGroup(group?: UmbTiptapToolbarGroupViewModel, rowIndex = 0, groupIndex = 0) {
-		if (!group) return nothing;
-		const hideActionBar = this._toolbar[rowIndex].data.length === 1 && group.data.length === 0;
-		return html`
-			<div
-				class="group"
-				@dragover=${(e: DragEvent) => this.#context.onDragOver(e)}
-				@drop=${(e: DragEvent) => this.#context.onDrop(e, [rowIndex, groupIndex, group.data.length])}>
-				<div class="items">
-					${when(
-						group?.data.length === 0,
-						() => html`<em><umb-localize key="tiptap_toolbar_addItems">Add items</umb-localize></em>`,
-						() => html`${group!.data.map((alias, idx) => this.#renderItem(alias, rowIndex, groupIndex, idx))}`,
-					)}
-				</div>
-				${when(
-					!hideActionBar,
-					() => html`
-						<uui-action-bar>
-							<uui-button
-								color="danger"
-								look="secondary"
-								label=${this.localize.term('tiptap_toolbar_removeGroup')}
-								@click=${() => this.#context?.removeToolbarGroup(rowIndex, groupIndex)}>
-								<uui-icon name="icon-trash"></uui-icon>
-							</uui-button>
-						</uui-action-bar>
-					`,
-				)}
-			</div>
-			<uui-button-inline-create
-				vertical
-				label=${this.localize.term('tiptap_toolbar_addGroup')}
-				@click=${() => this.#context?.insertToolbarGroup(rowIndex, groupIndex + 1)}></uui-button-inline-create>
-		`;
-	}
-
-	#renderItem(alias: string, rowIndex = 0, groupIndex = 0, itemIndex = 0) {
-		const item = this.#context?.getExtensionByAlias(alias);
-		if (!item) return nothing;
-		const forbidden = !this.#context?.isExtensionEnabled(item.alias);
-		return html`
-			<uui-button
-				compact
-				class=${forbidden ? 'forbidden' : ''}
-				draggable="true"
-				look=${forbidden ? 'placeholder' : 'outline'}
-				title=${this.localize.string(item.label)}
-				?disabled=${forbidden}
-				@click=${() => this.#context.removeToolbarItem([rowIndex, groupIndex, itemIndex])}
-				@dragend=${(e: DragEvent) => this.#context.onDragEnd(e)}
-				@dragstart=${(e: DragEvent) => this.#context.onDragStart(e, alias, [rowIndex, groupIndex, itemIndex])}>
-				<div class="inner">
-					${when(
-						item.icon,
-						() => html`<umb-icon .name=${item.icon}></umb-icon>`,
-						() => html`<span>${this.localize.string(item.label)}</span>`,
-					)}
-				</div>
-			</uui-button>
 		`;
 	}
 
@@ -315,95 +220,11 @@ export class UmbPropertyEditorUiTiptapToolbarConfigurationElement
 				display: flex;
 				flex-direction: column;
 				gap: var(--uui-size-1);
-
-				.row {
-					display: flex;
-					align-items: flex-start;
-					justify-content: space-between;
-					gap: var(--uui-size-3);
-					border: 1px solid var(--uui-color-border);
-					border-radius: var(--uui-border-radius);
-					padding: var(--uui-size-3) var(--uui-size-2);
-
-					&:hover {
-						border-color: var(--uui-button-contrast-hover);
-					}
-
-					.groups {
-						flex: 1;
-						display: flex;
-						flex-direction: row;
-						flex-wrap: wrap;
-						align-items: center;
-						justify-content: flex-start;
-						gap: var(--uui-size-1);
-
-						uui-button-inline-create {
-							height: 40px;
-						}
-
-						.group {
-							display: flex;
-							flex-direction: row;
-							align-items: center;
-							justify-content: space-between;
-							gap: var(--uui-size-3);
-
-							border: 1px dashed var(--uui-color-border-standalone);
-							border-radius: var(--uui-border-radius);
-							padding: var(--uui-size-3);
-
-							&:hover {
-								border-color: var(--uui-button-contrast-hover);
-							}
-
-							.items {
-								display: flex;
-								flex-direction: row;
-								flex-wrap: wrap;
-								gap: var(--uui-size-1);
-
-								uui-button {
-									--uui-button-font-weight: normal;
-
-									&[draggable='true'],
-									&[draggable='true'] > .inner {
-										cursor: move;
-									}
-
-									&[disabled],
-									&[disabled] > .inner {
-										cursor: not-allowed;
-									}
-
-									&.forbidden {
-										--color: var(--uui-color-danger);
-										--color-standalone: var(--uui-color-danger-standalone);
-										--color-emphasis: var(--uui-color-danger-emphasis);
-										--color-contrast: var(--uui-color-danger);
-										--uui-button-contrast-disabled: var(--uui-color-danger);
-										--uui-button-border-color-disabled: var(--uui-color-danger);
-										opacity: 0.5;
-									}
-
-									div {
-										display: flex;
-										gap: var(--uui-size-1);
-									}
-								}
-							}
-						}
-					}
-				}
 			}
 
 			#btnAddRow {
 				display: block;
 				margin-top: var(--uui-size-1);
-			}
-
-			.handle {
-				cursor: move;
 			}
 		`,
 	];
