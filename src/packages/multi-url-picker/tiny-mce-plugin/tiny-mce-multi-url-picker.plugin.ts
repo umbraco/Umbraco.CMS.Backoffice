@@ -1,17 +1,19 @@
-import type { UmbLinkPickerModalValue } from '../link-picker-modal/link-picker-modal.token.js';
 import { UMB_LINK_PICKER_MODAL } from '../link-picker-modal/link-picker-modal.token.js';
-import type { UmbLinkPickerLink } from '../link-picker-modal/types.js';
-import { type TinyMcePluginArguments, UmbTinyMcePluginBase } from '@umbraco-cms/backoffice/tiny-mce';
-import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import type { UmbLinkPickerLink, UmbLinkPickerLinkType } from '../link-picker-modal/types.js';
+import type { UmbLinkPickerModalValue } from '../link-picker-modal/link-picker-modal.token.js';
 import { UmbLocalizationController } from '@umbraco-cms/backoffice/localization-api';
+import { UmbTinyMcePluginBase } from '@umbraco-cms/backoffice/tiny-mce';
+import { UMB_MODAL_MANAGER_CONTEXT } from '@umbraco-cms/backoffice/modal';
+import type { TinyMcePluginArguments } from '@umbraco-cms/backoffice/tiny-mce';
 
 type AnchorElementAttributes = {
-	href?: string | null;
-	title?: string | null;
-	target?: string | null;
 	'data-anchor'?: string | null;
-	rel?: string | null;
+	href?: string | null;
+	target?: string | null;
 	text?: string;
+	title?: string | null;
+	type?: UmbLinkPickerLinkType;
+	rel?: string | null;
 };
 
 export default class UmbTinyMceMultiUrlPickerPlugin extends UmbTinyMcePluginBase {
@@ -21,16 +23,8 @@ export default class UmbTinyMceMultiUrlPickerPlugin extends UmbTinyMcePluginBase
 
 	constructor(args: TinyMcePluginArguments) {
 		super(args);
+
 		const localize = new UmbLocalizationController(args.host);
-
-		// const editorEventSetupCallback = (buttonApi: { setEnabled: (state: boolean) => void }) => {
-		// 	const editorEventCallback = (eventApi: { element: Element}) => {
-		// 		buttonApi.setEnabled(eventApi.element.nodeName.toLowerCase() === 'a' && eventApi.element.hasAttribute('href'));
-		// 	};
-
-		// 	editor.on('NodeChange', editorEventCallback);
-		// 	return () => editor.off('NodeChange', editorEventCallback);
-		// };
 
 		this.editor.ui.registry.addToggleButton('link', {
 			icon: 'link',
@@ -57,21 +51,8 @@ export default class UmbTinyMceMultiUrlPickerPlugin extends UmbTinyMcePluginBase
 		const selectedElm = this.editor.selection.getNode();
 		this.#anchorElement = this.editor.dom.getParent(selectedElm, 'a[href]') as HTMLAnchorElement;
 
-		const data: AnchorElementAttributes = {
-			text: this.#anchorElement
-				? this.#anchorElement.innerText || (this.#anchorElement.textContent ?? '')
-				: this.editor.selection.getContent({ format: 'text' }),
-			href: this.#anchorElement?.getAttribute('href') ?? '',
-			target: this.#anchorElement?.target ?? '',
-			rel: this.#anchorElement?.rel ?? '',
-		};
-
-		if (selectedElm.nodeName === 'IMG') {
-			data.text = ' ';
-		}
-
 		if (!this.#anchorElement) {
-			this.#openLinkPicker({ name: this.editor.selection.getContent() });
+			this.#openLinkPicker({ name: this.editor.selection.getContent({ format: 'text' }) });
 			return;
 		}
 
@@ -113,6 +94,7 @@ export default class UmbTinyMceMultiUrlPickerPlugin extends UmbTinyMcePluginBase
 
 		// TODO: This is a workaround for the issue where the link picker modal is returning a frozen object, and we need to extract the link into smaller parts to avoid the frozen object issue.
 		this.#linkPickerData = { link: { ...linkPickerData.link } };
+
 		this.#updateLink();
 	}
 
