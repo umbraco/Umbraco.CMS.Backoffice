@@ -347,7 +347,10 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 			this.layout,
 			(layoutData) => {
 				if (layoutData) {
-					this.#blockManager?.setOneLayout(layoutData);
+					this.#blockManager?.setOneLayout(
+						layoutData,
+						this.#modalContext?.data.originData as UmbBlockWorkspaceOriginData,
+					);
 				}
 			},
 			'observeThisLayout',
@@ -443,7 +446,7 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 			} else {
 				// Update data:
 
-				this.#blockManager.setOneLayout(layoutData);
+				this.#blockManager.setOneLayout(layoutData, this.#modalContext.data.originData as UmbBlockWorkspaceOriginData);
 				if (contentData) {
 					this.#blockManager.setOneContent(contentData);
 				}
@@ -480,7 +483,10 @@ export class UmbBlockWorkspaceContext<LayoutDataType extends UmbBlockLayoutBaseM
 			} else {
 				// Revert the layout, content & settings data to the original state: [NL]
 				if (this.#initialLayout) {
-					this.#blockManager?.setOneLayout(this.#initialLayout);
+					this.#blockManager?.setOneLayout(
+						this.#initialLayout,
+						this.#modalContext?.data.originData as UmbBlockWorkspaceOriginData,
+					);
 				}
 				if (this.#initialContent) {
 					this.#blockManager?.setOneContent(this.#initialContent);
