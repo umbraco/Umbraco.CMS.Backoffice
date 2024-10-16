@@ -75,20 +75,21 @@ export default class UmbTinyMceMultiUrlPickerPlugin extends UmbTinyMcePluginBase
 			return;
 		}
 
-		//if we already have a link selected, we want to pass that data over to the dialog
+		let url = this.#anchorElement.getAttribute('href') ?? this.#anchorElement.href ?? '';
+
+		const queryString = this.#anchorElement.getAttribute('data-anchor') ?? '';
+		if (queryString && url.endsWith(queryString)) {
+			url = url.substring(0, url.indexOf(queryString));
+		}
+
 		const currentTarget: UmbLinkPickerLink = {
 			name: this.#anchorElement.title || this.#anchorElement.textContent,
 			target: this.#anchorElement.target,
-			queryString: `${this.#anchorElement.search}${this.#anchorElement.hash}`,
+			queryString: queryString,
+			type: (this.#anchorElement.type as UmbLinkPickerLinkType) ?? 'external',
+			unique: url.includes('localLink:') ? url.substring(url.indexOf(':') + 1, url.indexOf('}')) : null,
+			url: url,
 		};
-
-		if (this.#anchorElement.href.includes('localLink:')) {
-			const href = this.#anchorElement.getAttribute('href')!;
-			currentTarget.unique = href.substring(href.indexOf(':') + 1, href.indexOf('}'));
-		} else if (this.#anchorElement.host.length) {
-			currentTarget.url = this.#anchorElement.protocol ? this.#anchorElement.protocol + '//' : undefined;
-			currentTarget.url += this.#anchorElement.host + this.#anchorElement.pathname;
-		}
 
 		this.#openLinkPicker(currentTarget);
 	}
@@ -115,32 +116,28 @@ export default class UmbTinyMceMultiUrlPickerPlugin extends UmbTinyMcePluginBase
 		this.#updateLink();
 	}
 
-	//Create a json obj used to create the attributes for the tag
-	// TODO => where has rel gone?
 	#createElemAttributes() {
-		// Attribute 'name' because of linkPickerData. It should be 'title' .
-		const { name, ...linkPickerData } = this.#linkPickerData!.link;
-		const a: AnchorElementAttributes = Object.assign({}, linkPickerData);
+		const link = this.#linkPickerData!.link;
 
-		// always need to map back to href for tinymce to render correctly
-		// do this first as checking querystring below may modify the href property
-		if (this.#linkPickerData?.link.url) {
-			a.href = this.#linkPickerData.link.url;
+		const anchor: AnchorElementAttributes = {
+			href: link.url ?? '',
+			title: link.name ?? link.url ?? '',
+			target: link.target,
+			type: link.type ?? 'external',
+			rel: link.target === '_blank' ? 'noopener' : null,
+		};
+
+		if (link.queryString) {
+			anchor['data-anchor'] = link.queryString;
+
+			if (link.queryString.startsWith('?')) {
+				anchor.href += !anchor.href ? '/' + link.queryString : link.queryString;
+			} else if (link.queryString.startsWith('#')) {
+				anchor.href += link.queryString;
+			}
 		}
 
-		if (this.#linkPickerData?.link.name) {
-			a.title = name;
-		}
-
-		if (
-			this.#linkPickerData?.link.queryString?.startsWith('#') ||
-			this.#linkPickerData?.link.queryString?.startsWith('?')
-		) {
-			a['data-anchor'] = this.#linkPickerData?.link.queryString;
-			a.href += this.#linkPickerData?.link.queryString;
-		}
-
-		return a;
+		return anchor;
 	}
 
 	#insertLink() {
