@@ -1,13 +1,13 @@
 import type { UmbCollectionBulkActionPermissions, UmbCollectionConfiguration } from '../../collection/types.js';
+import { UMB_WORKSPACE_EDITOR_CONTEXT } from '../../workspace/components/workspace-editor/workspace-editor.context.js';
 import { UMB_CONTENT_COLLECTION_WORKSPACE_CONTEXT } from './content-collection-workspace.context-token.js';
 import { customElement, html, nothing, state } from '@umbraco-cms/backoffice/external/lit';
-import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbDataTypeDetailRepository } from '@umbraco-cms/backoffice/data-type';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbDataTypeDetailModel } from '@umbraco-cms/backoffice/data-type';
-import type { UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/workspace';
+import type { ManifestWorkspaceView, UmbWorkspaceViewElement } from '@umbraco-cms/backoffice/workspace';
 
-const elementName = 'umb-content-collection-workspace-view';
 @customElement('umb-content-collection-workspace-view')
 export class UmbContentCollectionWorkspaceViewElement extends UmbLitElement implements UmbWorkspaceViewElement {
 	@state()
@@ -22,7 +22,11 @@ export class UmbContentCollectionWorkspaceViewElement extends UmbLitElement impl
 	@state()
 	private _documentUnique?: string;
 
+	manifest?: ManifestWorkspaceView;
+
 	#dataTypeDetailRepository = new UmbDataTypeDetailRepository(this);
+
+	#workspaceEditorContext?: typeof UMB_WORKSPACE_EDITOR_CONTEXT.TYPE;
 
 	constructor() {
 		super();
@@ -57,11 +61,27 @@ export class UmbContentCollectionWorkspaceViewElement extends UmbLitElement impl
 				'_observeConfigContentType',
 			);
 		});
+
+		this.consumeContext(UMB_WORKSPACE_EDITOR_CONTEXT, (workspaceEditorContext) => {
+			this.#workspaceEditorContext = workspaceEditorContext;
+		});
 	}
 
 	#mapDataTypeConfigToCollectionConfig(dataType: UmbDataTypeDetailModel): UmbCollectionConfiguration {
 		const config = new UmbPropertyEditorConfigCollection(dataType.values);
 		const pageSize = Number(config.getValueByAlias('pageSize'));
+
+		if (this.manifest?.alias) {
+			const icon = config?.getValueByAlias<string>('icon');
+			const label = config?.getValueByAlias<string>('tabName');
+
+			// TODO: Review how `showContentFirst` is implemented, and how to re-route/redirect the path.
+			const showContentFirst = Boolean(config?.getValueByAlias('showContentFirst'));
+			const weight = showContentFirst ? 199 : (this.manifest.weight ?? 300);
+
+			this.#workspaceEditorContext?.setWorkspaceViewMeta(this.manifest.alias, icon, label, weight);
+		}
+
 		return {
 			unique: this._documentUnique,
 			allowedEntityBulkActions: config?.getValueByAlias<UmbCollectionBulkActionPermissions>('bulkActionPermissions'),
@@ -83,6 +103,6 @@ export { UmbContentCollectionWorkspaceViewElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbContentCollectionWorkspaceViewElement;
+		'umb-content-collection-workspace-view': UmbContentCollectionWorkspaceViewElement;
 	}
 }
