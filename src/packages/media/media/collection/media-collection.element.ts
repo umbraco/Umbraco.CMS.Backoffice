@@ -8,9 +8,7 @@ import { UmbCollectionDefaultElement } from '@umbraco-cms/backoffice/collection'
 import { UmbRequestReloadChildrenOfEntityEvent } from '@umbraco-cms/backoffice/entity-action';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
 
-const elementName = 'umb-media-collection';
-
-@customElement(elementName)
+@customElement('umb-media-collection')
 export class UmbMediaCollectionElement extends UmbCollectionDefaultElement {
 	#collectionContext?: typeof UMB_MEDIA_COLLECTION_CONTEXT.TYPE;
 
@@ -106,6 +104,6 @@ export { UmbMediaCollectionElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbMediaCollectionElement;
+		'umb-media-collection': UmbMediaCollectionElement;
 	}
 }

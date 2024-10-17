@@ -3,9 +3,7 @@ import { css, customElement, html } from '@umbraco-cms/backoffice/external/lit';
 import { debounce } from '@umbraco-cms/backoffice/utils';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
-const elementName = 'umb-collection-filter-field';
-
-@customElement(elementName)
+@customElement('umb-collection-filter-field')
 export class UmbCollectionFilterFieldElement extends UmbLitElement {
 	#collectionContext?: typeof UMB_COLLECTION_CONTEXT.TYPE;
 
@@ -44,6 +42,6 @@ export class UmbCollectionFilterFieldElement extends UmbLitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbCollectionFilterFieldElement;
+		'umb-collection-filter-field': UmbCollectionFilterFieldElement;
 	}
 }

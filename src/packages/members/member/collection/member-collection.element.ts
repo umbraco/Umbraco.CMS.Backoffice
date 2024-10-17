@@ -3,9 +3,7 @@ import { UmbCollectionDefaultElement } from '@umbraco-cms/backoffice/collection'
 
 import './member-collection-header.element.js';
 
-const elementName = 'umb-member-collection';
-
-@customElement(elementName)
+@customElement('umb-member-collection')
 export class UmbMemberCollectionElement extends UmbCollectionDefaultElement {
 	protected override renderToolbar() {
 		return html`<umb-member-collection-header slot="header"></umb-member-collection-header>`;
@@ -19,6 +17,6 @@ export { UmbMemberCollectionElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbMemberCollectionElement;
+		'umb-member-collection': UmbMemberCollectionElement;
 	}
 }

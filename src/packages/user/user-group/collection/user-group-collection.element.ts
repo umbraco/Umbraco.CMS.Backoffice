@@ -5,9 +5,7 @@ import { UmbCollectionDefaultElement } from '@umbraco-cms/backoffice/collection'
 
 import './user-group-collection-header.element.js';
 
-const elementName = 'umb-user-group-collection';
-
-@customElement(elementName)
+@customElement('umb-user-group-collection')
 export class UmbUserGroupCollectionElement extends UmbCollectionDefaultElement {
 	#collectionContext?: typeof UMB_USER_GROUP_COLLECTION_CONTEXT.TYPE;
 
@@ -51,6 +49,6 @@ export { UmbUserGroupCollectionElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbUserGroupCollectionElement;
+		'umb-user-group-collection': UmbUserGroupCollectionElement;
 	}
 }

@@ -1,9 +1,7 @@
 import { customElement, html } from '@umbraco-cms/backoffice/external/lit';
 import { UmbCollectionDefaultElement } from '@umbraco-cms/backoffice/collection';
 
-const elementName = 'umb-dictionary-collection';
-
-@customElement(elementName)
+@customElement('umb-dictionary-collection')
 export class UmbDictionaryCollectionElement extends UmbCollectionDefaultElement {
 	protected override renderToolbar() {
 		return html`
@@ -18,6 +16,6 @@ export { UmbDictionaryCollectionElement as element };
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbDictionaryCollectionElement;
+		'umb-dictionary-collection': UmbDictionaryCollectionElement;
 	}
 }

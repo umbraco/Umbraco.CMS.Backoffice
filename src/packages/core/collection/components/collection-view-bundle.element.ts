@@ -15,9 +15,7 @@ interface UmbCollectionViewLayout {
 	pathName: string;
 }
 
-const elementName = 'umb-collection-view-bundle';
-
-@customElement(elementName)
+@customElement('umb-collection-view-bundle')
 export class UmbCollectionViewBundleElement extends UmbLitElement {
 	@state()
 	_views: Array<UmbCollectionViewLayout> = [];
@@ -172,6 +170,6 @@ export class UmbCollectionViewBundleElement extends UmbLitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbCollectionViewBundleElement;
+		'umb-collection-view-bundle': UmbCollectionViewBundleElement;
 	}
 }
