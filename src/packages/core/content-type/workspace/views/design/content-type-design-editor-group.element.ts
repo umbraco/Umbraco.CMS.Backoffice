@@ -231,10 +231,6 @@ export class UmbContentTypeWorkspaceViewEditGroupElement extends UmbLitElement {
 			:host([drag-placeholder]) > uui-box > * {
 				visibility: hidden;
 			}
-			
-			:host([drag-placeholder]) > uui-box > div[slot='header'] {
-				visibility: visible;
-			}
 
 			div[slot='header'] {
 				flex: 1;
