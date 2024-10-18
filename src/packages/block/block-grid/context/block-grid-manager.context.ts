@@ -1,6 +1,11 @@
 import type { UmbBlockGridLayoutModel, UmbBlockGridTypeModel } from '../types.js';
 import type { UmbBlockGridWorkspaceOriginData } from '../index.js';
-import { UmbArrayState, appendToFrozenArray, pushAtToUniqueArray } from '@umbraco-cms/backoffice/observable-api';
+import {
+	UmbArrayState,
+	UmbBooleanState,
+	appendToFrozenArray,
+	pushAtToUniqueArray,
+} from '@umbraco-cms/backoffice/observable-api';
 import { removeLastSlashFromPath, transformServerPathToClientPath } from '@umbraco-cms/backoffice/utils';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { UMB_APP_CONTEXT } from '@umbraco-cms/backoffice/app';
@@ -18,6 +23,16 @@ export class UmbBlockGridManagerContext<
 	BlockLayoutType extends UmbBlockGridLayoutModel = UmbBlockGridLayoutModel,
 > extends UmbBlockManagerContext<UmbBlockGridTypeModel, UmbBlockGridLayoutModel, UmbBlockGridWorkspaceOriginData> {
 	//
+	#inlineEditingMode = new UmbBooleanState(undefined);
+	readonly inlineEditingMode = this.#inlineEditingMode.asObservable();
+
+	setInlineEditingMode(inlineEditingMode: boolean | undefined) {
+		this.#inlineEditingMode.setValue(inlineEditingMode ?? false);
+	}
+	getInlineEditingMode(): boolean | undefined {
+		return this.#inlineEditingMode.getValue();
+	}
+
 	#initAppUrl: Promise<void>;
 	#appUrl?: string;
 	#blockGroups = new UmbArrayState(<Array<UmbBlockTypeGroup>>[], (x) => x.key);
@@ -171,7 +186,7 @@ export class UmbBlockGridManagerContext<
 		originData: UmbBlockGridWorkspaceOriginData,
 	) {
 		this.setOneLayout(layoutEntry, originData);
-		this.insertBlockData(layoutEntry, content, settings);
+		this.insertBlockData(layoutEntry, content, settings, originData);
 
 		return true;
 	}

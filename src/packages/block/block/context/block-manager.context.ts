@@ -8,6 +8,7 @@ import {
 	UmbBooleanState,
 	UmbClassState,
 	UmbStringState,
+	type MappingFunction,
 	mergeObservables,
 } from '@umbraco-cms/backoffice/observable-api';
 import { UmbDocumentTypeDetailRepository } from '@umbraco-cms/backoffice/document-type';
@@ -16,6 +17,7 @@ import { UmbId } from '@umbraco-cms/backoffice/id';
 import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
 import type { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import type { UmbBlockTypeBaseModel } from '@umbraco-cms/backoffice/block-type';
+import { UmbReadOnlyVariantStateManager } from '@umbraco-cms/backoffice/utils';
 
 export type UmbBlockDataObjectModel<LayoutEntryType extends UmbBlockLayoutBaseModel> = {
 	layout: LayoutEntryType;
@@ -65,6 +67,8 @@ export abstract class UmbBlockManagerContext<
 	readonly #settings = new UmbArrayState(<Array<UmbBlockDataModel>>[], (x) => x.key);
 	public readonly settings = this.#settings.asObservable();
 
+	public readonly readOnlyState = new UmbReadOnlyVariantStateManager(this);
+
 	readonly #exposes = new UmbArrayState(
 		<Array<UmbBlockExposeModel>>[],
 		(x) => x.contentKey + '_' + x.culture + '_' + x.segment,
@@ -74,11 +78,14 @@ export abstract class UmbBlockManagerContext<
 	setEditorConfiguration(configs: UmbPropertyEditorConfigCollection) {
 		this._editorConfiguration.setValue(configs);
 		if (this._liveEditingMode.getValue() === undefined) {
-			this._liveEditingMode.setValue(configs.getValueByAlias<boolean>('liveEditingMode'));
+			this._liveEditingMode.setValue(configs.getValueByAlias<boolean>('useLiveEditing'));
 		}
 	}
 	getEditorConfiguration(): UmbPropertyEditorConfigCollection | undefined {
 		return this._editorConfiguration.getValue();
+	}
+	editorConfigurationPart(method: MappingFunction<UmbPropertyEditorConfigCollection | undefined, unknown>) {
+		return this._editorConfiguration.asObservablePart(method);
 	}
 
 	setBlockTypes(blockTypes: Array<BlockType>) {
@@ -199,7 +206,9 @@ export abstract class UmbBlockManagerContext<
 	getContentOf(contentKey: string) {
 		return this.#contents.value.find((x) => x.key === contentKey);
 	}
-	setOneLayout(layoutData: BlockLayoutType) {
+	// originData param is used by some implementations. [NL] should be here, do not remove it.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	setOneLayout(layoutData: BlockLayoutType, _originData?: BlockOriginDataType) {
 		this._layouts.appendOne(layoutData);
 	}
 	setOneContent(contentData: UmbBlockDataModel) {
@@ -312,7 +321,13 @@ export abstract class UmbBlockManagerContext<
 		originData: BlockOriginDataType,
 	): boolean;
 
-	protected insertBlockData(layoutEntry: BlockLayoutType, content: UmbBlockDataModel, settings?: UmbBlockDataModel) {
+	protected insertBlockData(
+		layoutEntry: BlockLayoutType,
+		content: UmbBlockDataModel,
+		settings: UmbBlockDataModel | undefined,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_originData: BlockOriginDataType,
+	) {
 		// Create content entry:
 		if (layoutEntry.contentKey) {
 			this.#contents.appendOne(content);

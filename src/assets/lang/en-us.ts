@@ -345,6 +345,7 @@ export default {
 		variantScheduleNotAllowed: 'Schedule is not allowed',
 		variantUnpublishNotAllowed: 'Unpublish is not allowed',
 		selectAllVariants: 'Select all variants',
+		saveModalTitle: 'Save',
 	},
 	blueprints: {
 		createBlueprintFrom: "Create a new Document Blueprint from '%0%'",
@@ -802,6 +803,7 @@ export default {
 		email: 'Email',
 		error: 'Error',
 		field: 'Field',
+		fieldFor: 'Field for %0%',
 		findDocument: 'Find',
 		first: 'First',
 		focalPoint: 'Focal point',
@@ -930,6 +932,7 @@ export default {
 		header: 'Header',
 		systemField: 'system field',
 		lastUpdated: 'Last Updated',
+		selectAll: 'Select all',
 		skipToMenu: 'Skip to menu',
 		skipToContent: 'Skip to content',
 		restore: 'Restore',
@@ -2513,7 +2516,8 @@ export default {
 		configureArea: 'Configure area',
 		deleteArea: 'Delete area',
 		addColumnSpanOption: 'Add spanning %0% columns option',
-		createThisFor: 'Create %0% for %1%',
+		createThisFor: (name: string, variantName: string) =>
+			variantName ? `Create ${name} for ${variantName}` : `Create ${name}`,
 		insertBlock: 'Insert Block',
 		labelInlineMode: 'Display inline with text',
 	},

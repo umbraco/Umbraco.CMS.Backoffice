@@ -13,12 +13,12 @@ import type { ManifestWorkspaceView, UmbWorkspaceViewElement } from '@umbraco-cm
 @customElement('umb-block-workspace-view-edit')
 export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements UmbWorkspaceViewElement {
 	@property({ attribute: false })
-	public get manifest(): ManifestWorkspaceView | undefined {
-		return;
-	}
 	public set manifest(value: ManifestWorkspaceView | undefined) {
 		this.#managerName = (value?.meta as any).blockElementManagerName ?? 'content';
 		this.#setStructureManager();
+	}
+	public get manifest(): ManifestWorkspaceView | undefined {
+		return;
 	}
 	#managerName?: UmbBlockWorkspaceElementManagerNames;
 	#blockWorkspace?: typeof UMB_BLOCK_WORKSPACE_CONTEXT.TYPE;
@@ -69,8 +69,16 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 		const blockManager = this.#blockWorkspace[this.#managerName];
 		this.#tabsStructureHelper.setStructureManager(blockManager.structure);
 
-		// Create Data Set & setup Validation Context:
-		blockManager.setup(this);
+		this.observe(
+			this.#blockWorkspace.variantId,
+			(variantId) => {
+				if (variantId) {
+					// Create Data Set & setup Validation Context:
+					blockManager.setup(this, variantId);
+				}
+			},
+			'observeVariantId',
+		);
 
 		this.observe(
 			await this.#blockWorkspace![this.#managerName!].structure.hasRootContainers('Group'),
@@ -138,9 +146,9 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 										<uui-tab
 											label="Content"
 											.active=${this._routerPath + '/' === this._activePath}
-											href=${this._routerPath + '/'}
-											>Content</uui-tab
-										>
+											href=${this._routerPath + '/'}>
+											<umb-localize key="general_content">Content</umb-localize>
+										</uui-tab>
 									`
 								: ''}
 							${repeat(
@@ -148,9 +156,12 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 								(tab) => tab.name,
 								(tab) => {
 									const path = this._routerPath + '/tab/' + encodeFolderName(tab.name || '');
-									return html`<uui-tab label=${tab.name ?? 'Unnamed'} .active=${path === this._activePath} href=${path}
-										>${tab.name}</uui-tab
-									>`;
+									return html`<uui-tab
+										label=${this.localize.string(tab.name ?? '#general_unknown')}
+										.active=${path === this._activePath}
+										href=${path}>
+										${this.localize.string(tab.name)}
+									</uui-tab>`;
 								},
 							)}
 						</uui-tab-group>`
@@ -169,7 +180,7 @@ export class UmbBlockWorkspaceViewEditElement extends UmbLitElement implements U
 		`;
 	}
 
-	static override styles = [
+	static override readonly styles = [
 		UmbTextStyles,
 		css`
 			:host {

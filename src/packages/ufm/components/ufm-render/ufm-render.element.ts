@@ -34,6 +34,10 @@ export class UmbUfmRenderElement extends UmbLitElement {
 		});
 	}
 
+	override toString(): string {
+		return this.shadowRoot?.textContent ?? '';
+	}
+
 	override render() {
 		return until(this.#renderMarkdown());
 	}
@@ -54,6 +58,14 @@ export class UmbUfmRenderElement extends UmbLitElement {
 
 			pre {
 				overflow: auto;
+			}
+
+			:host > :first-child {
+				margin-block-start: 0;
+			}
+
+			:host > :last-child {
+				margin-block-end: 0;
 			}
 		`,
 	];

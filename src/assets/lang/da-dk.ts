@@ -326,6 +326,7 @@ export default {
 		variantSendForApprovalNotAllowed: 'Send for approval is not allowed',
 		variantScheduleNotAllowed: 'Schedule is not allowed',
 		variantUnpublishNotAllowed: 'Unpublish is not allowed',
+		saveModalTitle: 'Gem',
 	},
 	blueprints: {
 		createBlueprintFrom: "Opret en ny indholdsskabelon fra '%0%'",
@@ -782,6 +783,7 @@ export default {
 		email: 'E-mail',
 		error: 'Fejl',
 		field: 'Felt',
+		fieldFor: 'Felt for %0%',
 		findDocument: 'Find',
 		first: 'Første',
 		focalPoint: 'Fokuspunkt',
@@ -2361,7 +2363,8 @@ export default {
 		allowBlockInAreas: 'Allow in areas',
 		allowBlockInAreasHelp:
 			'Make this block available by default within the areas of other Blocks (unless explicit permissions are set for these areas).',
-		createThisFor: 'Opret %0% for %1%',
+		createThisFor: (name: string, variantName: string) =>
+			variantName ? `Opret ${name} for ${variantName}` : `Create ${name}`,
 		insertBlock: 'Indsæt Block',
 		labelInlineMode: 'Indsæt på linje med tekst',
 	},
