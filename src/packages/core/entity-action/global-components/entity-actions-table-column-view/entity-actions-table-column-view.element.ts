@@ -2,9 +2,9 @@ import type { UmbEntityModel } from '@umbraco-cms/backoffice/entity';
 import { html, nothing, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 
-const elementName = 'umb-entity-actions-table-column-layout';
+const elementName = 'umb-entity-actions-table-column-view';
 @customElement(elementName)
-export class UmbEntityActionsTableColumnLayoutElement extends UmbLitElement {
+export class UmbEntityActionsTableColumnViewElement extends UmbLitElement {
 	@property({ attribute: false })
 	value?: UmbEntityModel;
 
@@ -36,6 +36,6 @@ export class UmbEntityActionsTableColumnLayoutElement extends UmbLitElement {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbEntityActionsTableColumnLayoutElement;
+		[elementName]: UmbEntityActionsTableColumnViewElement;
 	}
 }
