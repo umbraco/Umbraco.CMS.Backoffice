@@ -19,7 +19,7 @@ export const UMB_LINK_PICKER_MODAL = new UmbModalToken<UmbLinkPickerModalData, U
 	{
 		modal: {
 			type: 'sidebar',
-			size: 'small',
+			size: 'medium',
 		},
 	},
 );
