@@ -183,7 +183,6 @@ export class UmbInputTiptapElement extends UmbFormControlMixin<string, typeof Um
 				box-sizing: border-box;
 				height: 100%;
 				width: 100%;
-				min-height: 400px;
 				display: grid; /* Don't ask me why this is needed, but it is. */
 				pre {
 					background-color: var(--uui-color-surface-alt);
