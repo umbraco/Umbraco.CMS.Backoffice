@@ -75,6 +75,7 @@ import { UmbIsTrashedEntityContext } from '@umbraco-cms/backoffice/recycle-bin';
 import { UmbReadOnlyVariantStateManager } from '@umbraco-cms/backoffice/utils';
 import { UmbDataTypeItemRepositoryManager } from '@umbraco-cms/backoffice/data-type';
 import type { UmbRepositoryResponse } from '@umbraco-cms/backoffice/repository';
+import { UMB_APP_CONTEXT } from '@umbraco-cms/backoffice/app';
 
 type EntityModel = UmbDocumentDetailModel;
 type EntityTypeModel = UmbDocumentTypeDetailModel;
@@ -120,6 +121,10 @@ export class UmbDocumentWorkspaceContext
 	readonly unique = this.#data.createObservablePartOfCurrent((data) => data?.unique);
 	readonly entityType = this.#data.createObservablePartOfCurrent((data) => data?.entityType);
 	readonly isTrashed = this.#data.createObservablePartOfCurrent((data) => data?.isTrashed);
+	readonly values = this.#data.createObservablePartOfCurrent((data) => data?.values);
+	getValues() {
+		return this.#data.getCurrent()?.values;
+	}
 
 	readonly contentTypeUnique = this.#data.createObservablePartOfCurrent((data) => data?.documentType.unique);
 	readonly contentTypeHasCollection = this.#data.createObservablePartOfCurrent(
@@ -287,6 +292,7 @@ export class UmbDocumentWorkspaceContext
 	override resetState() {
 		super.resetState();
 		this.#data.clear();
+		this.removeUmbControllerByAlias(UmbWorkspaceIsNewRedirectControllerAlias);
 	}
 
 	async loadLanguages() {
@@ -298,6 +304,7 @@ export class UmbDocumentWorkspaceContext
 	async load(unique: string) {
 		this.resetState();
 		this.#getDataPromise = this.repository.requestByUnique(unique);
+
 		type GetDataType = Awaited<ReturnType<UmbDocumentDetailRepository['requestByUnique']>>;
 		const { data, asObservable } = (await this.#getDataPromise) as GetDataType;
 
@@ -598,7 +605,9 @@ export class UmbDocumentWorkspaceContext
 		// Tell the server that we're entering preview mode.
 		await new UmbDocumentPreviewRepository(this).enter();
 
-		const previewUrl = new URL('preview', window.location.origin);
+		const appContext = await this.getContext(UMB_APP_CONTEXT);
+
+		const previewUrl = new URL(appContext.getBackofficePath() + '/preview', appContext.getServerUrl());
 		previewUrl.searchParams.set('id', unique);
 
 		if (culture && culture !== UMB_INVARIANT_CULTURE) {
@@ -870,7 +879,6 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	public override destroy(): void {
-		this.#data.destroy();
 		this.structure.destroy();
 		this.#languageRepository.destroy();
 		super.destroy();
