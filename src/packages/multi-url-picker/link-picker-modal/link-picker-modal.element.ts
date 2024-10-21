@@ -141,29 +141,34 @@ export class UmbLinkPickerModalElement extends UmbModalBaseElement<UmbLinkPicker
 	}
 
 	#renderLinkUrlInput() {
-		return html`<span>
-			<uui-label for="link-input">${this.localize.term('defaultdialogs_link')}</uui-label>
-			<uui-input
-				id="link-input"
-				placeholder=${this.localize.term('general_url')}
-				label=${this.localize.term('general_url')}
-				.value="${this._link.unique ?? this._link.url ?? ''}"
-				@input=${() => this.#partialUpdateLink({ type: 'external', url: this._linkInput.value as string })}
-				?disabled="${this._link.unique ? true : false}"></uui-input>
-		</span>`;
+		return html`
+			<span>
+				<uui-label for="link-input">${this.localize.term('defaultdialogs_link')}</uui-label>
+				<uui-input
+					id="link-input"
+					placeholder=${this.localize.term('general_url')}
+					label=${this.localize.term('general_url')}
+					.value="${this._link.unique ?? this._link.url ?? ''}"
+					@input=${() => this.#partialUpdateLink({ type: 'external', url: this._linkInput.value as string })}
+					?disabled="${this._link.unique ? true : false}"></uui-input>
+			</span>
+		`;
 	}
 
 	#renderAnchorInput() {
 		if (this._layout.hideAnchor) return nothing;
-		return html`<span>
-			<uui-label for="anchor-input">${this.localize.term('defaultdialogs_anchorLinkPicker')}</uui-label>
-			<uui-input
-				id="anchor-input"
-				placeholder=${this.localize.term('placeholders_anchor')}
-				label=${this.localize.term('placeholders_anchor')}
-				@input=${this.#handleQueryString}
-				.value="${this._link.queryString ?? ''}"></uui-input>
-		</span>`;
+		return html`
+			<span>
+				<uui-label for="anchor-input">${this.localize.term('defaultdialogs_anchorLinkPicker')}</uui-label>
+				<uui-input
+					id="anchor-input"
+					placeholder=${this.localize.term('placeholders_anchor')}
+					label=${this.localize.term('placeholders_anchor')}
+					@input=${this.#handleQueryString}
+					.value="${this._link.queryString ?? ''}"></uui-input>
+			</span>
+		`;
+	}
 
 	#renderTargetInput() {
 		if (this._layout.hideTarget) return nothing;
