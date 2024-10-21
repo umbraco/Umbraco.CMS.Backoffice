@@ -31,6 +31,7 @@ export class UmbLinkPickerModalElement extends UmbModalBaseElement<UmbLinkPicker
 	@state()
 	_layout: UmbLinkPickerConfig = {
 		hideAnchor: false,
+		hideTarget: false,
 	};
 
 	@state()
@@ -59,6 +60,7 @@ export class UmbLinkPickerModalElement extends UmbModalBaseElement<UmbLinkPicker
 				this._selectionConfiguration.selection = this._selectedKey ? [this._selectedKey] : [];
 			});
 		}
+
 		this._layout = this.data?.config;
 	}
 
@@ -120,15 +122,7 @@ export class UmbLinkPickerModalElement extends UmbModalBaseElement<UmbLinkPicker
 						@input=${() => this.#partialUpdateLink({ name: this._linkTitleInput.value as string })}
 						.value="${this._link.name ?? ''}"></uui-input>
 
-					<uui-label>${this.localize.term('content_target')}</uui-label>
-					<uui-toggle
-						id="#target-toggle"
-						label=${this.localize.term('defaultdialogs_openInNewWindow')}
-						.checked="${this._link.target === '_blank' ? true : false}"
-						@change="${(e: UUIBooleanInputEvent) =>
-							this.#partialUpdateLink({ target: e.target.checked ? '_blank' : '' })}">
-						${this.localize.term('defaultdialogs_openInNewWindow')}
-					</uui-toggle>
+					${this.#renderTargetInput()}
 
 					<hr />
 
@@ -170,6 +164,19 @@ export class UmbLinkPickerModalElement extends UmbModalBaseElement<UmbLinkPicker
 				@input=${this.#handleQueryString}
 				.value="${this._link.queryString ?? ''}"></uui-input>
 		</span>`;
+
+	#renderTargetInput() {
+		if (this._layout.hideTarget) return nothing;
+		return html`
+			<uui-label for="target-toggle">${this.localize.term('content_target')}</uui-label>
+			<uui-toggle
+				id="target-toggle"
+				label=${this.localize.term('defaultdialogs_openInNewWindow')}
+				.checked=${this._link.target === '_blank' ? true : false}
+				@change=${(e: UUIBooleanInputEvent) => this.#partialUpdateLink({ target: e.target.checked ? '_blank' : '' })}>
+				${this.localize.term('defaultdialogs_openInNewWindow')}
+			</uui-toggle>
+		`;
 	}
 
 	#renderTrees() {

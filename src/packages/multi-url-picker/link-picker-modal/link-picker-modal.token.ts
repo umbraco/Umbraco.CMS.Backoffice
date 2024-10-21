@@ -9,9 +9,9 @@ export interface UmbLinkPickerModalData {
 
 export type UmbLinkPickerModalValue = { link: UmbLinkPickerLink };
 
-// TODO: investigate: this looks more like a property editor configuration. Is this used in the correct way?
 export interface UmbLinkPickerConfig {
 	hideAnchor?: boolean;
+	hideTarget?: boolean;
 }
 
 export const UMB_LINK_PICKER_MODAL = new UmbModalToken<UmbLinkPickerModalData, UmbLinkPickerModalValue>(
