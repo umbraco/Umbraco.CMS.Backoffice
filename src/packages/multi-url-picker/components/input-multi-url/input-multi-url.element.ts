@@ -204,6 +204,7 @@ export class UmbInputMultiUrlElement extends UUIFormControlMixin(UmbLitElement, 
 					},
 					value: {
 						link: {
+							icon: data?.icon,
 							name: data?.name,
 							published: data?.published,
 							queryString: data?.queryString,
@@ -320,14 +321,16 @@ export class UmbInputMultiUrlElement extends UUIFormControlMixin(UmbLitElement, 
 
 	#renderEditAction(href?: string) {
 		if (this.readonly || !href) return nothing;
-		return html` <uui-button href=${href} label=${this.localize.term('general_edit')}></uui-button> `;
+		return html`<uui-button href=${href} label=${this.localize.term('general_edit')}></uui-button>`;
 	}
 
 	#renderRemoveAction(index: number) {
 		if (this.readonly) return nothing;
-		return html` <uui-button
-			@click=${() => this.#requestRemoveItem(index)}
-			label=${this.localize.term('general_remove')}></uui-button>`;
+		return html`
+			<uui-button
+				label=${this.localize.term('general_remove')}
+				@click=${() => this.#requestRemoveItem(index)}></uui-button>
+		`;
 	}
 
 	static override styles = [
