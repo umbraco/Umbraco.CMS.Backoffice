@@ -201,12 +201,14 @@ export class UmbInputDocumentElement extends UmbFormControlMixin<string | undefi
 		if (this.readonly && this.selection.length > 0) {
 			return nothing;
 		} else {
-			return html` <uui-button
-				id="btn-add"
-				look="placeholder"
-				@click=${this.#openPicker}
-				label=${this.localize.term('general_choose')}
-				?disabled=${this.readonly}></uui-button>`;
+			return html`
+				<uui-button
+					id="btn-add"
+					look="placeholder"
+					@click=${this.#openPicker}
+					label=${this.localize.term('general_choose')}
+					?disabled=${this.readonly}></uui-button>
+			`;
 		}
 	}
 
@@ -230,7 +232,8 @@ export class UmbInputDocumentElement extends UmbFormControlMixin<string | undefi
 				name=${item.name}
 				id=${item.unique}
 				class=${classMap({ draft: this.#isDraft(item) })}
-				?readonly=${this.readonly}>
+				?readonly=${this.readonly}
+				?standalone=${this.max === 1}>
 				${this.#renderIcon(item)} ${this.#renderIsTrashed(item)}
 				<uui-action-bar slot="actions">
 					${this.#renderOpenButton(item)} ${this.#renderRemoveButton(item)}
