@@ -3,7 +3,7 @@ export { UmbDocumentItemRepository, UMB_DOCUMENT_ITEM_REPOSITORY_ALIAS } from '.
 export {
 	UmbDocumentPublishingRepository,
 	UMB_DOCUMENT_PUBLISHING_REPOSITORY_ALIAS,
-} from '../publishing/publishing/index.js';
+} from '../publishing/repository/index.js';
 export { UmbDocumentPreviewRepository } from './preview/index.js';
 
 export type { UmbDocumentItemModel } from './item/types.js';

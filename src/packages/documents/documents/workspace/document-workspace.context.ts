@@ -15,7 +15,7 @@ import {
 	UMB_DOCUMENT_SCHEDULE_MODAL,
 	UMB_DOCUMENT_SAVE_MODAL,
 } from '../modals/index.js';
-import { UmbDocumentPublishingRepository } from '../publishing/publishing/index.js';
+import { UmbDocumentPublishingRepository } from '../publishing/repository/index.js';
 import { UmbUnpublishDocumentEntityAction } from '../entity-actions/unpublish.action.js';
 import { UmbDocumentValidationRepository } from '../repository/validation/document-validation.repository.js';
 import {
