@@ -93,7 +93,7 @@ export class UmbDocumentWorkspaceContext
 	public readonly repository = new UmbDocumentDetailRepository(this);
 	public readonly publishingRepository = new UmbDocumentPublishingRepository(this);
 
-	#publishPendingChanges = new UmbPublishPendingChangesManager(this);
+	public readonly publishedPendingChanges = new UmbPublishPendingChangesManager(this);
 
 	#parent = new UmbObjectState<UmbEntityModel | undefined>(undefined);
 	readonly parentUnique = this.#parent.asObservablePart((parent) => (parent ? parent.unique : undefined));
@@ -319,7 +319,7 @@ export class UmbDocumentWorkspaceContext
 			this.#data.setPersisted(data);
 			this.#data.setCurrent(data);
 
-			this.#publishPendingChanges.process({ unique, currentData: data });
+			this.publishedPendingChanges.process({ unique, currentData: data });
 		}
 
 		this.observe(asObservable(), (entity) => this.#onStoreChange(entity), 'umbDocumentStoreObserver');
