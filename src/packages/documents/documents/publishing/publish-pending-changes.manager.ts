@@ -1,5 +1,5 @@
-import { UmbDocumentPublishingRepository } from '../repository/index.js';
 import type { UmbDocumentDetailModel } from '../types.js';
+import { UmbDocumentPublishingRepository } from './repository/index.js';
 import { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 import { UmbMergeContentVariantDataController } from '@umbraco-cms/backoffice/content';
