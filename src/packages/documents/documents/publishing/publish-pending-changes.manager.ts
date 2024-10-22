@@ -56,9 +56,7 @@ export class UmbPublishPendingChangesManager extends UmbControllerBase {
 			}
 		});
 
-		const variantsWithPendingChanges = (await Promise.all(pendingChangesPromises)).filter(
-			(x) => x !== null,
-		) as VariantPendingChange[];
+		const variantsWithPendingChanges = (await Promise.all(pendingChangesPromises)).filter((x) => x !== null);
 
 		this.#pendingChanges.setValue(variantsWithPendingChanges);
 	}
