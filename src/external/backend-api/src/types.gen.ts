@@ -2027,6 +2027,16 @@ export type PublishDocumentWithDescendantsRequestModel = {
     cultures: Array<(string)>;
 };
 
+export type PublishedDocumentResponseModel = {
+    values: Array<(DocumentValueResponseModel)>;
+    variants: Array<(DocumentVariantResponseModel)>;
+    id: string;
+    documentType: (DocumentTypeReferenceResponseModel);
+    urls: Array<(DocumentUrlInfoModel)>;
+    template?: ((ReferenceByIdModel) | null);
+    isTrashed: boolean;
+};
+
 export enum RedirectStatusModel {
     ENABLED = 'Enabled',
     DISABLED = 'Disabled'
@@ -3488,6 +3498,12 @@ export type PutDocumentByIdPublishWithDescendantsData = {
 };
 
 export type PutDocumentByIdPublishWithDescendantsResponse = (string);
+
+export type GetDocumentByIdPublishedData = {
+    id: string;
+};
+
+export type GetDocumentByIdPublishedResponse = ((PublishedDocumentResponseModel));
 
 export type GetDocumentByIdReferencedByData = {
     id: string;
