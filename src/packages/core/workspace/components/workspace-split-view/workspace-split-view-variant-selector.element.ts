@@ -52,6 +52,9 @@ export class UmbWorkspaceSplitViewVariantSelectorElement extends UmbLitElement {
 	@state()
 	private _readOnlyCultures: string[] = [];
 
+	@state()
+	private _variantsWithPendingChanges: Array<any> = [];
+
 	#publishStateLocalizationMap = {
 		[DocumentVariantStateModel.DRAFT]: 'content_unpublished',
 		[DocumentVariantStateModel.PUBLISHED]: 'content_published',
@@ -74,6 +77,7 @@ export class UmbWorkspaceSplitViewVariantSelectorElement extends UmbLitElement {
 			this.#observeActiveVariants(workspaceContext);
 			this.#observeReadOnlyStates(workspaceContext);
 			this.#observeCurrentVariant();
+			this.#observePendingChanges(workspaceContext);
 		});
 
 		this.consumeContext(UMB_PROPERTY_DATASET_CONTEXT, (instance) => {
@@ -144,6 +148,20 @@ export class UmbWorkspaceSplitViewVariantSelectorElement extends UmbLitElement {
 			},
 			'_currentLanguage',
 		);
+	}
+
+	async #observePendingChanges(workspaceContext: UmbDocumentWorkspaceContext) {
+		this.observe(
+			workspaceContext.publishedPendingChanges.variantsWithPendingChanges,
+			(variants) => {
+				this._variantsWithPendingChanges = variants;
+			},
+			'_observePendingChanges',
+		);
+	}
+
+	#hasPendingChanges(variant: UmbDocumentVariantOptionModel) {
+		return this._variantsWithPendingChanges.some((x) => x.variantId.compare(variant));
 	}
 
 	#handleInput(event: UUIInputEvent) {
@@ -289,6 +307,7 @@ export class UmbWorkspaceSplitViewVariantSelectorElement extends UmbLitElement {
 									variantOption.variant?.state || DocumentVariantStateModel.NOT_CREATED
 								],
 							)}
+							${this.#hasPendingChanges(variantOption) ? html`<uui-tag>Pending changes</uui-tag>` : nothing}
 							${variantOption.language.isDefault
 								? html`<span> - ${this.localize.term('general_default')}</span>`
 								: nothing}
