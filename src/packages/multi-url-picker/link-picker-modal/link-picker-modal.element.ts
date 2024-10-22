@@ -37,6 +37,10 @@ export class UmbLinkPickerModalElement extends UmbModalBaseElement<UmbLinkPicker
 			this._config = this.data.config;
 		}
 
+		// Get all the media types, excluding the folders, so that files are selectable media items.
+		const mediaTypeStructureRepository = new UmbMediaTypeStructureRepository(this);
+		const { data: mediaTypes } = await mediaTypeStructureRepository.requestAllowedChildrenOf(null);
+		this._allowedMediaTypeIds = mediaTypes?.items.map((x) => x.unique).filter((x) => !isUmbracoFolder(x)) ?? [];
 	}
 
 	#partialUpdateLink(linkObject: Partial<UmbLinkPickerLink>) {
