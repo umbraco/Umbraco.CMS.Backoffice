@@ -9,6 +9,7 @@ import {
 	property,
 	repeat,
 	state,
+	when,
 } from '@umbraco-cms/backoffice/external/lit';
 import { simpleHashCode } from '@umbraco-cms/backoffice/observable-api';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
@@ -312,24 +313,17 @@ export class UmbInputMultiUrlElement extends UUIFormControlMixin(UmbLitElement, 
 				detail=${(link.url || '') + (link.queryString || '')}
 				?readonly=${this.readonly}>
 				<umb-icon slot="icon" name=${link.icon || 'icon-link'}></umb-icon>
-				<uui-action-bar slot="actions">
-					${this.#renderEditAction(href)} ${this.#renderRemoveAction(index)}
-				</uui-action-bar>
+				${when(
+					!this.readonly,
+					() => html`
+						<uui-action-bar slot="actions">
+							<uui-button
+								label=${this.localize.term('general_remove')}
+								@click=${() => this.#requestRemoveItem(index)}></uui-button>
+						</uui-action-bar>
+					`,
+				)}
 			</uui-ref-node>
-		`;
-	}
-
-	#renderEditAction(href?: string) {
-		if (this.readonly || !href) return nothing;
-		return html`<uui-button href=${href} label=${this.localize.term('general_edit')}></uui-button>`;
-	}
-
-	#renderRemoveAction(index: number) {
-		if (this.readonly) return nothing;
-		return html`
-			<uui-button
-				label=${this.localize.term('general_remove')}
-				@click=${() => this.#requestRemoveItem(index)}></uui-button>
 		`;
 	}
 
