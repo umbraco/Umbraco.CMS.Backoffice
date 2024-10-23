@@ -75,6 +75,8 @@ export class UmbLinkPickerModalElement extends UmbModalBaseElement<UmbLinkPicker
 		let name;
 		if (url && !this.value.link.name) {
 			if (URL.canParse(url)) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				const parts = URL.parse(url);
 				name = parts?.hostname ?? url;
 			} else {
