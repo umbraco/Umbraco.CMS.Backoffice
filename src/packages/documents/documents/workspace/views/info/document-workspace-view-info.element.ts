@@ -79,7 +79,8 @@ export class UmbDocumentWorkspaceViewInfoElement extends UmbLitElement {
 
 		this.consumeContext(UMB_DOCUMENT_PROPERTY_DATASET_CONTEXT, (context) => {
 			this.observe(context.currentVariant, (value) => {
-				this._variant = value;
+				// TODO: get the correct type automatically
+				this._variant = value as UmbDocumentVariantModel;
 			});
 		});
 	}
