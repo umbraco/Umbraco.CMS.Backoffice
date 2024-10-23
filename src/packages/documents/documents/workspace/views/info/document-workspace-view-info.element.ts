@@ -29,9 +29,6 @@ export class UmbDocumentWorkspaceViewInfoElement extends UmbLitElement {
 	@state()
 	private _urls?: Array<DocumentUrlInfoModel>;
 
-	@state()
-	private _createDate?: string;
-
 	/**Document Type */
 	@state()
 	private _documentTypeUnique = '';
