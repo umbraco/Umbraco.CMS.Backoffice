@@ -4,10 +4,12 @@ import {
 	css,
 	customElement,
 	html,
+	ifDefined,
 	nothing,
 	property,
 	repeat,
 	state,
+	when,
 } from '@umbraco-cms/backoffice/external/lit';
 import { splitStringToArray } from '@umbraco-cms/backoffice/utils';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
@@ -227,17 +229,26 @@ export class UmbInputDocumentElement extends UmbFormControlMixin<string | undefi
 
 	#renderItem(item: UmbDocumentItemModel) {
 		if (!item.unique) return;
+		const href = !this.readonly && this.showOpenButton ? `${this._editDocumentPath}edit/${item.unique}` : undefined;
 		return html`
 			<uui-ref-node
-				name=${item.name}
 				id=${item.unique}
 				class=${classMap({ draft: this.#isDraft(item) })}
+				name=${item.name}
+				href=${ifDefined(href)}
 				?readonly=${this.readonly}
 				?standalone=${this.max === 1}>
 				${this.#renderIcon(item)} ${this.#renderIsTrashed(item)}
-				<uui-action-bar slot="actions">
-					${this.#renderOpenButton(item)} ${this.#renderRemoveButton(item)}
-				</uui-action-bar>
+				${when(
+					!this.readonly,
+					() => html`
+						<uui-action-bar slot="actions">
+							<uui-button
+								label=${this.localize.term('general_remove')}
+								@click=${() => this.#onRemove(item)}></uui-button>
+						</uui-action-bar>
+					`,
+				)}
 			</uui-ref-node>
 		`;
 	}
@@ -250,25 +261,6 @@ export class UmbInputDocumentElement extends UmbFormControlMixin<string | undefi
 	#renderIsTrashed(item: UmbDocumentItemModel) {
 		if (!item.isTrashed) return;
 		return html`<uui-tag size="s" slot="tag" color="danger">Trashed</uui-tag>`;
-	}
-
-	#renderRemoveButton(item: UmbDocumentItemModel) {
-		if (this.readonly) return nothing;
-		return html`
-			<uui-button @click=${() => this.#onRemove(item)} label=${this.localize.term('general_remove')}></uui-button>
-		`;
-	}
-
-	#renderOpenButton(item: UmbDocumentItemModel) {
-		if (this.readonly) return nothing;
-		if (!this.showOpenButton) return nothing;
-		return html`
-			<uui-button
-				href="${this._editDocumentPath}edit/${item.unique}"
-				label="${this.localize.term('general_open')} ${item.name}">
-				${this.localize.term('general_open')}
-			</uui-button>
-		`;
 	}
 
 	static override styles = [
