@@ -79,7 +79,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 					},
 					{
 						alias: 'maxImageSize',
-						label: 'Maximum size for inserted images',
+						label: '#rte_config_maxImageSize',
 						description: 'Maximum width or height - enter 0 to disable resizing',
 						propertyEditorUiAlias: 'Umb.PropertyEditorUI.TinyMCE.MaxImageSizeConfiguration',
 						weight: 40,
@@ -94,7 +94,7 @@ export const manifests: Array<UmbExtensionManifest> = [
 					},
 					{
 						alias: 'overlaySize',
-						label: 'Overlay Size',
+						label: '#rte_config_overlaySize',
 						description: 'Select the width of the overlay (link picker)',
 						propertyEditorUiAlias: 'Umb.PropertyEditorUi.OverlaySize',
 						weight: 81,

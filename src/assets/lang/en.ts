@@ -2647,7 +2647,16 @@ export default {
 		wordWrapConfigLabel: 'Word wrap',
 		wordWrapConfigDescription: 'Enable word wrapping in the code editor.',
 	},
+	rte: {
+		config_blocks: 'Available Blocks',
+		config_ignoreUserStartNodes: 'Ignore User Start Nodes',
+		config_maxImageSize: 'Maximum size for inserted images',
+		config_mediaParentId: 'Image Upload Folder',
+		config_overlaySize: 'Overlay size',
+	},
 	tiptap: {
+		config_extensions: 'Capabilities',
+		config_toolbar: 'Toolbar',
 		extGroup_formatting: 'Text formatting',
 		extGroup_interactive: 'Interactive elements',
 		extGroup_media: 'Embeds and media',
