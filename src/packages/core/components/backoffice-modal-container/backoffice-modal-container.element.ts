@@ -58,11 +58,13 @@ export class UmbBackofficeModalContainerElement extends UmbLitElement {
 			return;
 		}
 
-		this._modals.forEach((modal) => {
+		this._modals.forEach(async (modal) => {
 			if (this._modalElementMap.has(modal.key)) return;
 
 			const modalElement = new UmbModalElement();
 			modalElement.modalContext = modal;
+
+			await modalElement.createModalElement();
 
 			modalElement.element?.addEventListener('close-end', this.#onCloseEnd.bind(this, modal.key));
 			modal.addEventListener('umb:destroy', this.#onCloseEnd.bind(this, modal.key));
