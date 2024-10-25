@@ -32,7 +32,7 @@ export class UmbDocumentTreeItemElement extends UmbTreeItemElementBase<UmbDocume
 	#observeAppCulture() {
 		this.observe(this.#appLanguageContext!.appLanguageCulture, (value) => {
 			this._currentCulture = value;
-			this._variant = this.#getVariant(value);
+			this._variant = this.#findVariant(value);
 		});
 	}
 
@@ -42,7 +42,7 @@ export class UmbDocumentTreeItemElement extends UmbTreeItemElementBase<UmbDocume
 		});
 	}
 
-	#getVariant(culture: string | undefined) {
+	#findVariant(culture: string | undefined) {
 		return this.item?.variants.find((x) => x.culture === culture);
 	}
 
@@ -58,9 +58,9 @@ export class UmbDocumentTreeItemElement extends UmbTreeItemElementBase<UmbDocume
 		}
 
 		// ensure we always have the correct variant data
-		this._variant = this.#getVariant(this._currentCulture);
+		this._variant = this.#findVariant(this._currentCulture);
 
-		const fallbackName = this.#getVariant(this._defaultCulture)?.name ?? this._item?.variants[0].name ?? 'Unknown';
+		const fallbackName = this.#findVariant(this._defaultCulture)?.name ?? this._item?.variants[0].name ?? 'Unknown';
 		return this._variant?.name ?? `(${fallbackName})`;
 	}
 
@@ -70,7 +70,7 @@ export class UmbDocumentTreeItemElement extends UmbTreeItemElementBase<UmbDocume
 		}
 
 		// ensure we always have the correct variant data
-		this._variant = this.#getVariant(this._currentCulture);
+		this._variant = this.#findVariant(this._currentCulture);
 
 		return this._variant?.state === DocumentVariantStateModel.DRAFT;
 	}
