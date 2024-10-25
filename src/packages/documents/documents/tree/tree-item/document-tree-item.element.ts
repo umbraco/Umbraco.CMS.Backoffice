@@ -1,5 +1,5 @@
-import { DocumentVariantStateModel } from '@umbraco-cms/backoffice/external/backend-api';
 import type { UmbDocumentTreeItemModel, UmbDocumentTreeItemVariantModel } from '../types.js';
+import { DocumentVariantStateModel } from '@umbraco-cms/backoffice/external/backend-api';
 import { css, html, nothing, customElement, state, classMap } from '@umbraco-cms/backoffice/external/lit';
 import type { UmbAppLanguageContext } from '@umbraco-cms/backoffice/language';
 import { UMB_APP_LANGUAGE_CONTEXT } from '@umbraco-cms/backoffice/language';
