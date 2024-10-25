@@ -1,3 +1,4 @@
+import { DocumentVariantStateModel } from '@umbraco-cms/backoffice/external/backend-api';
 import type { UmbDocumentTreeItemModel, UmbDocumentTreeItemVariantModel } from '../types.js';
 import { css, html, nothing, customElement, state, classMap } from '@umbraco-cms/backoffice/external/lit';
 import type { UmbAppLanguageContext } from '@umbraco-cms/backoffice/language';
@@ -65,13 +66,13 @@ export class UmbDocumentTreeItemElement extends UmbTreeItemElementBase<UmbDocume
 
 	#isDraft() {
 		if (this.#isInvariant()) {
-			return this._item?.variants[0].state === 'Draft';
+			return this._item?.variants[0].state === DocumentVariantStateModel.DRAFT;
 		}
 
 		// ensure we always have the correct variant data
 		this._variant = this.#getVariant(this._currentCulture);
 
-		return this._variant?.state === 'Draft';
+		return this._variant?.state === DocumentVariantStateModel.DRAFT;
 	}
 
 	override renderIconContainer() {
