@@ -56,6 +56,9 @@ export class UmbDocumentTreeItemElement extends UmbTreeItemElementBase<UmbDocume
 			return this._item?.variants[0].name;
 		}
 
+		// ensure we always have the correct variant data
+		this._variant = this.#getVariant(this._currentCulture);
+
 		const fallbackName = this.#getVariant(this._defaultCulture)?.name ?? this._item?.variants[0].name ?? 'Unknown';
 		return this._variant?.name ?? `(${fallbackName})`;
 	}
@@ -64,6 +67,9 @@ export class UmbDocumentTreeItemElement extends UmbTreeItemElementBase<UmbDocume
 		if (this.#isInvariant()) {
 			return this._item?.variants[0].state === 'Draft';
 		}
+
+		// ensure we always have the correct variant data
+		this._variant = this.#getVariant(this._currentCulture);
 
 		return this._variant?.state === 'Draft';
 	}
