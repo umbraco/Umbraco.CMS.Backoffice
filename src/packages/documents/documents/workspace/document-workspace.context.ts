@@ -712,18 +712,20 @@ export class UmbDocumentWorkspaceContext
 
 		await this.#performSaveOrCreate(variantIds, saveData);
 
-		await this.publishingRepository.publish(
+		const { error } = await this.publishingRepository.publish(
 			unique,
 			variantIds.map((variantId) => ({ variantId })),
 		);
 
-		const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
-		const event = new UmbRequestReloadStructureForEntityEvent({
-			unique: this.getUnique()!,
-			entityType: this.getEntityType(),
-		});
+		if (!error) {
+			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
+			const event = new UmbRequestReloadStructureForEntityEvent({
+				unique: this.getUnique()!,
+				entityType: this.getEntityType(),
+			});
 
-		eventContext.dispatchEvent(event);
+			eventContext.dispatchEvent(event);
+		}
 	}
 
 	async #handleSave() {
