@@ -826,6 +826,12 @@ export class UmbDocumentWorkspaceContext
 	}
 
 	public async publishWithDescendants() {
+		const unique = this.getUnique();
+		if (!unique) throw new Error('Unique is missing');
+
+		const entityType = this.getEntityType();
+		if (!entityType) throw new Error('Entity type is missing');
+
 		const { options, selected } = await this.#determineVariantOptions();
 
 		const modalManagerContext = await this.getContext(UMB_MODAL_MANAGER_CONTEXT);
@@ -847,13 +853,30 @@ export class UmbDocumentWorkspaceContext
 
 		if (!variantIds.length) return;
 
-		const unique = this.getUnique();
-		if (!unique) throw new Error('Unique is missing');
-		await this.publishingRepository.publishWithDescendants(
+		const { error } = await this.publishingRepository.publishWithDescendants(
 			unique,
 			variantIds,
 			result.includeUnpublishedDescendants ?? false,
 		);
+
+		if (!error) {
+			const eventContext = await this.getContext(UMB_ACTION_EVENT_CONTEXT);
+
+			// request reload of this entity
+			const structureEvent = new UmbRequestReloadStructureForEntityEvent({
+				entityType,
+				unique,
+			});
+
+			// request reload of the children
+			const childrenEvent = new UmbRequestReloadChildrenOfEntityEvent({
+				entityType,
+				unique,
+			});
+
+			eventContext.dispatchEvent(structureEvent);
+			eventContext.dispatchEvent(childrenEvent);
+		}
 	}
 
 	async delete() {
