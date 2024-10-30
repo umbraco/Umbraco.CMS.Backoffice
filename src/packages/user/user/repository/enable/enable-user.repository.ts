@@ -22,7 +22,7 @@ export class UmbEnableUserRepository extends UmbUserRepositoryBase {
 				this.detailStore?.updateItem(id, { state: UserStateModel.ACTIVE });
 			});
 
-			const notification = { data: { message: `User disabled` } };
+			const notification = { data: { message: `User enabled` } };
 			this.notificationContext?.peek('positive', notification);
 		}
 
