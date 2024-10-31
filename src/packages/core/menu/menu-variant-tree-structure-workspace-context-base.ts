@@ -5,12 +5,16 @@ import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import { UMB_VARIANT_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/workspace';
 import { UmbArrayState, UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { UMB_MENU_STRUCTURE_WORKSPACE_CONTEXT } from './menu-tree-structure-workspace.context-token.js';
 
 interface UmbMenuVariantTreeStructureWorkspaceContextBaseArgs {
 	treeRepositoryAlias: string;
 }
 
-export abstract class UmbMenuVariantTreeStructureWorkspaceContextBase extends UmbContextBase<unknown> {
+export abstract class UmbMenuVariantTreeStructureWorkspaceContextBase
+	extends UmbContextBase<unknown>
+	implements UmbMenuStructureWorkspaceContext
+{
 	// TODO: add correct interface
 	#workspaceContext?: any;
 	#args: UmbMenuVariantTreeStructureWorkspaceContextBaseArgs;
@@ -23,7 +27,7 @@ export abstract class UmbMenuVariantTreeStructureWorkspaceContextBase extends Um
 
 	constructor(host: UmbControllerHost, args: UmbMenuVariantTreeStructureWorkspaceContextBaseArgs) {
 		// TODO: set up context token
-		super(host, 'UmbMenuStructureWorkspaceContext');
+		super(host, UMB_MENU_STRUCTURE_WORKSPACE_CONTEXT);
 		this.#args = args;
 
 		this.consumeContext(UMB_VARIANT_WORKSPACE_CONTEXT, (instance) => {

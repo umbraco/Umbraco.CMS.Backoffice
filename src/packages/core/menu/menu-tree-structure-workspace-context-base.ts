@@ -1,4 +1,5 @@
 import type { UmbStructureItemModel } from './types.js';
+import { UMB_MENU_STRUCTURE_WORKSPACE_CONTEXT } from './menu-tree-structure-workspace.context-token.js';
 import type { UmbTreeRepository, UmbTreeItemModel, UmbTreeRootModel } from '@umbraco-cms/backoffice/tree';
 import { createExtensionApiByAlias } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
@@ -22,7 +23,7 @@ export abstract class UmbMenuTreeStructureWorkspaceContextBase extends UmbContex
 
 	constructor(host: UmbControllerHost, args: UmbMenuTreeStructureWorkspaceContextBaseArgs) {
 		// TODO: set up context token
-		super(host, 'UmbMenuStructureWorkspaceContext');
+		super(host, UMB_MENU_STRUCTURE_WORKSPACE_CONTEXT);
 		this.#args = args;
 
 		this.consumeContext(UMB_WORKSPACE_CONTEXT, (instance) => {
