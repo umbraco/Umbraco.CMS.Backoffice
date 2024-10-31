@@ -1,18 +1,19 @@
 import type { UmbVariantStructureItemModel } from './types.js';
+import { UMB_MENU_STRUCTURE_WORKSPACE_CONTEXT } from './menu-tree-structure-workspace.context-token.js';
+import type { UmbMenuStructureWorkspaceContext } from './menu-structure-workspace-context.interface.js';
 import type { UmbTreeRepository, UmbTreeRootModel } from '@umbraco-cms/backoffice/tree';
 import { createExtensionApiByAlias } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
 import { UMB_VARIANT_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/workspace';
 import { UmbArrayState, UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
-import { UMB_MENU_STRUCTURE_WORKSPACE_CONTEXT } from './menu-tree-structure-workspace.context-token.js';
 
 interface UmbMenuVariantTreeStructureWorkspaceContextBaseArgs {
 	treeRepositoryAlias: string;
 }
 
 export abstract class UmbMenuVariantTreeStructureWorkspaceContextBase
-	extends UmbContextBase<unknown>
+	extends UmbContextBase<UmbMenuStructureWorkspaceContext>
 	implements UmbMenuStructureWorkspaceContext
 {
 	// TODO: add correct interface

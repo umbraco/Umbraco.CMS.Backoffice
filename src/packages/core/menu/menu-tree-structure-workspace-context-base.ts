@@ -1,5 +1,6 @@
 import type { UmbStructureItemModel } from './types.js';
 import { UMB_MENU_STRUCTURE_WORKSPACE_CONTEXT } from './menu-tree-structure-workspace.context-token.js';
+import type { UmbMenuStructureWorkspaceContext } from './menu-structure-workspace-context.interface.js';
 import type { UmbTreeRepository, UmbTreeItemModel, UmbTreeRootModel } from '@umbraco-cms/backoffice/tree';
 import { createExtensionApiByAlias } from '@umbraco-cms/backoffice/extension-registry';
 import { UmbContextBase } from '@umbraco-cms/backoffice/class-api';
@@ -11,7 +12,10 @@ interface UmbMenuTreeStructureWorkspaceContextBaseArgs {
 	treeRepositoryAlias: string;
 }
 
-export abstract class UmbMenuTreeStructureWorkspaceContextBase extends UmbContextBase<unknown> {
+export abstract class UmbMenuTreeStructureWorkspaceContextBase
+	extends UmbContextBase<UmbMenuStructureWorkspaceContext>
+	implements UmbMenuStructureWorkspaceContext
+{
 	#workspaceContext?: any;
 	#args: UmbMenuTreeStructureWorkspaceContextBaseArgs;
 
