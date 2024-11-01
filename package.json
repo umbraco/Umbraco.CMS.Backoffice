@@ -211,7 +211,7 @@
 		"@tiptap/extension-text-style": "^2.8.0",
 		"@tiptap/extension-underline": "^2.8.0",
 		"@tiptap/pm": "^2.8.0",
-		"@tiptap/starter-kit": "^2.8.0",
+		"@tiptap/starter-kit": "^2.9.1",
 		"@types/diff": "^5.2.1",
 		"@types/dompurify": "^3.0.5",
 		"@types/uuid": "^10.0.0",
