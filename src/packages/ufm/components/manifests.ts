@@ -15,6 +15,9 @@ export const manifests: Array<ManifestUfmComponent> = [
 		api: () => import('./localize/localize.component.js'),
 		meta: { alias: 'umbLocalize', marker: '#' },
 	},
+	/*
+	 * @deprecated since version 15.0-rc3
+	 */
 	{
 		type: 'ufmComponent',
 		alias: 'Umb.Markdown.ContentName',
