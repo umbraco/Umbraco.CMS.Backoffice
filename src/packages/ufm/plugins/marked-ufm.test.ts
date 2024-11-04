@@ -23,9 +23,9 @@ describe('UmbMarkedUfm', () => {
 		// Manually configuring the UFM components for testing.
 		UmbMarked.use(
 			ufm([
-				{ alias: 'Umb.Markdown.ContentName', marker: '~', render: new UmbUfmContentNameComponent().render },
-				{ alias: 'Umb.Markdown.LabelValue', marker: '=', render: new UmbUfmLabelValueComponent().render },
-				{ alias: 'Umb.Markdown.Localize', marker: '#', render: new UmbUfmLocalizeComponent().render },
+				{ alias: 'umbContentName', marker: '~', render: new UmbUfmContentNameComponent().render },
+				{ alias: 'umbValue', marker: '=', render: new UmbUfmLabelValueComponent().render },
+				{ alias: 'umbLocalize', marker: '#', render: new UmbUfmLocalizeComponent().render },
 			]),
 		);
 
