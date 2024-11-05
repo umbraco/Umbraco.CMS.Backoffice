@@ -236,7 +236,7 @@
 		"@hey-api/openapi-ts": "^0.52.11",
 		"@open-wc/testing": "^4.0.0",
 		"@playwright/test": "^1.48.2",
-		"@rollup/plugin-commonjs": "^26.0.1",
+		"@rollup/plugin-commonjs": "^28.0.1",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^15.2.3",
 		"@rollup/plugin-replace": "^5.0.7",
