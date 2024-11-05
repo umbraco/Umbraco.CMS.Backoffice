@@ -85,7 +85,7 @@ export class UmbBlockGridManagerContext<
 		super(host);
 
 		this.#initAppUrl = this.getContext(UMB_APP_CONTEXT).then((appContext) => {
-			this.#appUrl = appContext.getServerUrl() + appContext.getBackofficePath();
+			this.#appUrl = appContext.getServerUrl();
 		});
 	}
 
