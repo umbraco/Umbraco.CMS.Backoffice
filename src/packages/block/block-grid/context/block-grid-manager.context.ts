@@ -34,7 +34,9 @@ export class UmbBlockGridManagerContext<
 	}
 
 	#initAppUrl: Promise<void>;
-	#appUrl?: string;
+
+	#serverUrl?: string;
+
 	#blockGroups = new UmbArrayState(<Array<UmbBlockTypeGroup>>[], (x) => x.key);
 	public readonly blockGroups = this.#blockGroups.asObservable();
 
@@ -45,7 +47,8 @@ export class UmbBlockGridManagerContext<
 
 		if (layoutStylesheet) {
 			// Cause we await initAppUrl in setting the _editorConfiguration, we can trust the appUrl begin here.
-			return removeLastSlashFromPath(this.#appUrl!) + transformServerPathToClientPath(layoutStylesheet);
+			const url = new URL(transformServerPathToClientPath(layoutStylesheet), this.#serverUrl);
+			return url.href;
 		}
 		return undefined;
 	});
@@ -85,7 +88,7 @@ export class UmbBlockGridManagerContext<
 		super(host);
 
 		this.#initAppUrl = this.getContext(UMB_APP_CONTEXT).then((appContext) => {
-			this.#appUrl = appContext.getServerUrl();
+			this.#serverUrl = appContext.getServerUrl();
 		});
 	}
 
