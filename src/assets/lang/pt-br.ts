@@ -113,6 +113,7 @@ export default {
 		updateDate: 'Última edição',
 		uploadClear: 'Remover arquivo',
 		urls: 'Link ao documento',
+		saveModalTitle: 'Salvar',
 	},
 	create: {
 		chooseNode: 'Onde você quer criar seu novo(a) %0%',
@@ -177,7 +178,7 @@ export default {
 		inserttable: 'Inserir tabela',
 		lastEdited: 'Última Edição',
 		link: 'Link',
-		linkinternal: 'Link interno:',
+		linkinternal: 'Link interno',
 		linklocaltip: 'Ao usar links locais insira "#" na frente do link',
 		linknewwindow: 'Abrir em nova janela?',
 		macroDoesNotHaveProperties: 'Este macro não contém nenhuma propriedade que possa ser editada',
@@ -206,7 +207,7 @@ export default {
 	},
 	dictionaryItem: {
 		description:
-			"Editar as diferente versões de linguagem para o item de dicionário '<em>%0%</em>' abaixo <br /> Você pode adicionar mais linguagens sob 'linguagens' no menu à esquerda",
+			"Editar as diferente versões de linguagem para o item de dicionário '%0%' abaixo. Você pode adicionar mais linguagens sob 'linguagens' no menu à esquerda.",
 		displayName: 'Nome da Cultura',
 	},
 	editdatatype: {

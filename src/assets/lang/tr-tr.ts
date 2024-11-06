@@ -305,6 +305,7 @@ export default {
 		createEmpty: 'Yeni oluştur',
 		createFromClipboard: 'Panodan yapıştır',
 		nodeIsInTrash: "Bu öğe Geri Dönüşüm Kutusu'nda",
+		saveModalTitle: 'Kaydet',
 	},
 	blueprints: {
 		createBlueprintFrom: '<em>%0%</em> den yeni bir İçerik Şablonu oluşturun',
@@ -436,7 +437,7 @@ export default {
 			'Bir dil için kültürü değiştirmek pahalı bir işlem olabilir ve içerik önbelleğinin ve dizinlerin yeniden oluşturulmasına neden olabilir',
 		lastEdited: 'Son Düzenleme',
 		link: 'Bağlantı',
-		linkinternal: 'Dahili bağlantı:',
+		linkinternal: 'Dahili bağlantı',
 		linklocaltip: 'Yerel bağlantıları kullanırken, bağlantının önüne "#" ekleyin',
 		linknewwindow: 'Yeni pencerede açılsın mı?',
 		macroDoesNotHaveProperties: 'Bu makro düzenleyebileceğiniz herhangi bir özellik içermiyor',
@@ -510,9 +511,9 @@ export default {
 		noItems: 'Sözlük öğesi yok.',
 	},
 	dictionaryItem: {
-		description: "\n      Aşağıdaki sözlük öğesi '<em>%0%</em>' için farklı dil sürümlerini düzenleyin\n   ",
+		description: "Aşağıdaki sözlük öğesi '%0%' için farklı dil sürümlerini düzenleyin",
 		displayName: 'Kültür Adı',
-		changeKeyError: "\n      '%0%' anahtarı zaten var.\n   ",
+		changeKeyError: "'%0%' anahtarı zaten var.",
 		overviewTitle: 'Sözlüğe genel bakış',
 	},
 	examineManagement: {

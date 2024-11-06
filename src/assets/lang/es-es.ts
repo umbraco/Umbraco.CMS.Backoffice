@@ -202,6 +202,7 @@ export default {
 		addTextBox: 'Añadir otra caja de texto',
 		removeTextBox: 'Eliminar caja de texto',
 		contentRoot: 'Raíz de contenido',
+		saveModalTitle: 'Guardar',
 	},
 	blueprints: {
 		createBlueprintFrom: 'Crear nueva Plantilla de Contenido desde <em>%0%</em>',
@@ -370,9 +371,9 @@ export default {
 		createNew: 'Crear elemento de diccionario',
 	},
 	dictionaryItem: {
-		description: "Editar las diferentes versiones lingüísticas para la entrada en el diccionario '% 0%' debajo",
-		displayName: 'nombre de la cultura\n',
-		changeKeyError: "\n      La clave '%0%' ya existe.\n   ",
+		description: "Editar las diferentes versiones lingüísticas para la entrada en el diccionario '%0%' debajo",
+		displayName: 'nombre de la cultura',
+		changeKeyError: "La clave '%0%' ya existe.",
 	},
 	placeholders: {
 		username: 'Escribe tu nombre de usuario',

@@ -1,7 +1,7 @@
 import { UMB_EDIT_MEDIA_WORKSPACE_PATH_PATTERN } from '../../../paths.js';
 import type { UmbMediaCollectionFilterModel, UmbMediaCollectionItemModel } from '../../types.js';
 import { UMB_MEDIA_COLLECTION_CONTEXT } from '../../media-collection.context-token.js';
-import { css, customElement, html, nothing, state, when } from '@umbraco-cms/backoffice/external/lit';
+import { css, customElement, html, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { UmbDefaultCollectionContext, UmbCollectionColumnConfiguration } from '@umbraco-cms/backoffice/collection';
@@ -21,9 +21,6 @@ import './column-layouts/media-table-column-name.element.js';
 
 @customElement('umb-media-table-collection-view')
 export class UmbMediaTableCollectionViewElement extends UmbLitElement {
-	@state()
-	private _loading = false;
-
 	@state()
 	private _userDefinedProperties?: Array<UmbCollectionColumnConfiguration>;
 
@@ -90,8 +87,6 @@ export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 	#observeCollectionContext() {
 		if (!this.#collectionContext) return;
 
-		this.observe(this.#collectionContext.loading, (loading) => (this._loading = loading), '_observeLoading');
-
 		this.observe(
 			this.#collectionContext.userDefinedProperties,
 			(userDefinedProperties) => {
@@ -130,9 +125,9 @@ export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 				};
 			});
 
-			this._tableColumns = [...this.#systemColumns, ...userColumns];
+			this._tableColumns = [...this.#systemColumns, ...userColumns, { name: '', alias: 'entityActions' }];
 		} else {
-			this._tableColumns = [...this.#systemColumns];
+			this._tableColumns = [...this.#systemColumns, { name: '', alias: 'entityActions' }];
 		}
 	}
 
@@ -146,6 +141,17 @@ export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 
 			const data =
 				this._tableColumns?.map((column) => {
+					if (column.alias === 'entityActions') {
+						return {
+							columnAlias: 'entityActions',
+							value: html`<umb-entity-actions-table-column-view
+								.value=${{
+									entityType: item.entityType,
+									unique: item.unique,
+								}}></umb-entity-actions-table-column-view>`,
+						};
+					}
+
 					const editPath = this.#routeBuilder
 						? this.#routeBuilder({ entityType: item.entityType }) +
 							UMB_EDIT_MEDIA_WORKSPACE_PATH_PATTERN.generateLocal({ unique: item.unique })
@@ -184,7 +190,7 @@ export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 			case 'updater':
 				return item.updater;
 			default:
-				return item.values.find((value) => value.alias === alias)?.value ?? '';
+				return item.values?.find((value) => value.alias === alias)?.value ?? '';
 		}
 	}
 
@@ -213,24 +219,6 @@ export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 	}
 
 	override render() {
-		return this._tableItems.length === 0 ? this.#renderEmpty() : this.#renderItems();
-	}
-
-	#renderEmpty() {
-		if (this._tableItems.length > 0) return nothing;
-		return html`
-			<div class="container">
-				${when(
-					this._loading,
-					() => html`<uui-loader></uui-loader>`,
-					() => html`<p>${this.localize.term('content_listViewNoItems')}</p>`,
-				)}
-			</div>
-		`;
-	}
-
-	#renderItems() {
-		if (this._tableItems.length === 0) return nothing;
 		return html`
 			<umb-table
 				.config=${this._tableConfig}
@@ -240,7 +228,6 @@ export class UmbMediaTableCollectionViewElement extends UmbLitElement {
 				@selected=${this.#handleSelect}
 				@deselected=${this.#handleDeselect}
 				@ordered=${this.#handleOrdering}></umb-table>
-			${when(this._loading, () => html`<uui-loader-bar></uui-loader-bar>`)}
 		`;
 	}
 

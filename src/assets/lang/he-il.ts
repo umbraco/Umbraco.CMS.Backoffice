@@ -113,6 +113,7 @@ export default {
 		updateDate: 'נערך לאחרונה',
 		uploadClear: 'הסר קובץ',
 		urls: 'קשר למסמך',
+		saveModalTitle: 'שמור',
 	},
 	create: {
 		chooseNode: 'היכן ברצונך ליצור את %0%',
@@ -177,7 +178,7 @@ export default {
 		inserttable: 'הוסף טבלה',
 		lastEdited: 'נערך לאחרונה',
 		link: 'קישור',
-		linkinternal: 'קישור פנימי:',
+		linkinternal: 'קישור פנימי',
 		linklocaltip: 'בעת שימוש בקישוריים פנימיים, הוסף "#" בתחילת הקישור',
 		linknewwindow: 'לפתוח בחלון חדש?',
 		macroDoesNotHaveProperties: 'המאקרו לא מכיל מאפיינים שניתן לערוך',
@@ -204,7 +205,7 @@ export default {
 	},
 	dictionaryItem: {
 		description:
-			'\n      ערוך את גרסאות השפות השונות לפריט המילון \'<em>%0%</em>\' למטה<br/>ניתן להוסיף שפות נוספות תחת "שפות" בתפריט בצד שמאל\n   ',
+			'ערוך את גרסאות השפות השונות לפריט המילון \'%0%\' למטה ניתן להוסיף שפות נוספות תחת "שפות" בתפריט בצד שמאל',
 		displayName: 'שם התצוגה לשפה',
 	},
 	editdatatype: {

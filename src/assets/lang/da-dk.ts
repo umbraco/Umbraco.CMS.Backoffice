@@ -326,6 +326,7 @@ export default {
 		variantSendForApprovalNotAllowed: 'Send for approval is not allowed',
 		variantScheduleNotAllowed: 'Schedule is not allowed',
 		variantUnpublishNotAllowed: 'Unpublish is not allowed',
+		saveModalTitle: 'Gem',
 	},
 	blueprints: {
 		createBlueprintFrom: "Opret en ny indholdsskabelon fra '%0%'",
@@ -498,7 +499,7 @@ export default {
 			'Ændring af kulturen for et sprog kan forsage en krævende opration og vil\n      resultere i indholds cache og indeksering vil blive genlavet\n    ',
 		lastEdited: 'Sidst redigeret',
 		link: 'Link',
-		linkinternal: 'Internt link:',
+		linkinternal: 'Internt link',
 		linklocaltip: 'Ved lokalt link, indsæt da en "#" foran linket',
 		linknewwindow: 'Åben i nyt vindue?',
 		macroDoesNotHaveProperties: 'Denne makro har ingen egenskaber du kan redigere',
@@ -588,9 +589,9 @@ export default {
 	},
 	dictionaryItem: {
 		description:
-			"\n      Rediger de forskellige sprogversioner for ordbogselementet '%0%' herunder.<br />Du tilføjer flere sprog under 'sprog' i menuen til venstre </key>\n      ",
+			"Rediger de forskellige sprogversioner for ordbogselementet '%0%' herunder. Du tilføjer flere sprog under 'sprog' i menuen til venstre.",
 		displayName: 'Kulturnavn',
-		changeKeyError: "\n      Navnet '%0%' eksisterer allerede.\n   ",
+		changeKeyError: "Navnet '%0%' eksisterer allerede.",
 		overviewTitle: 'Ordbogsoversigt',
 	},
 	examineManagement: {
@@ -782,6 +783,7 @@ export default {
 		email: 'E-mail',
 		error: 'Fejl',
 		field: 'Felt',
+		fieldFor: 'Felt for %0%',
 		findDocument: 'Find',
 		first: 'Første',
 		focalPoint: 'Fokuspunkt',
@@ -899,6 +901,7 @@ export default {
 		avatar: 'Avatar til',
 		header: 'Overskrift',
 		systemField: 'system felt',
+		readOnly: 'Skrivebeskyttet',
 		restore: 'Genskab',
 		generic: 'Generic',
 		media: 'Media',
@@ -2285,7 +2288,7 @@ export default {
 		forceHideContentEditorHelp: 'Skjul indholds redigerings knappen samt indholdseditoren i Blok Redigerings vinduet',
 		gridInlineEditing: 'Direkte redigering',
 		gridInlineEditingHelp:
-			'Tilføjer direkte redigering a det første felt. Yderligere felter optræder kun i redigerings vinduet.',
+			'Tilføjer direkte redigering af det første felt. Yderligere felter optræder kun i redigerings vinduet.',
 		blockHasChanges: 'Du har lavet ændringer til dette indhold. Er du sikker på at du vil kassere dem?',
 		confirmCancelBlockCreationHeadline: 'Annuller oprettelse?',
 		confirmCancelBlockCreationMessage: 'Er du sikker på at du vil annullere oprettelsen.',
@@ -2361,6 +2364,10 @@ export default {
 		allowBlockInAreas: 'Allow in areas',
 		allowBlockInAreasHelp:
 			'Make this block available by default within the areas of other Blocks (unless explicit permissions are set for these areas).',
+		createThisFor: (name: string, variantName: string) =>
+			variantName ? `Opret ${name} for ${variantName}` : `Create ${name}`,
+		insertBlock: 'Indsæt Block',
+		labelInlineMode: 'Indsæt på linje med tekst',
 	},
 	contentTemplatesDashboard: {
 		whatHeadline: 'Hvad er Indholdsskabeloner?',

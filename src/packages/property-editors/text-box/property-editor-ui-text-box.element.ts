@@ -1,11 +1,11 @@
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, state, ifDefined, property } from '@umbraco-cms/backoffice/external/lit';
-import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/property-editor';
-import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import {
+	type UmbPropertyEditorUiElement,
 	UmbPropertyValueChangeEvent,
 	type UmbPropertyEditorConfigCollection,
 } from '@umbraco-cms/backoffice/property-editor';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import type { UUIInputElement } from '@umbraco-cms/backoffice/external/uui';
 import { UMB_VALIDATION_EMPTY_LOCALIZATION_KEY, UmbFormControlMixin } from '@umbraco-cms/backoffice/validation';
 
@@ -33,6 +33,13 @@ export class UmbPropertyEditorUITextBoxElement
 	mandatory?: boolean;
 	@property({ type: String })
 	mandatoryMessage = UMB_VALIDATION_EMPTY_LOCALIZATION_KEY;
+
+	/**
+	 * The name of this field.
+	 * @type {string}
+	 */
+	@property({ type: String })
+	name?: string;
 
 	#defaultType: UuiInputTypeType = 'text';
 
@@ -72,6 +79,7 @@ export class UmbPropertyEditorUITextBoxElement
 
 	override render() {
 		return html`<uui-input
+			.label=${this.localize.term('general_fieldFor', [this.name])}
 			.value=${this.value ?? ''}
 			.type=${this._type}
 			placeholder=${ifDefined(this._placeholder)}

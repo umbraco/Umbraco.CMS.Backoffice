@@ -297,6 +297,7 @@ export default {
 		schedulePublishHelp: "Sélectionnez la date et l'heure de publication/dépublication de l'élément de contenu.",
 		createEmpty: 'Créer nouveau',
 		createFromClipboard: 'Copier du clipboard',
+		saveModalTitle: 'Sauver',
 	},
 	blueprints: {
 		createBlueprintFrom: 'Créer un nouveau Modèle de Contenu à partir de <em>%0%</em>',
@@ -441,7 +442,7 @@ export default {
 			"Modifier la culture d'une langue peut être une opération lourde qui aura pour conséquence la réinitialisation de la cache de contenu et des index",
 		lastEdited: 'Dernière modification',
 		link: 'Lien',
-		linkinternal: 'Lien interne :',
+		linkinternal: 'Lien interne',
 		linklocaltip: 'Si vous utilisez des ancres, insérez # au début du lien',
 		linknewwindow: 'Ouvrir dans une nouvelle fenêtre?',
 		macroDoesNotHaveProperties: 'Cette macro ne contient aucune propriété éditable',
@@ -517,10 +518,9 @@ export default {
 		createNew: 'Créer un élément de dictionnaire',
 	},
 	dictionaryItem: {
-		description:
-			"\n      Editez les différentes versions de langues pour l'élément de dictionnaire '<em>%0%</em>' ci-dessous.\n   ",
+		description: "Editez les différentes versions de langues pour l'élément de dictionnaire '%0%' ci-dessous.",
 		displayName: 'Nom de Culture',
-		changeKeyError: "\n      La clé '%0%' existe déjà.\n   ",
+		changeKeyError: "La clé '%0%' existe déjà.",
 		overviewTitle: 'Aperçu du dictionaire',
 	},
 	examineManagement: {

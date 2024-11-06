@@ -153,6 +153,7 @@ export default {
 		scheduledPublishServerTime: '預計發表的時間（伺服器端）',
 		scheduledPublishDocumentation:
 			'<a href="https://docs.umbraco.com/umbraco-cms/fundamentals/data/scheduled-publishing#timezones" target="_blank" rel="noopener">這是什麼意思？</a>',
+		saveModalTitle: '保存',
 	},
 	media: {
 		clickToUpload: '點選以便上傳',
@@ -231,7 +232,7 @@ export default {
 		inserttable: '插入表格',
 		lastEdited: '最近編輯',
 		link: '連結',
-		linkinternal: '內部連結：',
+		linkinternal: '內部連結',
 		linklocaltip: '本地連結請用“#”號開頭',
 		linknewwindow: '在新視窗中打開？',
 		macroDoesNotHaveProperties: '本巨集沒有包含您可以編輯的屬性',
@@ -278,8 +279,7 @@ export default {
 		selectEditor: '選擇編輯器',
 	},
 	dictionaryItem: {
-		description:
-			"\n      為此字典項目 '<em>%0%</em>' 編輯不同語言版本，<br />您可以在左方選單「語言」中增添新的語言\n   ",
+		description: "為此字典項目 '%0%' 編輯不同語言版本，您可以在左方選單「語言」中增添新的語言",
 		displayName: '語言名稱',
 	},
 	placeholders: {

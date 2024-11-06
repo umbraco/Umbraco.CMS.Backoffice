@@ -199,6 +199,7 @@ export default {
 		addTextBox: 'Dodaj kolejne pole tekstowe',
 		removeTextBox: 'Usuń te pole tekstowe',
 		contentRoot: 'Korzeń zawartości',
+		saveModalTitle: 'Zapisz',
 	},
 	blueprints: {
 		createBlueprintFrom: 'Stwórz nowy Szablon Zawartości z <em>%0%</em>',
@@ -301,7 +302,7 @@ export default {
 		inserttable: 'Wstaw tabelę',
 		lastEdited: 'Ostatnio edytowane',
 		link: 'Link',
-		linkinternal: 'Link wewnętrzny:',
+		linkinternal: 'Link wewnętrzny',
 		linklocaltip: 'Kiedy używasz odnośników lokalnych, wstaw znak "#" na początku linku',
 		linknewwindow: 'Otworzyć w nowym oknie?',
 		macroDoesNotHaveProperties: 'To makro nie posiada żadnych właściwości, które można edytować',
@@ -364,9 +365,9 @@ export default {
 	},
 	dictionaryItem: {
 		description:
-			'\n    Edytuj różne wersje językowe dla elementu słownika \'<em>%0%</em>\' poniżej.<br/>\n    Możesz dodać dodatkowe języki w menu "Języki" po lewej stronie.',
+			'Edytuj różne wersje językowe dla elementu słownika \'%0%\' poniżej. Możesz dodać dodatkowe języki w menu "Języki" po lewej stronie.',
 		displayName: 'Nazwa języka',
-		changeKeyError: "\n      Klucz '%0%' już istnieje.\n   ",
+		changeKeyError: "Klucz '%0%' już istnieje.",
 	},
 	placeholders: {
 		username: 'Wpisz nazwę użytkownika',

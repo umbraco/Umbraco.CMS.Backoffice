@@ -1,6 +1,5 @@
 import { UmbSubmittableWorkspaceContextBase } from '../submittable/index.js';
 import { UmbEntityWorkspaceDataManager } from '../entity/entity-workspace-data-manager.js';
-import { UMB_WORKSPACE_PATH_PATTERN } from '../paths.js';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import type { UmbEntityModel, UmbEntityUnique } from '@umbraco-cms/backoffice/entity';
@@ -153,9 +152,7 @@ export abstract class UmbEntityDetailWorkspaceContextBase<
 	 * @memberof UmbEntityWorkspaceContextBase
 	 */
 	protected _checkWillNavigateAway(newUrl: string) {
-		const workspaceBasePath = UMB_WORKSPACE_PATH_PATTERN.generateLocal({ entityType: this.getEntityType() });
-		const currentWorkspacePathIdentifier = '/' + workspaceBasePath + '/' + this.routes.getActiveLocalPath();
-		return !newUrl.includes(currentWorkspacePathIdentifier);
+		return !newUrl.includes(this.routes.getActiveLocalPath());
 	}
 
 	async #create(currentData: DetailModelType) {
@@ -198,6 +195,12 @@ export abstract class UmbEntityDetailWorkspaceContextBase<
 
 	#onWillNavigate = async (e: CustomEvent) => {
 		const newUrl = e.detail.url;
+
+		/* TODO: temp removal of discard changes in workspace modals.
+		 The modal closes before the discard changes dialog is resolved.*/
+		if (newUrl.includes('/modal/umb-modal-workspace/')) {
+			return true;
+		}
 
 		if (this._checkWillNavigateAway(newUrl) && this._data.getHasUnpersistedChanges()) {
 			e.preventDefault();
@@ -247,9 +250,8 @@ export abstract class UmbEntityDetailWorkspaceContextBase<
 	}
 
 	public override destroy(): void {
-		this._data.destroy();
-		this._detailRepository?.destroy();
 		window.removeEventListener('willchangestate', this.#onWillNavigate);
+		this._detailRepository?.destroy();
 		super.destroy();
 	}
 }

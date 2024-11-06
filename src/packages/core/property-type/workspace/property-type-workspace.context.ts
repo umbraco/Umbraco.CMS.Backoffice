@@ -1,6 +1,6 @@
 import { UmbPropertyTypeWorkspaceEditorElement } from './property-type-workspace-editor.element.js';
 import type { UmbPropertyTypeWorkspaceData } from './property-type-workspace.modal-token.js';
-import type { UmbPropertyDatasetContext } from '@umbraco-cms/backoffice/property';
+import type { UmbPropertyDatasetContext, UmbPropertyValueData } from '@umbraco-cms/backoffice/property';
 import type {
 	UmbInvariantDatasetWorkspaceContext,
 	UmbRoutableWorkspaceContext,
@@ -10,6 +10,8 @@ import {
 	UmbSubmittableWorkspaceContextBase,
 	UmbInvariantWorkspacePropertyDatasetContext,
 	UmbWorkspaceIsNewRedirectController,
+	UmbWorkspaceIsNewRedirectControllerAlias,
+	umbObjectToPropertyValueArray,
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbObjectState } from '@umbraco-cms/backoffice/observable-api';
 import type { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
@@ -17,6 +19,7 @@ import type { UmbPropertyTypeModel } from '@umbraco-cms/backoffice/content-type'
 import { UMB_CONTENT_TYPE_WORKSPACE_CONTEXT } from '@umbraco-cms/backoffice/content-type';
 import { UmbId } from '@umbraco-cms/backoffice/id';
 import { UmbValidationContext } from '@umbraco-cms/backoffice/validation';
+import { firstValueFrom } from '@umbraco-cms/backoffice/external/rxjs';
 
 export class UmbPropertyTypeWorkspaceContext<PropertyTypeData extends UmbPropertyTypeModel = UmbPropertyTypeModel>
 	extends UmbSubmittableWorkspaceContextBase<PropertyTypeData>
@@ -37,6 +40,13 @@ export class UmbPropertyTypeWorkspaceContext<PropertyTypeData extends UmbPropert
 
 	readonly name = this.#data.asObservablePart((data) => data?.name);
 	readonly unique = this.#data.asObservablePart((data) => data?.id);
+
+	readonly values = this.#data.asObservablePart((data) => {
+		return umbObjectToPropertyValueArray(data);
+	});
+	async getValues(): Promise<Array<UmbPropertyValueData> | undefined> {
+		return umbObjectToPropertyValueArray(await firstValueFrom(this.data));
+	}
 
 	constructor(host: UmbControllerHost, args: { manifest: ManifestWorkspace }) {
 		super(host, args.manifest.alias);
@@ -62,7 +72,7 @@ export class UmbPropertyTypeWorkspaceContext<PropertyTypeData extends UmbPropert
 
 					const containerUnique =
 						info.match.params.containerUnique === 'null' ? null : info.match.params.containerUnique;
-					this.create(containerUnique);
+					await this.create(containerUnique);
 
 					new UmbWorkspaceIsNewRedirectController(
 						this,
@@ -87,7 +97,7 @@ export class UmbPropertyTypeWorkspaceContext<PropertyTypeData extends UmbPropert
 	protected override resetState() {
 		super.resetState();
 		this.#data.setValue(undefined);
-		this.removeUmbControllerByAlias('isNewRedirectController');
+		this.removeUmbControllerByAlias(UmbWorkspaceIsNewRedirectControllerAlias);
 		this.removeUmbControllerByAlias('observePropertyTypeData');
 	}
 

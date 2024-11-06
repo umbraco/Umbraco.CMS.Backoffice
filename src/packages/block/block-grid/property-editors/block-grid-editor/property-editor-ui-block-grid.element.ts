@@ -11,8 +11,10 @@ import {
 	ref,
 } from '@umbraco-cms/backoffice/external/lit';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/property-editor';
-import type { UmbPropertyEditorConfigCollection } from '@umbraco-cms/backoffice/property-editor';
+import type {
+	UmbPropertyEditorUiElement,
+	UmbPropertyEditorConfigCollection,
+} from '@umbraco-cms/backoffice/property-editor';
 import '../../components/block-grid-entries/index.js';
 import { observeMultiple } from '@umbraco-cms/backoffice/observable-api';
 import { UMB_PROPERTY_CONTEXT, UMB_PROPERTY_DATASET_CONTEXT } from '@umbraco-cms/backoffice/property';
@@ -50,6 +52,9 @@ export class UmbPropertyEditorUIBlockGridElement
 
 		const blockGroups = config.getValueByAlias<Array<UmbBlockTypeGroup>>('blockGroups') ?? [];
 		this.#managerContext.setBlockGroups(blockGroups);
+
+		const useInlineEditingAsDefault = config.getValueByAlias<boolean>('useInlineEditingAsDefault');
+		this.#managerContext.setInlineEditingMode(useInlineEditingAsDefault);
 
 		this.style.maxWidth = config.getValueByAlias<string>('maxPropertyWidth') ?? '';
 
@@ -121,12 +126,35 @@ export class UmbPropertyEditorUIBlockGridElement
 				},
 				'motherObserver',
 			);
+
 			this.observe(
 				propertyContext?.alias,
 				(alias) => {
 					this.#managerContext.setPropertyAlias(alias);
 				},
 				'observePropertyAlias',
+			);
+
+			// If the current property is readonly all inner block content should also be readonly.
+			this.observe(
+				observeMultiple([propertyContext.isReadOnly, propertyContext.variantId]),
+				([isReadOnly, variantId]) => {
+					const unique = 'UMB_PROPERTY_EDITOR_UI';
+					if (variantId === undefined) return;
+
+					if (isReadOnly) {
+						const state = {
+							unique,
+							variantId,
+							message: '',
+						};
+
+						this.#managerContext.readOnlyState.addState(state);
+					} else {
+						this.#managerContext.readOnlyState.removeState(unique);
+					}
+				},
+				'observeIsReadOnly',
 			);
 		});
 

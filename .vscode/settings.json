@@ -21,10 +21,12 @@
 		"svgs",
 		"templating",
 		"tinymce",
+		"tiptap",
 		"umbraco",
 		"Uncategorized",
 		"uninitialize",
 		"unprovide",
+		"unpublishing",
 		"variantable"
 	],
 	"exportall.config.folderListener": [],

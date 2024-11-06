@@ -331,6 +331,7 @@ export default {
 		variantSendForApprovalNotAllowed: 'Ni chaniateir anfon am gymeradwyaeth',
 		variantScheduleNotAllowed: 'Ni chaniateir amserlennu',
 		variantUnpublishNotAllowed: 'Ni chaniateir dad-gyhoeddi',
+		saveModalTitle: 'Achub',
 	},
 	blueprints: {
 		createBlueprintFrom: "Creu Templed Cynnwys newydd o '%0%'",
@@ -503,7 +504,7 @@ export default {
 			"Gall newid y diwylliant ar gyfer iaith fod yn weithrediad drud a bydd yn arwain at ailadeiladu'r storfa cynnwys a'r mynegeion",
 		lastEdited: 'Golygwyd ddiwethaf',
 		link: 'Dolen',
-		linkinternal: 'Dolen fewnol:',
+		linkinternal: 'Dolen fewnol',
 		linklocaltip: 'Wrth ddefnyddio dolenni leol, defnyddiwch "#" o flaen y ddolen',
 		linknewwindow: 'Agor mewn ffenestr newydd?',
 		macroDoesNotHaveProperties: "Nid yw'r macro yma yn cynnwys unrhyw briodweddau gallwch chi olygu",
@@ -591,9 +592,9 @@ export default {
 	},
 	dictionaryItem: {
 		description:
-			"\n            Golygwch y fersiynau iaith gwahanol ar gyfer yr eitem geiriadur '<em>%0%</em>' islaw<br/>Gallwch ychwanegu ieithoedd ychwanegol o dan 'ieithoedd' yn y ddewislen ar y chwith\n            ",
+			"Golygwch y fersiynau iaith gwahanol ar gyfer yr eitem geiriadur '%0%' islaw<br/>Gallwch ychwanegu ieithoedd ychwanegol o dan 'ieithoedd' yn y ddewislen ar y chwith",
 		displayName: 'Enw Diwylliant',
-		changeKeyError: "\n            Mae'r allwedd '%0%' yn bodoli eisoes.\n            ",
+		changeKeyError: "Mae'r allwedd '%0%' yn bodoli eisoes.",
 		overviewTitle: 'Trosolwg Geiriadur',
 	},
 	examineManagement: {

@@ -319,6 +319,7 @@ export default {
 		createEmpty: 'Kreiraj novo',
 		createFromClipboard: 'Zalijepi iz međuspremnika',
 		nodeIsInTrash: 'Ova stavka je u košu za smeće',
+		saveModalTitle: 'Spremi',
 	},
 	blueprints: {
 		createBlueprintFrom: 'Kreirajte novi predložak sadržaja iz <em>%0%</em>',
@@ -483,7 +484,7 @@ export default {
 			'Promjena kulture jezika može biti skupa operacija i rezultirat će promjenama u predmemoriji sadržaja i indeksima koji se rekonstruiraju\n    ',
 		lastEdited: 'Zadnje uređivano',
 		link: 'Link',
-		linkinternal: 'Interni link:',
+		linkinternal: 'Interni link',
 		linklocaltip: 'Kada koristite lokalni linkovi, umetnite "#" ispred linka',
 		linknewwindow: 'Otvoriti u novom prozoru?',
 		macroDoesNotHaveProperties: 'Ovaj makro ne sadrži svojstva koja možete uređivati',
@@ -568,9 +569,9 @@ export default {
 		createNew: 'Kreirajte stavku iz rječnika',
 	},
 	dictionaryItem: {
-		description: "\n      Uredite različite jezičke varijante za stavku rječnika '<em>%0%</em>' ispod\n   ",
+		description: "Uredite različite jezičke varijante za stavku rječnika '%0%' ispod",
 		displayName: 'Kultura',
-		changeKeyError: "\n      Stavka '%0%' već postoji.\n   ",
+		changeKeyError: "Stavka '%0%' već postoji.",
 		overviewTitle: 'Pregled riječnika',
 	},
 	examineManagement: {

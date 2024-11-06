@@ -18,6 +18,7 @@ import {
 import {
 	UmbSubmittableWorkspaceContextBase,
 	UmbWorkspaceIsNewRedirectController,
+	UmbWorkspaceIsNewRedirectControllerAlias,
 } from '@umbraco-cms/backoffice/workspace';
 import { UmbTemplateDetailRepository } from '@umbraco-cms/backoffice/template';
 import { UMB_ACTION_EVENT_CONTEXT } from '@umbraco-cms/backoffice/action';
@@ -109,7 +110,7 @@ export class UmbDocumentTypeWorkspaceContext
 			{
 				path: UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN.toString(),
 				component: UmbDocumentTypeWorkspaceEditorElement,
-				setup: (_component, info) => {
+				setup: async (_component, info) => {
 					const params = info.match.params as unknown as UmbPathPatternTypeAsEncodedParamsType<
 						typeof UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN.PARAMS
 					>;
@@ -119,7 +120,7 @@ export class UmbDocumentTypeWorkspaceContext
 					if (parentUnique === undefined) {
 						throw new Error('ParentUnique url parameter is required to create a document type');
 					}
-					this.create({ entityType: parentEntityType, unique: parentUnique }, presetAlias);
+					await this.create({ entityType: parentEntityType, unique: parentUnique }, presetAlias);
 
 					new UmbWorkspaceIsNewRedirectController(
 						this,
@@ -132,7 +133,7 @@ export class UmbDocumentTypeWorkspaceContext
 				path: UMB_EDIT_DOCUMENT_TYPE_WORKSPACE_PATH_PATTERN.toString(),
 				component: UmbDocumentTypeWorkspaceEditorElement,
 				setup: (_component, info) => {
-					this.removeUmbControllerByAlias('isNewRedirectController');
+					this.removeUmbControllerByAlias(UmbWorkspaceIsNewRedirectControllerAlias);
 					const unique = info.match.params.unique;
 					this.load(unique);
 				},
@@ -227,7 +228,7 @@ export class UmbDocumentTypeWorkspaceContext
 
 		switch (presetAlias) {
 			case UMB_CREATE_DOCUMENT_TYPE_WORKSPACE_PRESET_TEMPLATE satisfies UmbCreateDocumentTypeWorkspacePresetType: {
-				this.setIcon('icon-notepad');
+				this.setIcon('icon-document-html');
 				this.createTemplateMode = true;
 				break;
 			}

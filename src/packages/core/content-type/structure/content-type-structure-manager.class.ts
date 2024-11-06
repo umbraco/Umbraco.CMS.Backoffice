@@ -45,12 +45,9 @@ export class UmbContentTypeStructureManager<
 	readonly ownerContentType = this.#contentTypes.asObservablePart((x) =>
 		x.find((y) => y.unique === this.#ownerContentTypeUnique),
 	);
-	readonly ownerContentTypeAlias = this.#contentTypes.asObservablePart(
-		(x) => x.find((y) => y.unique === this.#ownerContentTypeUnique)?.alias,
-	);
-	readonly ownerContentTypeCompositions = this.#contentTypes.asObservablePart(
-		(x) => x.find((y) => y.unique === this.#ownerContentTypeUnique)?.compositions,
-	);
+	readonly ownerContentTypeAlias = createObservablePart(this.ownerContentType, (x) => x?.alias);
+	readonly ownerContentTypeName = createObservablePart(this.ownerContentType, (x) => x?.name);
+	readonly ownerContentTypeCompositions = createObservablePart(this.ownerContentType, (x) => x?.compositions);
 
 	readonly #contentTypeContainers = this.#contentTypes.asObservablePart((contentTypes) => {
 		// Notice this may need to use getValue to avoid resetting it self. [NL]
@@ -70,9 +67,9 @@ export class UmbContentTypeStructureManager<
 		// Notice this may need to use getValue to avoid resetting it self. [NL]
 		return contentTypes.some((x) => x.properties.length > 0);
 	});
-	readonly contentTypePropertyAliases = this.#contentTypes.asObservablePart((contentTypes) => {
-		return contentTypes.flatMap((x) => x.properties ?? []).map((x) => x.alias);
-	});
+	readonly contentTypePropertyAliases = createObservablePart(this.contentTypeProperties, (properties) =>
+		properties.map((x) => x.alias),
+	);
 	readonly contentTypeUniques = this.#contentTypes.asObservablePart((x) => x.map((y) => y.unique));
 	readonly contentTypeAliases = this.#contentTypes.asObservablePart((x) => x.map((y) => y.alias));
 
@@ -108,6 +105,8 @@ export class UmbContentTypeStructureManager<
 	 * @returns {Promise} - Promise resolved
 	 */
 	public async loadType(unique?: string) {
+		//if (!unique) return;
+		//if (this.#ownerContentTypeUnique === unique) return;
 		this._reset();
 
 		this.#ownerContentTypeUnique = unique;
@@ -727,6 +726,7 @@ export class UmbContentTypeStructureManager<
 	}
 
 	private _reset() {
+		this.#contentTypes.setValue([]);
 		this.#contentTypeObservers.forEach((observer) => observer.destroy());
 		this.#contentTypeObservers = [];
 		this.#contentTypes.setValue([]);

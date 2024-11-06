@@ -146,6 +146,7 @@ export default {
 		notmemberof: 'Ikke medlem av gruppe(ne)',
 		childItems: 'Undersider',
 		target: 'Åpne i vindu',
+		saveModalTitle: 'Lagre',
 	},
 	media: {
 		clickToUpload: 'Klikk for å laste opp',
@@ -221,7 +222,7 @@ export default {
 		inserttable: 'Sett inn tabell',
 		lastEdited: 'Sist redigert',
 		link: 'Lenke',
-		linkinternal: 'Intern link:',
+		linkinternal: 'Intern link',
 		linklocaltip: 'Ved lokal link, sett inn "#" foran link',
 		linknewwindow: 'Åpne i nytt vindu?',
 		macroDoesNotHaveProperties: 'Denne makroen har ingen egenskaper du kan endre',
@@ -250,8 +251,10 @@ export default {
 	},
 	dictionaryItem: {
 		description:
-			"Rediger de forskjellige språkversjonene for ordbokelementet '<em>%0%</em>' under.<br/>Du kan legge til flere språk under 'språk' i menyen til venstre.",
+			"Rediger de forskjellige språkversjonene for ordbokelementet '%0%' under. Du kan legge til flere språk under 'språk' i menyen til venstre.",
 		displayName: 'Språk',
+		changeKeyError: "Kan ikke endre nøkkel for '%0%' fordi det allerede finnes en oversettelse for denne nøkkelen",
+		overviewTitle: 'Ordbok',
 	},
 	placeholders: {
 		username: 'Skriv inn ditt brukernavn',
