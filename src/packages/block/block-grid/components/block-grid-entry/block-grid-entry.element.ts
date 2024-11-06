@@ -1,3 +1,6 @@
+// WARREN: TODO
+// https://github.com/umbraco/Umbraco-CMS/issues/17316
+
 import { UmbBlockGridEntryContext } from '../../context/block-grid-entry.context.js';
 import { UmbLitElement, umbDestroyOnDisconnect } from '@umbraco-cms/backoffice/lit-element';
 import { html, css, customElement, property, state, nothing } from '@umbraco-cms/backoffice/external/lit';
