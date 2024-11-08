@@ -10,12 +10,12 @@ interface UmbPublishedPendingChangesManagerProcessArgs {
 	currentData: UmbDocumentDetailModel;
 }
 
-interface UmbVariantPendingChanges {
+interface UmbVariantWithPendingChanges {
 	variantId: UmbVariantId;
 }
 
 export class UmbPublishedPendingChangesManager extends UmbControllerBase {
-	#variantsWithPendingChanges = new UmbArrayState<UmbVariantPendingChanges>([], (x) => x.variantId.toString());
+	#variantsWithPendingChanges = new UmbArrayState<UmbVariantWithPendingChanges>([], (x) => x.variantId.toString());
 	public readonly variantsWithPendingChanges = this.#variantsWithPendingChanges.asObservable();
 
 	#publishingRepository = new UmbDocumentPublishingRepository(this);
