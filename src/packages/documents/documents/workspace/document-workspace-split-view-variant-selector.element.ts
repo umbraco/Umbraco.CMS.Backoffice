@@ -1,6 +1,6 @@
 import type { UmbDocumentVariantOptionModel } from '../types.js';
 import { sortVariants } from '../utils.js';
-import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from './document-workspace.context-token.js';
+import { UMB_DOCUMENT_PUBLISHING_WORKSPACE_CONTEXT } from '../publishing/index.js';
 import { customElement, html, nothing, state } from '@umbraco-cms/backoffice/external/lit';
 import { DocumentVariantStateModel } from '@umbraco-cms/backoffice/external/backend-api';
 import { UmbWorkspaceSplitViewVariantSelectorElement } from '@umbraco-cms/backoffice/workspace';
@@ -12,7 +12,7 @@ export class UmbDocumentWorkspaceSplitViewVariantSelectorElement extends UmbWork
 	@state()
 	private _variantsWithPendingChanges: Array<any> = [];
 
-	#documentWorkspaceContext?: typeof UMB_DOCUMENT_WORKSPACE_CONTEXT.TYPE;
+	#documentPublishingWorkspaceContext?: typeof UMB_DOCUMENT_PUBLISHING_WORKSPACE_CONTEXT.TYPE;
 
 	#publishStateLocalizationMap = {
 		[DocumentVariantStateModel.DRAFT]: 'content_unpublished',
@@ -23,15 +23,15 @@ export class UmbDocumentWorkspaceSplitViewVariantSelectorElement extends UmbWork
 
 	constructor() {
 		super();
-		this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
-			this.#documentWorkspaceContext = instance;
+		this.consumeContext(UMB_DOCUMENT_PUBLISHING_WORKSPACE_CONTEXT, (instance) => {
+			this.#documentPublishingWorkspaceContext = instance;
 			this.#observePendingChanges();
 		});
 	}
 
 	async #observePendingChanges() {
 		this.observe(
-			this.#documentWorkspaceContext?.publishedPendingChanges.variantsWithPendingChanges,
+			this.#documentPublishingWorkspaceContext?.publishedPendingChanges.variantsWithChanges,
 			(variants) => {
 				this._variantsWithPendingChanges = variants || [];
 			},

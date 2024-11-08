@@ -20,7 +20,6 @@ import {
 } from '../paths.js';
 import { UmbDocumentPreviewRepository } from '../repository/preview/index.js';
 import { UMB_DOCUMENT_COLLECTION_ALIAS } from '../collection/index.js';
-import { UmbPublishedPendingChangesManager } from '../publishing/index.js';
 import { UMB_DOCUMENT_DETAIL_MODEL_VARIANT_SCAFFOLD, UMB_DOCUMENT_WORKSPACE_ALIAS } from './constants.js';
 import type { UmbEntityModel } from '@umbraco-cms/backoffice/entity';
 import { UMB_INVARIANT_CULTURE, UmbVariantId } from '@umbraco-cms/backoffice/variant';
@@ -64,7 +63,6 @@ export class UmbDocumentWorkspaceContext
 		UmbContentCollectionWorkspaceContext<UmbDocumentTypeDetailModel>
 {
 	public readonly publishingRepository = new UmbDocumentPublishingRepository(this);
-	public readonly publishedPendingChanges = new UmbPublishedPendingChangesManager(this);
 
 	#serverValidation = new UmbServerModelValidatorContext(this);
 	#validationRepository?: UmbDocumentValidationRepository;
@@ -147,7 +145,6 @@ export class UmbDocumentWorkspaceContext
 
 		if (response.data) {
 			this.#isTrashedContext.setIsTrashed(response.data.isTrashed);
-			this.publishedPendingChanges.process({ unique, currentData: response.data });
 		}
 
 		return response;

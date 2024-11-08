@@ -1,55 +1,45 @@
 import type { UmbDocumentDetailModel } from '../types.js';
-import { UmbDocumentPublishingRepository } from './repository/index.js';
 import { UmbVariantId } from '@umbraco-cms/backoffice/variant';
 import { UmbControllerBase } from '@umbraco-cms/backoffice/class-api';
 import { UmbMergeContentVariantDataController } from '@umbraco-cms/backoffice/content';
 import { jsonStringComparison, UmbArrayState } from '@umbraco-cms/backoffice/observable-api';
 
-interface UmbPublishedPendingChangesManagerProcessArgs {
-	unique: string;
+interface UmbDocumentPublishedPendingChangesManagerProcessArgs {
 	currentData: UmbDocumentDetailModel;
+	publishedData: UmbDocumentDetailModel;
 }
 
-interface UmbVariantWithPendingChanges {
+interface UmbVariantWithChanges {
 	variantId: UmbVariantId;
 }
 
-export class UmbPublishedPendingChangesManager extends UmbControllerBase {
-	#variantsWithPendingChanges = new UmbArrayState<UmbVariantWithPendingChanges>([], (x) => x.variantId.toString());
-	public readonly variantsWithPendingChanges = this.#variantsWithPendingChanges.asObservable();
-
-	#publishingRepository = new UmbDocumentPublishingRepository(this);
+export class UmbDocumentPublishedPendingChangesManager extends UmbControllerBase {
+	#variantsWithChanges = new UmbArrayState<UmbVariantWithChanges>([], (x) => x.variantId.toString());
+	public readonly variantsWithChanges = this.#variantsWithChanges.asObservable();
 
 	/**
 	 * Checks each variant if there are any pending changes to publish.
-	 * @param {UmbPublishedPendingChangesManagerProcessArgs} args - The arguments for the process.
+	 * @param {UmbDocumentPublishedPendingChangesManagerProcessArgs} args - The arguments for the process.
 	 * @param {string} args.unique - The unique identifier of the document.
 	 * @param {UmbDocumentDetailModel} args.currentData - The current document data.
 	 * @returns {Promise<void>}
 	 * @memberof UmbPublishedPendingChangesManager
 	 */
-	async process(args: UmbPublishedPendingChangesManagerProcessArgs): Promise<void> {
-		if (!args.unique) throw new Error('Unique is missing');
+	async process(args: UmbDocumentPublishedPendingChangesManagerProcessArgs): Promise<void> {
 		if (!args.currentData) throw new Error('Current Data is missing');
-
-		const { data: publishedData } = await this.#publishingRepository.published(args.unique);
-
-		if (!publishedData) {
-			this.#variantsWithPendingChanges.setValue([]);
-			return;
-		}
+		if (!args.publishedData) throw new Error('Published Data is missing');
 
 		const variantIds = args.currentData.variants?.map((x) => UmbVariantId.Create(x)) ?? [];
 
 		const pendingChangesPromises = variantIds.map(async (variantId) => {
 			const mergedData = await new UmbMergeContentVariantDataController(this).process(
-				publishedData,
+				args.publishedData,
 				args.currentData,
 				[variantId],
 				[variantId],
 			);
 
-			if (jsonStringComparison(mergedData, publishedData) === false) {
+			if (jsonStringComparison(mergedData, args.publishedData) === false) {
 				return { variantId };
 			} else {
 				return null;
@@ -58,6 +48,6 @@ export class UmbPublishedPendingChangesManager extends UmbControllerBase {
 
 		const variantsWithPendingChanges = (await Promise.all(pendingChangesPromises)).filter((x) => x !== null);
 
-		this.#variantsWithPendingChanges.setValue(variantsWithPendingChanges);
+		this.#variantsWithChanges.setValue(variantsWithPendingChanges);
 	}
 }
