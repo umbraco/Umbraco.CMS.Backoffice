@@ -1,13 +1,18 @@
 import type { UmbDocumentVariantOptionModel } from '../types.js';
 import { sortVariants } from '../utils.js';
-import { customElement, html } from '@umbraco-cms/backoffice/external/lit';
+import { UMB_DOCUMENT_WORKSPACE_CONTEXT } from './document-workspace.context-token.js';
+import { customElement, html, nothing, state } from '@umbraco-cms/backoffice/external/lit';
 import { DocumentVariantStateModel } from '@umbraco-cms/backoffice/external/backend-api';
 import { UmbWorkspaceSplitViewVariantSelectorElement } from '@umbraco-cms/backoffice/workspace';
 
-const elementName = 'umb-document-workspace-split-view-variant-selector';
-@customElement(elementName)
+@customElement('umb-document-workspace-split-view-variant-selector')
 export class UmbDocumentWorkspaceSplitViewVariantSelectorElement extends UmbWorkspaceSplitViewVariantSelectorElement<UmbDocumentVariantOptionModel> {
 	protected override _variantSorter = sortVariants;
+
+	@state()
+	private _variantsWithPendingChanges: Array<any> = [];
+
+	#documentWorkspaceContext?: typeof UMB_DOCUMENT_WORKSPACE_CONTEXT.TYPE;
 
 	#publishStateLocalizationMap = {
 		[DocumentVariantStateModel.DRAFT]: 'content_unpublished',
@@ -16,8 +21,31 @@ export class UmbDocumentWorkspaceSplitViewVariantSelectorElement extends UmbWork
 		[DocumentVariantStateModel.NOT_CREATED]: 'content_notCreated',
 	};
 
+	constructor() {
+		super();
+		this.consumeContext(UMB_DOCUMENT_WORKSPACE_CONTEXT, (instance) => {
+			this.#documentWorkspaceContext = instance;
+			this.#observePendingChanges();
+		});
+	}
+
+	async #observePendingChanges() {
+		this.observe(
+			this.#documentWorkspaceContext?.publishedPendingChanges.variantsWithPendingChanges,
+			(variants) => {
+				this._variantsWithPendingChanges = variants || [];
+			},
+			'_observePendingChanges',
+		);
+	}
+
+	#hasPendingChanges(variant: UmbDocumentVariantOptionModel) {
+		return this._variantsWithPendingChanges.some((x) => x.variantId.compare(variant));
+	}
+
 	override _renderVariantDetails(variantOption: UmbDocumentVariantOptionModel) {
-		return html` ${this.localize.term(
+		return html` ${this.#hasPendingChanges(variantOption) ? html`<uui-tag>Pending changes</uui-tag>` : nothing}
+		${this.localize.term(
 			this.#publishStateLocalizationMap[variantOption.variant?.state || DocumentVariantStateModel.NOT_CREATED],
 		)}`;
 	}
@@ -25,6 +53,6 @@ export class UmbDocumentWorkspaceSplitViewVariantSelectorElement extends UmbWork
 
 declare global {
 	interface HTMLElementTagNameMap {
-		[elementName]: UmbDocumentWorkspaceSplitViewVariantSelectorElement;
+		['umb-document-workspace-split-view-variant-selector']: UmbDocumentWorkspaceSplitViewVariantSelectorElement;
 	}
 }

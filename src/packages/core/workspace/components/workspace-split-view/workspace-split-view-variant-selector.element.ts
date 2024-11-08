@@ -66,9 +66,6 @@ export class UmbWorkspaceSplitViewVariantSelectorElement<
 	@state()
 	private _readOnlyCultures: string[] = [];
 
-	@state()
-	private _variantsWithPendingChanges: Array<any> = [];
-
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected _variantSorter = (a: VariantOptionModelType, b: VariantOptionModelType) => {
 		return 0;
@@ -87,7 +84,6 @@ export class UmbWorkspaceSplitViewVariantSelectorElement<
 			this.#observeActiveVariants(workspaceContext);
 			this.#observeReadOnlyStates(workspaceContext);
 			this.#observeCurrentVariant();
-			this.#observePendingChanges(workspaceContext);
 		});
 
 		this.consumeContext(UMB_PROPERTY_DATASET_CONTEXT, (instance) => {
@@ -158,20 +154,6 @@ export class UmbWorkspaceSplitViewVariantSelectorElement<
 			},
 			'_currentLanguage',
 		);
-	}
-
-	async #observePendingChanges(workspaceContext: UmbDocumentWorkspaceContext) {
-		this.observe(
-			workspaceContext.publishedPendingChanges.variantsWithPendingChanges,
-			(variants) => {
-				this._variantsWithPendingChanges = variants;
-			},
-			'_observePendingChanges',
-		);
-	}
-
-	#hasPendingChanges(variant: UmbDocumentVariantOptionModel) {
-		return this._variantsWithPendingChanges.some((x) => x.variantId.compare(variant));
 	}
 
 	#handleInput(event: UUIInputEvent) {
@@ -315,7 +297,6 @@ export class UmbWorkspaceSplitViewVariantSelectorElement<
 						</div>
 						<div class="variant-details">
 							<span>${this._renderVariantDetails(variantOption)}</span>
-							${this.#hasPendingChanges(variantOption) ? html`<uui-tag>Pending changes</uui-tag>` : nothing}
 							<span
 								>${variantOption.language.isDefault
 									? html`<span> - ${this.localize.term('general_default')}</span>`
