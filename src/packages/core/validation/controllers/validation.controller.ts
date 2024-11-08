@@ -79,13 +79,16 @@ export class UmbValidationController extends UmbControllerBase implements UmbVal
 		this.messages.removeTranslator(translator);
 	}
 
+	#currentProvideHost?: UmbClassInterface;
 	/**
 	 * Provide this validation context to a specific controller host.
 	 * This can be used to Host a validation context in a Workspace, but provide it on a certain scope, like a specific Workspace View.
 	 * @param controllerHost {UmbClassInterface}
 	 */
 	provideAt(controllerHost: UmbClassInterface): void {
+		if (this.#currentProvideHost === controllerHost) return;
 		this.#providerCtrl?.destroy();
+		this.#currentProvideHost = controllerHost;
 		this.#providerCtrl = controllerHost.provideContext(UMB_VALIDATION_CONTEXT, this);
 	}
 
@@ -100,10 +103,10 @@ export class UmbValidationController extends UmbControllerBase implements UmbVal
 	 * @example
 	 * ```ts
 	 * const validationContext = new UmbValidationContext(this);
-	 * validationContext.setDataPath("$.values[?(@.alias='my-property')].value");
+	 * validationContext.setDataPath("$.values[?(@.alias == 'my-property')].value");
 	 * ```
 	 *
-	 * A message with the path: '$.values[?(@.alias='my-property')].value.innerProperty', will for above example become '$.innerProperty' for the local Validation Context.
+	 * A message with the path: '$.values[?(@.alias == 'my-property')].value.innerProperty', will for above example become '$.innerProperty' for the local Validation Context.
 	 */
 	setDataPath(dataPath: string): void {
 		if (this.#baseDataPath) {
