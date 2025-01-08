@@ -20,6 +20,7 @@ import type {
 import { umbLocalizationManager } from './localization.manager.js';
 import type { LitElement } from '@umbraco-cms/backoffice/external/lit';
 import type { UmbController, UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { escapeHTML } from '@umbraco-cms/backoffice/utils';
 
 const LocalizationControllerAlias = Symbol();
 /**
@@ -109,8 +110,9 @@ export class UmbLocalizationController<LocalizationSetType extends UmbLocalizati
 
 	/**
 	 * Outputs a translated term.
-	 * @param key
-	 * @param {...any} args
+	 * @param {string} key - the localization key, the indicator of what localization entry you want to retrieve.
+	 * @param {...any} args - the arguments to parse for this localization entry.
+	 * @returns {string} - the translated term as a string.
 	 */
 	term<K extends keyof LocalizationSetType>(key: K, ...args: FunctionParams<LocalizationSetType[K]>): string {
 		if (!this.#usedKeys.includes(key)) {
@@ -118,29 +120,35 @@ export class UmbLocalizationController<LocalizationSetType extends UmbLocalizati
 		}
 
 		const { primary, secondary } = this.getLocalizationData(this.lang());
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		let term: any;
 
 		// Look for a matching term using regionCode, code, then the fallback
-		if (primary && primary[key]) {
+		if (primary?.[key]) {
 			term = primary[key];
-		} else if (secondary && secondary[key]) {
+		} else if (secondary?.[key]) {
 			term = secondary[key];
-		} else if (umbLocalizationManager.fallback && umbLocalizationManager.fallback[key]) {
+		} else if (umbLocalizationManager.fallback?.[key]) {
 			term = umbLocalizationManager.fallback[key];
 		} else {
 			return String(key);
 		}
 
+		// As translated texts can contain HTML, we will need to render with unsafeHTML.
+		// But arguments can come from user input, so they should be escaped.
+		const sanitizedArgs = args.map((a) => escapeHTML(a));
+
 		if (typeof term === 'function') {
-			return term(...args) as string;
+			return term(...sanitizedArgs) as string;
 		}
 
 		if (typeof term === 'string') {
-			if (args.length > 0) {
+			if (sanitizedArgs.length) {
 				// Replace placeholders of format "%index%" and "{index}" with provided values
 				term = term.replace(/(%(\d+)%|\{(\d+)\})/g, (match, _p1, p2, p3): string => {
 					const index = p2 || p3;
-					return String(args[index] || match);
+					return typeof sanitizedArgs[index] !== 'undefined' ? String(sanitizedArgs[index]) : match;
 				});
 			}
 		}
@@ -178,7 +186,18 @@ export class UmbLocalizationController<LocalizationSetType extends UmbLocalizati
 		return new Intl.RelativeTimeFormat(this.lang(), options).format(value, unit);
 	}
 
-	string(text: string): string {
+	/**
+	 * Translates a string containing one or more terms. The terms should be prefixed with a `#` character.
+	 * If the term is found in the localization set, it will be replaced with the localized term.
+	 * If the term is not found, the original term will be returned.
+	 * @param {string} text The text to translate.
+	 * @returns {string} The translated text.
+	 */
+	string(text: unknown): string {
+		if (typeof text !== 'string') {
+			return '';
+		}
+
 		// find all words starting with #
 		const regex = /#\w+/g;
 

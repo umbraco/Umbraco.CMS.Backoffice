@@ -175,6 +175,12 @@ describe('UmbLocalizeController', () => {
 			expect((controller.term as any)('logout', 'Hello', 'World')).to.equal('Log out');
 		});
 
+		it('should encode HTML entities', () => {
+			expect(controller.term('withInlineToken', 'Hello', '<script>alert("XSS")</script>'), 'XSS detected').to.equal(
+				'Hello &lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;',
+			);
+		});
+
 		it('only reacts to changes of its own localization-keys', async () => {
 			const element: UmbLocalizationRenderCountElement = await fixture(
 				html`<umb-localization-render-count></umb-localization-render-count>`,
@@ -289,6 +295,12 @@ describe('UmbLocalizeController', () => {
 		it('should return the word with a # if the word is not found', async () => {
 			const str = '#missing_translation_key';
 			expect(controller.string(str)).to.equal('#missing_translation_key');
+		});
+
+		it('should return an empty string if the input is not a string', async () => {
+			expect(controller.string(123)).to.equal('');
+			expect(controller.string({})).to.equal('');
+			expect(controller.string(undefined)).to.equal('');
 		});
 	});
 
