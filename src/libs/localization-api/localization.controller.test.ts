@@ -177,7 +177,7 @@ describe('UmbLocalizeController', () => {
 
 		it('should encode HTML entities', () => {
 			expect(controller.term('withInlineToken', 'Hello', '<script>alert("XSS")</script>'), 'XSS detected').to.equal(
-				'Hello &lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;',
+				'Hello &lt;script&gt;alert(&#34;XSS&#34;)&lt;/script&gt;',
 			);
 		});
 
