@@ -50,6 +50,16 @@ export class UmbUserGroupMockDB extends UmbEntityMockDbBase<UmbMockUserGroupMode
 		return uniqueArray;
 	}
 
+	getFallbackPermissions(userGroupIds: Array<{ id: string }>): Array<string> {
+		const permissions = this.data
+			.filter((userGroup) => userGroupIds.map((reference) => reference.id).includes(userGroup.id))
+			.map((userGroup) => (userGroup.fallbackPermissions?.length ? userGroup.fallbackPermissions : []))
+			.flat();
+
+		// Remove duplicates
+		return Array.from(new Set(permissions));
+	}
+
 	getAllowedSections(userGroupIds: Array<{ id: string }>): string[] {
 		const sections = this.data
 			.filter((userGroup) => userGroupIds.map((reference) => reference.id).includes(userGroup.id))
